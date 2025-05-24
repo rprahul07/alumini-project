@@ -1,0 +1,22 @@
+## 🚀 Contributor Workflow
+
+> ⚠️ Do **NOT** push directly to `dev`, `test`, or `prod`.
+
+### ✅ Steps to Contribute:
+
+```bash
+# Pull the latest dev branch
+git checkout dev
+git pull origin dev
+
+# Create your own feature branch
+git checkout -b feature/<your-feature-name>
+
+# Work on the code and commit
+git add .
+git commit -m "Your message"
+
+# Push your feature branch
+git push origin feature/<your-feature-name>
+
+# Open a Pull Request to 'dev' branch on GitHub
