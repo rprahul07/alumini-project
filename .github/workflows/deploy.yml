@@ -1,0 +1,44 @@
+name: 🚀 Deploy Dev to EC2
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up SSH Agent
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.EC2_DEV_SSH_KEY }}
+
+      - name: Deploy to Dev EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_DEV_HOST }} << 'EOF'
+            # Navigate or clone into your app directory
+            mkdir -p ~/mineapp
+            cd ~/mineapp
+
+            # Pull the latest changes from dev branch
+            if [ -d ".git" ]; then
+              git pull origin dev
+            else
+              git clone -b dev https://github.com/rprahul07/alumini-project .
+            fi
+
+            # Navigate to backend and install/start
+            cd .../backend
+            npm install
+            pm2 restart backend || pm2 start index.js --name backend
+
+            # Navigate to frontend and install/start
+            cd ../frontend
+            npm install
+            pm2 restart frontend || pm2 start npm --name frontend -- start
+          EOF
