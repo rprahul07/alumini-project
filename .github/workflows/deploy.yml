@@ -20,24 +20,22 @@ jobs:
 
       - name: Deploy to Dev EC2
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_DEV_HOST }} << 'EOF'
-            # Navigate or clone into your app directory
-            mkdir -p ~/mineapp
+          ssh -o StrictHostKeyChecking=no -p ${{ secrets.EC2_PORT }} ubuntu@${{ secrets.EC2_DEV_HOST }} << 'EOF'
+            # Navigate to your existing app folder
             cd ~/mineapp
 
-            # Pull the latest changes from dev branch
-            if [ -d ".git" ]; then
-              git pull origin dev
-            else
-              git clone -b dev https://github.com/rprahul07/alumini-project .
-            fi
+            # Reset local changes (optional) and pull latest dev code
+            git reset --hard
+            git clean -fd
+            git checkout dev
+            git pull origin dev
 
-            # Navigate to backend and install/start
-            cd .../backend
+            # Backend setup
+            cd backend
             npm install
             pm2 restart backend || pm2 start index.js --name backend
 
-            # Navigate to frontend and install/start
+            # Frontend setup
             cd ../frontend
             npm install
             pm2 restart frontend || pm2 start npm --name frontend -- start
