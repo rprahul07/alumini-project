@@ -34,7 +34,7 @@ axios.interceptors.request.use(
 
 // Configure axios defaults
 axios.defaults.baseURL =
-  process.env.REACT_APP_API_URL || "http://localhost:8000";
+  process.env.REACT_APP_API_URL || "http://localhost:5001";
 axios.defaults.withCredentials = true;
 axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
 
@@ -55,13 +55,11 @@ export const authAPI = {
   // Login
   login: async (credentials) => {
     try {
-      console.log(credentials);
       const response = await axios.post("/api/auth/login", credentials);
-
       return response.data;
     } catch (error) {
       const errorMsg =
-        error.response?.data?.error || "An unexpected error occurred";
+        error.response?.data?.error || "Invalid credentials. Please try again.";
       throw new Error(errorMsg);
     }
   },
@@ -69,13 +67,21 @@ export const authAPI = {
   // Register
   register: async (userData) => {
     try {
-      console.log(userData);
       const response = await axios.post("/api/auth/register", userData);
       return response.data;
     } catch (error) {
-      const errorMsg =
-        error.response?.data?.error || "An unexpected error occurred";
-      throw new Error(errorMsg);
+      // Handle specific error cases
+      if (error.response?.data?.error) {
+        throw new Error(error.response.data.error);
+      } else if (error.response?.status === 400) {
+        throw new Error("Registration failed. Please check your information and try again.");
+      } else if (error.response?.status === 409) {
+        throw new Error("Email already exists. Please use a different email address.");
+      } else if (error.response?.status === 500) {
+        throw new Error("Server error. Please try again later.");
+      } else {
+        throw new Error("An unexpected error occurred. Please try again.");
+      }
     }
   },
 
@@ -86,7 +92,7 @@ export const authAPI = {
       return response.data;
     } catch (error) {
       const errorMsg =
-        error.response?.data?.error || "An unexpected error occurred";
+        error.response?.data?.error || "Logout failed. Please try again.";
       throw new Error(errorMsg);
     }
   },
@@ -98,7 +104,7 @@ export const authAPI = {
       return response.data;
     } catch (error) {
       const errorMsg =
-        error.response?.data?.error || "An unexpected error occurred";
+        error.response?.data?.error || "Google sign-in failed. Please try again.";
       throw new Error(errorMsg);
     }
   },

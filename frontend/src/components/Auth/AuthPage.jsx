@@ -247,10 +247,23 @@ const AuthPage = ({ onAuthSuccess }) => {
         ? await authAPI.login(userData)
         : await authAPI.register(userData);
 
-      setSuccessMessage(authType === 'login' ? 'Login successful!' : 'Registration successful!');
+      // Show success message
+      const successMsg = authType === 'login' 
+        ? 'Login successful! Redirecting to dashboard...' 
+        : 'Registration successful! You can now log in.';
+      setSuccessMessage(successMsg);
 
       if (onAuthSuccess) {
-        onAuthSuccess(userRole);
+        // For login, redirect immediately
+        if (authType === 'login') {
+          onAuthSuccess(userRole);
+        } else {
+          // For registration, wait 2 seconds to show success message then redirect to login
+          setTimeout(() => {
+            setAuthType('login');
+            setUserRole(null);
+          }, 2000);
+        }
       }
 
       // Reset form after success
@@ -269,13 +282,19 @@ const AuthPage = ({ onAuthSuccess }) => {
         rollNumber: '',
       });
     } catch (error) {
-      if (error.response?.status === 401) {
+      // Handle specific error cases
+      if (error.message.includes('Email already exists')) {
+        setErrors({
+          email: 'This email is already registered. Please use a different email or try logging in.',
+          submit: 'Registration failed: Email already exists'
+        });
+      } else if (error.message.includes('Invalid credentials')) {
+        setErrors({ submit: 'Invalid email or password. Please try again.' });
+      } else if (error.response?.status === 401) {
         setIsLocked(true);
         setLockoutTime(15);
         setTimeout(() => setIsLocked(false), 15 * 60 * 1000);
-        setErrors({ submit: 'Invalid credentials. Account locked for 15 minutes.' });
-      } else if (error.response?.data?.message) {
-        setErrors({ submit: error.response.data.message });
+        setErrors({ submit: 'Too many failed attempts. Account locked for 15 minutes.' });
       } else {
         setErrors({ submit: error.message || 'Something went wrong. Please try again.' });
       }
