@@ -32,18 +32,21 @@ axios.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Configure axios defaults
-axios.defaults.baseURL =
-  process.env.REACT_APP_API_URL || "http://localhost:5001";
-axios.defaults.withCredentials = true;
-axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
+// Create axios instance with default config
+const api = axios.create({
+  baseURL: process.env.REACT_APP_API_URL || "http://localhost:5001",
+  withCredentials: true,
+  headers: {
+    "X-Requested-With": "XMLHttpRequest"
+  }
+});
 
 // Auth APIs
 export const authAPI = {
   // Check authentication status
   checkAuth: async () => {
     try {
-      const response = await axios.get("/api/auth/check");
+      const response = await api.get("/api/auth/check");
       return response.data;
     } catch (error) {
       const errorMsg =
@@ -55,7 +58,7 @@ export const authAPI = {
   // Login
   login: async (credentials) => {
     try {
-      const response = await axios.post("/api/auth/login", credentials);
+      const response = await api.post("/api/auth/login", credentials);
       return response.data;
     } catch (error) {
       const errorMsg =
@@ -67,7 +70,7 @@ export const authAPI = {
   // Register
   register: async (userData) => {
     try {
-      const response = await axios.post("/api/auth/register", userData);
+      const response = await api.post("/api/auth/register", userData);
       return response.data;
     } catch (error) {
       // Handle specific error cases
@@ -88,7 +91,7 @@ export const authAPI = {
   // Logout
   logout: async () => {
     try {
-      const response = await axios.post("/api/auth/logout");
+      const response = await api.post("/api/auth/logout");
       return response.data;
     } catch (error) {
       const errorMsg =
@@ -100,7 +103,7 @@ export const authAPI = {
   // Google OAuth
   googleAuth: async (token) => {
     try {
-      const response = await axios.post("/api/auth/google", { token });
+      const response = await api.post("/api/auth/google", { token });
       return response.data;
     } catch (error) {
       const errorMsg =
@@ -115,7 +118,7 @@ export const profileAPI = {
   // Get user profile
   getProfile: async () => {
     try {
-      const response = await axios.get("/api/profile");
+      const response = await api.get("/api/profile");
       return response.data;
     } catch (error) {
       const errorMsg =
@@ -127,7 +130,7 @@ export const profileAPI = {
   // Update user profile
   updateProfile: async (profileData) => {
     try {
-      const response = await axios.put("/api/profile", profileData);
+      const response = await api.put("/api/profile", profileData);
       return response.data;
     } catch (error) {
       const errorMsg =
@@ -138,14 +141,14 @@ export const profileAPI = {
 };
 
 // Error handling interceptor
-axios.interceptors.response.use(
+api.interceptors.response.use(
   (response) => response,
   async (error) => {
     if (error.response?.status === 419) {
       // CSRF token mismatch
       window.location.reload();
-    } else if (error.response?.status === 401) {
-      // Unauthorized - redirect to login
+    } else if (error.response?.status === 401 && !window.location.pathname.includes('/auth')) {
+      // Only redirect to auth if we're not already on the auth page
       window.location.href = "/auth";
     }
     return Promise.reject(error);
