@@ -9,18 +9,21 @@ on:
 jobs:
   frontend_cli:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
     steps:
     - uses: actions/checkout@v4 # Checkout entire repo to runner
     - name: Use Node.js 20.x
       uses: actions/setup-node@v4
       with:
         node-version: '20.x'
-        cache: 'npm' # caching npm dependencies
+        cache: 'npm'
+        cache-dependency-path: 'frontend/package-lock.json'   # Importand because our package is in subdirectory
 
     - name: Checking for Dependency errors!
       run: |
         echo "Checking for dependency errors in frontend.."
-        cd frontend
         npm ci
 
     - name: Frontend Startup Validation!
@@ -28,7 +31,6 @@ jobs:
         # I am planning to start the frontend from here using npm run and check the port status to validate if the website can go live.
         # By default the port that i am planning on using is 3000.
         # !! change the port here or set it in frontend if port for frontend is changed later. !!
-        cd frontend
         npm run start > frontend_startup.log 2>&1 & # logs both STDOUT and STDERR to log file
         FRONTEND_PID=$! # stores the frontends process id
 
@@ -50,6 +52,9 @@ jobs:
 
   backend_cli:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
     steps:
     - uses: actions/checkout@v4
     - name: Use Node.js 20.x
@@ -57,11 +62,11 @@ jobs:
       with:
         node-version: '20.x'
         cache: 'npm'
+        cache-dependency-path: 'backend/package-lock.json' # Importand because our package is in subdirectory
 
     - name: Check Backend Dependecies
       run: |
         echo "Checking for dependency errors in backend.."
-        cd backend
         npm ci
 
     - name: Validate Required Secrets/Enviornment Variables
@@ -72,7 +77,6 @@ jobs:
         JWT_SECRET: ${{ secrets.JWT_SECRET }}
         NODE_ENV: ${{ secrets.NODE_ENV }}
       run: |
-        cd backend
         echo "Validating required environment variables for Backend.."
 
         if [ -z "$DATABASE_URL" ]; then
@@ -110,7 +114,6 @@ jobs:
 
     - name: Backend Startup Validation!
       run: |
-        cd backend
         npm run server > backend_startup.log 2>&1 &
         BACKEND_PID=$!
 
