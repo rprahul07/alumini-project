@@ -81,7 +81,7 @@ const AuthPage = ({ onAuthSuccess }) => {
 
   // Sanitize user input to prevent XSS attacks (removing < and > characters) 
   function sanitizeInput(input) {
-    return input.replace(/[<>]/g, '').trim();
+    return input.replace(/[<>]/g, '');
   }
 
   // Handle changes in input fields and sanitize them using sanitizing function and replace the fields name and value after sanitization rest of the feilds remians same.
