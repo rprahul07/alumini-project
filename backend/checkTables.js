@@ -1,9 +1,12 @@
 import pkg from 'pg';
+import pool from "./db/db.js";
 const { Pool } = pkg;
 
-const pool = new Pool({
-    connectionString: 'postgresql://postgres:wluoFmQftmYQqWnfkORBGRZNcIYveFzR@gondola.proxy.rlwy.net:46655/railway'
-});
+// require('dotenv').config();
+
+// const pool = new Pool({
+//     connectionString: process.env.DATABASE_URL
+// });
 
 async function checkTables() {
     try {
