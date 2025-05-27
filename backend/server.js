@@ -39,10 +39,11 @@ app.use(cookieParser()); // Parse cookies
 // CORS setup with credentials enabled
 app.use(
   cors({
-    origin: CLIENT_URL,
-    credentials: true, // Enable credentials
+    origin: ["http://43.204.96.201", "http://localhost:3000"],
+    credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+    exposedHeaders: ['set-cookie']
   })
 );
 

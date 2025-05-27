@@ -24,12 +24,22 @@ function App() {
         setIsAuthenticated(true);
         setUserRole(data.role);
       } catch (error) {
-        console.error('Auth check failed:', error);
+        // Don't log the error if it's just an unauthorized error
+        if (!error.message.includes('unauthorized') && !error.message.includes('Unauthorized')) {
+          console.error('Auth check failed:', error);
+        }
         setIsAuthenticated(false);
         setUserRole(null);
       }
     };
-    checkAuth();
+    
+    // Only check auth if we're not on the auth page
+    if (!window.location.pathname.includes('/auth')) {
+      checkAuth();
+    } else {
+      setIsAuthenticated(false);
+      setUserRole(null);
+    }
   }, []);
 
   // Apply security headers
