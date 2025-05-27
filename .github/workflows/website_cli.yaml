@@ -1,0 +1,129 @@
+name: Website CI
+
+on:
+  push:
+    branches: [ "dev" ]
+  pull_request:
+    branches: [ "dev" ]
+
+jobs:
+  frontend_cli:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4 # Checkout entire repo to runner
+    - name: Use Node.js 20.x
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm' # caching npm dependencies
+
+    - name: Checking for Dependency errors!
+      run: npm ci
+      working-directory: frontend
+
+    - name: Frontend Startup Validation!
+      run: |
+        # I am planning to start the frontend from here using npm run and check the port status to validate if the website can go live.
+        # By default the port that i am planning on using is 3000.
+        # !! change the port here or set it in frontend if port for frontend is changed later. !!
+        npm run start > frontend_startup.log 2>&1 & # logs both STDOUT and STDERR to log file
+        FRONTEND_PID=$! # stores the frontends process id
+
+        echo "Waiting for frontend to start on port 3000..."
+        sleep 15
+
+        # curl has an exit code of 0 if server is running
+        if curl -s -f -I http://localhost:3000; then
+          echo "Frontend Started successfully on port 3000."
+          kill $FRONTEND_PID
+        else
+          echo "Frontend failed to start or crached immediately!!"
+          echo "Startup log:"
+          cat frontend_startup.log
+          kill $FRONTEND_PID || true
+          exit 1
+        fi
+      working-directory: frontend
+
+  backend_cli:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Use Node.js 20.x
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+
+    - name: Check Backend Dependecies
+      run: npm ci
+      working-directory: backend
+
+    - name: Validate Required Secrets/Enviornment Variables
+      env:
+        PORT: 8000
+        DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        CLIENT_URL: ${{ secrets.CLIENT_URL }}
+        JWT_SECRET: ${{ secrets.JWT_SECRET }}
+        NODE_ENV: ${{ secrets.NODE_ENV }}
+      run: |
+        echo "Validating required environment variables for Backend.."
+
+        if [ -z "$DATABASE_URL" ]; then
+          echo "Error: DATABASE_URL secret is not set!"
+          echo "Please add DATABASE_URL to your repository secrets."
+          exit 1
+        fi
+
+        if [ -z "$CLIENT_URL" ]; then
+          echo "Error: CLIENT_URL secret is not set!"
+          echo "Please add CLIENT_URL to your repository secrets."
+          exit 1
+        fi
+
+        if [ -z "$JWT_SECRET" ]; then
+          echo "Error: JWT_SECRET secret is not set!"
+          echo "Please add JWT_SECRET to your repository secrets."
+          exit 1 
+        fi
+
+        if [ -z "$NODE_ENV" ]; then
+          echo "Error: NODE_ENV secret is not set!"
+          echo "Please add NODE_ENV to your repository secrets."
+          exit 1
+        fi
+
+        if [ -z "$PORT" ]; then
+          echo "Error: PORT secret is not set!"
+          echo "Please add PORT to your repository secrets."
+          exit 1 
+        fi
+
+        echo "All required backend environment variables are set."
+      working-directory: backend
+
+    - name: Backend Startup Validation!
+      run: |
+        npm run server > backend_startup.log 2>&1 &
+        BACKEND_PID=$!
+
+        echo "Waiting for backend to start on port ${PORT}..."
+        sleep 15
+
+        if curl -s -f -I http://localhost:${PORT}; then
+          echo "Backend started successfully on port ${PORT}."
+          kill $BACKEND_PID
+        else
+          echo "Backend failed to start or health check failed."
+          echo "Startup log:"
+          cat backend_startup.log
+          kill $BACKEND_PID || true
+          exit 1
+        fi
+      working-directory: backend
+      env:
+        PORT: 8000
+        DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        CLIENT_URL: ${{ secrets.CLIENT_URL }}
+        JWT_SECRET: ${{ secrets.JWT_SECRET }}
+        NODE_ENV: ${{ secrets.NODE_ENV }}
