@@ -18,14 +18,17 @@ jobs:
         cache: 'npm' # caching npm dependencies
 
     - name: Checking for Dependency errors!
-      run: npm ci
-      working-directory: frontend
+      run: |
+        echo "Checking for dependency errors in frontend.."
+        cd frontend
+        npm ci
 
     - name: Frontend Startup Validation!
       run: |
         # I am planning to start the frontend from here using npm run and check the port status to validate if the website can go live.
         # By default the port that i am planning on using is 3000.
         # !! change the port here or set it in frontend if port for frontend is changed later. !!
+        cd frontend
         npm run start > frontend_startup.log 2>&1 & # logs both STDOUT and STDERR to log file
         FRONTEND_PID=$! # stores the frontends process id
 
@@ -43,7 +46,7 @@ jobs:
           kill $FRONTEND_PID || true
           exit 1
         fi
-      working-directory: frontend
+
 
   backend_cli:
     runs-on: ubuntu-latest
@@ -56,8 +59,10 @@ jobs:
         cache: 'npm'
 
     - name: Check Backend Dependecies
-      run: npm ci
-      working-directory: backend
+      run: |
+        echo "Checking for dependency errors in backend.."
+        cd backend
+        npm ci
 
     - name: Validate Required Secrets/Enviornment Variables
       env:
@@ -67,6 +72,7 @@ jobs:
         JWT_SECRET: ${{ secrets.JWT_SECRET }}
         NODE_ENV: ${{ secrets.NODE_ENV }}
       run: |
+        cd backend
         echo "Validating required environment variables for Backend.."
 
         if [ -z "$DATABASE_URL" ]; then
@@ -100,10 +106,11 @@ jobs:
         fi
 
         echo "All required backend environment variables are set."
-      working-directory: backend
+
 
     - name: Backend Startup Validation!
       run: |
+        cd backend
         npm run server > backend_startup.log 2>&1 &
         BACKEND_PID=$!
 
@@ -120,7 +127,7 @@ jobs:
           kill $BACKEND_PID || true
           exit 1
         fi
-      working-directory: backend
+
       env:
         PORT: 8000
         DATABASE_URL: ${{ secrets.DATABASE_URL }}
