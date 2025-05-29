@@ -47,7 +47,7 @@ const { generateToken, doubleCsrfProtection } = doubleCsrf({
 async function connectDB() {
     try {
         await pool.connect();
-        console.log('✅ Connected to PostgreSQL database');
+        console.log(' Connected to PostgreSQL database');
         
         // Create tables if they don't exist
         await createTables();
@@ -132,6 +132,6 @@ app.use((req, res) => {
 
 // Start server
 const server = app.listen(PORT, '0.0.0.0', () => {
-  console.log(`✅ Server running at http://localhost:${PORT}`);
-  console.log(`✅ Server also accessible at http://43.204.96.201:${PORT}`);
+  console.log(`Server running at http://localhost:${PORT}`);
+  console.log(`Server also accessible at http://43.204.96.201:${PORT}`);
 });
