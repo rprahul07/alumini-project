@@ -1,32 +1,34 @@
-import React, { useState, useEffect } from 'react';
-import { FaGoogle } from 'react-icons/fa';
-import axios from 'axios';
-import RoleSelection from './RoleSelection';
-import AuthForm from './AuthForm';
-import './AuthPage.css';
-import { authAPI } from '../../services/api';
+import React, { useState, useEffect } from "react";
+import RoleSelection from "./RoleSelection";
+import AuthForm from "./AuthForm";
+import "./AuthPage.css";
+import { authAPI } from "../../services/api";
+import { useNavigate } from "react-router-dom";
 
 const AuthPage = ({ onAuthSuccess }) => {
   // State for login/register toggling
-  const [authType, setAuthType] = useState('login');
+  const [authType, setAuthType] = useState("login");
 
   // State to track selected user role (alumni, faculty, student)
   const [userRole, setUserRole] = useState(null);
 
   // Form data state for all fields
   const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    phoneNumber: '',
-    password: '',
-    confirmPassword: '',
-    graduationYear: '',
-    department: '',
-    currentJobTitle: '',
-    companyName: '',
-    designation: '',
-    currentSemester: '',
-    rollNumber: '',
+    role: "",
+    email: "",
+    password: "",
+    ...(authType === "register" && {
+      fullName: "",
+      phoneNumber: "",
+      confirmPassword: "",
+      graduationYear: "",
+      department: "",
+      currentJobTitle: "",
+      companyName: "",
+      designation: "",
+      currentSemester: "",
+      rollNumber: "",
+    }),
   });
 
   // Errors for input field
@@ -36,39 +38,13 @@ const AuthPage = ({ onAuthSuccess }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   // Success message to display on successful login/register
-  const [successMessage, setSuccessMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState("");
 
   // Account lockout for brute force prevention
   const [isLocked, setIsLocked] = useState(false);
   const [lockoutTime, setLockoutTime] = useState(0);
 
-  // Get CSRF token from cookie
-  const getCsrfToken = () => {
-    const name = 'XSRF-TOKEN';
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
-    return null;
-  };
-
-  // Configure axios defaults
-  useEffect(() => {
-    // Set default headers for all requests
-    axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-    axios.defaults.withCredentials = true; // Important for cookies
-
-    // Add response interceptor to handle CSRF token refresh
-    axios.interceptors.response.use(
-      (response) => response,
-      async (error) => {
-        if (error.response?.status === 419) { // CSRF token mismatch
-          // Refresh the page to get a new CSRF token
-          window.location.reload();
-        }
-        return Promise.reject(error);
-      }
-    );
-  }, []);
+  const navigate = useNavigate();
 
   // Password rules
   const passwordRequirements = {
@@ -79,9 +55,9 @@ const AuthPage = ({ onAuthSuccess }) => {
     requireSpecialChar: true,
   };
 
-  // Sanitize user input to prevent XSS attacks (removing < and > characters) 
+  // Sanitize user input to prevent XSS attacks (removing < and > characters)
   function sanitizeInput(input) {
-    return input.replace(/[<>]/g, '').trim();
+    return input.replace(/[<>]/g, "").trim();
   }
 
   // Handle changes in input fields and sanitize them using sanitizing function and replace the fields name and value after sanitization rest of the feilds remians same.
@@ -96,7 +72,7 @@ const AuthPage = ({ onAuthSuccess }) => {
 
     // Clear error message for this field if any
     if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: '' }));
+      setErrors((prev) => ({ ...prev, [name]: "" }));
     }
   };
 
@@ -106,67 +82,99 @@ const AuthPage = ({ onAuthSuccess }) => {
 
     // Email validation
     if (!formData.email) {
-      validationErrors.email = 'Email is required';
+      validationErrors.email = "Email is required";
     } else {
       const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
       if (!emailRegex.test(formData.email)) {
-        validationErrors.email = 'Please enter a valid email address';
+        validationErrors.email = "Please enter a valid email address";
       }
     }
 
     // Password validation
     if (!formData.password) {
-      validationErrors.password = 'Password is required';
+      validationErrors.password = "Password is required";
+    } else if (authType === "login") {
+      // For login, only check if password is not empty
+      if (formData.password.length === 0) {
+        validationErrors.password = "Password is required";
+      }
     } else {
+      // For registration, check password strength
       const pwErrors = validatePassword(formData.password);
       if (pwErrors.length > 0) {
-        validationErrors.password = pwErrors.join('. ');
+        validationErrors.password = pwErrors.join(". ");
       }
     }
 
-    // Confirm password for registration
-    if (authType === 'register') {
+    // Only validate registration-specific fields if registering
+    if (authType === "register") {
+      // Confirm password validation
       if (!formData.confirmPassword) {
-        validationErrors.confirmPassword = 'Please confirm your password';
+        validationErrors.confirmPassword = "Please confirm your password";
       } else if (formData.password !== formData.confirmPassword) {
-        validationErrors.confirmPassword = 'Passwords do not match';
+        validationErrors.confirmPassword = "Passwords do not match";
       }
-    }
 
-    // Full name validation
-    if (!formData.fullName) {
-      validationErrors.fullName = 'Full name is required';
-    }
-
-    // Phone number validation
-    if (!formData.phoneNumber) {
-      validationErrors.phoneNumber = 'Phone number is required';
-    } else {
-      const phoneRegex = /^\+?[\d\s-]{10,}$/;
-      if (!phoneRegex.test(formData.phoneNumber)) {
-        validationErrors.phoneNumber = 'Please enter a valid phone number';
+      // Full name validation
+      if (!formData.fullName || formData.fullName.trim() === "") {
+        validationErrors.fullName = "Full name is required";
       }
-    }
 
-    // Role-specific validation on registration
-    if (authType === 'register') {
+      // Phone number validation
+      if (!formData.phoneNumber || formData.phoneNumber.trim() === "") {
+        validationErrors.phoneNumber = "Phone number is required";
+      } else {
+        const phoneRegex = /^\+?[\d\s-]{10,}$/;
+        if (!phoneRegex.test(formData.phoneNumber)) {
+          validationErrors.phoneNumber = "Please enter a valid phone number";
+        }
+      }
+
+      // Role-specific validation
       switch (userRole) {
-        case 'alumni':
-          if (!formData.graduationYear) validationErrors.graduationYear = 'Graduation year is required';
-          if (!formData.department) validationErrors.department = 'Department is required';
-          if (!formData.currentJobTitle) validationErrors.currentJobTitle = 'Current job title is required';
-          if (!formData.companyName) validationErrors.companyName = 'Company name is required';
+        case "alumni":
+          if (
+            !formData.graduationYear ||
+            formData.graduationYear.trim() === ""
+          ) {
+            validationErrors.graduationYear = "Graduation year is required";
+          }
+          if (!formData.department || formData.department.trim() === "") {
+            validationErrors.department = "Department is required";
+          }
+          if (
+            !formData.currentJobTitle ||
+            formData.currentJobTitle.trim() === ""
+          ) {
+            validationErrors.currentJobTitle = "Current job title is required";
+          }
+          if (!formData.companyName || formData.companyName.trim() === "") {
+            validationErrors.companyName = "Company name is required";
+          }
           break;
 
-        case 'faculty':
-          if (!formData.designation) validationErrors.designation = 'Designation is required';
-          if (!formData.department) validationErrors.department = 'Department is required';
+        case "faculty":
+          if (!formData.designation || formData.designation.trim() === "") {
+            validationErrors.designation = "Designation is required";
+          }
+          if (!formData.department || formData.department.trim() === "") {
+            validationErrors.department = "Department is required";
+          }
           break;
 
-        case 'student':
-          if (!formData.department) validationErrors.department = 'Department is required';
-          if (!formData.currentSemester) validationErrors.currentSemester = 'Current semester is required';
-          if (!formData.rollNumber) validationErrors.rollNumber = 'Roll number is required';
+        case "student":
+          if (!formData.department || formData.department.trim() === "") {
+            validationErrors.department = "Department is required";
+          }
+          if (
+            !formData.currentSemester ||
+            formData.currentSemester.trim() === ""
+          ) {
+            validationErrors.currentSemester = "Current semester is required";
+          }
+          if (!formData.rollNumber || formData.rollNumber.trim() === "") {
+            validationErrors.rollNumber = "Roll number is required";
+          }
           break;
 
         default:
@@ -183,38 +191,57 @@ const AuthPage = ({ onAuthSuccess }) => {
     const errors = [];
 
     if (password.length < passwordRequirements.minLength) {
-      errors.push(`Password must be at least ${passwordRequirements.minLength} characters long`);
+      errors.push(
+        `Password must be at least ${passwordRequirements.minLength} characters long`
+      );
     }
     if (passwordRequirements.requireUppercase && !/[A-Z]/.test(password)) {
-      errors.push('Password must contain at least one uppercase letter');
+      errors.push("Password must contain at least one uppercase letter");
     }
     if (passwordRequirements.requireLowercase && !/[a-z]/.test(password)) {
-      errors.push('Password must contain at least one lowercase letter');
+      errors.push("Password must contain at least one lowercase letter");
     }
     if (passwordRequirements.requireNumber && !/\d/.test(password)) {
-      errors.push('Password must contain at least one number');
+      errors.push("Password must contain at least one number");
     }
-    if (passwordRequirements.requireSpecialChar && !/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
-      errors.push('Password must contain at least one special character');
+    if (
+      passwordRequirements.requireSpecialChar &&
+      !/[!@#$%^&*(),.?":{}|<>]/.test(password)
+    ) {
+      errors.push("Password must contain at least one special character");
     }
 
     // Additional security checks
     if (/(.)\1{2,}/.test(password)) {
-      errors.push('Password cannot contain 3 or more consecutive identical characters');
+      errors.push(
+        "Password cannot contain 3 or more consecutive identical characters"
+      );
     }
-    
+
     // Check for common patterns
     const commonPatterns = [
-      'password', '123456', 'qwerty', 'admin',
-      'welcome', 'letmein', 'monkey', 'dragon'
+      "password",
+      "123456",
+      "qwerty",
+      "admin",
+      "welcome",
+      "letmein",
+      "monkey",
+      "dragon",
     ];
-    if (commonPatterns.some(pattern => password.toLowerCase().includes(pattern))) {
-      errors.push('Password contains common patterns that are not allowed');
+    if (
+      commonPatterns.some((pattern) => password.toLowerCase().includes(pattern))
+    ) {
+      errors.push("Password contains common patterns that are not allowed");
     }
 
     // Check for sequential characters
-    if (/(abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn|mno|nop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz)/i.test(password)) {
-      errors.push('Password cannot contain sequential characters');
+    if (
+      /(abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn|mno|nop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz)/i.test(
+        password
+      )
+    ) {
+      errors.push("Password cannot contain sequential characters");
     }
 
     return errors;
@@ -223,11 +250,12 @@ const AuthPage = ({ onAuthSuccess }) => {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setSuccessMessage('');
+    setSuccessMessage("");
     setErrors({});
-
     if (isLocked) {
-      setErrors({ submit: `Account locked. Please try again after ${lockoutTime} minutes.` });
+      setErrors({
+        submit: `Account locked. Please try again after ${lockoutTime} minutes.`,
+      });
       return;
     }
 
@@ -238,29 +266,44 @@ const AuthPage = ({ onAuthSuccess }) => {
     setIsLoading(true);
 
     try {
+      // Base user data
       const userData = {
-        ...formData,
+        email: formData.email,
+        password: formData.password,
+        confirmPassword: formData.confirmPassword,
+        fullName: formData.fullName,
+        phoneNumber: formData.phoneNumber,
         role: userRole,
       };
 
-      const response = authType === 'login' 
-        ? await authAPI.login(userData)
-        : await authAPI.register(userData);
+      // Add role-specific fields
+      if (userRole === "alumni") {
+        userData.graduationYear = formData.graduationYear;
+        userData.department = formData.department;
+        userData.currentJobTitle = formData.currentJobTitle;
+        userData.companyName = formData.companyName;
+      } else if (userRole === "faculty") {
+        userData.designation = formData.designation;
+        userData.department = formData.department;
+      } else if (userRole === "student") {
+        userData.department = formData.department;
+        userData.currentSemester = formData.currentSemester;
+        userData.rollNumber = formData.rollNumber;
+      }
 
-      // Show success message
-      const successMsg = authType === 'login' 
-        ? 'Login successful! Redirecting to dashboard...' 
-        : 'Registration successful! You can now log in.';
-      setSuccessMessage(successMsg);
-
-      if (onAuthSuccess) {
-        // For login, redirect immediately
-        if (authType === 'login') {
+      if (authType === "login") {
+        const response = await authAPI.login(userData);
+        setSuccessMessage("Login successful! Redirecting to dashboard...");
+        if (onAuthSuccess) {
           onAuthSuccess(userRole);
-        } else {
-          // For registration, wait 2 seconds to show success message then redirect to login
+        }
+        navigate("/dashboard");
+      } else {
+        await authAPI.register(userData);
+        setSuccessMessage("Registration successful! You can now log in.");
+        if (onAuthSuccess) {
           setTimeout(() => {
-            setAuthType('login');
+            setAuthType("login");
             setUserRole(null);
           }, 2000);
         }
@@ -268,35 +311,42 @@ const AuthPage = ({ onAuthSuccess }) => {
 
       // Reset form after success
       setFormData({
-        fullName: '',
-        email: '',
-        phoneNumber: '',
-        password: '',
-        confirmPassword: '',
-        graduationYear: '',
-        department: '',
-        currentJobTitle: '',
-        companyName: '',
-        designation: '',
-        currentSemester: '',
-        rollNumber: '',
+        email: "",
+        password: "",
+        ...(authType === "register" && {
+          fullName: "",
+          phoneNumber: "",
+          confirmPassword: "",
+          graduationYear: "",
+          department: "",
+          currentJobTitle: "",
+          companyName: "",
+          designation: "",
+          currentSemester: "",
+          rollNumber: "",
+        }),
       });
     } catch (error) {
       // Handle specific error cases
-      if (error.message.includes('Email already exists')) {
+      if (error.message.includes("Email already exists")) {
         setErrors({
-          email: 'This email is already registered. Please use a different email or try logging in.',
-          submit: 'Registration failed: Email already exists'
+          email:
+            "This email is already registered. Please use a different email or try logging in.",
+          submit: "Registration failed: Email already exists",
         });
-      } else if (error.message.includes('Invalid credentials')) {
-        setErrors({ submit: 'Invalid email or password. Please try again.' });
+      } else if (error.message.includes("Invalid credentials")) {
+        setErrors({ submit: "Invalid email or password. Please try again." });
       } else if (error.response?.status === 401) {
         setIsLocked(true);
         setLockoutTime(15);
         setTimeout(() => setIsLocked(false), 15 * 60 * 1000);
-        setErrors({ submit: 'Too many failed attempts. Account locked for 15 minutes.' });
+        setErrors({
+          submit: "Too many failed attempts. Account locked for 15 minutes.",
+        });
       } else {
-        setErrors({ submit: error.message || 'Something went wrong. Please try again.' });
+        setErrors({
+          submit: error.message || "Something went wrong. Please try again.",
+        });
       }
     } finally {
       setIsLoading(false);
@@ -307,17 +357,43 @@ const AuthPage = ({ onAuthSuccess }) => {
   const handleGoogleSignIn = async () => {
     try {
       setIsLoading(true);
-      // Implement Google OAuth flow here
       const response = await authAPI.googleAuth(/* token */);
       if (onAuthSuccess) {
         onAuthSuccess(response.role);
       }
     } catch (error) {
-      setErrors({ submit: error.message || 'Google sign-in failed. Please try again.' });
+      setErrors({
+        submit: error.message || "Google sign-in failed. Please try again.",
+      });
     } finally {
       setIsLoading(false);
     }
   };
+
+  // Update formData when authType changes
+  useEffect(() => {
+    if (authType === "login") {
+      setFormData({
+        email: "",
+        password: "",
+      });
+    } else {
+      setFormData({
+        fullName: "",
+        email: "",
+        phoneNumber: "",
+        password: "",
+        confirmPassword: "",
+        graduationYear: "",
+        department: "",
+        currentJobTitle: "",
+        companyName: "",
+        designation: "",
+        currentSemester: "",
+        rollNumber: "",
+      });
+    }
+  }, [authType]);
 
   return (
     <div className="auth-container">
@@ -325,23 +401,23 @@ const AuthPage = ({ onAuthSuccess }) => {
         {/* Toggle between Login and Register */}
         <div className="auth-tabs">
           <button
-            className={authType === 'login' ? 'active' : ''}
+            className={authType === "login" ? "active" : ""}
             onClick={() => {
-              setAuthType('login');
+              setAuthType("login");
               setUserRole(null);
               setErrors({});
-              setSuccessMessage('');
+              setSuccessMessage("");
             }}
           >
             Login
           </button>
           <button
-            className={authType === 'register' ? 'active' : ''}
+            className={authType === "register" ? "active" : ""}
             onClick={() => {
-              setAuthType('register');
+              setAuthType("register");
               setUserRole(null);
               setErrors({});
-              setSuccessMessage('');
+              setSuccessMessage("");
             }}
           >
             Register
@@ -373,20 +449,22 @@ const AuthPage = ({ onAuthSuccess }) => {
           onClick={() => {
             setUserRole(null);
             setErrors({});
-            setSuccessMessage('');
+            setSuccessMessage("");
             setFormData({
-              fullName: '',
-              email: '',
-              phoneNumber: '',
-              password: '',
-              confirmPassword: '',
-              graduationYear: '',
-              department: '',
-              currentJobTitle: '',
-              companyName: '',
-              designation: '',
-              currentSemester: '',
-              rollNumber: '',
+              email: "",
+              password: "",
+              ...(authType === "register" && {
+                fullName: "",
+                phoneNumber: "",
+                confirmPassword: "",
+                graduationYear: "",
+                department: "",
+                currentJobTitle: "",
+                companyName: "",
+                designation: "",
+                currentSemester: "",
+                rollNumber: "",
+              }),
             });
           }}
         >

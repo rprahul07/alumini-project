@@ -14,13 +14,24 @@ const isPasswordStrong = (password) => {
   const hasNumber = /\d/.test(password);
   const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
   const noConsecutiveChars = !/(.)\1{2,}/.test(password);
-  const noSequentialChars = !/(abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn|mno|nop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz)/i.test(password);
-  
+  const noSequentialChars =
+    !/(abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn|mno|nop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz)/i.test(
+      password
+    );
+
   const commonPatterns = [
-    'password', '123456', 'qwerty', 'admin',
-    'welcome', 'letmein', 'monkey', 'dragon'
+    "password",
+    "123456",
+    "qwerty",
+    "admin",
+    "welcome",
+    "letmein",
+    "monkey",
+    "dragon",
   ];
-  const noCommonPatterns = !commonPatterns.some(pattern => password.toLowerCase().includes(pattern));
+  const noCommonPatterns = !commonPatterns.some((pattern) =>
+    password.toLowerCase().includes(pattern)
+  );
 
   return (
     password.length >= minLength &&
@@ -55,7 +66,9 @@ export const signup = async (req, res) => {
 
     // Validate required fields
     if (!fullName || !email || !phoneNumber || !password || !role) {
-      return res.status(400).json({ error: "Please fill in all required fields" });
+      return res
+        .status(400)
+        .json({ error: "Please fill in all required fields" });
     }
 
     if (password !== confirmPassword) {
@@ -64,7 +77,8 @@ export const signup = async (req, res) => {
 
     if (!isPasswordStrong(password)) {
       return res.status(400).json({
-        error: "Password must be at least 12 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character. It cannot contain 3 or more consecutive identical characters, sequential characters, or common patterns."
+        error:
+          "Password must be at least 12 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character. It cannot contain 3 or more consecutive identical characters, sequential characters, or common patterns.",
       });
     }
 
@@ -76,9 +90,11 @@ export const signup = async (req, res) => {
       }
     } catch (error) {
       console.error("Error checking email existence:", error);
-      if (error.code === '42P01') {
+      if (error.code === "42P01") {
         // Table doesn't exist error
-        return res.status(500).json({ error: "Database setup incomplete. Please try again later." });
+        return res.status(500).json({
+          error: "Database setup incomplete. Please try again later.",
+        });
       }
       throw error;
     }
@@ -91,7 +107,9 @@ export const signup = async (req, res) => {
       if (role === "student") {
         // Validate student-specific fields
         if (!department || !currentSemester || !rollNumber) {
-          return res.status(400).json({ error: "Please fill in all required student fields" });
+          return res
+            .status(400)
+            .json({ error: "Please fill in all required student fields" });
         }
 
         const result = await pool.query(
@@ -110,8 +128,15 @@ export const signup = async (req, res) => {
         newUser = result.rows[0];
       } else if (role === "alumni") {
         // Validate alumni-specific fields
-        if (!department || !graduationYear || !currentJobTitle || !companyName) {
-          return res.status(400).json({ error: "Please fill in all required alumni fields" });
+        if (
+          !department ||
+          !graduationYear ||
+          !currentJobTitle ||
+          !companyName
+        ) {
+          return res
+            .status(400)
+            .json({ error: "Please fill in all required alumni fields" });
         }
 
         const result = await pool.query(
@@ -132,7 +157,9 @@ export const signup = async (req, res) => {
       } else if (role === "faculty") {
         // Validate faculty-specific fields
         if (!department || !designation) {
-          return res.status(400).json({ error: "Please fill in all required faculty fields" });
+          return res
+            .status(400)
+            .json({ error: "Please fill in all required faculty fields" });
         }
 
         const result = await pool.query(
@@ -153,12 +180,12 @@ export const signup = async (req, res) => {
       }
     } catch (error) {
       console.error("Error inserting user:", error);
-      if (error.code === '23505') {
+      if (error.code === "23505") {
         // Unique constraint violation
-        if (error.constraint.includes('email')) {
+        if (error.constraint.includes("email")) {
           return res.status(409).json({ error: "Email already exists" });
         }
-        if (error.constraint.includes('roll_number')) {
+        if (error.constraint.includes("roll_number")) {
           return res.status(409).json({ error: "Roll number already exists" });
         }
       }
@@ -169,8 +196,10 @@ export const signup = async (req, res) => {
       generateTokenAndSetCookie(newUser.id, role, res);
     } catch (error) {
       console.error("Error generating token:", error);
-      if (error.message.includes('secretOrPrivateKey must have a value')) {
-        return res.status(500).json({ error: "Server configuration error. Please contact administrator." });
+      if (error.message.includes("secretOrPrivateKey must have a value")) {
+        return res.status(500).json({
+          error: "Server configuration error. Please contact administrator.",
+        });
       }
       throw error;
     }
@@ -183,7 +212,9 @@ export const signup = async (req, res) => {
     });
   } catch (error) {
     console.error("Error in signup controller:", error);
-    res.status(500).json({ error: "Internal server error. Please try again later." });
+    res
+      .status(500)
+      .json({ error: "Internal server error. Please try again later." });
   }
 };
 
@@ -292,7 +323,6 @@ export const signup = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const { email, password, role } = req.body;
-
     const user = await findUserByEmailAndRole(email, role);
     if (!user) {
       return res.status(400).json({ error: "Invalid email or password" });
@@ -333,15 +363,14 @@ export const checkAuth = async (req, res) => {
     if (!req.user) {
       return res.status(401).json({ error: "Not authenticated" });
     }
-
     // Get user details from database based on role stored in token
     let userQuery;
-    if (req.user.role === 'student') {
-      userQuery = 'SELECT id, full_name, email, role FROM students WHERE id = $1';
-    } else if (req.user.role === 'alumni') {
-      userQuery = 'SELECT id, full_name, email, role FROM alumni WHERE id = $1';
-    } else if (req.user.role === 'faculty') {
-      userQuery = 'SELECT id, full_name, email, role FROM faculty WHERE id = $1';
+    if (req.user.role === "student") {
+      userQuery = "SELECT id, full_name, email FROM students WHERE id = $1";
+    } else if (req.user.role === "alumni") {
+      userQuery = "SELECT id, full_name, email FROM alumni WHERE id = $1";
+    } else if (req.user.role === "faculty") {
+      userQuery = "SELECT id, full_name, email FROM faculty WHERE id = $1";
     } else {
       return res.status(400).json({ error: "Invalid role" });
     }
@@ -356,7 +385,7 @@ export const checkAuth = async (req, res) => {
       _id: user.id,
       fullName: user.full_name,
       email: user.email,
-      role: req.user.role
+      role: req.user.role,
     });
   } catch (error) {
     console.error("Error in checkAuth controller:", error);

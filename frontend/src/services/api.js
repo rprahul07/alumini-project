@@ -34,128 +34,145 @@ axios.interceptors.request.use(
 
 // Create axios instance with default config
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || "http://localhost:5001",
+  baseURL: "http://localhost:5001",
   withCredentials: true,
   headers: {
-    "X-Requested-With": "XMLHttpRequest"
-  }
+    "Content-Type": "application/json",
+    "X-Requested-With": "XMLHttpRequest",
+  },
 });
+
+// Add request interceptor to include CSRF token
+api.interceptors.request.use(
+  async (config) => {
+    try {
+      const response = await axios.get("http://localhost:5001/api/csrf-token", {
+        withCredentials: true,
+      });
+      config.headers["X-CSRF-Token"] = response.data.csrfToken;
+    } catch (error) {
+      console.error("Error fetching CSRF token:", error);
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 // Auth APIs
 export const authAPI = {
-  // Check authentication status
   checkAuth: async () => {
     try {
       const response = await api.get("/api/auth/check");
       return response.data;
     } catch (error) {
-      const errorMsg =
-        error.response?.data?.error || "An unexpected error occurred";
-      throw new Error(errorMsg);
+      throw new Error(
+        error.response?.data?.error || "An unexpected error occurred"
+      );
     }
   },
 
-  // Login
   login: async (credentials) => {
     try {
-      const response = await api.post("/api/auth/login", credentials);
+      const loginData = {
+        role: credentials.role,
+        email: credentials.email,
+        password: credentials.password,
+      };
+      const response = await api.post("/api/auth/login", loginData);
       return response.data;
     } catch (error) {
-      const errorMsg =
-        error.response?.data?.error || "Invalid credentials. Please try again.";
-      throw new Error(errorMsg);
+      throw new Error(
+        error.response?.data?.error || "Invalid credentials. Please try again."
+      );
     }
   },
 
-  // Register
   register: async (userData) => {
     try {
       const response = await api.post("/api/auth/register", userData);
       return response.data;
     } catch (error) {
-      // Handle specific error cases
       if (error.response?.data?.error) {
         throw new Error(error.response.data.error);
       } else if (error.response?.status === 400) {
-        throw new Error("Registration failed. Please check your information and try again.");
+        throw new Error(
+          "Registration failed. Please check your information and try again."
+        );
       } else if (error.response?.status === 409) {
-        throw new Error("Email already exists. Please use a different email address.");
+        throw new Error(
+          "Email already exists. Please use a different email address."
+        );
       } else if (error.response?.status === 500) {
         throw new Error("Server error. Please try again later.");
-      } else {
-        throw new Error("An unexpected error occurred. Please try again.");
       }
+      throw new Error("An unexpected error occurred. Please try again.");
     }
   },
 
-  // Logout
   logout: async () => {
     try {
       const response = await api.post("/api/auth/logout");
       return response.data;
     } catch (error) {
-      const errorMsg =
-        error.response?.data?.error || "Logout failed. Please try again.";
-      throw new Error(errorMsg);
+      throw new Error(
+        error.response?.data?.error || "Logout failed. Please try again."
+      );
     }
   },
 
-  // Google OAuth
   googleAuth: async (token) => {
     try {
       const response = await api.post("/api/auth/google", { token });
       return response.data;
     } catch (error) {
-      const errorMsg =
-        error.response?.data?.error || "Google sign-in failed. Please try again.";
-      throw new Error(errorMsg);
+      throw new Error(
+        error.response?.data?.error ||
+          "Google sign-in failed. Please try again."
+      );
     }
   },
 };
 
 // User Profile APIs
 export const profileAPI = {
-  // Get user profile
   getProfile: async () => {
     try {
       const response = await api.get("/api/profile");
       return response.data;
     } catch (error) {
-      const errorMsg =
-        error.response?.data?.error || "An unexpected error occurred";
-      throw new Error(errorMsg);
+      throw new Error(
+        error.response?.data?.error || "An unexpected error occurred"
+      );
     }
   },
 
-  // Update user profile
   updateProfile: async (profileData) => {
     try {
       const response = await api.put("/api/profile", profileData);
       return response.data;
     } catch (error) {
-      const errorMsg =
-        error.response?.data?.error || "An unexpected error occurred";
-      throw new Error(errorMsg);
+      throw new Error(
+        error.response?.data?.error || "An unexpected error occurred"
+      );
     }
   },
 };
 
-// Error handling interceptor
+// Add response interceptor to handle CSRF token refresh
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     if (error.response?.status === 419) {
       // CSRF token mismatch
       window.location.reload();
-    } else if (error.response?.status === 401 && !window.location.pathname.includes('/auth')) {
-      // Only redirect to auth if we're not already on the auth page
-      window.location.href = "/auth";
     }
     return Promise.reject(error);
   }
 );
 
-export default {
+const apiService = {
   auth: authAPI,
   profile: profileAPI,
 };
+
+export default apiService;

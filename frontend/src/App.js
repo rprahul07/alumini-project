@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import AuthPage from './components/Auth/AuthPage';
-import { authAPI } from './services/api';
+import Dashboard from './components/Dashboard';
+import './App.css';
 
 // Security headers configuration
 const securityHeaders = {
@@ -16,31 +17,8 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userRole, setUserRole] = useState(null);
 
-  // Check authentication status on mount
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const data = await authAPI.checkAuth();
-        setIsAuthenticated(true);
-        setUserRole(data.role);
-      } catch (error) {
-        // Don't log the error if it's just an unauthorized error
-        if (!error.message.includes('unauthorized') && !error.message.includes('Unauthorized')) {
-          console.error('Auth check failed:', error);
-        }
-        setIsAuthenticated(false);
-        setUserRole(null);
-      }
-    };
-    
-    // Only check auth if we're not on the auth page
-    if (!window.location.pathname.includes('/auth')) {
-      checkAuth();
-    } else {
-      setIsAuthenticated(false);
-      setUserRole(null);
-    }
-  }, []);
+  // Optionally, you can add logic to check authentication status on mount
+  // and handle CSRF as needed, depending on your backend setup.
 
   // Apply security headers
   useEffect(() => {
@@ -49,61 +27,34 @@ function App() {
     });
   }, []);
 
-  // Protected Route component
-  const ProtectedRoute = ({ children, allowedRoles }) => {
-    if (!isAuthenticated) {
-      return <Navigate to="/auth" replace />;
-    }
-
-    if (allowedRoles && !allowedRoles.includes(userRole)) {
-      return <Navigate to="/unauthorized" replace />;
-    }
-
-    return children;
-  };
-
   return (
     <Router>
       <div className="App">
         <Routes>
-          {/* Auth Routes */}
-          <Route 
-            path="/auth" 
+          <Route
+            path="/auth"
             element={
-              isAuthenticated ? 
-              <Navigate to="/dashboard" replace /> : 
-              <AuthPage onAuthSuccess={(role) => {
-                setIsAuthenticated(true);
-                setUserRole(role);
-              }} />
-            } 
+              !isAuthenticated ? (
+                <AuthPage onAuthSuccess={(role) => {
+                  setIsAuthenticated(true);
+                  setUserRole(role);
+                }} />
+              ) : (
+                <Navigate to="/dashboard" replace />
+              )
+            }
           />
-          
-          {/* Protected Routes */}
-          <Route 
-            path="/dashboard" 
+          <Route
+            path="/dashboard"
             element={
-              <ProtectedRoute allowedRoles={['alumni', 'faculty', 'student']}>
-                <div>Dashboard (Coming Soon)</div>
-              </ProtectedRoute>
-            } 
+              isAuthenticated ? (
+                <Dashboard onLogout={() => setIsAuthenticated(false)} userRole={userRole} />
+              ) : (
+                <Navigate to="/auth" replace />
+              )
+            }
           />
-
-          {/* Unauthorized Route */}
-          <Route 
-            path="/unauthorized" 
-            element={<div>You are not authorized to access this page.</div>} 
-          />
-          
-          {/* Redirect root to auth page if not authenticated, dashboard if authenticated */}
-          <Route 
-            path="/" 
-            element={
-              isAuthenticated ? 
-              <Navigate to="/dashboard" replace /> : 
-              <Navigate to="/auth" replace />
-            } 
-          />
+          <Route path="/" element={<Navigate to="/auth" replace />} />
         </Routes>
       </div>
     </Router>
