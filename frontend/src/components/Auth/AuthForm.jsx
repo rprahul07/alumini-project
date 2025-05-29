@@ -1,4 +1,6 @@
 import React from 'react';
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
 import PasswordRequirements from './PasswordRequirements';
 import GoogleAuthButton from './GoogleAuthButton';
 
@@ -17,6 +19,25 @@ const AuthForm = ({
 }) => {
   if (!userRole) return null;
 
+  const onSubmit = (e) => {
+    e.preventDefault();
+    handleSubmit(e);
+  };
+
+  const handleButtonClick = (e) => {
+    e.preventDefault();
+    handleSubmit(e);
+  };
+
+  const handlePhoneChange = (value, country) => {
+    handleInputChange({
+      target: {
+        name: 'phoneNumber',
+        value: `+${value}`
+      }
+    });
+  };
+
   return (
     <div className="auth-form">
       <h2>{authType === 'login' ? 'Login' : 'Register'} as {userRole}</h2>
@@ -26,19 +47,21 @@ const AuthForm = ({
       {errors.submit && (
         <div className="error-message">{errors.submit}</div>
       )}
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="fullName">Full Name</label>
-          <input
-            type="text"
-            id="fullName"
-            name="fullName"
-            value={formData.fullName}
-            onChange={handleInputChange}
-            className={errors.fullName ? 'error' : ''}
-          />
-          {errors.fullName && <span className="error">{errors.fullName}</span>}
-        </div>
+      <form onSubmit={onSubmit}>
+        {authType === 'register' && (
+          <div className="form-group">
+            <label htmlFor="fullName">Full Name</label>
+            <input
+              type="text"
+              id="fullName"
+              name="fullName"
+              value={formData.fullName}
+              onChange={handleInputChange}
+              className={errors.fullName ? 'error' : ''}
+            />
+            {errors.fullName && <span className="error">{errors.fullName}</span>}
+          </div>
+        )}
 
         <div className="form-group">
           <label htmlFor="email">Email</label>
@@ -49,22 +72,29 @@ const AuthForm = ({
             value={formData.email}
             onChange={handleInputChange}
             className={errors.email ? 'error' : ''}
+            required
           />
           {errors.email && <span className="error">{errors.email}</span>}
         </div>
 
-        <div className="form-group">
-          <label htmlFor="phoneNumber">Phone Number</label>
-          <input
-            type="tel"
-            id="phoneNumber"
-            name="phoneNumber"
-            value={formData.phoneNumber}
-            onChange={handleInputChange}
-            className={errors.phoneNumber ? 'error' : ''}
-          />
-          {errors.phoneNumber && <span className="error">{errors.phoneNumber}</span>}
-        </div>
+        {authType === 'register' && (
+          <div className="form-group">
+            <label htmlFor="phoneNumber">Phone Number</label>
+            <PhoneInput
+              country={'in'}
+              value={formData.phoneNumber?.replace('+', '')}
+              onChange={handlePhoneChange}
+              inputClass={errors.phoneNumber ? 'error' : ''}
+              containerClass="phone-input-container"
+              inputProps={{
+                id: 'phoneNumber',
+                name: 'phoneNumber',
+                required: true
+              }}
+            />
+            {errors.phoneNumber && <span className="error">{errors.phoneNumber}</span>}
+          </div>
+        )}
 
         <div className="form-group">
           <label htmlFor="password">Password</label>
@@ -72,9 +102,10 @@ const AuthForm = ({
             type="password"
             id="password"
             name="password"
-            value={formData.password}
+            value={formData.password || ''}
             onChange={handleInputChange}
             className={errors.password ? 'error' : ''}
+            required
           />
           {errors.password && <span className="error">{errors.password}</span>}
           {authType === 'register' && (
@@ -89,15 +120,16 @@ const AuthForm = ({
               type="password"
               id="confirmPassword"
               name="confirmPassword"
-              value={formData.confirmPassword}
+              value={formData.confirmPassword || ''}
               onChange={handleInputChange}
               className={errors.confirmPassword ? 'error' : ''}
+              required
             />
             {errors.confirmPassword && <span className="error">{errors.confirmPassword}</span>}
           </div>
         )}
 
-        {/* Role-specific Fields */}
+        {/* Role-specific Fields - Only show for registration */}
         {authType === 'register' && (
           <>
             {userRole === 'alumni' && (
@@ -254,6 +286,7 @@ const AuthForm = ({
           type="submit" 
           className="submit-btn"
           disabled={isLoading || isLocked}
+          onClick={handleButtonClick}
         >
           {isLoading ? 'Processing...' : authType === 'login' ? 'Login' : 'Register'}
         </button>

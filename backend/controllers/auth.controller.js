@@ -3,7 +3,7 @@ import {
   findUserByEmailAndRole,
   checkIfEmailExists,
 } from "../models/userModel.js";
-import generateTokenAndSetCookie from "../utils/generateTocken.js";
+import generateTokenAndSetCookie from "../utils/generateToken.js";
 import pool from "../db/db.js";
 
 // import { OAuth2Client } from "google-auth-library";
@@ -291,12 +291,31 @@ export const signup = async (req, res) => {
 
 export const login = async (req, res) => {
   try {
-    const { email, password, role } = req.body;
+    const { email, password } = req.body;
 
-    const user = await findUserByEmailAndRole(email, role);
+    // Check all tables for the user
+    const studentResult = await pool.query('SELECT * FROM students WHERE email = $1', [email]);
+    const alumniResult = await pool.query('SELECT * FROM alumni WHERE email = $1', [email]);
+    const facultyResult = await pool.query('SELECT * FROM faculty WHERE email = $1', [email]);
+
+    let user = null;
+    let role = null;
+
+    if (studentResult.rows.length > 0) {
+      user = studentResult.rows[0];
+      role = 'student';
+    } else if (alumniResult.rows.length > 0) {
+      user = alumniResult.rows[0];
+      role = 'alumni';
+    } else if (facultyResult.rows.length > 0) {
+      user = facultyResult.rows[0];
+      role = 'faculty';
+    }
+
     if (!user) {
       return res.status(400).json({ error: "Invalid email or password" });
     }
+
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
     if (!isPasswordCorrect) {
       return res.status(400).json({ error: "Invalid email or password" });

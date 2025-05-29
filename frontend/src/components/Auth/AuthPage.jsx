@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { FaGoogle } from 'react-icons/fa';
-import axios from 'axios';
 import RoleSelection from './RoleSelection';
 import AuthForm from './AuthForm';
 import './AuthPage.css';
 import { authAPI } from '../../services/api';
+import { useNavigate } from 'react-router-dom';
 
 const AuthPage = ({ onAuthSuccess }) => {
   // State for login/register toggling
@@ -15,18 +14,20 @@ const AuthPage = ({ onAuthSuccess }) => {
 
   // Form data state for all fields
   const [formData, setFormData] = useState({
-    fullName: '',
     email: '',
-    phoneNumber: '',
     password: '',
-    confirmPassword: '',
-    graduationYear: '',
-    department: '',
-    currentJobTitle: '',
-    companyName: '',
-    designation: '',
-    currentSemester: '',
-    rollNumber: '',
+    ...(authType === 'register' && {
+      fullName: '',
+      phoneNumber: '',
+      confirmPassword: '',
+      graduationYear: '',
+      department: '',
+      currentJobTitle: '',
+      companyName: '',
+      designation: '',
+      currentSemester: '',
+      rollNumber: '',
+    })
   });
 
   // Errors for input field
@@ -42,33 +43,7 @@ const AuthPage = ({ onAuthSuccess }) => {
   const [isLocked, setIsLocked] = useState(false);
   const [lockoutTime, setLockoutTime] = useState(0);
 
-  // Get CSRF token from cookie
-  const getCsrfToken = () => {
-    const name = 'XSRF-TOKEN';
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
-    return null;
-  };
-
-  // Configure axios defaults
-  useEffect(() => {
-    // Set default headers for all requests
-    axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-    axios.defaults.withCredentials = true; // Important for cookies
-
-    // Add response interceptor to handle CSRF token refresh
-    axios.interceptors.response.use(
-      (response) => response,
-      async (error) => {
-        if (error.response?.status === 419) { // CSRF token mismatch
-          // Refresh the page to get a new CSRF token
-          window.location.reload();
-        }
-        return Promise.reject(error);
-      }
-    );
-  }, []);
+  const navigate = useNavigate();
 
   // Password rules
   const passwordRequirements = {
@@ -117,56 +92,79 @@ const AuthPage = ({ onAuthSuccess }) => {
     // Password validation
     if (!formData.password) {
       validationErrors.password = 'Password is required';
+    } else if (authType === 'login') {
+      // For login, only check if password is not empty
+      if (formData.password.length === 0) {
+        validationErrors.password = 'Password is required';
+      }
     } else {
+      // For registration, check password strength
       const pwErrors = validatePassword(formData.password);
       if (pwErrors.length > 0) {
         validationErrors.password = pwErrors.join('. ');
       }
     }
 
-    // Confirm password for registration
+    // Only validate registration-specific fields if registering
     if (authType === 'register') {
+      // Confirm password validation
       if (!formData.confirmPassword) {
         validationErrors.confirmPassword = 'Please confirm your password';
       } else if (formData.password !== formData.confirmPassword) {
         validationErrors.confirmPassword = 'Passwords do not match';
       }
-    }
 
-    // Full name validation
-    if (!formData.fullName) {
-      validationErrors.fullName = 'Full name is required';
-    }
-
-    // Phone number validation
-    if (!formData.phoneNumber) {
-      validationErrors.phoneNumber = 'Phone number is required';
-    } else {
-      const phoneRegex = /^\+?[\d\s-]{10,}$/;
-      if (!phoneRegex.test(formData.phoneNumber)) {
-        validationErrors.phoneNumber = 'Please enter a valid phone number';
+      // Full name validation
+      if (!formData.fullName || formData.fullName.trim() === '') {
+        validationErrors.fullName = 'Full name is required';
       }
-    }
 
-    // Role-specific validation on registration
-    if (authType === 'register') {
+      // Phone number validation
+      if (!formData.phoneNumber || formData.phoneNumber.trim() === '') {
+        validationErrors.phoneNumber = 'Phone number is required';
+      } else {
+        const phoneRegex = /^\+?[\d\s-]{10,}$/;
+        if (!phoneRegex.test(formData.phoneNumber)) {
+          validationErrors.phoneNumber = 'Please enter a valid phone number';
+        }
+      }
+
+      // Role-specific validation
       switch (userRole) {
         case 'alumni':
-          if (!formData.graduationYear) validationErrors.graduationYear = 'Graduation year is required';
-          if (!formData.department) validationErrors.department = 'Department is required';
-          if (!formData.currentJobTitle) validationErrors.currentJobTitle = 'Current job title is required';
-          if (!formData.companyName) validationErrors.companyName = 'Company name is required';
+          if (!formData.graduationYear || formData.graduationYear.trim() === '') {
+            validationErrors.graduationYear = 'Graduation year is required';
+          }
+          if (!formData.department || formData.department.trim() === '') {
+            validationErrors.department = 'Department is required';
+          }
+          if (!formData.currentJobTitle || formData.currentJobTitle.trim() === '') {
+            validationErrors.currentJobTitle = 'Current job title is required';
+          }
+          if (!formData.companyName || formData.companyName.trim() === '') {
+            validationErrors.companyName = 'Company name is required';
+          }
           break;
 
         case 'faculty':
-          if (!formData.designation) validationErrors.designation = 'Designation is required';
-          if (!formData.department) validationErrors.department = 'Department is required';
+          if (!formData.designation || formData.designation.trim() === '') {
+            validationErrors.designation = 'Designation is required';
+          }
+          if (!formData.department || formData.department.trim() === '') {
+            validationErrors.department = 'Department is required';
+          }
           break;
 
         case 'student':
-          if (!formData.department) validationErrors.department = 'Department is required';
-          if (!formData.currentSemester) validationErrors.currentSemester = 'Current semester is required';
-          if (!formData.rollNumber) validationErrors.rollNumber = 'Roll number is required';
+          if (!formData.department || formData.department.trim() === '') {
+            validationErrors.department = 'Department is required';
+          }
+          if (!formData.currentSemester || formData.currentSemester.trim() === '') {
+            validationErrors.currentSemester = 'Current semester is required';
+          }
+          if (!formData.rollNumber || formData.rollNumber.trim() === '') {
+            validationErrors.rollNumber = 'Roll number is required';
+          }
           break;
 
         default:
@@ -238,27 +236,42 @@ const AuthPage = ({ onAuthSuccess }) => {
     setIsLoading(true);
 
     try {
+      // Base user data
       const userData = {
-        ...formData,
+        email: formData.email,
+        password: formData.password,
+        confirmPassword: formData.confirmPassword,
+        fullName: formData.fullName,
+        phoneNumber: formData.phoneNumber,
         role: userRole,
       };
 
-      const response = authType === 'login' 
-        ? await authAPI.login(userData)
-        : await authAPI.register(userData);
+      // Add role-specific fields
+      if (userRole === 'alumni') {
+        userData.graduationYear = formData.graduationYear;
+        userData.department = formData.department;
+        userData.currentJobTitle = formData.currentJobTitle;
+        userData.companyName = formData.companyName;
+      } else if (userRole === 'faculty') {
+        userData.designation = formData.designation;
+        userData.department = formData.department;
+      } else if (userRole === 'student') {
+        userData.department = formData.department;
+        userData.currentSemester = formData.currentSemester;
+        userData.rollNumber = formData.rollNumber;
+      }
 
-      // Show success message
-      const successMsg = authType === 'login' 
-        ? 'Login successful! Redirecting to dashboard...' 
-        : 'Registration successful! You can now log in.';
-      setSuccessMessage(successMsg);
-
-      if (onAuthSuccess) {
-        // For login, redirect immediately
-        if (authType === 'login') {
+      if (authType === 'login') {
+        const response = await authAPI.login(userData);
+        setSuccessMessage('Login successful! Redirecting to dashboard...');
+        if (onAuthSuccess) {
           onAuthSuccess(userRole);
-        } else {
-          // For registration, wait 2 seconds to show success message then redirect to login
+        }
+        navigate('/dashboard');
+      } else {
+        await authAPI.register(userData);
+        setSuccessMessage('Registration successful! You can now log in.');
+        if (onAuthSuccess) {
           setTimeout(() => {
             setAuthType('login');
             setUserRole(null);
@@ -268,18 +281,20 @@ const AuthPage = ({ onAuthSuccess }) => {
 
       // Reset form after success
       setFormData({
-        fullName: '',
         email: '',
-        phoneNumber: '',
         password: '',
-        confirmPassword: '',
-        graduationYear: '',
-        department: '',
-        currentJobTitle: '',
-        companyName: '',
-        designation: '',
-        currentSemester: '',
-        rollNumber: '',
+        ...(authType === 'register' && {
+          fullName: '',
+          phoneNumber: '',
+          confirmPassword: '',
+          graduationYear: '',
+          department: '',
+          currentJobTitle: '',
+          companyName: '',
+          designation: '',
+          currentSemester: '',
+          rollNumber: '',
+        })
       });
     } catch (error) {
       // Handle specific error cases
@@ -307,7 +322,6 @@ const AuthPage = ({ onAuthSuccess }) => {
   const handleGoogleSignIn = async () => {
     try {
       setIsLoading(true);
-      // Implement Google OAuth flow here
       const response = await authAPI.googleAuth(/* token */);
       if (onAuthSuccess) {
         onAuthSuccess(response.role);
@@ -318,6 +332,31 @@ const AuthPage = ({ onAuthSuccess }) => {
       setIsLoading(false);
     }
   };
+
+  // Update formData when authType changes
+  useEffect(() => {
+    if (authType === 'login') {
+      setFormData({
+        email: '',
+        password: ''
+      });
+    } else {
+      setFormData({
+        fullName: '',
+        email: '',
+        phoneNumber: '',
+        password: '',
+        confirmPassword: '',
+        graduationYear: '',
+        department: '',
+        currentJobTitle: '',
+        companyName: '',
+        designation: '',
+        currentSemester: '',
+        rollNumber: '',
+      });
+    }
+  }, [authType]);
 
   return (
     <div className="auth-container">
@@ -375,18 +414,20 @@ const AuthPage = ({ onAuthSuccess }) => {
             setErrors({});
             setSuccessMessage('');
             setFormData({
-              fullName: '',
               email: '',
-              phoneNumber: '',
               password: '',
-              confirmPassword: '',
-              graduationYear: '',
-              department: '',
-              currentJobTitle: '',
-              companyName: '',
-              designation: '',
-              currentSemester: '',
-              rollNumber: '',
+              ...(authType === 'register' && {
+                fullName: '',
+                phoneNumber: '',
+                confirmPassword: '',
+                graduationYear: '',
+                department: '',
+                currentJobTitle: '',
+                companyName: '',
+                designation: '',
+                currentSemester: '',
+                rollNumber: '',
+              })
             });
           }}
         >

@@ -15,11 +15,11 @@ export const protect = async (req, res, next) => {
     // Check if user still exists
     let userQuery;
     if (decoded.role === 'student') {
-      userQuery = 'SELECT id FROM students WHERE id = $1';
+      userQuery = 'SELECT id, full_name, email, role FROM students WHERE id = $1';
     } else if (decoded.role === 'alumni') {
-      userQuery = 'SELECT id FROM alumni WHERE id = $1';
+      userQuery = 'SELECT id, full_name, email, role FROM alumni WHERE id = $1';
     } else if (decoded.role === 'faculty') {
-      userQuery = 'SELECT id FROM faculty WHERE id = $1';
+      userQuery = 'SELECT id, full_name, email, role FROM faculty WHERE id = $1';
     } else {
       return res.status(400).json({ error: "Invalid role" });
     }
@@ -32,7 +32,8 @@ export const protect = async (req, res, next) => {
     // Add user info to request
     req.user = {
       id: decoded.id,
-      role: decoded.role
+      role: decoded.role,
+      ...result.rows[0]
     };
 
     next();

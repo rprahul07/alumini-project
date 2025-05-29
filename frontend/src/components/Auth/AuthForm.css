@@ -1,0 +1,151 @@
+.auth-form {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.form-group input.error {
+  border-color: #ff4d4f;
+}
+
+.error {
+  color: #ff4d4f;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 10px;
+  background-color: #1890ff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.submit-btn:disabled {
+  background-color: #d9d9d9;
+  cursor: not-allowed;
+}
+
+.success-message {
+  color: #52c41a;
+  margin-bottom: 15px;
+  padding: 10px;
+  background-color: #f6ffed;
+  border: 1px solid #b7eb8f;
+  border-radius: 4px;
+}
+
+/* Phone Input Styles */
+.phone-input-container {
+  width: 100% !important;
+}
+
+.phone-input-container .form-control {
+  width: 100% !important;
+  height: 32px !important;
+  border: 1px solid #ddd !important;
+  border-radius: 4px !important;
+  padding-left: 48px !important;
+}
+
+.phone-input-container .form-control.error {
+  border-color: #ff4d4f !important;
+}
+
+.phone-input-container .flag-dropdown {
+  border: 1px solid #ddd !important;
+  border-radius: 4px 0 0 4px !important;
+}
+
+.phone-input-container .selected-flag {
+  border-radius: 4px 0 0 4px !important;
+}
+
+.phone-input-container .country-list {
+  max-height: 200px !important;
+  overflow-y: auto !important;
+}
+
+.phone-input-container .country-list .country {
+  padding: 7px 10px !important;
+}
+
+.phone-input-container .country-list .country:hover {
+  background-color: #f5f5f5 !important;
+}
+
+.phone-input-container .country-list .country.highlight {
+  background-color: #e6f7ff !important;
+}
+
+/* Google Auth Button Styles */
+.google-auth-btn {
+  width: 100%;
+  padding: 10px;
+  background-color: white;
+  color: #757575;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.google-auth-btn:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+}
+
+.google-auth-btn img {
+  width: 18px;
+  height: 18px;
+}
+
+/* Password Requirements Styles */
+.password-requirements {
+  margin-top: 8px;
+  font-size: 12px;
+}
+
+.requirement {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 4px;
+}
+
+.requirement.met {
+  color: #52c41a;
+}
+
+.requirement.not-met {
+  color: #ff4d4f;
+}
+
+.requirement-icon {
+  font-size: 14px;
+} 
