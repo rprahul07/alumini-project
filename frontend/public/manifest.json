@@ -1,0 +1,9 @@
+{
+  "short_name": "Alumni Connect",
+  "name": "Alumni Connect - College Alumni Network",
+  "icons": [],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+} 
