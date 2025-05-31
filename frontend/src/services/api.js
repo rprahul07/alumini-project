@@ -1,134 +1,118 @@
 import axios from "axios";
-
-// Rate limiting configuration
-const RATE_LIMIT = {
-  maxRequests: 5,
-  timeWindow: 60000, // 1 minute
-  requests: new Map(),
-};
-
-// Rate limiting interceptor
-axios.interceptors.request.use(
-  (config) => {
-    const now = Date.now();
-    const key = `${config.url}-${config.method}`;
-    const requestHistory = RATE_LIMIT.requests.get(key) || [];
-
-    // Clean old requests
-    const validRequests = requestHistory.filter(
-      (time) => now - time < RATE_LIMIT.timeWindow
-    );
-
-    if (validRequests.length >= RATE_LIMIT.maxRequests) {
-      return Promise.reject(
-        new Error("Rate limit exceeded. Please try again later.")
-      );
-    }
-
-    validRequests.push(now);
-    RATE_LIMIT.requests.set(key, validRequests);
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
+import { validateForm } from "../utils/validation";
 
 // Create axios instance with default config
 const api = axios.create({
-  baseURL: "http://localhost:5001",
-  withCredentials: true,
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5001",
   headers: {
     "Content-Type": "application/json",
-    "X-Requested-With": "XMLHttpRequest",
   },
+  withCredentials: true, // Enable sending cookies
 });
 
-// Add request interceptor to include CSRF token
+// CSRF token management
+let csrfToken = null;
+let tokenExpiry = null;
+const TOKEN_REFRESH_INTERVAL = 3.5 * 60 * 1000; // 3.5 minutes (with buffer)
+
+// Function to fetch CSRF token with caching
+const fetchCsrfToken = async () => {
+  try {
+    // Return cached token if it's still valid
+    if (csrfToken && tokenExpiry && Date.now() < tokenExpiry) {
+      return csrfToken;
+    }
+
+    const response = await api.get('/api/csrf-token');
+    
+    csrfToken = response.data.csrfToken;
+    tokenExpiry = Date.now() + TOKEN_REFRESH_INTERVAL;
+    
+    return csrfToken;
+  } catch (error) {
+    throw new Error('Failed to fetch CSRF token. Please try again.');
+  }
+};
+
+// Utility function for API responses
+const handleApiResponse = (response) => ({
+  success: true,
+  data: response.data
+});
+
+// Add request interceptor for CSRF token and logging
 api.interceptors.request.use(
   async (config) => {
-    try {
-      const response = await axios.get("http://localhost:5001/api/csrf-token", {
-        withCredentials: true,
-      });
-      config.headers["X-CSRF-Token"] = response.data.csrfToken;
-    } catch (error) {
-      console.error("Error fetching CSRF token:", error);
+    // Add CSRF token to non-GET requests
+    if (config.method !== 'get') {
+      const token = await fetchCsrfToken();
+      config.headers['X-CSRF-Token'] = token;
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => {
+    return Promise.reject(error);
+  }
 );
 
-// Auth APIs
-export const authAPI = {
-  checkAuth: async () => {
-    try {
-      const response = await api.get("/api/auth/check");
-      return response.data;
-    } catch (error) {
-      throw new Error(
-        error.response?.data?.error || "An unexpected error occurred"
-      );
+// Add response interceptor for logging and error handling
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    // Handle specific error cases
+    if (error.response?.status === 403) {
+      csrfToken = null;
+      tokenExpiry = null;
+      throw new Error("Session expired. Please refresh the page and try again.");
     }
-  },
+    
+    if (error.response?.status === 401) {
+      throw new Error("Please log in to continue.");
+    }
+    
+    throw new Error(
+      error.response?.data?.message || 
+      error.message || 
+      "An unexpected error occurred. Please try again."
+    );
+  }
+);
 
+// Auth API methods
+export const authAPI = {
+  // Login method
   login: async (credentials) => {
     try {
-      const loginData = {
-        role: credentials.role,
-        email: credentials.email,
-        password: credentials.password,
-      };
-      const response = await api.post("/api/auth/login", loginData);
-      return response.data;
+      // Validate required fields
+      if (!credentials.email || !credentials.password || !credentials.role) {
+        throw new Error("Email, password, and role are required");
+      }
+
+      const response = await api.post("/api/auth/login", credentials);
+      return handleApiResponse(response);
     } catch (error) {
-      throw new Error(
-        error.response?.data?.error || "Invalid credentials. Please try again."
-      );
+      throw error;
     }
   },
 
+  // Register method
   register: async (userData) => {
     try {
-      const response = await api.post("/api/auth/register", userData);
-      return response.data;
-    } catch (error) {
-      if (error.response?.data?.error) {
-        throw new Error(error.response.data.error);
-      } else if (error.response?.status === 400) {
-        throw new Error(
-          "Registration failed. Please check your information and try again."
-        );
-      } else if (error.response?.status === 409) {
-        throw new Error(
-          "Email already exists. Please use a different email address."
-        );
-      } else if (error.response?.status === 500) {
-        throw new Error("Server error. Please try again later.");
+      // Validate form data
+      const validationErrors = validateForm(userData, "register", userData.role);
+      if (Object.keys(validationErrors).length > 0) {
+        throw new Error(Object.values(validationErrors).join(". "));
       }
-      throw new Error("An unexpected error occurred. Please try again.");
-    }
-  },
 
-  logout: async () => {
-    try {
-      const response = await api.post("/api/auth/logout");
-      return response.data;
+      const response = await api.post("/api/auth/register", userData);
+      return handleApiResponse(response);
     } catch (error) {
-      throw new Error(
-        error.response?.data?.error || "Logout failed. Please try again."
-      );
-    }
-  },
-
-  googleAuth: async (token) => {
-    try {
-      const response = await api.post("/api/auth/google", { token });
-      return response.data;
-    } catch (error) {
-      throw new Error(
-        error.response?.data?.error ||
-          "Google sign-in failed. Please try again."
-      );
+      if (error.response?.status === 409) {
+        throw new Error(
+          "This email is already registered. Please use a different email or login."
+        );
+      }
+      throw error;
     }
   },
 };
@@ -138,37 +122,21 @@ export const profileAPI = {
   getProfile: async () => {
     try {
       const response = await api.get("/api/profile");
-      return response.data;
+      return handleApiResponse(response);
     } catch (error) {
-      throw new Error(
-        error.response?.data?.error || "An unexpected error occurred"
-      );
+      throw error;
     }
   },
 
   updateProfile: async (profileData) => {
     try {
       const response = await api.put("/api/profile", profileData);
-      return response.data;
+      return handleApiResponse(response);
     } catch (error) {
-      throw new Error(
-        error.response?.data?.error || "An unexpected error occurred"
-      );
+      throw error;
     }
   },
 };
-
-// Add response interceptor to handle CSRF token refresh
-api.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    if (error.response?.status === 419) {
-      // CSRF token mismatch
-      window.location.reload();
-    }
-    return Promise.reject(error);
-  }
-);
 
 const apiService = {
   auth: authAPI,

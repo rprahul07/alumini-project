@@ -322,26 +322,43 @@ export const signup = async (req, res) => {
 
 export const login = async (req, res) => {
   try {
+    // Only destructure required fields
     const { email, password, role } = req.body;
+    
+    // Validate required fields
+    if (!email || !password || !role) {
+      return res.status(400).json({ error: "Email, password, and role are required" });
+    }
+
+    console.log('Login attempt:', { email, role, password: '[REDACTED]' });
+
     const user = await findUserByEmailAndRole(email, role);
+    console.log('User found:', user ? { id: user.id, email: user.email, role } : 'No user found');
+
     if (!user) {
+      console.log('Login failed: User not found');
       return res.status(400).json({ error: "Invalid email or password" });
     }
+
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
+    console.log('Password check result:', isPasswordCorrect);
+
     if (!isPasswordCorrect) {
+      console.log('Login failed: Incorrect password');
       return res.status(400).json({ error: "Invalid email or password" });
     }
 
     generateTokenAndSetCookie(user.id, role, res);
+    console.log('Login successful, token generated');
 
+    // Only send required data in response
     res.status(200).json({
       _id: user.id,
-      fullName: user.full_name,
       email: user.email,
-      role,
+      role
     });
   } catch (error) {
-    console.log("Error in login controller:", error);
+    console.error("Error in login controller:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
