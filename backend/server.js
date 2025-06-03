@@ -2,55 +2,135 @@ import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import authRoutes from "./routes/auth.routes.js";
-import pool from "./db/db.js";
-import { createTables } from "./db/schema.js";
+import authRouter from "./routes/authentication_routes.js";
+import { AppError } from "./utils/response.utils.js";
 
 // Load environment variables
 dotenv.config();
+console.log('Environment variables loaded');
+
+// Force port 5001
+process.env.PORT = 5001;
 
 const app = express();
-
-// Use environment variables
-const PORT = process.env.PORT || 5000;
+const PORT = 5001;
 const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:3000";
 
-// Database connection and schema initialization
-async function connectDB() {
-    try {
-        await pool.connect();
-        console.log('✅ Connected to PostgreSQL database');
-        
-        // Create tables if they don't exist
-        await createTables();
-    } catch (error) {
-        console.error('Error connecting to database:', error);
-        process.exit(1);
-    }
-}
+console.log(`Server configuration: PORT=${PORT}, CLIENT_URL=${CLIENT_URL}`);
 
-// Initialize database connection
-connectDB();
+// Request logging middleware
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+  console.log('Request headers:', req.headers);
+  console.log('Request body:', req.body);
+  next();
+});
 
-// Middleware
-app.use(express.json()); // Parse JSON request bodies
-app.use(cookieParser()); // Parse cookies
+const corsOptions = {
+  origin: CLIENT_URL,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: [
+    'Content-Type',
+    'Authorization',
+    'X-CSRF-Token',
+    'X-Requested-With',
+    'Accept',
+    'Origin'
+  ]
+};
 
-// CORS setup with credentials enabled
-app.use(
-  cors({
-    origin: ["http://43.204.96.201", "http://localhost:3000"],
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
-    exposedHeaders: ['set-cookie']
-  })
-);
+// Enable pre-flight requests
+app.options('*', cors(corsOptions));
 
-// Routes
-app.use("/api/auth", authRoutes);
+// Apply CORS middleware first
+app.use(cors(corsOptions));
+
+// Then other middleware
+app.use(express.json());
+app.use(cookieParser());
+
+// Test route
+app.get('/', (req, res) => {
+  res.json({ message: 'Server is running' });
+});
+
+// CSRF token route
+app.get('/api/csrf-token', (req, res) => {
+  console.log('CSRF token requested');
+  res.json({ csrfToken: 'dummy-csrf-token' });
+});
+
+// Auth routes
+app.use("/api/auth", authRouter);
+
+// Error handler for Prisma errors
+app.use((err, req, res, next) => {
+  console.error('Error details:', {
+    name: err.name,
+    message: err.message,
+    code: err.code,
+    meta: err.meta,
+    stack: err.stack
+  });
+
+  // Handle Prisma-specific errors
+  if (err.code?.startsWith('P')) {
+    console.error('Prisma error:', err);
+    return res.status(400).json({
+      success: false,
+      message: 'Database operation failed',
+      error: process.env.NODE_ENV === 'development' ? {
+        code: err.code,
+        message: err.message,
+        meta: err.meta
+      } : 'Database operation failed'
+    });
+  }
+
+  // Handle validation errors
+  if (err instanceof AppError) {
+    return res.status(err.statusCode || 400).json({
+      success: false,
+      message: err.message
+    });
+  }
+
+  // Handle other errors
+  res.status(500).json({
+    success: false,
+    message: 'Internal Server Error',
+    error: process.env.NODE_ENV === 'development' ? {
+      message: err.message,
+      stack: err.stack
+    } : 'An unexpected error occurred'
+  });
+});
+
+// 404 handler
+app.use((req, res) => {
+  console.log(`404 - Not Found: ${req.method} ${req.url}`);
+  res.status(404).json({ success: false, message: 'Not Found' });
+});
 
 // Start server
-app.listen(PORT, () => {
-  console.log(`✅ Server running at http://localhost:${PORT}`);
+const server = app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+  console.log(`CORS enabled for origin: ${CLIENT_URL}`);
+}).on('error', (error) => {
+  if (error.code === 'EADDRINUSE') {
+    console.error(`Port ${PORT} is already in use. Please free up the port and try again.`);
+  } else {
+    console.error('Failed to start server:', error);
+  }
+  process.exit(1);
+});
+
+// Handle process termination
+process.on('SIGTERM', () => {
+  console.log('SIGTERM received. Shutting down gracefully...');
+  server.close(() => {
+    console.log('Server closed');
+    process.exit(0);
+  });
 });

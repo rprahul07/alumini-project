@@ -1,5 +1,7 @@
 import axios from "axios";
 
+const BASE_URL = "http://localhost:5001";
+
 // Rate limiting configuration
 const RATE_LIMIT = {
   maxRequests: 5,
@@ -34,11 +36,12 @@ axios.interceptors.request.use(
 
 // Create axios instance with default config
 const api = axios.create({
-  baseURL: "http://localhost:5001",
+  baseURL: BASE_URL,
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
     "X-Requested-With": "XMLHttpRequest",
+    "Accept": "application/json"
   },
 });
 
@@ -46,8 +49,12 @@ const api = axios.create({
 api.interceptors.request.use(
   async (config) => {
     try {
-      const response = await axios.get("http://localhost:5001/api/csrf-token", {
+      const response = await axios.get(`${BASE_URL}/api/csrf-token`, {
         withCredentials: true,
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json"
+        }
       });
       config.headers["X-CSRF-Token"] = response.data.csrfToken;
     } catch (error) {
