@@ -1,7 +1,8 @@
 export const ROLES = {
   STUDENT: 'student',
   ALUMNI: 'alumni',
-  FACULTY: 'faculty'
+  FACULTY: 'faculty',
+  ADMIN: 'admin'
 };
 
 export const VALID_ROLES = Object.values(ROLES);

@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import authRouter from "./routes/authentication_routes.js";
+import adminRouter from "./routes/admin_routes.js";
 import { AppError } from "./utils/response.utils.js";
 
 // Load environment variables
@@ -61,8 +62,9 @@ app.get('/api/csrf-token', (req, res) => {
   res.json({ csrfToken: 'dummy-csrf-token' });
 });
 
-// Auth routes
+// Routes
 app.use("/api/auth", authRouter);
+app.use("/api/admin", adminRouter);
 
 // Error handler for Prisma errors
 app.use((err, req, res, next) => {

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import AuthPage from './components/Auth/AuthPage';
 import Dashboard from './components/Dashboard';
+import ActivityLogs from './components/Admin/ActivityLogs';
+import AdminLogin from './components/Admin/AdminLogin';
 import './App.css';
 
 // Security headers configuration
@@ -13,12 +15,38 @@ const securityHeaders = {
   'Permissions-Policy': 'geolocation=(), microphone=(), camera=()'
 };
 
+// Admin route protection component
+const AdminRoute = ({ children }) => {
+  const isAdmin = localStorage.getItem('userRole') === 'admin';
+  return isAdmin ? children : <Navigate to="/admin/login" replace />;
+};
+
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userRole, setUserRole] = useState(null);
 
-  // Optionally, you can add logic to check authentication status on mount
-  // and handle CSRF as needed, depending on your backend setup.
+  // Check authentication status on mount
+  useEffect(() => {
+    const storedRole = localStorage.getItem('userRole');
+    const token = localStorage.getItem('token');
+    if (token && storedRole) {
+      setIsAuthenticated(true);
+      setUserRole(storedRole);
+    }
+  }, []);
+
+  const handleAuthSuccess = (role) => {
+    setIsAuthenticated(true);
+    setUserRole(role);
+    localStorage.setItem('userRole', role);
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    setUserRole(null);
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('token');
+  };
 
   // Apply security headers
   useEffect(() => {
@@ -35,12 +63,19 @@ function App() {
             path="/auth"
             element={
               !isAuthenticated ? (
-                <AuthPage onAuthSuccess={(role) => {
-                  setIsAuthenticated(true);
-                  setUserRole(role);
-                }} />
+                <AuthPage onAuthSuccess={handleAuthSuccess} />
               ) : (
                 <Navigate to="/dashboard" replace />
+              )
+            }
+          />
+          <Route
+            path="/admin/login"
+            element={
+              !isAuthenticated ? (
+                <AdminLogin onAuthSuccess={handleAuthSuccess} />
+              ) : (
+                <Navigate to="/admin/logs" replace />
               )
             }
           />
@@ -48,9 +83,21 @@ function App() {
             path="/dashboard"
             element={
               isAuthenticated ? (
-                <Dashboard onLogout={() => setIsAuthenticated(false)} userRole={userRole} />
+                <Dashboard onLogout={handleLogout} userRole={userRole} />
               ) : (
                 <Navigate to="/auth" replace />
+              )
+            }
+          />
+          <Route
+            path="/admin/logs"
+            element={
+              isAuthenticated ? (
+                <AdminRoute>
+                  <ActivityLogs />
+                </AdminRoute>
+              ) : (
+                <Navigate to="/admin/login" replace />
               )
             }
           />

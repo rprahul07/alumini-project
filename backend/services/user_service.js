@@ -42,12 +42,13 @@ export const verifyPassword = async (plainPassword, hashedPassword) => {
 };
 
 export const checkEmailExists = async (email) => {
-  const [student, alumni, faculty] = await Promise.all([
+  const [student, alumni, faculty, admin] = await Promise.all([
     prisma.student.findUnique({ where: { email } }),
     prisma.alumni.findUnique({ where: { email } }),
-    prisma.faculty.findUnique({ where: { email } })
+    prisma.faculty.findUnique({ where: { email } }),
+    prisma.admin.findUnique({ where: { email } })
   ]);
-  return Boolean(student || alumni || faculty);
+  return Boolean(student || alumni || faculty || admin);
 };
 
 export const findUserByRole = async (identifier, role, select = { id: true }) => {
@@ -55,7 +56,8 @@ export const findUserByRole = async (identifier, role, select = { id: true }) =>
     ? { email: identifier }
     : { id: identifier };
 
-  return prisma[role.toLowerCase()].findUnique({
+  const model = role.toLowerCase() === 'admin' ? 'admin' : role.toLowerCase();
+  return prisma[model].findUnique({
     where,
     select
   });

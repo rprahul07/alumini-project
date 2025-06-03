@@ -180,6 +180,10 @@ api.interceptors.response.use(
 const apiService = {
   auth: authAPI,
   profile: profileAPI,
+  get: api.get.bind(api),
+  post: api.post.bind(api),
+  put: api.put.bind(api),
+  delete: api.delete.bind(api)
 };
 
 export default apiService;
