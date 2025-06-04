@@ -41,17 +41,13 @@ const corsOptions = {
   ]
 };
 
-// Enable pre-flight requests
+
 app.options('*', cors(corsOptions));
-
-// Apply CORS middleware first
 app.use(cors(corsOptions));
-
-// Then other middleware
 app.use(express.json());
 app.use(cookieParser());
 
-// Test route
+
 app.get('/', (req, res) => {
   res.json({ message: 'Server is running' });
 });

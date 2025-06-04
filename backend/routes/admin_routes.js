@@ -5,11 +5,11 @@ import {
   getActivityLogs,
   getPasswordChanges,
   getEmailChanges
-} from "../controllers/admin_controller.js";
+} from "../controllers/admin/admin_controller.js";
 
 const router = express.Router();
 
-// Protect all admin routes
+
 router.use(protect);
 router.use(isAdmin);
 

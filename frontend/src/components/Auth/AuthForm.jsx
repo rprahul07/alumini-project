@@ -1,8 +1,18 @@
 import React from 'react';
+import {
+  TextField,
+  Button,
+  Box,
+  Typography,
+  Grid,
+  IconButton,
+  InputAdornment,
+  CircularProgress,
+} from '@mui/material';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
-import PasswordRequirements from './PasswordRequirements';
 import GoogleAuthButton from './GoogleAuthButton';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 const AuthForm = ({
   authType,
@@ -11,25 +21,24 @@ const AuthForm = ({
   errors,
   isLoading,
   isLocked,
-  passwordRequirements,
   handleInputChange,
   handleSubmit,
   handleGoogleSignIn,
-  successMessage
 }) => {
+  const [showPassword, setShowPassword] = React.useState(false);
+
   if (!userRole) return null;
+
+  const handleTogglePassword = () => {
+    setShowPassword(!showPassword);
+  };
 
   const onSubmit = (e) => {
     e.preventDefault();
     handleSubmit(e);
   };
 
-  const handleButtonClick = (e) => {
-    e.preventDefault();
-    handleSubmit(e);
-  };
-
-  const handlePhoneChange = (value, country) => {
+  const handlePhoneChange = (value) => {
     handleInputChange({
       target: {
         name: 'phoneNumber',
@@ -39,266 +48,278 @@ const AuthForm = ({
   };
 
   return (
-    <div className="auth-form">
-      <h2>{authType === 'login' ? 'Login' : 'Register'} as {userRole}</h2>
-      {successMessage && (
-        <div className="success-message">{successMessage}</div>
+    <Box component="form" onSubmit={onSubmit} noValidate sx={{ width: '100%' }}>
+      <Typography variant="h5" gutterBottom align="center" sx={{ mb: 3 }}>
+        {authType === 'login' ? 'Sign In' : 'Create Account'}
+      </Typography>
+
+      {authType === 'register' && (
+        <TextField
+          fullWidth
+          label="Full Name"
+          name="fullName"
+          value={formData.fullName || ''}
+          onChange={handleInputChange}
+          error={!!errors.fullName}
+          helperText={errors.fullName}
+          margin="normal"
+          required
+        />
       )}
-      {errors.submit && (
-        <div className="error-message">{errors.submit}</div>
-      )}
-      <form onSubmit={onSubmit}>
-        {authType === 'register' && (
-          <div className="form-group">
-            <label htmlFor="fullName">Full Name</label>
-            <input
-              type="text"
-              id="fullName"
-              name="fullName"
-              value={formData.fullName}
-              onChange={handleInputChange}
-              className={errors.fullName ? 'error' : ''}
-            />
-            {errors.fullName && <span className="error">{errors.fullName}</span>}
-          </div>
-        )}
 
-        <div className="form-group">
-          <label htmlFor="email">Email</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={formData.email}
-            onChange={handleInputChange}
-            className={errors.email ? 'error' : ''}
-            required
+      <TextField
+        fullWidth
+        label="Email"
+        name="email"
+        type="email"
+        value={formData.email || ''}
+        onChange={handleInputChange}
+        error={!!errors.email}
+        helperText={errors.email}
+        margin="normal"
+        required
+      />
+
+      {authType === 'register' && (
+        <Box sx={{ mt: 2, mb: 1 }}>
+          <PhoneInput
+            country={'in'}
+            value={formData.phoneNumber?.replace('+', '')}
+            onChange={handlePhoneChange}
+            inputStyle={{
+              width: '100%',
+              height: '56px',
+              fontSize: '16px',
+              borderColor: errors.phoneNumber ? 'error.main' : 'rgba(0, 0, 0, 0.23)',
+            }}
+            containerStyle={{
+              width: '100%'
+            }}
+            inputProps={{
+              id: 'phoneNumber',
+              name: 'phoneNumber',
+              required: true
+            }}
           />
-          {errors.email && <span className="error">{errors.email}</span>}
-        </div>
-
-        {authType === 'register' && (
-          <div className="form-group">
-            <label htmlFor="phoneNumber">Phone Number</label>
-            <PhoneInput
-              country={'in'}
-              value={formData.phoneNumber?.replace('+', '')}
-              onChange={handlePhoneChange}
-              inputClass={errors.phoneNumber ? 'error' : ''}
-              containerClass="phone-input-container"
-              inputProps={{
-                id: 'phoneNumber',
-                name: 'phoneNumber',
-                required: true
-              }}
-            />
-            {errors.phoneNumber && <span className="error">{errors.phoneNumber}</span>}
-          </div>
-        )}
-
-        <div className="form-group">
-          <label htmlFor="password">Password</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            value={formData.password || ''}
-            onChange={handleInputChange}
-            className={errors.password ? 'error' : ''}
-            required
-          />
-          {errors.password && <span className="error">{errors.password}</span>}
-          {authType === 'register' && (
-            <PasswordRequirements passwordRequirements={passwordRequirements} />
+          {errors.phoneNumber && (
+            <Typography color="error" variant="caption">
+              {errors.phoneNumber}
+            </Typography>
           )}
-        </div>
+        </Box>
+      )}
 
-        {authType === 'register' && (
-          <div className="form-group">
-            <label htmlFor="confirmPassword">Confirm Password</label>
-            <input
-              type="password"
-              id="confirmPassword"
-              name="confirmPassword"
-              value={formData.confirmPassword || ''}
-              onChange={handleInputChange}
-              className={errors.confirmPassword ? 'error' : ''}
-              required
-            />
-            {errors.confirmPassword && <span className="error">{errors.confirmPassword}</span>}
-          </div>
-        )}
+      <TextField
+        fullWidth
+        label="Password"
+        name="password"
+        type={showPassword ? 'text' : 'password'}
+        value={formData.password || ''}
+        onChange={handleInputChange}
+        error={!!errors.password}
+        helperText={errors.password}
+        margin="normal"
+        required
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                aria-label="toggle password visibility"
+                onClick={handleTogglePassword}
+                edge="end"
+              >
+                {showPassword ? <VisibilityOff /> : <Visibility />}
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
+      />
 
-        {/* Role-specific Fields - Only show for registration */}
-        {authType === 'register' && (
-          <>
-            {userRole === 'alumni' && (
-              <>
-                <div className="form-group">
-                  <label htmlFor="graduationYear">Graduation Year</label>
-                  <input
-                    type="text"
-                    id="graduationYear"
-                    name="graduationYear"
-                    value={formData.graduationYear}
-                    onChange={handleInputChange}
-                    required
-                    pattern="\d{4}"
-                    maxLength={4}
-                    className={errors.graduationYear ? 'error' : ''}
-                  />
-                  {errors.graduationYear && <span className="error">{errors.graduationYear}</span>}
-                </div>
+      {authType === 'register' && (
+        <TextField
+          fullWidth
+          label="Confirm Password"
+          name="confirmPassword"
+          type={showPassword ? 'text' : 'password'}
+          value={formData.confirmPassword || ''}
+          onChange={handleInputChange}
+          error={!!errors.confirmPassword}
+          helperText={errors.confirmPassword}
+          margin="normal"
+          required
+        />
+      )}
 
-                <div className="form-group">
-                  <label htmlFor="department">Department / Course</label>
-                  <input
-                    type="text"
-                    id="department"
-                    name="department"
-                    value={formData.department}
-                    onChange={handleInputChange}
-                    required
-                    maxLength={100}
-                    className={errors.department ? 'error' : ''}
-                  />
-                  {errors.department && <span className="error">{errors.department}</span>}
-                </div>
+      {/* Role-specific Fields */}
+      {authType === 'register' && (
+        <Grid container spacing={2} sx={{ mt: 1 }}>
+          {userRole === 'alumni' && (
+            <>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  fullWidth
+                  id="graduationYear"
+                  label="Graduation Year"
+                  name="graduationYear"
+                  value={formData.graduationYear || ''}
+                  onChange={handleInputChange}
+                  error={!!errors.graduationYear}
+                  helperText={errors.graduationYear}
+                  inputProps={{
+                    pattern: "\\d{4}",
+                    maxLength: 4
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  fullWidth
+                  id="department"
+                  label="Department / Course"
+                  name="department"
+                  value={formData.department || ''}
+                  onChange={handleInputChange}
+                  error={!!errors.department}
+                  helperText={errors.department}
+                  inputProps={{ maxLength: 100 }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  fullWidth
+                  id="currentJobTitle"
+                  label="Current Job Title"
+                  name="currentJobTitle"
+                  value={formData.currentJobTitle || ''}
+                  onChange={handleInputChange}
+                  error={!!errors.currentJobTitle}
+                  helperText={errors.currentJobTitle}
+                  inputProps={{ maxLength: 100 }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  fullWidth
+                  id="companyName"
+                  label="Company Name"
+                  name="companyName"
+                  value={formData.companyName || ''}
+                  onChange={handleInputChange}
+                  error={!!errors.companyName}
+                  helperText={errors.companyName}
+                  inputProps={{ maxLength: 100 }}
+                />
+              </Grid>
+            </>
+          )}
 
-                <div className="form-group">
-                  <label htmlFor="currentJobTitle">Current Job Title</label>
-                  <input
-                    type="text"
-                    id="currentJobTitle"
-                    name="currentJobTitle"
-                    value={formData.currentJobTitle}
-                    onChange={handleInputChange}
-                    required
-                    maxLength={100}
-                    className={errors.currentJobTitle ? 'error' : ''}
-                  />
-                  {errors.currentJobTitle && <span className="error">{errors.currentJobTitle}</span>}
-                </div>
+          {userRole === 'faculty' && (
+            <>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  fullWidth
+                  id="designation"
+                  label="Designation"
+                  name="designation"
+                  value={formData.designation || ''}
+                  onChange={handleInputChange}
+                  error={!!errors.designation}
+                  helperText={errors.designation}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  fullWidth
+                  id="department"
+                  label="Department"
+                  name="department"
+                  value={formData.department || ''}
+                  onChange={handleInputChange}
+                  error={!!errors.department}
+                  helperText={errors.department}
+                />
+              </Grid>
+            </>
+          )}
 
-                <div className="form-group">
-                  <label htmlFor="companyName">Company Name</label>
-                  <input
-                    type="text"
-                    id="companyName"
-                    name="companyName"
-                    value={formData.companyName}
-                    onChange={handleInputChange}
-                    required
-                    maxLength={100}
-                    className={errors.companyName ? 'error' : ''}
-                  />
-                  {errors.companyName && <span className="error">{errors.companyName}</span>}
-                </div>
-              </>
-            )}
+          {userRole === 'student' && (
+            <>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  fullWidth
+                  id="department"
+                  label="Department"
+                  name="department"
+                  value={formData.department || ''}
+                  onChange={handleInputChange}
+                  error={!!errors.department}
+                  helperText={errors.department}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  fullWidth
+                  id="currentSemester"
+                  label="Current Semester"
+                  name="currentSemester"
+                  value={formData.currentSemester || ''}
+                  onChange={handleInputChange}
+                  error={!!errors.currentSemester}
+                  helperText={errors.currentSemester}
+                  inputProps={{
+                    pattern: "[1-8]",
+                    maxLength: 1
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  id="rollNumber"
+                  label="Roll Number"
+                  name="rollNumber"
+                  value={formData.rollNumber || ''}
+                  onChange={handleInputChange}
+                  error={!!errors.rollNumber}
+                  helperText={errors.rollNumber}
+                />
+              </Grid>
+            </>
+          )}
+        </Grid>
+      )}
 
-            {userRole === 'faculty' && (
-              <>
-                <div className="form-group">
-                  <label htmlFor="designation">Designation</label>
-                  <input
-                    type="text"
-                    id="designation"
-                    name="designation"
-                    value={formData.designation}
-                    onChange={handleInputChange}
-                    required
-                    maxLength={100}
-                    className={errors.designation ? 'error' : ''}
-                  />
-                  {errors.designation && <span className="error">{errors.designation}</span>}
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="department">Department</label>
-                  <input
-                    type="text"
-                    id="department"
-                    name="department"
-                    value={formData.department}
-                    onChange={handleInputChange}
-                    required
-                    maxLength={100}
-                    className={errors.department ? 'error' : ''}
-                  />
-                  {errors.department && <span className="error">{errors.department}</span>}
-                </div>
-              </>
-            )}
-
-            {userRole === 'student' && (
-              <>
-                <div className="form-group">
-                  <label htmlFor="department">Course & Department</label>
-                  <input
-                    type="text"
-                    id="department"
-                    name="department"
-                    value={formData.department}
-                    onChange={handleInputChange}
-                    required
-                    maxLength={100}
-                    className={errors.department ? 'error' : ''}
-                  />
-                  {errors.department && <span className="error">{errors.department}</span>}
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="currentSemester">Current Semester</label>
-                  <input
-                    type="text"
-                    id="currentSemester"
-                    name="currentSemester"
-                    value={formData.currentSemester}
-                    onChange={handleInputChange}
-                    required
-                    maxLength={2}
-                    className={errors.currentSemester ? 'error' : ''}
-                  />
-                  {errors.currentSemester && <span className="error">{errors.currentSemester}</span>}
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="rollNumber">Roll Number</label>
-                  <input
-                    type="text"
-                    id="rollNumber"
-                    name="rollNumber"
-                    value={formData.rollNumber}
-                    onChange={handleInputChange}
-                    required
-                    maxLength={20}
-                    className={errors.rollNumber ? 'error' : ''}
-                  />
-                  {errors.rollNumber && <span className="error">{errors.rollNumber}</span>}
-                </div>
-              </>
-            )}
-          </>
-        )}
-
-        <button 
-          type="submit" 
-          className="submit-btn"
+      <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <Button
+          type="submit"
+          variant="contained"
           disabled={isLoading || isLocked}
-          onClick={handleButtonClick}
+          sx={{ minWidth: 120 }}
         >
-          {isLoading ? 'Processing...' : authType === 'login' ? 'Login' : 'Register'}
-        </button>
-      </form>
+          {isLoading ? (
+            <CircularProgress size={24} color="inherit" />
+          ) : authType === 'login' ? (
+            'Sign In'
+          ) : (
+            'Register'
+          )}
+        </Button>
+      </Box>
 
-      <GoogleAuthButton 
-        onClick={handleGoogleSignIn} 
+      <GoogleAuthButton
+        onClick={handleGoogleSignIn}
         disabled={isLoading || isLocked}
-      >
-        Continue with Google
-      </GoogleAuthButton>
-    </div>
+      />
+    </Box>
   );
 };
 
