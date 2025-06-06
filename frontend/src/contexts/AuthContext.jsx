@@ -1,119 +1,137 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { authAPI } from '../middleware/api';
 import { getErrorMessage } from '../utils/errorHandling';
+import { profileAPI } from '../middleware/api';
 
+// Create AuthContext to share auth info across app
 const AuthContext = createContext();
 
-const AUTH_TOKEN_KEY = 'token';
+// Key for storing user role in localStorage
 const USER_ROLE_KEY = 'userRole';
 
-// Separate useAuth hook into a named function for better HMR compatibility
-function useAuth() {
+// Custom hook to use auth context easily
+export function useAuth() {
   const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+  if (!context) {
+    throw new Error('useAuth must be used inside AuthProvider');
   }
   return context;
 }
-
-export { useAuth };
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Check authentication status on mount
   useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await authAPI.checkAuth();
+        if (response.success) {
+          const storedRole = localStorage.getItem(USER_ROLE_KEY);
+          
+          // Fetch complete profile data
+          try {
+            const profileResponse = await profileAPI.getProfile();
+            if (profileResponse.success) {
+              const userWithProfile = {
+                ...response.data,
+                ...profileResponse.data,
+                role: storedRole || response.data.role
+              };
+              setUser(userWithProfile);
+            }
+          } catch (profileError) {
+            console.error('Error fetching profile:', profileError);
+            // Still set user with basic data if profile fetch fails
+            const userWithRole = { ...response.data, role: storedRole || response.data.role };
+            setUser(userWithRole);
+          }
+        } else {
+          setUser(null);
+        }
+      } catch (err) {
+        localStorage.removeItem(USER_ROLE_KEY);
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     checkAuth();
   }, []);
 
-  const clearError = () => {
-    setError(null);
-  };
-
-  const checkAuth = async () => {
-    try {
-      const token = localStorage.getItem(AUTH_TOKEN_KEY);
-      console.log('Checking auth - Token:', token ? 'exists' : 'not found');
-      
-      if (!token) {
-        setUser(null);
-        return;
-      }
-
-      const response = await authAPI.checkAuth();
-      console.log('Auth check response:', response);
-      
-      if (response.success) {
-        setUser(response.data);
-      } else {
-        throw new Error('Authentication check failed');
-      }
-    } catch (error) {
-      console.error('Auth check failed:', error);
-      localStorage.removeItem(AUTH_TOKEN_KEY);
-      localStorage.removeItem(USER_ROLE_KEY);
-      setUser(null);
-      const errorResponse = getErrorMessage(error);
-      setError(errorResponse.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  // Login function
   const login = async (data) => {
     setLoading(true);
+    setError(null);
     try {
-      console.log('Login attempt with role:', data.role);
+      console.log('AuthContext - Login attempt with role:', data.role);
       const response = await authAPI.login(data);
-      console.log('Login response:', response);
-
+      console.log('AuthContext - Login response:', response);
+      
       if (response.success) {
-        // Store both token and role
-        localStorage.setItem(AUTH_TOKEN_KEY, response.data.token);
+        console.log('AuthContext - Setting role in localStorage:', data.role.toLowerCase());
         localStorage.setItem(USER_ROLE_KEY, data.role.toLowerCase());
-        console.log('Stored auth data - Role:', data.role.toLowerCase());
         
-        setUser(response.data);
-        setError(null);
-        return response;
+        // Fetch complete profile data after login
+        try {
+          const profileResponse = await profileAPI.getProfile();
+          console.log('AuthContext - Profile response:', profileResponse);
+          
+          if (profileResponse.success) {
+            const userWithProfile = {
+              ...response.data,
+              ...profileResponse.data,
+              role: data.role.toLowerCase()
+            };
+            console.log('AuthContext - Setting user with profile:', userWithProfile);
+            setUser(userWithProfile);
+            return { success: true, data: userWithProfile };
+          }
+        } catch (profileError) {
+          console.error('AuthContext - Profile fetch error:', profileError);
+          // Still set user with basic data if profile fetch fails
+          const userWithRole = { ...response.data, role: data.role.toLowerCase() };
+          console.log('AuthContext - Setting user with basic data:', userWithRole);
+          setUser(userWithRole);
+          return { success: true, data: userWithRole };
+        }
       }
-      throw new Error(response.message || 'Login failed');
-    } catch (error) {
-      console.error('Login error:', error);
-      const errorResponse = getErrorMessage(error);
-      setError(errorResponse.message);
-      throw error;
+      return response;
+    } catch (err) {
+      console.error('AuthContext - Login error:', err);
+      setError(getErrorMessage(err).message);
+      throw err;
     } finally {
       setLoading(false);
     }
   };
 
+  // Logout function
   const logout = async () => {
     setLoading(true);
     try {
       const response = await authAPI.logout();
       if (response.success) {
-        localStorage.removeItem(AUTH_TOKEN_KEY);
         localStorage.removeItem(USER_ROLE_KEY);
         setUser(null);
         setError(null);
       } else {
         throw new Error('Logout failed');
       }
-    } catch (error) {
-      const errorResponse = getErrorMessage(error);
-      // Still remove user data even if logout API fails
-      localStorage.removeItem(AUTH_TOKEN_KEY);
+    } catch (err) {
       localStorage.removeItem(USER_ROLE_KEY);
       setUser(null);
-      setError(errorResponse.message);
-      throw error;
+      setError(getErrorMessage(err).message);
+      throw err;
     } finally {
       setLoading(false);
     }
   };
 
+  // Register function
   const register = async (data) => {
     setLoading(true);
     setError(null);
@@ -123,28 +141,33 @@ export const AuthProvider = ({ children }) => {
         throw new Error(response.message || 'Registration failed');
       }
       return response;
-    } catch (error) {
-      const errorResponse = getErrorMessage(error);
-      setError(errorResponse.message);
-      throw error;
+    } catch (err) {
+      setError(getErrorMessage(err).message);
+      throw err;
     } finally {
       setLoading(false);
     }
   };
 
-  const value = {
-    user,
-    loading,
-    error,
-    login,
-    logout,
-    register,
-    clearError,
-  };
+  // Get user role from state or localStorage
+  const role = user?.role || localStorage.getItem(USER_ROLE_KEY) || null;
+  console.log('AuthContext - Current role:', role);
+  console.log('AuthContext - Current user:', user);
 
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider
+      value={{
+        user,
+        role,
+        loading,
+        error,
+        login,
+        logout,
+        register,
+        clearError: () => setError(null),
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
-}; 
+};

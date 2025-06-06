@@ -1,21 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { FiEye, FiEyeOff, FiMail } from 'react-icons/fi';
+// ✅ Cleaned & Optimized - Placeholder-safe
+import React, { useState } from 'react';
 import { FcGoogle } from 'react-icons/fc';
-import { BsGithub } from 'react-icons/bs';
-import { useAuth } from '../contexts/AuthContext';
+import { EnvelopeIcon, LockClosedIcon, UserIcon, PhoneIcon, AcademicCapIcon, BriefcaseIcon, UserGroupIcon, BuildingOfficeIcon } from '@heroicons/react/24/outline';
 import Alert from '../components/Alert';
-import { validateField } from '../utils/errorHandling';
 import useAlert from '../hooks/useAlert';
-import { useNavigate } from 'react-router-dom';
 
 const AuthForm = ({
   authType,
   userRole,
+  onSubmit,
+  error,
+  loading,
 }) => {
-  const navigate = useNavigate();
-  const { login, register, loading } = useAuth();
   const { alert, showAlert, clearAlert, handleError } = useAlert();
-  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -23,7 +20,6 @@ const AuthForm = ({
     fullName: '',
     phoneNumber: '',
     department: '',
-    // Role-specific fields
     currentSemester: '',
     rollNumber: '',
     graduationYear: '',
@@ -33,15 +29,9 @@ const AuthForm = ({
   });
   const [formErrors, setFormErrors] = useState({});
 
-  useEffect(() => {
-    setFormErrors({});
-    clearAlert();
-  }, [authType, clearAlert]);
-
   const validateForm = () => {
     const errors = {};
     
-    // Validate common fields
     if (!formData.email.trim()) {
       errors.email = 'Email is required';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
@@ -55,7 +45,6 @@ const AuthForm = ({
     }
 
     if (authType === 'register') {
-      // Registration validations
       if (!formData.confirmPassword) {
         errors.confirmPassword = 'Please confirm your password';
       } else if (formData.password !== formData.confirmPassword) {
@@ -74,7 +63,6 @@ const AuthForm = ({
         errors.department = 'Department is required';
       }
 
-      // Role-specific validations
       if (userRole === 'student') {
         if (!formData.currentSemester.trim()) {
           errors.currentSemester = 'Current semester is required';
@@ -109,13 +97,16 @@ const AuthForm = ({
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    // Clear field error when user starts typing
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
     if (formErrors[name]) {
-      setFormErrors(prev => ({ ...prev, [name]: '' }));
+      setFormErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
     }
-    // Clear alert when user starts typing
-    clearAlert();
   };
 
   const handleSubmit = async (e) => {
@@ -135,27 +126,7 @@ const AuthForm = ({
           password: formData.password,
           role: userRole,
         };
-
-        console.log('Attempting login with:', { ...loginData, password: '[REDACTED]' });
-        const response = await login(loginData);
-        
-        if (response?.success) {
-          console.log('Login successful, preparing to navigate');
-          showAlert('Login successful! Redirecting to dashboard...', 'success');
-          
-          // Ensure we have the role before navigating
-          const storedRole = localStorage.getItem('userRole');
-          console.log('Stored role before navigation:', storedRole);
-          
-          // Add a small delay to ensure state updates are processed
-          setTimeout(() => {
-            console.log('Navigating to dashboard...');
-            navigate('/dashboard', { replace: true });
-          }, 1500);
-        } else {
-          console.log('Login response indicated failure:', response);
-          showAlert('Login failed. Please check your credentials.', 'error');
-        }
+        await onSubmit(loginData);
       } else {
         const registerData = {
           email: formData.email,
@@ -167,7 +138,6 @@ const AuthForm = ({
           role: userRole,
         };
 
-        // Add role-specific fields
         if (userRole === 'student') {
           Object.assign(registerData, {
             currentSemester: formData.currentSemester,
@@ -185,35 +155,10 @@ const AuthForm = ({
           });
         }
 
-        const response = await register(registerData);
-        
-        if (response?.success) {
-          showAlert('Registration successful! Please log in.', 'success');
-          // Reset form
-          setFormData({
-            email: '',
-            password: '',
-            confirmPassword: '',
-            fullName: '',
-            phoneNumber: '',
-            department: '',
-            currentSemester: '',
-            rollNumber: '',
-            graduationYear: '',
-            currentJobTitle: '',
-            companyName: '',
-            designation: '',
-          });
-          // Short delay before redirecting to login
-          setTimeout(() => {
-            navigate('/login');
-          }, 1500);
-        }
+        await onSubmit(registerData);
       }
     } catch (err) {
-      console.error('Auth error:', err);
       handleError(err);
-      // Show specific error messages for common cases
       if (err.message.includes('Invalid email or password')) {
         showAlert('Invalid email or password. Please try again.', 'error');
       } else if (err.message.includes('Email already exists')) {
@@ -225,13 +170,7 @@ const AuthForm = ({
   };
 
   const handleGoogleSignIn = () => {
-    // Implement Google Sign In
-    console.log('Google Sign In clicked');
-  };
-
-  const handleGitHubSignIn = () => {
-    // Implement GitHub Sign In
-    console.log('GitHub Sign In clicked');
+    // TODO: Implement Google Sign In
   };
 
   return (
@@ -245,24 +184,23 @@ const AuthForm = ({
         />
       )}
 
+      {error && (
+        <Alert
+          type="error"
+          message={error}
+          className="mb-4"
+        />
+      )}
+
       <div className="space-y-4">
         <button
           type="button"
           onClick={handleGoogleSignIn}
-          className="w-full flex items-center justify-center px-4 py-3 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 transition-colors"
+          className="w-full flex items-center justify-center px-4 py-3 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 transition-all duration-200"
           disabled={loading}
         >
           <FcGoogle className="w-5 h-5 mr-3" />
           Continue with Google
-        </button>
-        <button
-          type="button"
-          onClick={handleGitHubSignIn}
-          className="w-full flex items-center justify-center px-4 py-3 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 transition-colors"
-          disabled={loading}
-        >
-          <BsGithub className="w-5 h-5 mr-3" />
-          Continue with GitHub
         </button>
       </div>
 
@@ -281,14 +219,21 @@ const AuthForm = ({
         {authType === 'register' && (
           <>
             <div>
-              <div className="relative">
+              <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">
+                Full Name
+              </label>
+              <div className="mt-1 relative rounded-lg shadow-sm">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <UserIcon className="h-5 w-5 text-indigo-500" />
+                </div>
                 <input
                   type="text"
+                  id="fullName"
                   name="fullName"
                   value={formData.fullName}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 bg-gray-50 border-0 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors"
-                  placeholder="Full Name"
+                  className="block w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 sm:text-sm"
+                  placeholder="John Doe"
                   disabled={loading}
                   required
                 />
@@ -299,14 +244,21 @@ const AuthForm = ({
             </div>
 
             <div>
-              <div className="relative">
+              <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700">
+                Phone Number
+              </label>
+              <div className="mt-1 relative rounded-lg shadow-sm">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <PhoneIcon className="h-5 w-5 text-indigo-500" />
+                </div>
                 <input
                   type="tel"
+                  id="phoneNumber"
                   name="phoneNumber"
                   value={formData.phoneNumber}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 bg-gray-50 border-0 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors"
-                  placeholder="Phone Number"
+                  className="block w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 sm:text-sm"
+                  placeholder="+91 9876543210"
                   disabled={loading}
                   required
                 />
@@ -317,14 +269,21 @@ const AuthForm = ({
             </div>
 
             <div>
-              <div className="relative">
+              <label htmlFor="department" className="block text-sm font-medium text-gray-700">
+                Department
+              </label>
+              <div className="mt-1 relative rounded-lg shadow-sm">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <BuildingOfficeIcon className="h-5 w-5 text-indigo-500" />
+                </div>
                 <input
                   type="text"
+                  id="department"
                   name="department"
                   value={formData.department}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 bg-gray-50 border-0 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors"
-                  placeholder="Department"
+                  className="block w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 sm:text-sm"
+                  placeholder="Computer Science"
                   disabled={loading}
                   required
                 />
@@ -334,18 +293,24 @@ const AuthForm = ({
               )}
             </div>
 
-            {/* Role-specific fields */}
             {userRole === 'student' && (
               <>
                 <div>
-                  <div className="relative">
+                  <label htmlFor="currentSemester" className="block text-sm font-medium text-gray-700">
+                    Current Semester
+                  </label>
+                  <div className="mt-1 relative rounded-lg shadow-sm">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <AcademicCapIcon className="h-5 w-5 text-indigo-500" />
+                    </div>
                     <input
                       type="text"
+                      id="currentSemester"
                       name="currentSemester"
                       value={formData.currentSemester}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 bg-gray-50 border-0 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors"
-                      placeholder="Current Semester"
+                      className="block w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 sm:text-sm"
+                      placeholder="6th Semester"
                       disabled={loading}
                       required
                     />
@@ -356,14 +321,21 @@ const AuthForm = ({
                 </div>
 
                 <div>
-                  <div className="relative">
+                  <label htmlFor="rollNumber" className="block text-sm font-medium text-gray-700">
+                    Roll Number
+                  </label>
+                  <div className="mt-1 relative rounded-lg shadow-sm">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <UserGroupIcon className="h-5 w-5 text-indigo-500" />
+                    </div>
                     <input
                       type="text"
+                      id="rollNumber"
                       name="rollNumber"
                       value={formData.rollNumber}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 bg-gray-50 border-0 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors"
-                      placeholder="Roll Number"
+                      className="block w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 sm:text-sm"
+                      placeholder="CS2023001"
                       disabled={loading}
                       required
                     />
@@ -378,16 +350,21 @@ const AuthForm = ({
             {userRole === 'alumni' && (
               <>
                 <div>
-                  <div className="relative">
+                  <label htmlFor="graduationYear" className="block text-sm font-medium text-gray-700">
+                    Graduation Year
+                  </label>
+                  <div className="mt-1 relative rounded-lg shadow-sm">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <AcademicCapIcon className="h-5 w-5 text-indigo-500" />
+                    </div>
                     <input
                       type="number"
+                      id="graduationYear"
                       name="graduationYear"
                       value={formData.graduationYear}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 bg-gray-50 border-0 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors"
-                      placeholder="Graduation Year"
-                      min="1900"
-                      max={new Date().getFullYear()}
+                      className="block w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 sm:text-sm"
+                      placeholder="2023"
                       disabled={loading}
                       required
                     />
@@ -398,14 +375,21 @@ const AuthForm = ({
                 </div>
 
                 <div>
-                  <div className="relative">
+                  <label htmlFor="currentJobTitle" className="block text-sm font-medium text-gray-700">
+                    Current Job Title
+                  </label>
+                  <div className="mt-1 relative rounded-lg shadow-sm">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <BriefcaseIcon className="h-5 w-5 text-indigo-500" />
+                    </div>
                     <input
                       type="text"
+                      id="currentJobTitle"
                       name="currentJobTitle"
                       value={formData.currentJobTitle}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 bg-gray-50 border-0 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors"
-                      placeholder="Current Job Title"
+                      className="block w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 sm:text-sm"
+                      placeholder="Software Engineer"
                       disabled={loading}
                       required
                     />
@@ -416,14 +400,21 @@ const AuthForm = ({
                 </div>
 
                 <div>
-                  <div className="relative">
+                  <label htmlFor="companyName" className="block text-sm font-medium text-gray-700">
+                    Company Name
+                  </label>
+                  <div className="mt-1 relative rounded-lg shadow-sm">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <BuildingOfficeIcon className="h-5 w-5 text-indigo-500" />
+                    </div>
                     <input
                       type="text"
+                      id="companyName"
                       name="companyName"
                       value={formData.companyName}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 bg-gray-50 border-0 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors"
-                      placeholder="Company Name"
+                      className="block w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 sm:text-sm"
+                      placeholder="Tech Corp"
                       disabled={loading}
                       required
                     />
@@ -437,14 +428,21 @@ const AuthForm = ({
 
             {userRole === 'faculty' && (
               <div>
-                <div className="relative">
+                <label htmlFor="designation" className="block text-sm font-medium text-gray-700">
+                  Designation
+                </label>
+                <div className="mt-1 relative rounded-lg shadow-sm">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <UserGroupIcon className="h-5 w-5 text-indigo-500" />
+                  </div>
                   <input
                     type="text"
+                    id="designation"
                     name="designation"
                     value={formData.designation}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 bg-gray-50 border-0 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors"
-                    placeholder="Designation"
+                    className="block w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 sm:text-sm"
+                    placeholder="Assistant Professor"
                     disabled={loading}
                     required
                   />
@@ -458,18 +456,24 @@ const AuthForm = ({
         )}
 
         <div>
-          <div className="relative">
+          <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+            Email Address
+          </label>
+          <div className="mt-1 relative rounded-lg shadow-sm">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <EnvelopeIcon className="h-5 w-5 text-indigo-500" />
+            </div>
             <input
               type="email"
+              id="email"
               name="email"
               value={formData.email}
               onChange={handleInputChange}
-              className="w-full px-4 py-3 bg-gray-50 border-0 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors"
+              className="block w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 sm:text-sm"
               placeholder="you@example.com"
               disabled={loading}
               required
             />
-            <FiMail className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" />
           </div>
           {formErrors.email && (
             <p className="mt-1 text-sm text-red-600">{formErrors.email}</p>
@@ -477,28 +481,24 @@ const AuthForm = ({
         </div>
 
         <div>
-          <div className="relative">
+          <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+            Password
+          </label>
+          <div className="mt-1 relative rounded-lg shadow-sm">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <LockClosedIcon className="h-5 w-5 text-indigo-500" />
+            </div>
             <input
-              type={showPassword ? 'text' : 'password'}
+              type="password"
+              id="password"
               name="password"
               value={formData.password}
               onChange={handleInputChange}
-              className="w-full px-4 py-3 bg-gray-50 border-0 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors"
+              className="block w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 sm:text-sm"
               placeholder="••••••••"
               disabled={loading}
               required
             />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-            >
-              {showPassword ? (
-                <FiEyeOff className="w-5 h-5" />
-              ) : (
-                <FiEye className="w-5 h-5" />
-              )}
-            </button>
           </div>
           {formErrors.password && (
             <p className="mt-1 text-sm text-red-600">{formErrors.password}</p>
@@ -507,14 +507,21 @@ const AuthForm = ({
 
         {authType === 'register' && (
           <div>
-            <div className="relative">
+            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+              Confirm Password
+            </label>
+            <div className="mt-1 relative rounded-lg shadow-sm">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <LockClosedIcon className="h-5 w-5 text-indigo-500" />
+              </div>
               <input
-                type={showPassword ? 'text' : 'password'}
+                type="password"
+                id="confirmPassword"
                 name="confirmPassword"
                 value={formData.confirmPassword}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 bg-gray-50 border-0 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors"
-                placeholder="Confirm Password"
+                className="block w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 sm:text-sm"
+                placeholder="••••••••"
                 disabled={loading}
                 required
               />
@@ -524,44 +531,27 @@ const AuthForm = ({
             )}
           </div>
         )}
-      </div>
 
-      {authType === 'login' && (
-        <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <input
-              id="remember-me"
-              name="remember-me"
-              type="checkbox"
-              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-            />
-            <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-600">
-              Remember me
-            </label>
-          </div>
-
-          <div className="text-sm">
-            <a href="#" className="font-medium text-blue-600 hover:text-blue-700">
-              Forgot your password?
-            </a>
-          </div>
+        <div>
+          <button
+            type="submit"
+            className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+            disabled={loading}
+          >
+            {loading ? (
+              <span className="flex items-center">
+                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                {authType === 'login' ? 'Signing in...' : 'Creating account...'}
+              </span>
+            ) : (
+              authType === 'login' ? 'Sign In' : 'Create Account'
+            )}
+          </button>
         </div>
-      )}
-
-      <button
-        type="submit"
-        className="w-full flex items-center justify-center px-4 py-3 rounded-lg bg-black text-white hover:bg-gray-900 transition-colors font-medium"
-        disabled={loading}
-      >
-        {loading ? (
-          <div className="flex items-center">
-            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-3" />
-            Processing...
-          </div>
-        ) : (
-          authType === 'login' ? 'Sign In' : 'Create Account'
-        )}
-      </button>
+      </div>
     </form>
   );
 };
