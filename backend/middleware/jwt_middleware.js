@@ -11,22 +11,26 @@ export const protect = async (req, res, next) => {
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    if (!VALID_ROLES.includes(decoded.role)) {
+
+    // Normalize role to lowercase
+    const roleLower = decoded.role.toLowerCase();
+
+    if (!VALID_ROLES.includes(roleLower)) {
       throw new AppError("Invalid role", 400);
     }
 
-    const user = await findUserByRole(decoded.id, decoded.role);
+    const user = await findUserByRole(decoded.id, roleLower);
     if (!user) {
       throw new AppError("User no longer exists", 401);
     }
 
     req.user = {
       id: decoded.id,
-      role: decoded.role
+      role: roleLower,
     };
 
     next();
   } catch (error) {
     handleError(error, req, res);
   }
-}; 
+};

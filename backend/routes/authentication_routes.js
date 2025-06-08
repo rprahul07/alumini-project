@@ -3,18 +3,14 @@ import {
   signup,
   login,
   logout,
-  checkAuth
+  checkAuth,
 } from "../controllers/user/user_controller.js";
 import { protect } from "../middleware/jwt_middleware.js";
 import { loginLimiter } from "../middleware/rateLimiter.js";
 
 const router = express.Router();
 
-
-router.post("/register", signup);
 router.post("/signup", signup);
-
-
 
 router.post("/login", loginLimiter, login);
 

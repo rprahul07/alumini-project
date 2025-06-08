@@ -1,8 +1,8 @@
 export const ROLES = {
-  STUDENT: 'student',
-  ALUMNI: 'alumni',
-  FACULTY: 'faculty',
-  ADMIN: 'admin'
+  STUDENT: "student",
+  ALUMNI: "alumni",
+  FACULTY: "faculty",
+  ADMIN: "admin",
 };
 
 export const VALID_ROLES = Object.values(ROLES);
@@ -15,10 +15,17 @@ export const PASSWORD_REQUIREMENTS = {
     number: /\d/,
     special: /[!@#$%^&*(),.?":{}|<>]/,
     consecutive: /(.)\1{2,}/,
-    sequential: /(abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn|mno|nop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz)/i
+    sequential:
+      /(abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn|mno|nop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz)/i,
   },
   commonPasswords: [
-    "password", "123456", "qwerty", "admin",
-    "welcome", "letmein", "monkey", "dragon"
-  ]
-}; 
+    "password",
+    "123456",
+    "qwerty",
+    "admin",
+    "welcome",
+    "letmein",
+    "monkey",
+    "dragon",
+  ],
+};

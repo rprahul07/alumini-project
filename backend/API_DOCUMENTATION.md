@@ -1,6 +1,7 @@
 # Alumni Management System API Documentation
 
 ## Base URL
+
 ```
 http://localhost:5001
 ```
@@ -8,6 +9,7 @@ http://localhost:5001
 ## Authentication Endpoints
 
 ### Register/Signup
+
 ```http
 POST /api/auth/register
 POST /api/auth/signup
@@ -16,6 +18,7 @@ POST /api/auth/signup
 Both endpoints perform the same registration function.
 
 #### Request Body
+
 ```json
 {
   "email": "string",
@@ -41,6 +44,7 @@ Both endpoints perform the same registration function.
 ```
 
 #### Response
+
 ```json
 {
   "success": true,
@@ -55,6 +59,7 @@ Both endpoints perform the same registration function.
 ```
 
 ### Login
+
 ```http
 POST /api/auth/login
 ```
@@ -62,6 +67,7 @@ POST /api/auth/login
 Rate-limited endpoint for user authentication.
 
 #### Request Body
+
 ```json
 {
   "email": "string",
@@ -70,28 +76,94 @@ Rate-limited endpoint for user authentication.
 }
 ```
 
+### getById
+
+```http
+GET /api/"entity name"/:userId
+```
+
+The user Id is passed as parameter
+
 #### Response
+
 ```json
 {
   "success": true,
-  "message": "Logged in successfully",
   "data": {
-    "_id": "number",
-    "fullName": "string",
-    "email": "string",
-    "role": "string"
+    "id": 1,
+    "email": "john.doe@example.com",
+    "fullName": "John Doe",
+    "phoneNumber": "1234567890",
+    "department": "Computer Science",
+    "role": "FACULTY",
+    "photoUrl": "https://example.com/photo.jpg",
+    "faculty": {
+      "id": 10,
+      "designation": "Assistant Professor"
+    }
   }
 }
 ```
 
+### deleteById
+
+```http
+DELETE /api/"entity name"/:userId
+```
+
+The user Id is passed as parameter
+
+#### Response
+
+```json
+{
+  "success": true,
+  "message": "Faculty deleted successfully"
+}
+```
+
+### getall
+
+```http
+DELETE /api/"entity name"/getall
+```
+
+The user Id is passed as parameter
+
+#### Response
+
+````json
+{
+  "success": true,
+  "message": "Faculty retrieved successfully",
+  "data": {
+    "faculty": [
+      {
+        "id": 1,
+        "fullName": "Dr. Jane Smith",
+        "email": "jane.smith@example.com",
+        "phoneNumber": "9876543210",
+        "department": "Electrical Engineering",
+        "createdAt": "2024-08-10T12:34:56.789Z",
+        "photoUrl": "https://example.com/faculty/jane.jpg",
+        "faculty": {
+          "id": 101,
+          "designation": "Professor"
+        }
+      },
+      //etc.....
+      ]}}
+
 ### Logout
+
 ```http
 POST /api/auth/logout
-```
+````
 
 Protected endpoint requiring authentication.
 
 #### Response
+
 ```json
 {
   "success": true,
@@ -100,6 +172,7 @@ Protected endpoint requiring authentication.
 ```
 
 ### Check Authentication
+
 ```http
 GET /api/auth/check
 ```
@@ -107,6 +180,7 @@ GET /api/auth/check
 Protected endpoint to verify authentication status.
 
 #### Response
+
 ```json
 {
   "success": true,
@@ -123,6 +197,7 @@ Protected endpoint to verify authentication status.
 ## Security Endpoints
 
 ### CSRF Token
+
 ```http
 GET /api/csrf-token
 ```
@@ -130,6 +205,7 @@ GET /api/csrf-token
 Endpoint to obtain CSRF token for form submissions.
 
 #### Response
+
 ```json
 {
   "csrfToken": "string"
@@ -137,6 +213,7 @@ Endpoint to obtain CSRF token for form submissions.
 ```
 
 ### Health Check
+
 ```http
 GET /
 ```
@@ -144,6 +221,7 @@ GET /
 Simple endpoint to verify server status.
 
 #### Response
+
 ```json
 {
   "message": "Server is running"
@@ -153,15 +231,18 @@ Simple endpoint to verify server status.
 ## Security Features
 
 ### Rate Limiting
+
 - Login endpoint is rate-limited to prevent brute force attacks
 - Configurable time window and maximum attempts
 
 ### JWT Authentication
+
 - Protected routes require valid JWT token
 - Token delivered via HTTP-only cookie
 - Automatic token verification and role checking
 
 ### CORS Configuration
+
 - Origin: http://localhost:3000
 - Credentials: true
 - Methods: GET, POST, PUT, DELETE, OPTIONS
@@ -174,6 +255,7 @@ Simple endpoint to verify server status.
   - Origin
 
 ### Error Handling
+
 - Database errors (Prisma)
 - Validation errors
 - Authentication errors
@@ -182,6 +264,7 @@ Simple endpoint to verify server status.
 ## Usage Examples
 
 ### Registration Example
+
 ```http
 POST /api/auth/register
 Content-Type: application/json
@@ -200,6 +283,7 @@ Content-Type: application/json
 ```
 
 ### Login Example
+
 ```http
 POST /api/auth/login
 Content-Type: application/json
@@ -212,6 +296,7 @@ Content-Type: application/json
 ```
 
 ### Protected Route Example
+
 ```http
 GET /api/auth/check
 Cookie: jwt=<token>
@@ -221,6 +306,7 @@ X-CSRF-Token: <csrf_token>
 ## Error Responses
 
 ### Validation Error
+
 ```json
 {
   "success": false,
@@ -229,6 +315,7 @@ X-CSRF-Token: <csrf_token>
 ```
 
 ### Authentication Error
+
 ```json
 {
   "success": false,
@@ -237,9 +324,10 @@ X-CSRF-Token: <csrf_token>
 ```
 
 ### Database Error
+
 ```json
 {
   "success": false,
   "message": "Database operation failed"
 }
-``` 
+```

@@ -6,15 +6,23 @@ import { AppError } from "../utils/response.utils.js";
 export const validatePassword = (password) => {
   const {
     minLength,
-    patterns: { uppercase, lowercase, number, special, consecutive, sequential },
-    commonPasswords
+    patterns: {
+      uppercase,
+      lowercase,
+      number,
+      special,
+      consecutive,
+      sequential,
+    },
+    commonPasswords,
   } = PASSWORD_REQUIREMENTS;
 
-  const hasCommonPattern = commonPasswords.some(pattern => 
+  const hasCommonPattern = commonPasswords.some((pattern) =>
     password.toLowerCase().includes(pattern)
   );
 
-  const isValid = password.length >= minLength &&
+  const isValid =
+    password.length >= minLength &&
     uppercase.test(password) &&
     lowercase.test(password) &&
     number.test(password) &&
@@ -26,7 +34,7 @@ export const validatePassword = (password) => {
   if (!isValid) {
     throw new AppError(
       "Password must be at least 12 characters long and include uppercase, lowercase, number, and special character. " +
-      "It cannot contain 3+ consecutive identical characters, sequential characters, or common patterns.",
+        "It cannot contain 3+ consecutive identical characters, sequential characters, or common patterns.",
       400
     );
   }
@@ -42,24 +50,50 @@ export const verifyPassword = async (plainPassword, hashedPassword) => {
 };
 
 export const checkEmailExists = async (email) => {
-  const [student, alumni, faculty, admin] = await Promise.all([
-    prisma.student.findUnique({ where: { email } }),
-    prisma.alumni.findUnique({ where: { email } }),
-    prisma.faculty.findUnique({ where: { email } }),
-    prisma.admin.findUnique({ where: { email } })
-  ]);
-  return Boolean(student || alumni || faculty || admin);
+  const user = await prisma.user.findUnique({
+    where: { email },
+  });
+  return Boolean(user);
 };
 
-export const findUserByRole = async (identifier, role, select = { id: true }) => {
-  const where = typeof identifier === 'string' && identifier.includes('@') 
-    ? { email: identifier }
-    : { id: identifier };
+export const findUserByRole = async (
+  identifier,
+  role,
+  select = { id: true }
+) => {
+  const where = {
+    ...(typeof identifier === "string" && identifier.includes("@")
+      ? { email: identifier }
+      : { id: identifier }),
+    role: role.toLowerCase(),
+  };
 
-  const model = role.toLowerCase() === 'admin' ? 'admin' : role.toLowerCase();
-  return prisma[model].findUnique({
+  // Include role-specific data based on the role
+  const include = {};
+  switch (role.toLowerCase()) {
+    case "student":
+      include.student = true;
+      break;
+    case "alumni":
+      include.alumni = true;
+      break;
+    case "faculty":
+      include.faculty = true;
+      break;
+    case "admin":
+      include.admin = true;
+      break;
+  }
+
+  return prisma.user.findUnique({
     where,
-    select
+    select: {
+      ...select,
+      // Always include the role-specific relation if not already in select
+      ...(Object.keys(include).length > 0 && !select[Object.keys(include)[0]]
+        ? include
+        : {}),
+    },
   });
 };
 
@@ -68,41 +102,43 @@ export const createUser = async (userData, role) => {
     const { password, confirmPassword, role: userRole, ...rest } = userData;
     const hashedPassword = await hashPassword(password);
 
-    console.log('Creating user with data:', {
+    console.log("Creating user with data:", {
       ...rest,
       role,
-      hashedPasswordLength: hashedPassword.length
+      hashedPasswordLength: hashedPassword.length,
     });
 
     const newUser = await prisma[role.toLowerCase()].create({
       data: {
         ...rest,
-        password: hashedPassword
-      }
+        password: hashedPassword,
+      },
     });
 
-    console.log('User created successfully:', {
+    console.log("User created successfully:", {
       id: newUser.id,
       email: newUser.email,
-      role
+      role,
     });
 
     return newUser;
   } catch (error) {
-    console.error('Error creating user:', {
+    console.error("Error creating user:", {
       error: error.message,
       code: error.code,
-      meta: error.meta
+      meta: error.meta,
     });
 
-    if (error.code === 'P2002') {
-      throw new AppError(`${error.meta?.target?.[0] || 'Field'} already exists`, 409);
+    if (error.code === "P2002") {
+      throw new AppError(
+        `${error.meta?.target?.[0] || "Field"} already exists`,
+        409
+      );
     }
 
     throw error;
   }
 };
-
 
 const validateStudentFields = (data) => {
   const { department, currentSemester, rollNumber } = data;
@@ -144,4 +180,4 @@ export const validateUserData = (data, role) => {
     default:
       throw new AppError("Invalid role specified", 400);
   }
-}; 
+};
