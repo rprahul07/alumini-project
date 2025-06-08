@@ -1,95 +1,98 @@
 // ✅ Cleaned & Optimized - Placeholder-safe
-import React, { useState } from 'react';
-import { FcGoogle } from 'react-icons/fc';
-import { EnvelopeIcon, LockClosedIcon, UserIcon, PhoneIcon, AcademicCapIcon, BriefcaseIcon, UserGroupIcon, BuildingOfficeIcon } from '@heroicons/react/24/outline';
-import Alert from '../components/Alert';
-import useAlert from '../hooks/useAlert';
+import React, { useState } from "react";
+import { FcGoogle } from "react-icons/fc";
+import {
+  EnvelopeIcon,
+  LockClosedIcon,
+  UserIcon,
+  PhoneIcon,
+  AcademicCapIcon,
+  BriefcaseIcon,
+  UserGroupIcon,
+  BuildingOfficeIcon,
+} from "@heroicons/react/24/outline";
+import Alert from "../components/Alert";
+import useAlert from "../hooks/useAlert";
 
-const AuthForm = ({
-  authType,
-  userRole,
-  onSubmit,
-  error,
-  loading,
-}) => {
+const AuthForm = ({ authType, userRole, onSubmit, error, loading }) => {
   const { alert, showAlert, clearAlert, handleError } = useAlert();
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    confirmPassword: '',
-    fullName: '',
-    phoneNumber: '',
-    department: '',
-    currentSemester: '',
-    rollNumber: '',
-    graduationYear: '',
-    currentJobTitle: '',
-    companyName: '',
-    designation: '',
+    email: "",
+    password: "",
+    confirmPassword: "",
+    fullName: "",
+    phoneNumber: "",
+    department: "",
+    currentSemester: "",
+    rollNumber: "",
+    graduationYear: "",
+    currentJobTitle: "",
+    companyName: "",
+    designation: "",
   });
   const [formErrors, setFormErrors] = useState({});
 
   const validateForm = () => {
     const errors = {};
-    
+
     if (!formData.email.trim()) {
-      errors.email = 'Email is required';
+      errors.email = "Email is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      errors.email = 'Please enter a valid email address';
+      errors.email = "Please enter a valid email address";
     }
 
     if (!formData.password) {
-      errors.password = 'Password is required';
+      errors.password = "Password is required";
     } else if (formData.password.length < 6) {
-      errors.password = 'Password must be at least 6 characters';
+      errors.password = "Password must be at least 6 characters";
     }
 
-    if (authType === 'register') {
+    if (authType === "register") {
       if (!formData.confirmPassword) {
-        errors.confirmPassword = 'Please confirm your password';
+        errors.confirmPassword = "Please confirm your password";
       } else if (formData.password !== formData.confirmPassword) {
-        errors.confirmPassword = 'Passwords do not match';
+        errors.confirmPassword = "Passwords do not match";
       }
 
       if (!formData.fullName.trim()) {
-        errors.fullName = 'Full name is required';
+        errors.fullName = "Full name is required";
       }
 
       if (!formData.phoneNumber.trim()) {
-        errors.phoneNumber = 'Phone number is required';
+        errors.phoneNumber = "Phone number is required";
       }
 
       if (!formData.department.trim()) {
-        errors.department = 'Department is required';
+        errors.department = "Department is required";
       }
 
-      if (userRole === 'student') {
+      if (userRole === "student") {
         if (!formData.currentSemester.trim()) {
-          errors.currentSemester = 'Current semester is required';
+          errors.currentSemester = "Current semester is required";
         }
         if (!formData.rollNumber.trim()) {
-          errors.rollNumber = 'Roll number is required';
+          errors.rollNumber = "Roll number is required";
         }
-      } else if (userRole === 'alumni') {
+      } else if (userRole === "alumni") {
         if (!formData.graduationYear) {
-          errors.graduationYear = 'Graduation year is required';
+          errors.graduationYear = "Graduation year is required";
         }
         if (!formData.currentJobTitle.trim()) {
-          errors.currentJobTitle = 'Current job title is required';
+          errors.currentJobTitle = "Current job title is required";
         }
         if (!formData.companyName.trim()) {
-          errors.companyName = 'Company name is required';
+          errors.companyName = "Company name is required";
         }
-      } else if (userRole === 'faculty') {
+      } else if (userRole === "faculty") {
         if (!formData.designation.trim()) {
-          errors.designation = 'Designation is required';
+          errors.designation = "Designation is required";
         }
       }
     }
 
     if (Object.keys(errors).length > 0) {
       const firstError = Object.values(errors)[0];
-      showAlert(firstError, 'error');
+      showAlert(firstError, "error");
     }
 
     return errors;
@@ -97,14 +100,14 @@ const AuthForm = ({
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
     if (formErrors[name]) {
-      setFormErrors(prev => ({
+      setFormErrors((prev) => ({
         ...prev,
-        [name]: ''
+        [name]: "",
       }));
     }
   };
@@ -112,7 +115,7 @@ const AuthForm = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
     clearAlert();
-    
+
     const errors = validateForm();
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
@@ -120,7 +123,7 @@ const AuthForm = ({
     }
 
     try {
-      if (authType === 'login') {
+      if (authType === "login") {
         const loginData = {
           email: formData.email,
           password: formData.password,
@@ -138,33 +141,40 @@ const AuthForm = ({
           role: userRole,
         };
 
-        if (userRole === 'student') {
+        if (userRole === "student") {
           Object.assign(registerData, {
             currentSemester: formData.currentSemester,
             rollNumber: formData.rollNumber,
           });
-        } else if (userRole === 'alumni') {
+        } else if (userRole === "alumni") {
           Object.assign(registerData, {
             graduationYear: parseInt(formData.graduationYear),
             currentJobTitle: formData.currentJobTitle,
             companyName: formData.companyName,
           });
-        } else if (userRole === 'faculty') {
+        } else if (userRole === "faculty") {
           Object.assign(registerData, {
             designation: formData.designation,
           });
         }
 
+        console.log("Its getting here");
         await onSubmit(registerData);
       }
     } catch (err) {
       handleError(err);
-      if (err.message.includes('Invalid email or password')) {
-        showAlert('Invalid email or password. Please try again.', 'error');
-      } else if (err.message.includes('Email already exists')) {
-        showAlert('This email is already registered. Please try logging in.', 'error');
+      if (err.message.includes("Invalid email or password")) {
+        showAlert("Invalid email or password. Please try again.", "error");
+      } else if (err.message.includes("Email already exists")) {
+        showAlert(
+          "This email is already registered. Please try logging in.",
+          "error"
+        );
       } else {
-        showAlert(err.message || 'An error occurred. Please try again.', 'error');
+        showAlert(
+          err.message || "An error occurred. Please try again.",
+          "error"
+        );
       }
     }
   };
@@ -184,13 +194,7 @@ const AuthForm = ({
         />
       )}
 
-      {error && (
-        <Alert
-          type="error"
-          message={error}
-          className="mb-4"
-        />
-      )}
+      {error && <Alert type="error" message={error} className="mb-4" />}
 
       <div className="space-y-4">
         <button
@@ -216,10 +220,13 @@ const AuthForm = ({
       </div>
 
       <div className="space-y-4">
-        {authType === 'register' && (
+        {authType === "register" && (
           <>
             <div>
-              <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="fullName"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Full Name
               </label>
               <div className="mt-1 relative rounded-lg shadow-sm">
@@ -239,12 +246,17 @@ const AuthForm = ({
                 />
               </div>
               {formErrors.fullName && (
-                <p className="mt-1 text-sm text-red-600">{formErrors.fullName}</p>
+                <p className="mt-1 text-sm text-red-600">
+                  {formErrors.fullName}
+                </p>
               )}
             </div>
 
             <div>
-              <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="phoneNumber"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Phone Number
               </label>
               <div className="mt-1 relative rounded-lg shadow-sm">
@@ -264,12 +276,17 @@ const AuthForm = ({
                 />
               </div>
               {formErrors.phoneNumber && (
-                <p className="mt-1 text-sm text-red-600">{formErrors.phoneNumber}</p>
+                <p className="mt-1 text-sm text-red-600">
+                  {formErrors.phoneNumber}
+                </p>
               )}
             </div>
 
             <div>
-              <label htmlFor="department" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="department"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Department
               </label>
               <div className="mt-1 relative rounded-lg shadow-sm">
@@ -289,14 +306,19 @@ const AuthForm = ({
                 />
               </div>
               {formErrors.department && (
-                <p className="mt-1 text-sm text-red-600">{formErrors.department}</p>
+                <p className="mt-1 text-sm text-red-600">
+                  {formErrors.department}
+                </p>
               )}
             </div>
 
-            {userRole === 'student' && (
+            {userRole === "student" && (
               <>
                 <div>
-                  <label htmlFor="currentSemester" className="block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="currentSemester"
+                    className="block text-sm font-medium text-gray-700"
+                  >
                     Current Semester
                   </label>
                   <div className="mt-1 relative rounded-lg shadow-sm">
@@ -316,12 +338,17 @@ const AuthForm = ({
                     />
                   </div>
                   {formErrors.currentSemester && (
-                    <p className="mt-1 text-sm text-red-600">{formErrors.currentSemester}</p>
+                    <p className="mt-1 text-sm text-red-600">
+                      {formErrors.currentSemester}
+                    </p>
                   )}
                 </div>
 
                 <div>
-                  <label htmlFor="rollNumber" className="block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="rollNumber"
+                    className="block text-sm font-medium text-gray-700"
+                  >
                     Roll Number
                   </label>
                   <div className="mt-1 relative rounded-lg shadow-sm">
@@ -341,16 +368,21 @@ const AuthForm = ({
                     />
                   </div>
                   {formErrors.rollNumber && (
-                    <p className="mt-1 text-sm text-red-600">{formErrors.rollNumber}</p>
+                    <p className="mt-1 text-sm text-red-600">
+                      {formErrors.rollNumber}
+                    </p>
                   )}
                 </div>
               </>
             )}
 
-            {userRole === 'alumni' && (
+            {userRole === "alumni" && (
               <>
                 <div>
-                  <label htmlFor="graduationYear" className="block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="graduationYear"
+                    className="block text-sm font-medium text-gray-700"
+                  >
                     Graduation Year
                   </label>
                   <div className="mt-1 relative rounded-lg shadow-sm">
@@ -370,12 +402,17 @@ const AuthForm = ({
                     />
                   </div>
                   {formErrors.graduationYear && (
-                    <p className="mt-1 text-sm text-red-600">{formErrors.graduationYear}</p>
+                    <p className="mt-1 text-sm text-red-600">
+                      {formErrors.graduationYear}
+                    </p>
                   )}
                 </div>
 
                 <div>
-                  <label htmlFor="currentJobTitle" className="block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="currentJobTitle"
+                    className="block text-sm font-medium text-gray-700"
+                  >
                     Current Job Title
                   </label>
                   <div className="mt-1 relative rounded-lg shadow-sm">
@@ -395,12 +432,17 @@ const AuthForm = ({
                     />
                   </div>
                   {formErrors.currentJobTitle && (
-                    <p className="mt-1 text-sm text-red-600">{formErrors.currentJobTitle}</p>
+                    <p className="mt-1 text-sm text-red-600">
+                      {formErrors.currentJobTitle}
+                    </p>
                   )}
                 </div>
 
                 <div>
-                  <label htmlFor="companyName" className="block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="companyName"
+                    className="block text-sm font-medium text-gray-700"
+                  >
                     Company Name
                   </label>
                   <div className="mt-1 relative rounded-lg shadow-sm">
@@ -420,15 +462,20 @@ const AuthForm = ({
                     />
                   </div>
                   {formErrors.companyName && (
-                    <p className="mt-1 text-sm text-red-600">{formErrors.companyName}</p>
+                    <p className="mt-1 text-sm text-red-600">
+                      {formErrors.companyName}
+                    </p>
                   )}
                 </div>
               </>
             )}
 
-            {userRole === 'faculty' && (
+            {userRole === "faculty" && (
               <div>
-                <label htmlFor="designation" className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="designation"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Designation
                 </label>
                 <div className="mt-1 relative rounded-lg shadow-sm">
@@ -448,7 +495,9 @@ const AuthForm = ({
                   />
                 </div>
                 {formErrors.designation && (
-                  <p className="mt-1 text-sm text-red-600">{formErrors.designation}</p>
+                  <p className="mt-1 text-sm text-red-600">
+                    {formErrors.designation}
+                  </p>
                 )}
               </div>
             )}
@@ -456,7 +505,10 @@ const AuthForm = ({
         )}
 
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-gray-700"
+          >
             Email Address
           </label>
           <div className="mt-1 relative rounded-lg shadow-sm">
@@ -481,7 +533,10 @@ const AuthForm = ({
         </div>
 
         <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="password"
+            className="block text-sm font-medium text-gray-700"
+          >
             Password
           </label>
           <div className="mt-1 relative rounded-lg shadow-sm">
@@ -505,9 +560,12 @@ const AuthForm = ({
           )}
         </div>
 
-        {authType === 'register' && (
+        {authType === "register" && (
           <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="confirmPassword"
+              className="block text-sm font-medium text-gray-700"
+            >
               Confirm Password
             </label>
             <div className="mt-1 relative rounded-lg shadow-sm">
@@ -527,7 +585,9 @@ const AuthForm = ({
               />
             </div>
             {formErrors.confirmPassword && (
-              <p className="mt-1 text-sm text-red-600">{formErrors.confirmPassword}</p>
+              <p className="mt-1 text-sm text-red-600">
+                {formErrors.confirmPassword}
+              </p>
             )}
           </div>
         )}
@@ -540,14 +600,32 @@ const AuthForm = ({
           >
             {loading ? (
               <span className="flex items-center">
-                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                <svg
+                  className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
                 </svg>
-                {authType === 'login' ? 'Signing in...' : 'Creating account...'}
+                {authType === "login" ? "Signing in..." : "Creating account..."}
               </span>
+            ) : authType === "login" ? (
+              "Sign In"
             ) : (
-              authType === 'login' ? 'Sign In' : 'Create Account'
+              "Create Account"
             )}
           </button>
         </div>

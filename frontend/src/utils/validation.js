@@ -9,23 +9,23 @@ export const PASSWORD_REQUIREMENTS = {
 
 // Input sanitization function
 export const sanitizeInput = (value, fieldName) => {
-  if (typeof value !== 'string') return value;
-  
+  if (typeof value !== "string") return value;
+
   // Basic XSS prevention
   let sanitized = value
-    .replace(/[<>]/g, '') // Remove < and >
+    .replace(/[<>]/g, "") // Remove < and >
     .trim();
 
   // Field-specific sanitization
   switch (fieldName) {
-    case 'email':
+    case "email":
       return sanitized.toLowerCase();
-    case 'phoneNumber':
-      return sanitized.replace(/[^0-9+\-\s]/g, ''); // Keep only numbers, +, -, and spaces
-    case 'graduationYear':
-      return sanitized.replace(/[^0-9]/g, ''); // Keep only numbers
-    case 'currentSemester':
-      return sanitized.replace(/[^0-9]/g, ''); // Keep only numbers
+    case "phoneNumber":
+      return sanitized.replace(/[^0-9+\-\s]/g, ""); // Keep only numbers, +, -, and spaces
+    case "graduationYear":
+      return sanitized.replace(/[^0-9]/g, ""); // Keep only numbers
+    case "currentSemester":
+      return sanitized.replace(/[^0-9]/g, ""); // Keep only numbers
     default:
       return sanitized;
   }
@@ -48,23 +48,28 @@ const validatePassword = (password) => {
   const errors = [];
 
   if (password.length < PASSWORD_REQUIREMENTS.minLength) {
-    errors.push(`Password must be at least ${PASSWORD_REQUIREMENTS.minLength} characters long`);
+    errors.push(
+      `Password must be at least ${PASSWORD_REQUIREMENTS.minLength} characters long`
+    );
   }
 
   if (PASSWORD_REQUIREMENTS.requireUppercase && !/[A-Z]/.test(password)) {
-    errors.push('Password must contain at least one uppercase letter');
+    errors.push("Password must contain at least one uppercase letter");
   }
 
   if (PASSWORD_REQUIREMENTS.requireLowercase && !/[a-z]/.test(password)) {
-    errors.push('Password must contain at least one lowercase letter');
+    errors.push("Password must contain at least one lowercase letter");
   }
 
   if (PASSWORD_REQUIREMENTS.requireNumber && !/[0-9]/.test(password)) {
-    errors.push('Password must contain at least one number');
+    errors.push("Password must contain at least one number");
   }
 
-  if (PASSWORD_REQUIREMENTS.requireSpecialChar && !/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
-    errors.push('Password must contain at least one special character');
+  if (
+    PASSWORD_REQUIREMENTS.requireSpecialChar &&
+    !/[!@#$%^&*(),.?":{}|<>]/.test(password)
+  ) {
+    errors.push("Password must contain at least one special character");
   }
 
   return errors;
@@ -73,91 +78,92 @@ const validatePassword = (password) => {
 // Main form validation function
 export const validateForm = (formData, authType, userRole) => {
   const errors = {};
-
+  console.log("before email");
   // Email validation
   if (!formData.email) {
-    errors.email = 'Email is required';
+    errors.email = "Email is required";
   } else if (!isValidEmail(formData.email)) {
-    errors.email = 'Please enter a valid email address';
+    errors.email = "Please enter a valid email address";
   }
-
+  console.log("after email");
+  console.log("before pass");
   // Password validation
   if (!formData.password) {
-    errors.password = 'Password is required';
-  } else if (authType === 'register') {
+    errors.password = "Password is required";
+  } else if (authType === "register") {
     const passwordErrors = validatePassword(formData.password);
     if (passwordErrors.length > 0) {
       errors.password = passwordErrors[0];
     }
   }
-
+  console.log("after pass");
   // Registration-specific validations
-  if (authType === 'register') {
+  if (authType === "register") {
     // Full Name validation
     if (!formData.fullName) {
-      errors.fullName = 'Full name is required';
+      errors.fullName = "Full name is required";
     } else if (formData.fullName.length < 2) {
-      errors.fullName = 'Full name must be at least 2 characters long';
+      errors.fullName = "Full name must be at least 2 characters long";
     }
 
     // Phone Number validation
     if (!formData.phoneNumber) {
-      errors.phoneNumber = 'Phone number is required';
+      errors.phoneNumber = "Phone number is required";
     } else if (!isValidPhone(formData.phoneNumber)) {
-      errors.phoneNumber = 'Please enter a valid phone number';
+      errors.phoneNumber = "Please enter a valid phone number";
     }
 
     // Confirm Password validation
     if (!formData.confirmPassword) {
-      errors.confirmPassword = 'Please confirm your password';
+      errors.confirmPassword = "Please confirm your password";
     } else if (formData.password !== formData.confirmPassword) {
-      errors.confirmPassword = 'Passwords do not match';
+      errors.confirmPassword = "Passwords do not match";
     }
 
     // Role-specific validations
-    if (userRole === 'student') {
+    if (userRole === "student") {
       if (!formData.currentSemester) {
-        errors.currentSemester = 'Current semester is required';
+        errors.currentSemester = "Current semester is required";
       } else if (formData.currentSemester < 1 || formData.currentSemester > 8) {
-        errors.currentSemester = 'Semester must be between 1 and 8';
+        errors.currentSemester = "Semester must be between 1 and 8";
       }
 
       if (!formData.rollNumber) {
-        errors.rollNumber = 'Roll number is required';
+        errors.rollNumber = "Roll number is required";
       }
     }
 
-    if (userRole === 'alumni') {
+    if (userRole === "alumni") {
       if (!formData.graduationYear) {
-        errors.graduationYear = 'Graduation year is required';
+        errors.graduationYear = "Graduation year is required";
       } else {
         const year = parseInt(formData.graduationYear);
         const currentYear = new Date().getFullYear();
         if (year < 1950 || year > currentYear) {
-          errors.graduationYear = 'Please enter a valid graduation year';
+          errors.graduationYear = "Please enter a valid graduation year";
         }
       }
 
       if (!formData.currentJobTitle) {
-        errors.currentJobTitle = 'Current job title is required';
+        errors.currentJobTitle = "Current job title is required";
       }
 
       if (!formData.companyName) {
-        errors.companyName = 'Company name is required';
+        errors.companyName = "Company name is required";
       }
     }
 
-    if (userRole === 'faculty') {
+    if (userRole === "faculty") {
       if (!formData.designation) {
-        errors.designation = 'Designation is required';
+        errors.designation = "Designation is required";
       }
     }
 
     // Department validation for all roles
     if (!formData.department) {
-      errors.department = 'Department is required';
+      errors.department = "Department is required";
     }
   }
 
   return errors;
-}; 
+};

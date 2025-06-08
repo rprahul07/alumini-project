@@ -6,7 +6,7 @@ import {
   validateUserData,
   checkEmailExists,
   findUserByRole,
-  verifyPassword
+  verifyPassword,
 } from "../services/user.service.js";
 import { createStudent } from "./student.controller.js";
 import { createAlumni } from "./alumni_controller.js";
@@ -45,16 +45,14 @@ export const signup = async (req, res) => {
 
     generateTokenAndSetCookie(newUser.id, role, res);
 
-    res.status(201).json(createResponse(
-      true,
-      `${role} registered successfully`,
-      {
+    res.status(201).json(
+      createResponse(true, `${role} registered successfully`, {
         _id: newUser.id,
         fullName: newUser.fullName,
         email: newUser.email,
-        role
-      }
-    ));
+        role,
+      })
+    );
   } catch (error) {
     handleError(error, req, res);
   }
@@ -72,25 +70,23 @@ export const login = async (req, res) => {
       id: true,
       fullName: true,
       email: true,
-      password: true
+      password: true,
     });
 
     if (!user || !(await verifyPassword(password, user.password))) {
-      throw new AppError("Invalid email or password", 401);
+      throw new AppError("Invalid emkjnfwjail or password", 401);
     }
 
     generateTokenAndSetCookie(user.id, role, res);
-    
-    res.status(200).json(createResponse(
-      true,
-      "Logged in successfully",
-      {
+
+    res.status(200).json(
+      createResponse(true, "Logged in successfully", {
         _id: user.id,
         fullName: user.fullName,
         email: user.email,
-        role
-      }
-    ));
+        role,
+      })
+    );
   } catch (error) {
     handleError(error, req, res);
   }
@@ -111,27 +107,25 @@ export const checkAuth = async (req, res) => {
       throw new AppError("Not authenticated", 401);
     }
 
-    const user = await findUserByRole(
-      req.user.id,
-      req.user.role,
-      { id: true, fullName: true, email: true }
-    );
+    const user = await findUserByRole(req.user.id, req.user.role, {
+      id: true,
+      fullName: true,
+      email: true,
+    });
 
     if (!user) {
       throw new AppError("User not found", 404);
     }
 
-    res.json(createResponse(
-      true,
-      "User authenticated",
-      {
+    res.json(
+      createResponse(true, "User authenticated", {
         _id: user.id,
         fullName: user.fullName,
         email: user.email,
-        role: req.user.role
-      }
-    ));
+        role: req.user.role,
+      })
+    );
   } catch (error) {
     handleError(error, req, res);
   }
-}; 
+};

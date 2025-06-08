@@ -16,7 +16,9 @@ const AuthPage = ({ onAuthSuccess = () => {} }) => {
   const { login, register, error: authError } = useAuth();
 
   const [authType, setAuthType] = useState("login");
-  const [userRole, setUserRole] = useState(localStorage.getItem("selectedRole"));
+  const [userRole, setUserRole] = useState(
+    localStorage.getItem("selectedRole")
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
   const [lockoutTime, setLockoutTime] = useState(0);
@@ -31,7 +33,12 @@ const AuthPage = ({ onAuthSuccess = () => {} }) => {
         setIsLocked(true);
         setLockoutTime((LOCKOUT_DURATION - delta) / 1000);
         setLoginAttempts(lock.attempts);
-        showAlert(`Account locked. Try again in ${Math.ceil((LOCKOUT_DURATION - delta) / 60000)} minutes.`, 'error');
+        showAlert(
+          `Account locked. Try again in ${Math.ceil(
+            (LOCKOUT_DURATION - delta) / 60000
+          )} minutes.`,
+          "error"
+        );
       } else {
         localStorage.removeItem("authLockout");
       }
@@ -64,14 +71,17 @@ const AuthPage = ({ onAuthSuccess = () => {} }) => {
   // Handle form submission
   const handleSubmit = async (formData) => {
     clearAlert();
-
     if (isLocked) {
-      showAlert(`Account locked. Try again in ${Math.ceil(lockoutTime / 60)} minutes.`, 'error');
+      showAlert(
+        `Account locked. Try again in ${Math.ceil(lockoutTime / 60)} minutes.`,
+        "error"
+      );
       return;
     }
-
+    console.log("before valid");
     const validationErrors = validateForm(formData, authType, userRole);
     if (Object.keys(validationErrors).length) return;
+    console.log("alfter valid");
 
     setIsLoading(true);
 
@@ -79,23 +89,23 @@ const AuthPage = ({ onAuthSuccess = () => {} }) => {
       const apiData = { ...formData, role: userRole };
 
       if (authType === "login") {
-        console.log('Attempting login with data:', apiData);
+        console.log("Attempting login with data:", apiData);
         const resp = await login(apiData);
-        console.log('Login response:', resp);
+        console.log("Login response:", resp);
 
         if (resp.success) {
-          console.log('Login successful, setting up navigation...');
+          console.log("Login successful, setting up navigation...");
           localStorage.removeItem("authLockout");
           localStorage.setItem("userRole", userRole);
           onAuthSuccess(userRole);
           showAlert("Successfully logged in!", "success");
-          
-          console.log('Current userRole:', userRole);
-          console.log('Stored userRole:', localStorage.getItem('userRole'));
-          
+
+          console.log("Current userRole:", userRole);
+          console.log("Stored userRole:", localStorage.getItem("userRole"));
+
           setTimeout(() => {
-            console.log('Attempting navigation to dashboard...');
-            navigate('/dashboard', { replace: true });
+            console.log("Attempting navigation to dashboard...");
+            navigate("/dashboard", { replace: true });
           }, 500);
         } else {
           handleFailedLogin();
@@ -108,7 +118,7 @@ const AuthPage = ({ onAuthSuccess = () => {} }) => {
         }
       }
     } catch (err) {
-      console.error('Login error:', err);
+      console.error("Login error:", err);
       handleError(err);
     } finally {
       setIsLoading(false);
@@ -127,9 +137,19 @@ const AuthPage = ({ onAuthSuccess = () => {} }) => {
         "authLockout",
         JSON.stringify({ timestamp: Date.now(), attempts })
       );
-      showAlert(`Too many failed attempts. Account locked for ${LOCKOUT_DURATION / 60000} minutes.`, 'error');
+      showAlert(
+        `Too many failed attempts. Account locked for ${
+          LOCKOUT_DURATION / 60000
+        } minutes.`,
+        "error"
+      );
     } else {
-      showAlert(`Invalid credentials. ${MAX_LOGIN_ATTEMPTS - attempts} attempts remaining.`, 'error');
+      showAlert(
+        `Invalid credentials. ${
+          MAX_LOGIN_ATTEMPTS - attempts
+        } attempts remaining.`,
+        "error"
+      );
     }
   };
 
@@ -156,7 +176,9 @@ const AuthPage = ({ onAuthSuccess = () => {} }) => {
               {authType === "login" ? "Welcome Back!" : "Join Our Community"}
             </h2>
             <p className="mt-2 text-sm text-gray-600">
-              {authType === "login" ? "Sign in to access your dashboard" : "Create your account to get started"}
+              {authType === "login"
+                ? "Sign in to access your dashboard"
+                : "Create your account to get started"}
             </p>
           </div>
         </div>
