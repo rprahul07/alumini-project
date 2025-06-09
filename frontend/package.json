@@ -7,9 +7,12 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "prepare": "husky install"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.7.2",
+    "@heroicons/react": "^2.2.0",
     "@reduxjs/toolkit": "^2.2.1",
     "axios": "^1.6.7",
     "formik": "^2.4.5",
@@ -34,6 +37,17 @@
     "globals": "^13.24.0",
     "postcss": "^8.4.35",
     "tailwindcss": "^3.4.1",
-    "vite": "^6.3.5"
+    "vite": "^6.3.5",
+
+   
+    "prettier": "^3.2.5",
+    "prettier-plugin-tailwindcss": "^0.6.1",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.2",
+    "vite-plugin-svgr": "^3.2.0"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": "eslint --fix",
+    "*.{js,jsx,ts,tsx,json,css,md}": "prettier --write"
   }
 }
