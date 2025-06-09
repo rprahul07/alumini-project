@@ -13,6 +13,8 @@ import {
   validatePassword,
   validateUserData,
 } from "../../services/user_service.js";
+import multer from "multer";
+import { handlePhotoUpload } from "../../utils/handlePhotoUpload.utils.js";
 
 export const createStudent = async (userData) => {
   const {
@@ -112,9 +114,11 @@ export const getStudentById = async (req, res) => {
     }
 
     const userIdInt = parseInt(req.query.userId);
-                if (isNaN(userIdInt)) {
-                      return res.status(400).json({ success: false, message: "Invalid user ID" });
-}
+    if (isNaN(userIdInt)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid user ID" });
+    }
 
     const user = await prisma.user.findUnique({
       where: { id: userIdInt },
@@ -233,9 +237,11 @@ export const deleteStudentById = async (req, res) => {
     }
 
     const userIdInt = parseInt(req.query.userId);
-                if (isNaN(userIdInt)) {
-                      return res.status(400).json({ success: false, message: "Invalid user ID" });
-}
+    if (isNaN(userIdInt)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid user ID" });
+    }
 
     // Check if user exists and is a student
     const user = await prisma.user.findUnique({
@@ -301,15 +307,17 @@ export const deleteStudentById = async (req, res) => {
 
 export const updateStudentById = async (req, res) => {
   try {
-    const { userId } = req.params;
+    const userId = req.query.userId;
     const {
       fullName,
       email,
       phoneNumber,
       department,
-      photoUrl,
+      bio,
+      linkedinUrl,
       currentSemester,
       rollNumber,
+      graduationYear,
     } = req.body;
 
     if (!userId) {
@@ -319,10 +327,13 @@ export const updateStudentById = async (req, res) => {
       });
     }
 
-    const userIdInt = parseInt(req.query.userId);
-                if (isNaN(userIdInt)) {
-                      return res.status(400).json({ success: false, message: "Invalid user ID" });
-}
+    const userIdInt = parseInt(userId);
+    if (isNaN(userIdInt)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid user ID",
+      });
+    }
 
     // Check if user exists and is a student
     const user = await prisma.user.findUnique({
@@ -353,35 +364,55 @@ export const updateStudentById = async (req, res) => {
       });
     }
 
+    const newPhotoUrl = await handlePhotoUpload(req, user.photoUrl);
+
     // Prepare update data for User table
     const userUpdateData = {};
     if (fullName !== undefined) userUpdateData.fullName = fullName;
     if (email !== undefined) userUpdateData.email = email;
     if (phoneNumber !== undefined) userUpdateData.phoneNumber = phoneNumber;
     if (department !== undefined) userUpdateData.department = department;
-    if (photoUrl !== undefined) userUpdateData.photoUrl = photoUrl;
+    if (bio !== undefined) userUpdateData.bio = bio;
+    if (linkedinUrl !== undefined) userUpdateData.linkedinUrl = linkedinUrl;
+    if (newPhotoUrl) userUpdateData.photoUrl = newPhotoUrl;
 
     // Prepare update data for Student table
     const studentUpdateData = {};
-    if (currentSemester !== undefined)
-      studentUpdateData.currentSemester = currentSemester;
+    if (currentSemester !== undefined) {
+      const currentSemesterInt = parseInt(currentSemester);
+      if (isNaN(currentSemesterInt)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid current semester format",
+        });
+      }
+      studentUpdateData.currentSemester = currentSemesterInt;
+    }
     if (rollNumber !== undefined) studentUpdateData.rollNumber = rollNumber;
+    if (graduationYear !== undefined) {
+      const graduationYearInt = parseInt(graduationYear);
+      if (isNaN(graduationYearInt)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid graduation year format",
+        });
+      }
+      studentUpdateData.graduationYear = graduationYearInt;
+    }
 
     // Update both User and Student records using transaction
     const updatedData = await prisma.$transaction(async (prisma) => {
       // Update User record if there's data to update
-      let updatedUser = user;
       if (Object.keys(userUpdateData).length > 0) {
-        updatedUser = await prisma.user.update({
+        await prisma.user.update({
           where: { id: userIdInt },
           data: userUpdateData,
         });
       }
 
       // Update Student record if there's data to update
-      let updatedStudent = user.student;
       if (Object.keys(studentUpdateData).length > 0) {
-        updatedStudent = await prisma.student.update({
+        await prisma.student.update({
           where: { userId: userIdInt },
           data: studentUpdateData,
         });
@@ -398,11 +429,14 @@ export const updateStudentById = async (req, res) => {
           department: true,
           role: true,
           photoUrl: true,
+          bio: true,
+          linkedinUrl: true,
           student: {
             select: {
               id: true,
               currentSemester: true,
               rollNumber: true,
+              graduationYear: true,
             },
           },
         },
@@ -416,6 +450,28 @@ export const updateStudentById = async (req, res) => {
     });
   } catch (error) {
     console.error("Error updating student by ID:", error);
+
+    // Handle multer errors
+    if (error instanceof multer.MulterError) {
+      if (error.code === "LIMIT_FILE_SIZE") {
+        return res.status(400).json({
+          success: false,
+          message: "File size too large. Maximum size is 5MB",
+        });
+      }
+      return res.status(400).json({
+        success: false,
+        message: "File upload error",
+      });
+    }
+
+    // Handle file type error
+    if (error.message.includes("Only image files are allowed")) {
+      return res.status(400).json({
+        success: false,
+        message: "Only image files are allowed (JPEG, PNG, GIF, WebP)",
+      });
+    }
 
     // Handle specific Prisma errors
     if (error.code === "P2002") {
@@ -433,7 +489,7 @@ export const updateStudentById = async (req, res) => {
     }
 
     return res.status(500).json({
-      success: false,
+      success: true,
       message: "Internal server error",
       error: error.message,
     });

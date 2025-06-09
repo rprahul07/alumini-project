@@ -3,6 +3,8 @@ import { createResponse, handleError } from "../../utils/response.utils.js";
 import generateTokenAndSetCookie from "../../utils/generateTocken.js";
 import prisma from "../../lib/prisma.js";
 import { hashPassword } from "../../services/user_service.js";
+import multer from "multer";
+import { handlePhotoUpload } from "../../utils/handlePhotoUpload.utils.js";
 
 export const createAlumni = async (userData) => {
   const {
@@ -89,7 +91,7 @@ export const getAlumniById = async (req, res) => {
       });
     }
 
-    const userIdInt = parseInt( req.query.userId); // use req.query.userId if needed
+    const userIdInt = parseInt(req.query.userId); // use req.query.userId if needed
 
     if (isNaN(userIdInt)) {
       return res.status(400).json({
@@ -223,10 +225,12 @@ export const deleteAlumniById = async (req, res) => {
       });
     }
 
-   const userIdInt = parseInt(req.query.userId);
-                if (isNaN(userIdInt)) {
-                      return res.status(400).json({ success: false, message: "Invalid user ID" });
-}
+    const userIdInt = parseInt(req.query.userId);
+    if (isNaN(userIdInt)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid user ID" });
+    }
 
     // Check if user exists and is an alumni
     const user = await prisma.user.findUnique({
@@ -292,17 +296,20 @@ export const deleteAlumniById = async (req, res) => {
 
 export const updateAlumniById = async (req, res) => {
   try {
-    const { userId } = req.params;
+    const userId = req.query.userId;
+
     const {
       fullName,
       email,
       phoneNumber,
       department,
-      photoUrl,
+      bio,
+      linkedinUrl,
       graduationYear,
       course,
       currentJobTitle,
       companyName,
+      workExperience,
     } = req.body;
 
     if (!userId) {
@@ -312,16 +319,22 @@ export const updateAlumniById = async (req, res) => {
       });
     }
 
-   const userIdInt = parseInt(req.query.userId);
-                if (isNaN(userIdInt)) {
-                      return res.status(400).json({ success: false, message: "Invalid user ID" });
-}
+    const userIdInt = parseInt(userId);
+    if (isNaN(userIdInt)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid user ID" });
+    }
 
     // Check if user exists and is an alumni
     const user = await prisma.user.findUnique({
       where: { id: userIdInt },
       include: {
-        alumni: true,
+        alumni: {
+          include: {
+            workExperience: true,
+          },
+        },
       },
     });
 
@@ -346,13 +359,18 @@ export const updateAlumniById = async (req, res) => {
       });
     }
 
+    // Handle photo upload using utility function
+    const newPhotoUrl = await handlePhotoUpload(req, user.photoUrl);
+
     // Prepare update data for User table
     const userUpdateData = {};
     if (fullName !== undefined) userUpdateData.fullName = fullName;
     if (email !== undefined) userUpdateData.email = email;
     if (phoneNumber !== undefined) userUpdateData.phoneNumber = phoneNumber;
     if (department !== undefined) userUpdateData.department = department;
-    if (photoUrl !== undefined) userUpdateData.photoUrl = photoUrl;
+    if (bio !== undefined) userUpdateData.bio = bio;
+    if (linkedinUrl !== undefined) userUpdateData.linkedinUrl = linkedinUrl;
+    if (newPhotoUrl) userUpdateData.photoUrl = newPhotoUrl;
 
     // Prepare update data for Alumni table
     const alumniUpdateData = {};
@@ -374,25 +392,38 @@ export const updateAlumniById = async (req, res) => {
     // Update both User and Alumni records using transaction
     const updatedData = await prisma.$transaction(async (prisma) => {
       // Update User record if there's data to update
-      let updatedUser = user;
       if (Object.keys(userUpdateData).length > 0) {
-        updatedUser = await prisma.user.update({
+        await prisma.user.update({
           where: { id: userIdInt },
           data: userUpdateData,
         });
       }
 
       // Update Alumni record if there's data to update
-      let updatedAlumni = user.alumni;
       if (Object.keys(alumniUpdateData).length > 0) {
-        updatedAlumni = await prisma.alumni.update({
+        await prisma.alumni.update({
           where: { userId: userIdInt },
           data: alumniUpdateData,
         });
       }
 
+      // Handle work experience updates
+      if (workExperience !== undefined && Array.isArray(workExperience)) {
+        if (workExperience.length > 0) {
+          const workExperienceData = workExperience.map((exp) => ({
+            companyName: exp.companyName,
+            role: exp.role,
+            alumniId: user.alumni.id,
+          }));
+
+          await prisma.alumniWorkExperience.createMany({
+            data: workExperienceData,
+          });
+        }
+      }
+
       // Fetch the complete updated record
-      return await prisma.user.findUnique({
+      const finalResult = await prisma.user.findUnique({
         where: { id: userIdInt },
         select: {
           id: true,
@@ -402,6 +433,8 @@ export const updateAlumniById = async (req, res) => {
           department: true,
           role: true,
           photoUrl: true,
+          bio: true,
+          linkedinUrl: true,
           alumni: {
             select: {
               id: true,
@@ -409,10 +442,22 @@ export const updateAlumniById = async (req, res) => {
               course: true,
               currentJobTitle: true,
               companyName: true,
+              workExperience: {
+                select: {
+                  id: true,
+                  companyName: true,
+                  role: true,
+                },
+                orderBy: {
+                  id: "asc",
+                },
+              },
             },
           },
         },
       });
+
+      return finalResult;
     });
 
     return res.status(200).json({
@@ -422,6 +467,28 @@ export const updateAlumniById = async (req, res) => {
     });
   } catch (error) {
     console.error("Error updating alumni by ID:", error);
+
+    // Handle multer errors
+    if (error instanceof multer.MulterError) {
+      if (error.code === "LIMIT_FILE_SIZE") {
+        return res.status(400).json({
+          success: false,
+          message: "File size too large. Maximum size is 5MB",
+        });
+      }
+      return res.status(400).json({
+        success: false,
+        message: "File upload error",
+      });
+    }
+
+    // Handle file type error
+    if (error.message.includes("Only image files are allowed")) {
+      return res.status(400).json({
+        success: false,
+        message: "Only image files are allowed (JPEG, PNG, GIF, WebP)",
+      });
+    }
 
     // Handle specific Prisma errors
     if (error.code === "P2002") {

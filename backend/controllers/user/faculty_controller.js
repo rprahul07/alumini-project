@@ -3,6 +3,8 @@ import { createResponse, handleError } from "../../utils/response.utils.js";
 import generateTokenAndSetCookie from "../../utils/generateTocken.js";
 import prisma from "../../lib/prisma.js";
 import { hashPassword } from "../../services/user_service.js";
+import { handlePhotoUpload } from "../../utils/handlePhotoUpload.utils.js";
+import multer from "multer";
 
 export const createFaculty = async (userData) => {
   const { designation, fullName, email, password, phoneNumber, department } =
@@ -91,10 +93,12 @@ export const getFacultyById = async (req, res) => {
       });
     }
 
-   const userIdInt = parseInt(req.query.userId);
-                if (isNaN(userIdInt)) {
-                      return res.status(400).json({ success: false, message: "Invalid user ID" });
-}
+    const userIdInt = parseInt(req.query.userId);
+    if (isNaN(userIdInt)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid user ID" });
+    }
     const user = await prisma.user.findUnique({
       where: { id: userIdInt },
       select: {
@@ -214,9 +218,11 @@ export const deleteFacultyById = async (req, res) => {
     }
 
     const userIdInt = parseInt(req.query.userId);
-                if (isNaN(userIdInt)) {
-                      return res.status(400).json({ success: false, message: "Invalid user ID" });
-}
+    if (isNaN(userIdInt)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid user ID" });
+    }
     // Check if user exists and is a faculty
     const user = await prisma.user.findUnique({
       where: { id: userIdInt },
@@ -281,9 +287,17 @@ export const deleteFacultyById = async (req, res) => {
 
 export const updateFacultyById = async (req, res) => {
   try {
-    const { userId } = req.params;
-    const { fullName, email, phoneNumber, department, photoUrl, designation } =
-      req.body;
+    const userId = req.query.userId;
+
+    const {
+      fullName,
+      email,
+      phoneNumber,
+      department,
+      bio,
+      linkedinUrl,
+      designation,
+    } = req.body;
 
     if (!userId) {
       return res.status(400).json({
@@ -292,10 +306,13 @@ export const updateFacultyById = async (req, res) => {
       });
     }
 
-   const userIdInt = parseInt(req.query.userId);
-                if (isNaN(userIdInt)) {
-                      return res.status(400).json({ success: false, message: "Invalid user ID" });
-}
+    const userIdInt = parseInt(userId);
+    if (isNaN(userIdInt)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid user ID" });
+    }
+
     // Check if user exists and is a faculty
     const user = await prisma.user.findUnique({
       where: { id: userIdInt },
@@ -321,9 +338,11 @@ export const updateFacultyById = async (req, res) => {
     if (user.role !== "faculty") {
       return res.status(400).json({
         success: false,
-        message: "User is not a faculty",
+        message: "User is not a faculty member",
       });
     }
+
+    const newPhotoUrl = await handlePhotoUpload(req, user.photoUrl);
 
     // Prepare update data for User table
     const userUpdateData = {};
@@ -331,7 +350,9 @@ export const updateFacultyById = async (req, res) => {
     if (email !== undefined) userUpdateData.email = email;
     if (phoneNumber !== undefined) userUpdateData.phoneNumber = phoneNumber;
     if (department !== undefined) userUpdateData.department = department;
-    if (photoUrl !== undefined) userUpdateData.photoUrl = photoUrl;
+    if (bio !== undefined) userUpdateData.bio = bio;
+    if (linkedinUrl !== undefined) userUpdateData.linkedinUrl = linkedinUrl;
+    if (newPhotoUrl) userUpdateData.photoUrl = newPhotoUrl;
 
     // Prepare update data for Faculty table
     const facultyUpdateData = {};
@@ -340,25 +361,23 @@ export const updateFacultyById = async (req, res) => {
     // Update both User and Faculty records using transaction
     const updatedData = await prisma.$transaction(async (prisma) => {
       // Update User record if there's data to update
-      let updatedUser = user;
       if (Object.keys(userUpdateData).length > 0) {
-        updatedUser = await prisma.user.update({
+        await prisma.user.update({
           where: { id: userIdInt },
           data: userUpdateData,
         });
       }
 
       // Update Faculty record if there's data to update
-      let updatedFaculty = user.faculty;
       if (Object.keys(facultyUpdateData).length > 0) {
-        updatedFaculty = await prisma.faculty.update({
+        await prisma.faculty.update({
           where: { userId: userIdInt },
           data: facultyUpdateData,
         });
       }
 
       // Fetch the complete updated record
-      return await prisma.user.findUnique({
+      const finalResult = await prisma.user.findUnique({
         where: { id: userIdInt },
         select: {
           id: true,
@@ -368,6 +387,8 @@ export const updateFacultyById = async (req, res) => {
           department: true,
           role: true,
           photoUrl: true,
+          bio: true,
+          linkedinUrl: true,
           faculty: {
             select: {
               id: true,
@@ -376,6 +397,8 @@ export const updateFacultyById = async (req, res) => {
           },
         },
       });
+
+      return finalResult;
     });
 
     return res.status(200).json({
@@ -385,6 +408,28 @@ export const updateFacultyById = async (req, res) => {
     });
   } catch (error) {
     console.error("Error updating faculty by ID:", error);
+
+    // Handle multer errors
+    if (error instanceof multer.MulterError) {
+      if (error.code === "LIMIT_FILE_SIZE") {
+        return res.status(400).json({
+          success: false,
+          message: "File size too large. Maximum size is 5MB",
+        });
+      }
+      return res.status(400).json({
+        success: false,
+        message: "File upload error",
+      });
+    }
+
+    // Handle file type error
+    if (error.message.includes("Only image files are allowed")) {
+      return res.status(400).json({
+        success: false,
+        message: "Only image files are allowed (JPEG, PNG, GIF, WebP)",
+      });
+    }
 
     // Handle specific Prisma errors
     if (error.code === "P2002") {

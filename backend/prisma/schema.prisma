@@ -16,6 +16,8 @@ model User {
   department  String?  @db.VarChar(100)
   role        Role
   photoUrl    String?  @map("photo_url") @db.VarChar(500)
+  bio         String?  @db.Text
+  linkedinUrl String?  @map("linkedin_url") @db.VarChar(500)
  
   createdAt   DateTime @default(now()) @map("created_at")
   admin       Admin?
@@ -31,6 +33,7 @@ model Student {
   id              Int    @id @default(autoincrement())
   currentSemester Int    @map("current_semester") @db.Integer
   rollNumber      String @unique @map("roll_number") @db.VarChar(50)
+  graduationYear  Int?   @map("graduation_year")
   userId          Int    @unique @map("user_id")
   user            User   @relation(fields: [userId], references: [id])
 
@@ -38,15 +41,27 @@ model Student {
 }
 
 model Alumni {
-  id              Int     @id @default(autoincrement())
-  graduationYear  Int     @map("graduation_year")
-  course          String? @db.VarChar(100)
-  currentJobTitle String  @map("current_job_title") @db.VarChar(100)
-  companyName     String  @map("company_name") @db.VarChar(100)
-  userId          Int     @unique @map("user_id")
-  user            User    @relation(fields: [userId], references: [id])
+  id              Int                   @id @default(autoincrement())
+  graduationYear  Int                   @map("graduation_year")
+  course          String?               @db.VarChar(100)
+  currentJobTitle String                @map("current_job_title") @db.VarChar(100)
+  companyName     String                @map("company_name") @db.VarChar(100)
+  userId          Int                   @unique @map("user_id")
+  user            User                  @relation(fields: [userId], references: [id])
+  workExperience  AlumniWorkExperience[]
 
   @@map("alumni")
+}
+
+model AlumniWorkExperience {
+  id          Int    @id @default(autoincrement())
+  companyName String @map("company_name") @db.VarChar(100)
+  role        String @db.VarChar(100)
+  alumniId    Int    @map("alumni_id")
+  alumni      Alumni @relation(fields: [alumniId], references: [id], onDelete: Cascade)
+
+  @@index([alumniId])
+  @@map("alumni_work_experience")
 }
 
 model Faculty {

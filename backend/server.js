@@ -8,16 +8,16 @@ import facultyRouter from "./routes/faculty_routes.js";
 import studentRouter from "./routes/student_routes.js";
 import alumniRouter from "./routes/alumni_routes.js";
 import { AppError } from "./utils/response.utils.js";
+import { uploadPhotoMiddleware } from "./middleware/upload.middleware.js";
 
 // Load environment variables
 dotenv.config();
 console.log("Environment variables loaded");
 
 // Force port 5001
-process.env.PORT = 5001;
+const PORT = process.env.PORT || 5001;
 
 const app = express();
-const PORT = 5001;
 const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:3000";
 
 console.log(`Server configuration: PORT=${PORT}, CLIENT_URL=${CLIENT_URL}`);
@@ -58,13 +58,13 @@ app.get("/api/csrf-token", (req, res) => {
   console.log("CSRF token requested");
   res.json({ csrfToken: "dummy-csrf-token" });
 });
-
+app.use("/uploads", express.static("uploads"));
 // Routes
 app.use("/api/auth", authRouter);
 app.use("/api/admin", adminRouter);
-app.use("/api/alumni", alumniRouter);
-app.use("/api/student", studentRouter);
-app.use("/api/faculty", facultyRouter);
+app.use("/api/alumni", uploadPhotoMiddleware, alumniRouter);
+app.use("/api/student", uploadPhotoMiddleware, studentRouter);
+app.use("/api/faculty", uploadPhotoMiddleware, facultyRouter);
 
 // Error handler for Prisma errors
 app.use((err, req, res, next) => {
