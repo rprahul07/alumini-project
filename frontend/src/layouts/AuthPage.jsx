@@ -73,7 +73,7 @@ const AuthPage = () => {
     setError('');
 
     try {
-      const endpoint = authType === 'login' ? '/api/auth/login' : '/api/auth/register';
+      const endpoint = authType === 'login' ? '/api/auth/login' : '/api/auth/signup';
       const submitData = authType === 'login' ? {
         email: formData.email,
         password: formData.password,
@@ -81,7 +81,19 @@ const AuthPage = () => {
       } : {
         ...formData,
         role: userRole,
-        currentSemester: formData.role === 'student' ? parseInt(formData.currentSemester) : undefined
+        // Ensure currentSemester is sent as a number for student registration
+        currentSemester: userRole === 'student' ? parseInt(formData.currentSemester) : undefined,
+        // Ensure all required fields are included
+        department: formData.department || '',
+        rollNumber: formData.rollNumber || '',
+        // Remove undefined fields
+        ...(userRole !== 'student' && { currentSemester: undefined }),
+        ...(userRole !== 'alumni' && { 
+          graduationYear: undefined,
+          currentJobTitle: undefined,
+          companyName: undefined 
+        }),
+        ...(userRole !== 'faculty' && { designation: undefined })
       };
 
       console.log('Submitting data:', submitData);

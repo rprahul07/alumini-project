@@ -661,55 +661,57 @@ export const updateMyStudentProfile = async (req, res) => {
 export const getMyStudentProfile = async (req, res) => {
   try {
     const userId = req.user.id;
+    console.log('Getting profile for user ID:', userId);
 
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: {
-        id: true,
-        email: true,
-        fullName: true,
-        phoneNumber: true,
-        department: true,
-        role: true,
-        photoUrl: true,
-        bio: true,
-        linkedinUrl: true,
-        student: {
-          select: {
-            id: true,
-            currentSemester: true,
-            rollNumber: true,
-            graduationYear: true,
-          },
-        },
-      },
+      include: {
+        student: true
+      }
     });
+
+    console.log('Found user:', user);
 
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: "User not found",
+        message: 'User not found'
       });
     }
 
-    if (user.role !== ROLES.STUDENT || !user.student) {
-      return res.status(403).json({
-        success: false,
-        message: "Student profile not found or unauthorized",
-      });
-    }
+    // Format the response to include all necessary fields
+    const profileData = {
+      id: user.id,
+      fullName: user.fullName,
+      email: user.email,
+      phoneNumber: user.phoneNumber,
+      role: user.role,
+      photoUrl: user.photoUrl,
+      bio: user.bio,
+      department: user.department,
+      linkedinUrl: user.linkedinUrl,
+      twitterUrl: user.twitterUrl,
+      githubUrl: user.githubUrl,
+      student: user.student ? {
+        currentSemester: user.student.currentSemester,
+        rollNumber: user.student.rollNumber,
+        graduationYear: user.student.graduationYear
+      } : null
+    };
 
-    return res.status(200).json({
+    console.log('Sending profile data:', profileData);
+
+    res.status(200).json({
       success: true,
-      message: "Student profile fetched successfully",
-      data: user,
+      message: 'Profile retrieved successfully',
+      data: profileData
     });
   } catch (error) {
-    console.error("Error fetching student profile:", error);
-    return res.status(500).json({
+    console.error('Error in getMyStudentProfile:', error);
+    res.status(500).json({
       success: false,
-      message: "Internal server error",
-      error: error.message,
+      message: 'Failed to retrieve profile',
+      error: error.message
     });
   }
 };

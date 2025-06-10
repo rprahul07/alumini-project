@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../../config/axios';
 import { useNavigate } from 'react-router-dom';
 import useAlert from '../../hooks/useAlert';
 import RoleSpecificProfileForm from './RoleSpecificProfileForm';
@@ -26,68 +26,89 @@ const ProfileEditor = () => {
     profilePhoto: null,
     userRole: '',
     bio: '',
-    collegeRollNumber: '',
-    batch: { startYear: '', endYear: '' },
     department: '',
-    linkedInProfile: '',
-    graduationYear: '',
-    currentJobTitle: '',
-    currentCompany: '',
-    previousRoles: [],
-    previousCompanies: [],
-    designation: '',
-    address: '',
-    currentSemester: '',
     linkedinUrl: '',
     twitterUrl: '',
     githubUrl: '',
-    profilePicture: null
+    profilePicture: null,
+    // Student specific fields
+    currentSemester: '',
+    rollNumber: '',
+    graduationYear: '',
+    batch: {
+      startYear: '',
+      endYear: ''
+    },
+    // Alumni specific fields
+    currentJobTitle: '',
+    companyName: '',
+    // Faculty specific fields
+    designation: ''
   });
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get('/api/student/profile/get/', {
+        const userData = localStorage.getItem('user');
+        if (!userData) {
+          throw new Error('User data not found');
+        }
+
+        const parsedUser = JSON.parse(userData);
+        console.log('Fetching profile for user:', parsedUser);
+
+        const response = await axios.get(`/api/${parsedUser.role}/profile/get/`, {
           withCredentials: true
         });
+
+        console.log('Raw profile response:', response);
         console.log('Profile data:', response.data);
+        
         if (response.data.success) {
           const profileData = response.data.data;
-          setFormData({
+          console.log('Setting form data with:', profileData);
+          
+          const newFormData = {
             fullName: profileData.fullName || '',
             email: profileData.email || '',
             phoneNumber: profileData.phoneNumber || '',
-            profilePhoto: profileData.profilePicture || null,
+            profilePhoto: profileData.photoUrl || null,
             userRole: profileData.role || '',
             bio: profileData.bio || '',
             department: profileData.department || '',
-            address: profileData.address || '',
-            currentSemester: profileData.currentSemester || '',
             linkedinUrl: profileData.linkedinUrl || '',
             twitterUrl: profileData.twitterUrl || '',
             githubUrl: profileData.githubUrl || '',
+            // Role specific fields
             ...(profileData.role === 'student' && {
-              collegeRollNumber: profileData.rollNumber || '',
-              batch: profileData.batch || { startYear: '', endYear: '' },
-              linkedInProfile: profileData.linkedInProfile || ''
+              currentSemester: profileData.student?.currentSemester || '',
+              rollNumber: profileData.student?.rollNumber || '',
+              graduationYear: profileData.student?.graduationYear || '',
+              batch: {
+                startYear: profileData.student?.batch?.startYear || '',
+                endYear: profileData.student?.batch?.endYear || ''
+              }
             }),
             ...(profileData.role === 'alumni' && {
-              graduationYear: profileData.graduationYear || '',
-              currentJobTitle: profileData.currentJobTitle || '',
-              currentCompany: profileData.currentCompany || '',
-              previousRoles: profileData.previousRoles || [],
-              previousCompanies: profileData.previousCompanies || [],
-              linkedInProfile: profileData.linkedInProfile || ''
+              graduationYear: profileData.alumni?.graduationYear || '',
+              currentJobTitle: profileData.alumni?.currentJobTitle || '',
+              companyName: profileData.alumni?.companyName || ''
             }),
             ...(profileData.role === 'faculty' && {
-              designation: profileData.designation || ''
+              designation: profileData.faculty?.designation || ''
             }),
             profilePicture: null
-          });
+          };
+          
+          console.log('New form data:', newFormData);
+          setFormData(newFormData);
+        } else {
+          console.error('Profile fetch failed:', response.data);
+          setError(response.data.message || 'Failed to load profile data');
         }
       } catch (error) {
         console.error('Error fetching profile:', error);
-        setError('Failed to load profile data');
+        setError(error.response?.data?.message || 'Failed to load profile data');
       } finally {
         setLoading(false);
       }
@@ -114,16 +135,30 @@ const ProfileEditor = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
+    setLoading(true);
 
     try {
+      const userData = localStorage.getItem('user');
+      if (!userData) {
+        throw new Error('User data not found');
+      }
+
+      const parsedUser = JSON.parse(userData);
       const formDataToSend = new FormData();
+
+      // Add basic fields
       Object.keys(formData).forEach(key => {
-        if (formData[key] !== null) {
+        if (formData[key] !== null && key !== 'profilePhoto' && key !== 'profilePicture') {
           formDataToSend.append(key, formData[key]);
         }
       });
 
-      const response = await axios.put('/api/student/profile/update/', formDataToSend, {
+      // Add profile photo if it's a File object
+      if (formData.profilePhoto instanceof File) {
+        formDataToSend.append('profilePhoto', formData.profilePhoto);
+      }
+
+      const response = await axios.put(`/api/${parsedUser.role}/profile/update/`, formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data'
         },
@@ -138,17 +173,28 @@ const ProfileEditor = () => {
       }
     } catch (error) {
       console.error('Error updating profile:', error);
-      setError('Failed to update profile');
+      setError(error.response?.data?.message || 'Failed to update profile');
+      showAlert(error.response?.data?.message || 'Failed to update profile', 'error');
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleDeletePhoto = async () => {
     if (!formData.profilePhoto) return;
+    
     try {
       setLoading(true);
-      const response = await axios.delete('/api/student/profile/delete-photo', {
+      const userData = localStorage.getItem('user');
+      if (!userData) {
+        throw new Error('User data not found');
+      }
+
+      const parsedUser = JSON.parse(userData);
+      const response = await axios.delete(`/api/${parsedUser.role}/profile/delete-photo`, {
         withCredentials: true
       });
+
       if (response.data.success) {
         setFormData(prev => ({ ...prev, profilePhoto: null }));
         showAlert('Profile photo deleted successfully!', 'success');
@@ -290,14 +336,14 @@ const ProfileEditor = () => {
                 </div>
 
                 <div>
-                  <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">Address</label>
+                  <label htmlFor="department" className="block text-sm font-medium text-gray-700 mb-1">Department</label>
                   <div className="relative">
                     <PencilIcon className="absolute left-3 top-3 h-5 w-5 text-indigo-500" />
                     <input
                       type="text"
-                      id="address"
-                      name="address"
-                      value={formData.address}
+                      id="department"
+                      name="department"
+                      value={formData.department}
                       onChange={handleChange}
                       className="pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg w-full"
                     />

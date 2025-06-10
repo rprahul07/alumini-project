@@ -12,8 +12,8 @@ const RoleSpecificProfileForm = ({ role, formData, handleChange, setFormData }) 
             <input
               type="text"
               id="rollNumber"
-              name="rollNumber" // Corrected name
-              value={formData.rollNumber}
+              name="rollNumber"
+              value={formData.rollNumber || ''}
               onChange={handleChange}
               className="block w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
             />
@@ -26,7 +26,22 @@ const RoleSpecificProfileForm = ({ role, formData, handleChange, setFormData }) 
               type="text"
               id="department"
               name="department"
-              value={formData.department}
+              value={formData.department || ''}
+              onChange={handleChange}
+              className="block w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
+            />
+          </div>
+          <div className="mb-4">
+            <label htmlFor="currentSemester" className="block text-sm font-medium text-gray-700 mb-1">
+              Current Semester
+            </label>
+            <input
+              type="number"
+              id="currentSemester"
+              name="currentSemester"
+              min="1"
+              max="8"
+              value={formData.currentSemester || ''}
               onChange={handleChange}
               className="block w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
             />
@@ -39,7 +54,7 @@ const RoleSpecificProfileForm = ({ role, formData, handleChange, setFormData }) 
               type="number"
               id="batch.startYear"
               name="batch.startYear"
-              value={formData.batch.startYear}
+              value={formData.batch?.startYear || ''}
               onChange={handleChange}
               className="block w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
             />
@@ -52,20 +67,20 @@ const RoleSpecificProfileForm = ({ role, formData, handleChange, setFormData }) 
               type="number"
               id="batch.endYear"
               name="batch.endYear"
-              value={formData.batch.endYear}
+              value={formData.batch?.endYear || ''}
               onChange={handleChange}
               className="block w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
             />
           </div>
           <div className="mb-4">
-            <label htmlFor="linkedInProfile" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="linkedinUrl" className="block text-sm font-medium text-gray-700 mb-1">
               LinkedIn Profile URL
             </label>
             <input
               type="url"
-              id="linkedInProfile"
-              name="linkedInProfile"
-              value={formData.linkedInProfile}
+              id="linkedinUrl"
+              name="linkedinUrl"
+              value={formData.linkedinUrl || ''}
               onChange={handleChange}
               className="block w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
               placeholder="e.g., https://linkedin.com/in/yourprofile"
@@ -121,8 +136,8 @@ const RoleSpecificProfileForm = ({ role, formData, handleChange, setFormData }) 
             </label>
             <input
               type="text"
-              id="companyName"
-              name="companyName" // Corrected name
+              id="companyName" // Corrected name
+              name="companyName"
               value={formData.companyName}
               onChange={handleChange}
               className="block w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"

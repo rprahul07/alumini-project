@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FiEdit2, FiLinkedin, FiTwitter, FiGithub } from 'react-icons/fi';
-import axios from 'axios';
+import axios from '../../config/axios';
 import { useNavigate } from 'react-router-dom';
 
 const ProfileCard = () => {
@@ -15,16 +15,18 @@ const ProfileCard = () => {
         // Get user data from localStorage
         const userData = localStorage.getItem('user');
         if (userData) {
-          setUser(JSON.parse(userData));
-        }
-
-        // Fetch profile data from API
-        const response = await axios.get('/api/student/profile/get/', {
-          withCredentials: true
-        });
-        console.log('Profile data:', response.data);
-        if (response.data.success) {
-          setProfile(response.data.data);
+          const parsedUser = JSON.parse(userData);
+          setUser(parsedUser);
+          
+          // Fetch profile data from API based on user role
+          const response = await axios.get(`/api/student/profile/get/`, {
+            withCredentials: true
+          });
+          
+          console.log('Profile data:', response.data);
+          if (response.data.success) {
+            setProfile(response.data.data);
+          }
         }
       } catch (error) {
         console.error('Error fetching profile:', error);
@@ -59,22 +61,25 @@ const ProfileCard = () => {
             <div className="text-sm text-gray-500">Roll Number: {profile.student?.rollNumber || 'N/A'}</div>
             <div className="text-sm text-gray-500">Department: {profile.department || 'N/A'}</div>
             <div className="text-sm text-gray-500">Current Semester: {profile.student?.currentSemester || 'N/A'}</div>
+            {profile.student?.graduationYear && (
+              <div className="text-sm text-gray-500">Graduation Year: {profile.student.graduationYear}</div>
+            )}
           </>
         );
       case 'faculty':
         return (
           <>
             <div className="text-sm text-gray-500">Department: {profile.department || 'N/A'}</div>
-            <div className="text-sm text-gray-500">Position: {profile.designation || 'N/A'}</div>
-            <div className="text-sm text-gray-500">Office: {profile.office || 'N/A'}</div>
+            <div className="text-sm text-gray-500">Designation: {profile.faculty?.designation || 'N/A'}</div>
           </>
         );
       case 'alumni':
         return (
           <>
-            <div className="text-sm text-gray-500">Graduation Year: {profile.graduationYear || 'N/A'}</div>
-            <div className="text-sm text-gray-500">Current Company: {profile.currentCompany || 'N/A'}</div>
-            <div className="text-sm text-gray-500">Position: {profile.currentJobTitle || 'N/A'}</div>
+            <div className="text-sm text-gray-500">Department: {profile.department || 'N/A'}</div>
+            <div className="text-sm text-gray-500">Graduation Year: {profile.alumni?.graduationYear || 'N/A'}</div>
+            <div className="text-sm text-gray-500">Current Job: {profile.alumni?.currentJobTitle || 'N/A'}</div>
+            <div className="text-sm text-gray-500">Company: {profile.alumni?.companyName || 'N/A'}</div>
           </>
         );
       default:
