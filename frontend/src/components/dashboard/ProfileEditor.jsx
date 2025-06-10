@@ -1,11 +1,9 @@
-// ✅ Cleaned & Optimized - Placeholder-safe
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
-import { profileAPI } from '../../middleware/api';
 import useAlert from '../../hooks/useAlert';
 import RoleSpecificProfileForm from './RoleSpecificProfileForm';
-import { 
+import {
   CameraIcon,
   UserIcon,
   EnvelopeIcon,
@@ -14,18 +12,18 @@ import {
   ArrowLeftIcon,
   TrashIcon
 } from '@heroicons/react/24/outline';
-
-const ProfileEditor = () => {
+const baseApi = 'http://localhost:5000';
+const ProfileEditor = ({ userId, userRole }) => {
   const navigate = useNavigate();
-  const { user, updateUser } = useAuth();
   const { showAlert } = useAlert();
+
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
     phoneNumber: '',
     profilePhoto: null,
-    userRole: user?.role || '',
+    userRole: userRole || '',
     bio: '',
     collegeRollNumber: '',
     batch: { startYear: '', endYear: '' },
@@ -40,45 +38,48 @@ const ProfileEditor = () => {
   });
 
   useEffect(() => {
+    if (!userId) return;
+
     const fetchProfile = async () => {
       try {
-        const { data } = await profileAPI.getProfile();
+        const { data } = await axios.get(`${baseApi}/api/student/profile/get`);
         if (data) {
           setFormData(prev => ({
             ...prev,
-            fullName: data.fullName || prev.fullName,
-            email: data.email || prev.email,
-            phoneNumber: data.phoneNumber || prev.phoneNumber,
-            profilePhoto: data.profilePhoto || prev.profilePhoto,
-            userRole: data.role || prev.userRole,
-            bio: data.bio || prev.bio,
+            fullName: data.fullName || '',
+            email: data.email || '',
+            phoneNumber: data.phoneNumber || '',
+            profilePhoto: data.photoUrl || null,
+            userRole: data.role || userRole,
+            bio: data.bio || '',
             ...(data.role === 'student' && {
-              collegeRollNumber: data.rollNumber || prev.collegeRollNumber,
-              batch: data.batch || prev.batch,
-              department: data.department || prev.department,
-              linkedInProfile: data.linkedInProfile || prev.linkedInProfile
+              collegeRollNumber: data.student?.rollNumber || '',
+              department: data.department || '',
+              batch: data.student?.batch || { startYear: '', endYear: '' },
+              linkedInProfile: data.linkedInProfile || ''
             }),
             ...(data.role === 'alumni' && {
-              graduationYear: data.graduationYear || prev.graduationYear,
-              department: data.department || prev.department,
-              currentJobTitle: data.currentJobTitle || prev.currentJobTitle,
-              currentCompany: data.companyName || prev.currentCompany,
-              previousRoles: data.previousRoles || prev.previousRoles,
-              previousCompanies: data.previousCompanies || prev.previousCompanies,
-              linkedInProfile: data.linkedInProfile || prev.linkedInProfile
+              graduationYear: data.graduationYear || '',
+              department: data.department || '',
+              currentJobTitle: data.currentJobTitle || '',
+              currentCompany: data.currentCompany || '',
+              previousRoles: data.previousRoles || [],
+              previousCompanies: data.previousCompanies || [],
+              linkedInProfile: data.linkedInProfile || ''
             }),
             ...(data.role === 'faculty' && {
-              department: data.department || prev.department,
-              designation: data.designation || prev.designation
-            })
+              department: data.department || '',
+              designation: data.designation || ''
+            }),
           }));
         }
-      } catch {
+      } catch (err) {
         showAlert('Error fetching profile data', 'error');
       }
     };
+
     fetchProfile();
-  }, [showAlert, user]);
+  }, [userId, userRole, showAlert]);
 
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
@@ -98,34 +99,47 @@ const ProfileEditor = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+
     try {
-      let profilePhotoUrl = formData.profilePhoto;
+      let profilePhotoUrl = formData.profilePhoto ;
+
       if (formData.profilePhoto instanceof File) {
         const fd = new FormData();
         fd.append('profilePhoto', formData.profilePhoto);
-        const { data } = await profileAPI.uploadProfilePhoto(fd);
-        profilePhotoUrl = data.profilePhotoUrl;
+        const uploadRes = await axios.post(`${baseApi}/profile/${userId}/upload-photo`, fd);
+        profilePhotoUrl = uploadRes.data.profilePhotoUrl;
       }
 
-      // Transform data to match backend expectations
       const updateData = {
-        ...formData,
-        profilePhoto: profilePhotoUrl,
-        // Map frontend field names to backend field names
+        fullName: formData.fullName,
+        email: formData.email,
+        phoneNumber: formData.phoneNumber,
+        photoUrl: profilePhotoUrl,
+        role: formData.userRole,
+        bio: formData.bio,
+        department: formData.department,
+        linkedInProfile: formData.linkedInProfile,
         ...(formData.userRole === 'student' && {
-          rollNumber: formData.collegeRollNumber
+          student: {
+            rollNumber: formData.collegeRollNumber,
+            batch: formData.batch
+          }
         }),
         ...(formData.userRole === 'alumni' && {
-          companyName: formData.currentCompany
-        })
+          graduationYear: formData.graduationYear,
+          currentJobTitle: formData.currentJobTitle,
+          currentCompany: formData.currentCompany,
+          previousRoles: formData.previousRoles,
+          previousCompanies: formData.previousCompanies
+        }),
+        ...(formData.userRole === 'faculty' && {
+          designation: formData.designation
+        }),
       };
 
-      const { data } = await profileAPI.updateProfile(updateData);
-      if (data) {
-        showAlert('Profile updated successfully!', 'success');
-        updateUser(data);
-        navigate('/dashboard');
-      }
+      const { data } = await axios.put(`${baseApi}/api/profile/${userId}`, updateData);
+      showAlert('Profile updated successfully!', 'success');
+      navigate('/dashboard');
     } catch (error) {
       showAlert(
         error.response?.data?.message || 'Error updating profile',
@@ -138,13 +152,11 @@ const ProfileEditor = () => {
 
   const handleDeletePhoto = async () => {
     if (!formData.profilePhoto) return;
-    
     try {
       setLoading(true);
-      const { data } = await profileAPI.deleteProfilePhoto();
+      const { data } = await axios.delete(`${baseApi}/api/profile/${userId}/delete-photo`);
       if (data) {
         setFormData(prev => ({ ...prev, profilePhoto: null }));
-        updateUser({ ...user, profilePhoto: null });
         showAlert('Profile photo deleted successfully!', 'success');
       }
     } catch (error) {
@@ -178,9 +190,10 @@ const ProfileEditor = () => {
               <div className="relative group">
                 <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-white shadow-lg">
                   <img
-                    src={formData.profilePhoto instanceof File 
-                      ? URL.createObjectURL(formData.profilePhoto)
-                      : formData.profilePhoto || '/default-avatar.png'
+                    src={
+                      formData.profilePhoto instanceof File
+                        ? URL.createObjectURL(formData.profilePhoto)
+                        : formData.profilePhoto || '/default-avatar.png'
                     }
                     alt="Profile"
                     className="w-full h-full object-cover"
@@ -194,9 +207,10 @@ const ProfileEditor = () => {
                       accept="image/*"
                       onChange={handleChange}
                       className="hidden"
+                      name="profilePhoto"
                     />
                   </label>
-                  {formData.profilePhoto && (
+                  {formData.profilePhoto && !(formData.profilePhoto instanceof File) && (
                     <button
                       type="button"
                       onClick={handleDeletePhoto}
@@ -209,96 +223,87 @@ const ProfileEditor = () => {
                 </div>
               </div>
               <p className="mt-4 text-sm text-gray-500">
-                {formData.profilePhoto 
+                {formData.profilePhoto
                   ? 'Click the camera icon to update or trash icon to remove your photo'
                   : 'Click the camera icon to add a profile photo'}
               </p>
             </div>
+
+            {/* Basic Info */}
             <div className="mb-8">
               <h3 className="text-lg font-medium text-gray-900 mb-4">Basic Information</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">
-                    Full Name
-                  </label>
-                  <div className="relative rounded-lg shadow-sm">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <UserIcon className="h-5 w-5 text-indigo-500" />
-                    </div>
+                  <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                  <div className="relative">
+                    <UserIcon className="absolute left-3 top-3 h-5 w-5 text-indigo-500" />
                     <input
                       type="text"
                       id="fullName"
                       name="fullName"
                       value={formData.fullName}
                       onChange={handleChange}
-                      className="block w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
+                      className="pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg w-full"
                       required
                     />
                   </div>
                 </div>
+
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                    Email Address
-                  </label>
-                  <div className="relative rounded-lg shadow-sm">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <EnvelopeIcon className="h-5 w-5 text-indigo-500" />
-                    </div>
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                  <div className="relative">
+                    <EnvelopeIcon className="absolute left-3 top-3 h-5 w-5 text-indigo-500" />
                     <input
                       type="email"
                       id="email"
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
-                      className="block w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
+                      className="pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg w-full"
                       required
                     />
                   </div>
                 </div>
+
                 <div>
-                  <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700 mb-1">
-                    Phone Number
-                  </label>
-                  <div className="relative rounded-lg shadow-sm">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <PhoneIcon className="h-5 w-5 text-indigo-500" />
-                    </div>
+                  <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                  <div className="relative">
+                    <PhoneIcon className="absolute left-3 top-3 h-5 w-5 text-indigo-500" />
                     <input
                       type="tel"
                       id="phoneNumber"
                       name="phoneNumber"
                       value={formData.phoneNumber}
                       onChange={handleChange}
-                      className="block w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
+                      className="pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg w-full"
                     />
                   </div>
                 </div>
               </div>
+
               <div className="mt-6">
-                <label htmlFor="bio" className="block text-sm font-medium text-gray-700 mb-1">
-                  Bio
-                </label>
-                <div className="relative rounded-lg shadow-sm">
-                  <div className="absolute top-3 left-3 pointer-events-none">
-                    <PencilIcon className="h-5 w-5 text-indigo-500" />
-                  </div>
+                <label htmlFor="bio" className="block text-sm font-medium text-gray-700 mb-1">Bio</label>
+                <div className="relative">
+                  <PencilIcon className="absolute top-3 left-3 h-5 w-5 text-indigo-500" />
                   <textarea
                     id="bio"
                     name="bio"
                     rows={4}
                     value={formData.bio}
                     onChange={handleChange}
-                    className="block w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
+                    className="pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg w-full"
                     placeholder="Tell us about yourself..."
                   />
                 </div>
               </div>
             </div>
+
+            {/* Role-specific fields */}
             <div className="mb-8">
               <h3 className="text-lg font-medium text-gray-900 mb-4">
                 {formData.userRole === 'student' ? 'Academic Information' :
-                 formData.userRole === 'alumni' ? 'Professional Information' :
-                 formData.userRole === 'faculty' ? 'Faculty Information' : 'Additional Information'}
+                  formData.userRole === 'alumni' ? 'Professional Information' :
+                  formData.userRole === 'faculty' ? 'Faculty Information' : 'Additional Information'}
               </h3>
               <div className="bg-gray-50 rounded-lg p-6">
                 <RoleSpecificProfileForm
@@ -309,23 +314,15 @@ const ProfileEditor = () => {
                 />
               </div>
             </div>
+
+            {/* Submit */}
             <div className="flex justify-end">
               <button
                 type="submit"
                 disabled={loading}
-                className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium"
+                className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:from-indigo-700 hover:to-purple-700 disabled:opacity-50"
               >
-                {loading ? (
-                  <span className="flex items-center">
-                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Saving...
-                  </span>
-                ) : (
-                  'Save Profile'
-                )}
+                {loading ? 'Saving...' : 'Save Profile'}
               </button>
             </div>
           </form>
@@ -336,4 +333,3 @@ const ProfileEditor = () => {
 };
 
 export default ProfileEditor;
-

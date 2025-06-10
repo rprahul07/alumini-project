@@ -1,11 +1,13 @@
 import express from "express";
 import { protect } from "../middleware/jwt_middleware.js";
 import { loginLimiter } from "../middleware/rateLimiter.js";
+
 import {
   deleteAlumniById,
   getAllAlumni,
   getAlumniById,
   updateAlumniById,
+  updateAlumniSelf,
 } from "../controllers/user/alumni_controller.js";
 
 const router = express.Router();
@@ -17,5 +19,6 @@ router.get("/getall", getAllAlumni);
 router.get("/:userId", getAlumniById);
 router.delete("/:userId", deleteAlumniById);
 router.patch("/:userId", updateAlumniById);
+router.patch("/profile/update", updateAlumniSelf);
 
 export default router;

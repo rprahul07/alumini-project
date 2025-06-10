@@ -1,30 +1,23 @@
-import React from 'react';
-import { Navigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-// Role-specific dashboards
-import StudentDashboard from '../layouts/dashboards/StudentDashboard';
-import FacultyDashboard from '../layouts/dashboards/FacultyDashboard';
-import AlumniDashboard from '../layouts/dashboards/AlumniDashboard';
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const DashboardRedirect = () => {
-  const { role } = useAuth();
-  console.log('DashboardRedirect - Current role:', role);
+  const navigate = useNavigate();
+  const role = localStorage.getItem("selectedRole"); // Default to student if no role is set
 
-  if (role === 'student') {
-    console.log('Redirecting to student dashboard');
-    return <Navigate to="/dashboard/student" replace />;
-  }
-  if (role === 'faculty') {
-    console.log('Redirecting to faculty dashboard');
-    return <Navigate to="/dashboard/faculty" replace />;
-  }
-  if (role === 'alumni') {
-    console.log('Redirecting to alumni dashboard');
-    return <Navigate to="/dashboard/alumni" replace />;
-  }
+  useEffect(() => {
+    if (role === "student") {
+      navigate("/dashboard/student", { replace: true });
+    } else if (role === "faculty") {
+      navigate("/dashboard/faculty", { replace: true });
+    } else if (role === "alumni") {
+      navigate("/dashboard/alumni", { replace: true });
+    } else {
+      navigate("/unauthorized", { replace: true });
+    }
+  }, [role, navigate]);
 
-  console.log('No role found, redirecting to role selection');
-  return <Navigate to="/role-selection" replace />;
+  return null;
 };
 
-export default DashboardRedirect; 
+export default DashboardRedirect;

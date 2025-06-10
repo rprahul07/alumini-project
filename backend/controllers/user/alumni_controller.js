@@ -512,3 +512,173 @@ export const updateAlumniById = async (req, res) => {
     });
   }
 };
+export const updateAlumniSelf = async (req, res) => {
+  try {
+    const userId = req.user.id; // ✅ Securely extracted from the JWT
+
+    const {
+      fullName,
+      email,
+      phoneNumber,
+      department,
+      bio,
+      linkedinUrl,
+      graduationYear,
+      course,
+      currentJobTitle,
+      companyName,
+      workExperience,
+    } = req.body;
+
+    // Fetch user and alumni
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        alumni: {
+          include: {
+            workExperience: true,
+          },
+        },
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    if (!user.alumni) {
+      return res.status(404).json({
+        success: false,
+        message: "Alumni profile not found for this user",
+      });
+    }
+
+    if (user.role !== ROLES.ALUMNI) {
+      return res.status(403).json({
+        success: false,
+        message: "Access denied. Only alumni can update their profile.",
+      });
+    }
+
+    // ✅ Handle photo upload
+    const newPhotoUrl = await handlePhotoUpload(req, user.photoUrl);
+
+    // Prepare update payloads
+    const userUpdateData = {};
+    if (fullName !== undefined) userUpdateData.fullName = fullName;
+    if (email !== undefined) userUpdateData.email = email;
+    if (phoneNumber !== undefined) userUpdateData.phoneNumber = phoneNumber;
+    if (department !== undefined) userUpdateData.department = department;
+    if (bio !== undefined) userUpdateData.bio = bio;
+    if (linkedinUrl !== undefined) userUpdateData.linkedinUrl = linkedinUrl;
+    if (newPhotoUrl) userUpdateData.photoUrl = newPhotoUrl;
+
+    const alumniUpdateData = {};
+    if (graduationYear !== undefined) {
+      const gradYear = parseInt(graduationYear);
+      if (isNaN(gradYear)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid graduation year format",
+        });
+      }
+      alumniUpdateData.graduationYear = gradYear;
+    }
+    if (course !== undefined) alumniUpdateData.course = course;
+    if (currentJobTitle !== undefined) alumniUpdateData.currentJobTitle = currentJobTitle;
+    if (companyName !== undefined) alumniUpdateData.companyName = companyName;
+
+    // Update within transaction
+    const updatedData = await prisma.$transaction(async (prisma) => {
+      if (Object.keys(userUpdateData).length > 0) {
+        await prisma.user.update({
+          where: { id: userId },
+          data: userUpdateData,
+        });
+      }
+
+      if (Object.keys(alumniUpdateData).length > 0) {
+        await prisma.alumni.update({
+          where: { userId },
+          data: alumniUpdateData,
+        });
+      }
+
+      if (workExperience && Array.isArray(workExperience) && workExperience.length > 0) {
+        await prisma.alumniWorkExperience.createMany({
+          data: workExperience.map((exp) => ({
+            companyName: exp.companyName,
+            role: exp.role,
+            alumniId: user.alumni.id,
+          })),
+        });
+      }
+
+      // Fetch final result
+      return await prisma.user.findUnique({
+        where: { id: userId },
+        select: {
+          id: true,
+          email: true,
+          fullName: true,
+          phoneNumber: true,
+          department: true,
+          role: true,
+          photoUrl: true,
+          bio: true,
+          linkedinUrl: true,
+          alumni: {
+            select: {
+              id: true,
+              graduationYear: true,
+              course: true,
+              currentJobTitle: true,
+              companyName: true,
+              workExperience: {
+                select: {
+                  id: true,
+                  companyName: true,
+                  role: true,
+                },
+                orderBy: {
+                  id: "asc",
+                },
+              },
+            },
+          },
+        },
+      });
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Profile updated successfully",
+      data: updatedData,
+    });
+  } catch (error) {
+    console.error("Error updating alumni self:", error);
+
+    if (error instanceof multer.MulterError) {
+      return res.status(400).json({
+        success: false,
+        message: "File upload error: " + error.message,
+      });
+    }
+
+    if (error.message.includes("Only image files are allowed")) {
+      return res.status(400).json({
+        success: false,
+        message: "Only image files are allowed (JPEG, PNG, etc.)",
+      });
+    }
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};

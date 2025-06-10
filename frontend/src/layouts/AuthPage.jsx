@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import { FiArrowLeft } from "react-icons/fi";
 import AuthForm from "./AuthForm";
 import useAlert from "../hooks/useAlert";
 import Alert from "../components/Alert";
 import { validateForm } from "../utils/validation";
-import { useAuth } from "../contexts/AuthContext";
 
 const MAX_LOGIN_ATTEMPTS = 5;
 const LOCKOUT_DURATION = 15 * 60 * 1000; // 15 minutes
 
 const AuthPage = ({ onAuthSuccess = () => {} }) => {
   const navigate = useNavigate();
-  const { alert, showAlert, clearAlert, handleError } = useAlert();
-  const { login, register, error: authError } = useAuth();
+  const { alert, showAlert, clearAlert } = useAlert();
 
   const [authType, setAuthType] = useState("login");
   const [userRole, setUserRole] = useState(localStorage.getItem("selectedRole"));
@@ -22,7 +21,6 @@ const AuthPage = ({ onAuthSuccess = () => {} }) => {
   const [lockoutTime, setLockoutTime] = useState(0);
   const [loginAttempts, setLoginAttempts] = useState(0);
 
-  // Check lockout status
   useEffect(() => {
     const lock = JSON.parse(localStorage.getItem("authLockout"));
     if (lock) {
@@ -38,7 +36,6 @@ const AuthPage = ({ onAuthSuccess = () => {} }) => {
     }
   }, [showAlert]);
 
-  // Handle lockout timer
   useEffect(() => {
     if (!isLocked) return;
     const timer = setInterval(() => {
@@ -56,12 +53,6 @@ const AuthPage = ({ onAuthSuccess = () => {} }) => {
     return () => clearInterval(timer);
   }, [isLocked, clearAlert]);
 
-  // Show auth errors
-  useEffect(() => {
-    if (authError) showAlert(authError, "error");
-  }, [authError, showAlert]);
-
-  // Handle form submission
   const handleSubmit = async (formData) => {
     clearAlert();
 
@@ -74,48 +65,54 @@ const AuthPage = ({ onAuthSuccess = () => {} }) => {
     if (Object.keys(validationErrors).length) return;
 
     setIsLoading(true);
-
     try {
       const apiData = { ...formData, role: userRole };
+      let response;
 
       if (authType === "login") {
-        console.log('Attempting login with data:', apiData);
-        const resp = await login(apiData);
-        console.log('Login response:', resp);
+        response = await axios.post("/api/auth/login/", apiData);
+        const { data } = response;
 
-        if (resp.success) {
-          console.log('Login successful, setting up navigation...');
-          localStorage.removeItem("authLockout");
+        if (data.success) {
           localStorage.setItem("userRole", userRole);
           onAuthSuccess(userRole);
           showAlert("Successfully logged in!", "success");
-          
-          console.log('Current userRole:', userRole);
-          console.log('Stored userRole:', localStorage.getItem('userRole'));
-          
+
           setTimeout(() => {
-            console.log('Attempting navigation to dashboard...');
-            navigate('/dashboard', { replace: true });
+            let rolePath = "/dashboard";
+            if (userRole === "student") rolePath = "/dashboard/student";
+            else if (userRole === "faculty") rolePath = "/dashboard/faculty";
+            else if (userRole === "alumni") rolePath = "/dashboard/alumni";
+            else rolePath = "/unauthorized";
+
+            navigate(rolePath);
           }, 500);
         } else {
           handleFailedLogin();
+          showAlert(data.message || "Login failed. Please check your credentials.", "error");
         }
+
       } else {
-        const resp = await register(apiData);
-        if (resp.success) {
+        response = await axios.post("/api/auth/signup/", apiData);
+        const { data } = response;
+        
+
+        if (data.success) {
           setAuthType("login");
           showAlert("Account created successfully! Please log in.", "success");
+        } else {
+          showAlert(data.message || "Registration failed.", "error");
         }
       }
     } catch (err) {
-      console.error('Login error:', err);
-      handleError(err);
+      console.error("Auth error:", err);
+      const message = err?.response?.data?.message || "Something went wrong.";
+      showAlert(message, "error");
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Handle failed login attempts
   const handleFailedLogin = () => {
     const attempts = loginAttempts + 1;
     setLoginAttempts(attempts);
@@ -123,23 +120,18 @@ const AuthPage = ({ onAuthSuccess = () => {} }) => {
     if (attempts >= MAX_LOGIN_ATTEMPTS) {
       setIsLocked(true);
       setLockoutTime(LOCKOUT_DURATION / 1000);
-      localStorage.setItem(
-        "authLockout",
-        JSON.stringify({ timestamp: Date.now(), attempts })
-      );
-      showAlert(`Too many failed attempts. Account locked for ${LOCKOUT_DURATION / 60000} minutes.`, 'error');
+      localStorage.setItem("authLockout", JSON.stringify({ timestamp: Date.now(), attempts }));
+      showAlert(`Too many failed attempts. Account locked for ${LOCKOUT_DURATION / 60000} minutes.`, "error");
     } else {
-      showAlert(`Invalid credentials. ${MAX_LOGIN_ATTEMPTS - attempts} attempts remaining.`, 'error');
+      showAlert(`Invalid credentials. ${MAX_LOGIN_ATTEMPTS - attempts} attempts remaining.`, "error");
     }
   };
 
-  // Toggle between login and register
   const toggleAuthType = () => {
     setAuthType(authType === "login" ? "register" : "login");
     clearAlert();
   };
 
-  // Handle back navigation
   const handleBack = () => {
     localStorage.removeItem("selectedRole");
     setUserRole(null);
@@ -193,7 +185,7 @@ const AuthPage = ({ onAuthSuccess = () => {} }) => {
               authType={authType}
               userRole={userRole}
               onSubmit={handleSubmit}
-              error={authError}
+              error={null}
               loading={isLoading}
             />
           </div>

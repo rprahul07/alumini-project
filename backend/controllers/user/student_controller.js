@@ -495,3 +495,221 @@ export const updateStudentById = async (req, res) => {
     });
   }
 };
+export const updateMyStudentProfile = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const {
+      fullName,
+      email,
+      phoneNumber,
+      department,
+      bio,
+      linkedinUrl,
+      currentSemester,
+      rollNumber,
+      graduationYear,
+    } = req.body;
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        student: true,
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    if (!user.student) {
+      return res.status(404).json({
+        success: false,
+        message: "Student profile not found for this user",
+      });
+    }
+
+    if (user.role !== ROLES.STUDENT) {
+      return res.status(403).json({
+        success: false,
+        message: "User is not authorized to update this profile",
+      });
+    }
+
+    const newPhotoUrl = await handlePhotoUpload(req, user.photoUrl);
+
+    const userUpdateData = {};
+    if (fullName !== undefined) userUpdateData.fullName = fullName;
+    if (email !== undefined) userUpdateData.email = email;
+    if (phoneNumber !== undefined) userUpdateData.phoneNumber = phoneNumber;
+    if (department !== undefined) userUpdateData.department = department;
+    if (bio !== undefined) userUpdateData.bio = bio;
+    if (linkedinUrl !== undefined) userUpdateData.linkedinUrl = linkedinUrl;
+    if (newPhotoUrl) userUpdateData.photoUrl = newPhotoUrl;
+
+    const studentUpdateData = {};
+    if (currentSemester !== undefined) {
+      const semesterInt = parseInt(currentSemester);
+      if (isNaN(semesterInt)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid current semester format",
+        });
+      }
+      studentUpdateData.currentSemester = semesterInt;
+    }
+    if (rollNumber !== undefined) studentUpdateData.rollNumber = rollNumber;
+    if (graduationYear !== undefined) {
+      const yearInt = parseInt(graduationYear);
+      if (isNaN(yearInt)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid graduation year format",
+        });
+      }
+      studentUpdateData.graduationYear = yearInt;
+    }
+
+    const updatedData = await prisma.$transaction(async (prisma) => {
+      if (Object.keys(userUpdateData).length > 0) {
+        await prisma.user.update({
+          where: { id: userId },
+          data: userUpdateData,
+        });
+      }
+
+      if (Object.keys(studentUpdateData).length > 0) {
+        await prisma.student.update({
+          where: { userId },
+          data: studentUpdateData,
+        });
+      }
+
+      return await prisma.user.findUnique({
+        where: { id: userId },
+        select: {
+          id: true,
+          email: true,
+          fullName: true,
+          phoneNumber: true,
+          department: true,
+          role: true,
+          photoUrl: true,
+          bio: true,
+          linkedinUrl: true,
+          student: {
+            select: {
+              id: true,
+              currentSemester: true,
+              rollNumber: true,
+              graduationYear: true,
+            },
+          },
+        },
+      });
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Student profile updated successfully",
+      data: updatedData,
+    });
+  } catch (error) {
+    console.error("Error updating student profile:", error);
+
+    if (error instanceof multer.MulterError) {
+      if (error.code === "LIMIT_FILE_SIZE") {
+        return res.status(400).json({
+          success: false,
+          message: "File size too large. Maximum is 5MB",
+        });
+      }
+    }
+
+    if (error.message.includes("Only image files are allowed")) {
+      return res.status(400).json({
+        success: false,
+        message: "Only image files are allowed (JPEG, PNG, GIF, WebP)",
+      });
+    }
+
+    if (error.code === "P2002") {
+      return res.status(400).json({
+        success: false,
+        message: "Email or roll number already exists",
+      });
+    }
+
+    if (error.code === "P2025") {
+      return res.status(404).json({
+        success: false,
+        message: "Student not found",
+      });
+    }
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
+
+export const getMyStudentProfile = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        email: true,
+        fullName: true,
+        phoneNumber: true,
+        department: true,
+        role: true,
+        photoUrl: true,
+        bio: true,
+        linkedinUrl: true,
+        student: {
+          select: {
+            id: true,
+            currentSemester: true,
+            rollNumber: true,
+            graduationYear: true,
+          },
+        },
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    if (user.role !== ROLES.STUDENT || !user.student) {
+      return res.status(403).json({
+        success: false,
+        message: "Student profile not found or unauthorized",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Student profile fetched successfully",
+      data: user,
+    });
+  } catch (error) {
+    console.error("Error fetching student profile:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};

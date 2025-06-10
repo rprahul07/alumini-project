@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
+import { useState, useEffect } from 'react';
 import {
   IdentificationIcon,
   AcademicCapIcon,
@@ -26,7 +26,10 @@ const InfoItem = ({ icon: Icon, text }) => (
 );
 
 const ProfileCard = () => {
-  const { user } = useAuth();
+  const [user, setUser] = useState(() => {
+    const userData = localStorage.getItem('user');
+    return userData ? JSON.parse(userData) : null;
+  });
 
   const getRoleDisplay = (role) => ROLE_DISPLAY[role] || role;
 
@@ -39,11 +42,11 @@ const ProfileCard = () => {
       case 'student':
         return (
           <>
-            {user?.rollNumber && (
-              <InfoItem icon={IdentificationIcon} text={`Roll No: ${user.rollNumber}`} />
+            {user?.student?.rollNumber && (
+              <InfoItem icon={IdentificationIcon} text={`Roll No: ${user.student.rollNumber}`} />
             )}
-            {user?.batch?.endYear && (
-              <InfoItem icon={AcademicCapIcon} text={`Batch: ${user.batch.endYear}`} />
+            {user?.student?.batch?.endYear && (
+              <InfoItem icon={AcademicCapIcon} text={`Batch: ${user.student.batch.endYear}`} />
             )}
             {commonInfo}
           </>
@@ -51,14 +54,14 @@ const ProfileCard = () => {
       case 'alumni':
         return (
           <>
-            {user?.currentJobTitle && user?.companyName && (
+            {user?.alumni?.currentJobTitle && user?.alumni?.currentCompany && (
               <InfoItem 
                 icon={BriefcaseIcon} 
-                text={`${user.currentJobTitle} at ${user.companyName}`} 
+                text={`${user.alumni.currentJobTitle} at ${user.alumni.currentCompany}`} 
               />
             )}
-            {user?.graduationYear && (
-              <InfoItem icon={AcademicCapIcon} text={`Graduated: ${user.graduationYear}`} />
+            {user?.alumni?.graduationYear && (
+              <InfoItem icon={AcademicCapIcon} text={`Graduated: ${user.alumni.graduationYear}`} />
             )}
             {commonInfo}
           </>
@@ -66,8 +69,8 @@ const ProfileCard = () => {
       case 'faculty':
         return (
           <>
-            {user?.designation && (
-              <InfoItem icon={UserIcon} text={user.designation} />
+            {user?.faculty?.designation && (
+              <InfoItem icon={UserIcon} text={user.faculty.designation} />
             )}
             {commonInfo}
           </>

@@ -139,10 +139,10 @@ const AuthForm = ({
         };
 
         if (userRole === 'student') {
-          Object.assign(registerData, {
-            currentSemester: formData.currentSemester,
-            rollNumber: formData.rollNumber,
-          });
+            Object.assign(registerData, {
+              currentSemester: parseInt(formData.currentSemester),
+              rollNumber: formData.rollNumber,
+            });
         } else if (userRole === 'alumni') {
           Object.assign(registerData, {
             graduationYear: parseInt(formData.graduationYear),

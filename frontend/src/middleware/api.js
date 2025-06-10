@@ -123,7 +123,7 @@ const authAPI = {
 const profileAPI = {
   getProfile: async () => {
     try {
-      const response = await api.get("/api/profile");
+      const response = await api.get("/api/student/profile");
       return handleApiResponse(response);
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Failed to fetch profile');

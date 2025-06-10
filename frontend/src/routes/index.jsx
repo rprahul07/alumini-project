@@ -75,7 +75,7 @@ export const router = createBrowserRouter([
         element: <MainLayout />,
         children: [
           {
-            path: 'dashboard',
+            path: '/dashboard',
             element: (
               <ProtectedRoute allowedRoles={['student', 'alumni', 'faculty']}>
                 <DashboardRedirect />

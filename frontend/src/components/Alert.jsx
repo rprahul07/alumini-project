@@ -1,58 +1,27 @@
-import React from 'react';
-import { FiX, FiAlertCircle, FiCheckCircle, FiInfo } from 'react-icons/fi';
+import { useState } from 'react';
 
-const ALERT_TYPES = {
-  error: {
-    icon: FiAlertCircle,
-    baseClass: 'bg-red-50 text-red-600 border-red-200',
-    iconClass: 'text-red-500',
-  },
-  success: {
-    icon: FiCheckCircle,
-    baseClass: 'bg-green-50 text-green-600 border-green-200',
-    iconClass: 'text-green-500',
-  },
-  info: {
-    icon: FiInfo,
-    baseClass: 'bg-blue-50 text-blue-600 border-blue-200',
-    iconClass: 'text-blue-500',
-  },
-};
+const useAlert = () => {
+  const [alert, setAlert] = useState(null); // { message: '...', type: 'success' | 'error' }
 
-const Alert = ({ 
-  type = 'error',
-  message,
-  onClose,
-  className = '',
-  showIcon = true,
-}) => {
-  if (!message) return null;
+  const showAlert = (message, type) => {
+    setAlert({ message, type });
+    setTimeout(() => {
+      setAlert(null); // Clear alert after some time
+    }, 5000); // 5 seconds
+  };
 
-  const { icon: Icon, baseClass, iconClass } = ALERT_TYPES[type] || ALERT_TYPES.error;
-
-  return (
+  const AlertComponent = () => alert && (
     <div
-      className={`flex items-start p-4 rounded-lg border ${baseClass} ${className}`}
+      className={`fixed bottom-4 right-4 p-4 rounded-md shadow-lg text-white ${
+        alert.type === 'success' ? 'bg-green-500' : 'bg-red-500'
+      }`}
       role="alert"
     >
-      {showIcon && (
-        <Icon className={`w-5 h-5 ${iconClass} mt-0.5 flex-shrink-0`} />
-      )}
-      <div className="ml-3 flex-1">
-        <p className="text-sm font-medium">{message}</p>
-      </div>
-      {onClose && (
-        <button
-          type="button"
-          className={`ml-3 flex-shrink-0 ${iconClass} hover:opacity-75 focus:outline-none`}
-          onClick={onClose}
-          aria-label="Close alert"
-        >
-          <FiX className="w-5 h-5" />
-        </button>
-      )}
+      {alert.message}
     </div>
   );
+
+  return { showAlert, AlertComponent };
 };
 
-export default Alert; 
+export default useAlert;

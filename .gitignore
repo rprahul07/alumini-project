@@ -1,16 +1,4 @@
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
-
-node_modules
-dist
-dist-ssr
-*.local
+# See https://help.github.com/en/articles/ignoring-files#create-a-gitignore-file
 # dependencies
 /node_modules
 
@@ -74,18 +62,66 @@ coverage/
 
 # local .history folders (e.g. VS Code extensions)
 /.history
+# dependencies
+/node_modules
 
+# production
+/build
+/dist
 
-
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
+# misc
 .DS_Store
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# editor directories and files
+.idea/
+.vscode/
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
-*.sw?
 
-/generated/prisma
+# OS-specific
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# eslint cache
+.eslintcache
+
+# testing
+coverage/
+
+# parcel-bundler cache
+.cache/
+
+# next.js
+.next/
+
+# vercel
+.vercel/
+
+# storybook
+.out/
+
+# typescript
+*.tsbuildinfo
+
+# build artifact backups
+*.tgz
+
+# optional npm cache directory
+.npm
+
+# local .history folders (e.g. VS Code extensions)
+/.history

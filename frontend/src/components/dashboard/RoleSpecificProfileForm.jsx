@@ -1,130 +1,183 @@
-// ✅ Cleaned & Optimized - Placeholder-safe
 import React from 'react';
-import { FiPlusCircle, FiTrash2 } from 'react-icons/fi';
 
 const RoleSpecificProfileForm = ({ role, formData, handleChange, setFormData }) => {
-  const addPreviousRole = () => {
-    if (formData.previousRoles.length < 3) {
-      setFormData(prev => ({
-        ...prev,
-        previousRoles: [...prev.previousRoles, '']
-      }));
-    }
-  };
-
-  const removePreviousRole = (index) => {
-    setFormData(prev => ({
-      ...prev,
-      previousRoles: prev.previousRoles.filter((_, i) => i !== index)
-    }));
-  };
-
-  const addPreviousCompany = () => {
-    setFormData(prev => ({
-      ...prev,
-      previousCompanies: [...prev.previousCompanies, '']
-    }));
-  };
-
-  const removePreviousCompany = (index) => {
-    setFormData(prev => ({
-      ...prev,
-      previousCompanies: prev.previousCompanies.filter((_, i) => i !== index)
-    }));
-  };
-
-  if (role === 'student') {
-    return (
-      <div className="space-y-6">
-        <InputField label="College Roll Number" id="collegeRollNumber" name="collegeRollNumber" value={formData.collegeRollNumber} onChange={handleChange} required />
-        <InputField label="Batch Start Year" id="batch.startYear" name="batch.startYear" value={formData.batch.startYear} onChange={handleChange} type="number" required />
-        <InputField label="Batch End Year" id="batch.endYear" name="batch.endYear" value={formData.batch.endYear} onChange={handleChange} type="number" required />
-        <InputField label="Department" id="department" name="department" value={formData.department} onChange={handleChange} required />
-        <InputField label="LinkedIn Profile" id="linkedInProfile" name="linkedInProfile" value={formData.linkedInProfile} onChange={handleChange} type="url" placeholder="https://linkedin.com/in/your-profile" />
-      </div>
-    );
-  }
-
-  if (role === 'alumni') {
-    return (
-      <div className="space-y-6">
-        <InputField label="Graduation Year" id="graduationYear" name="graduationYear" value={formData.graduationYear} onChange={handleChange} type="number" required />
-        <InputField label="Department" id="department" name="department" value={formData.department} onChange={handleChange} required />
-        <InputField label="Current Job Title" id="currentJobTitle" name="currentJobTitle" value={formData.currentJobTitle} onChange={handleChange} required />
-        <InputField label="Current Company" id="currentCompany" name="currentCompany" value={formData.currentCompany} onChange={handleChange} required />
-        {/* Previous Roles */}
-        <div>
-          <div className="flex justify-between items-center mb-2">
-            <label className="block text-sm font-medium text-gray-700">Previous Roles (Max 3)</label>
-            {formData.previousRoles.length < 3 && (
-              <button type="button" onClick={addPreviousRole} className="text-[#4F46E5] hover:text-[#4338CA] text-sm font-medium">
-                <FiPlusCircle className="inline mr-1" />Add Role
-              </button>
-            )}
+  return (
+    <>
+      {role === 'student' && (
+        <>
+          <div className="mb-4">
+            <label htmlFor="rollNumber" className="block text-sm font-medium text-gray-700 mb-1">
+              Roll Number
+            </label>
+            <input
+              type="text"
+              id="rollNumber"
+              name="rollNumber" // Corrected name
+              value={formData.rollNumber}
+              onChange={handleChange}
+              className="block w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
+            />
           </div>
-          {formData.previousRoles.map((role, index) => (
-            <div key={index} className="flex gap-4 mb-2">
-              <input type="text" value={role} onChange={e => {
-                const newRoles = [...formData.previousRoles];
-                newRoles[index] = e.target.value;
-                setFormData(prev => ({ ...prev, previousRoles: newRoles }));
-              }} placeholder="Previous Role" className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4F46E5] focus:border-transparent" />
-              <button type="button" onClick={() => removePreviousRole(index)} className="text-red-500 hover:text-red-600"><FiTrash2 /></button>
-            </div>
-          ))}
-        </div>
-        {/* Previous Companies */}
-        <div>
-          <div className="flex justify-between items-center mb-2">
-            <label className="block text-sm font-medium text-gray-700">Previous Companies</label>
-            <button type="button" onClick={addPreviousCompany} className="text-[#4F46E5] hover:text-[#4338CA] text-sm font-medium">
-              <FiPlusCircle className="inline mr-1" />Add Company
-            </button>
+          <div className="mb-4">
+            <label htmlFor="department" className="block text-sm font-medium text-gray-700 mb-1">
+              Department
+            </label>
+            <input
+              type="text"
+              id="department"
+              name="department"
+              value={formData.department}
+              onChange={handleChange}
+              className="block w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
+            />
           </div>
-          {formData.previousCompanies.map((company, index) => (
-            <div key={index} className="flex gap-4 mb-2">
-              <input type="text" value={company} onChange={e => {
-                const newCompanies = [...formData.previousCompanies];
-                newCompanies[index] = e.target.value;
-                setFormData(prev => ({ ...prev, previousCompanies: newCompanies }));
-              }} placeholder="Previous Company" className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4F46E5] focus:border-transparent" />
-              <button type="button" onClick={() => removePreviousCompany(index)} className="text-red-500 hover:text-red-600"><FiTrash2 /></button>
-            </div>
-          ))}
-        </div>
-        <InputField label="LinkedIn Profile" id="linkedInProfile" name="linkedInProfile" value={formData.linkedInProfile} onChange={handleChange} type="url" placeholder="https://linkedin.com/in/your-profile" />
-      </div>
-    );
-  }
+          <div className="mb-4">
+            <label htmlFor="batch.startYear" className="block text-sm font-medium text-gray-700 mb-1">
+              Batch Start Year
+            </label>
+            <input
+              type="number"
+              id="batch.startYear"
+              name="batch.startYear"
+              value={formData.batch.startYear}
+              onChange={handleChange}
+              className="block w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
+            />
+          </div>
+          <div className="mb-4">
+            <label htmlFor="batch.endYear" className="block text-sm font-medium text-gray-700 mb-1">
+              Batch End Year
+            </label>
+            <input
+              type="number"
+              id="batch.endYear"
+              name="batch.endYear"
+              value={formData.batch.endYear}
+              onChange={handleChange}
+              className="block w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
+            />
+          </div>
+          <div className="mb-4">
+            <label htmlFor="linkedInProfile" className="block text-sm font-medium text-gray-700 mb-1">
+              LinkedIn Profile URL
+            </label>
+            <input
+              type="url"
+              id="linkedInProfile"
+              name="linkedInProfile"
+              value={formData.linkedInProfile}
+              onChange={handleChange}
+              className="block w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
+              placeholder="e.g., https://linkedin.com/in/yourprofile"
+            />
+          </div>
+        </>
+      )}
 
-  if (role === 'faculty') {
-    return (
-      <div className="space-y-6">
-        <InputField label="Department" id="department" name="department" value={formData.department} onChange={handleChange} required />
-        <InputField label="Designation" id="designation" name="designation" value={formData.designation} onChange={handleChange} required />
-      </div>
-    );
-  }
+      {role === 'alumni' && (
+        <>
+          <div className="mb-4">
+            <label htmlFor="graduationYear" className="block text-sm font-medium text-gray-700 mb-1">
+              Graduation Year
+            </label>
+            <input
+              type="number"
+              id="graduationYear"
+              name="graduationYear"
+              value={formData.graduationYear}
+              onChange={handleChange}
+              className="block w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
+            />
+          </div>
+          <div className="mb-4">
+            <label htmlFor="department" className="block text-sm font-medium text-gray-700 mb-1">
+              Department
+            </label>
+            <input
+              type="text"
+              id="department"
+              name="department"
+              value={formData.department}
+              onChange={handleChange}
+              className="block w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
+            />
+          </div>
+          <div className="mb-4">
+            <label htmlFor="currentJobTitle" className="block text-sm font-medium text-gray-700 mb-1">
+              Current Job Title
+            </label>
+            <input
+              type="text"
+              id="currentJobTitle"
+              name="currentJobTitle"
+              value={formData.currentJobTitle}
+              onChange={handleChange}
+              className="block w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
+            />
+          </div>
+          <div className="mb-4">
+            <label htmlFor="companyName" className="block text-sm font-medium text-gray-700 mb-1">
+              Current Company
+            </label>
+            <input
+              type="text"
+              id="companyName"
+              name="companyName" // Corrected name
+              value={formData.companyName}
+              onChange={handleChange}
+              className="block w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
+            />
+          </div>
+          {/* Add previous roles/companies fields if needed */}
+          <div className="mb-4">
+            <label htmlFor="linkedInProfile" className="block text-sm font-medium text-gray-700 mb-1">
+              LinkedIn Profile URL
+            </label>
+            <input
+              type="url"
+              id="linkedInProfile"
+              name="linkedInProfile"
+              value={formData.linkedInProfile}
+              onChange={handleChange}
+              className="block w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
+              placeholder="e.g., https://linkedin.com/in/yourprofile"
+            />
+          </div>
+        </>
+      )}
 
-  return null;
+      {role === 'faculty' && (
+        <>
+          <div className="mb-4">
+            <label htmlFor="designation" className="block text-sm font-medium text-gray-700 mb-1">
+              Designation
+            </label>
+            <input
+              type="text"
+              id="designation"
+              name="designation"
+              value={formData.designation}
+              onChange={handleChange}
+              className="block w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
+            />
+          </div>
+          <div className="mb-4">
+            <label htmlFor="department" className="block text-sm font-medium text-gray-700 mb-1">
+              Department
+            </label>
+            <input
+              type="text"
+              id="department"
+              name="department"
+              value={formData.department}
+              onChange={handleChange}
+              className="block w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
+            />
+          </div>
+        </>
+      )}
+    </>
+  );
 };
 
-const InputField = ({ label, id, name, value, onChange, type = 'text', required = false, placeholder }) => (
-  <div>
-    <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-1">
-      {label}{required && <span className="text-red-500">*</span>}
-    </label>
-    <input
-      type={type}
-      id={id}
-      name={name}
-      value={value}
-      onChange={onChange}
-      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4F46E5] focus:border-transparent"
-      required={required}
-      placeholder={placeholder}
-    />
-  </div>
-);
-
-export default RoleSpecificProfileForm; 
+export default RoleSpecificProfileForm;
