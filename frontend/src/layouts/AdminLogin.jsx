@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import useAlert from '../hooks/useAlert';
+import axios from '../config/axios';
 import { FiMail, FiLock } from 'react-icons/fi';
+import toast from 'react-hot-toast';
 
 const AdminLogin = () => {
   const [formData, setFormData] = useState({
@@ -11,8 +11,6 @@ const AdminLogin = () => {
   });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { login } = useAuth();
-  const { showAlert } = useAlert();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -27,100 +25,88 @@ const AdminLogin = () => {
     setLoading(true);
 
     try {
-      const loginData = {
+      const response = await axios.post('/api/auth/login', {
         ...formData,
         role: 'admin'
-      };
+      });
 
-      console.log('Attempting admin login...');
-      const response = await login(loginData);
-
-      if (response?.success) {
-        console.log('Admin login successful');
-        showAlert('Login successful! Redirecting to admin dashboard...', 'success');
-        
-        // Add a small delay to show the success message
-        setTimeout(() => {
-          navigate('/admin/logs', { replace: true });
-        }, 1500);
-      }
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+      
+      toast.success('Login successful! Redirecting to admin dashboard...');
+      
+      // Add a small delay to show the success message
+      setTimeout(() => {
+        navigate('/admin/logs', { replace: true });
+      }, 1500);
     } catch (err) {
       console.error('Admin login error:', err);
-      showAlert(
-        err.message || 'Login failed. Please check your credentials.',
-        'error'
-      );
+      toast.error(err.response?.data?.message || 'Login failed. Please check your credentials.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow-md">
-        <div>
-          <h2 className="text-3xl font-bold text-center text-gray-900 mb-2">
-            Admin Login
-          </h2>
-          <p className="text-center text-gray-600">
-            Please enter your credentials to access the admin dashboard
-          </p>
-        </div>
+    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md">
+        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+          Admin Login
+        </h2>
+      </div>
 
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="space-y-4">
-            <div className="relative">
-              <label htmlFor="email" className="sr-only">
-                Email
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+          <form className="space-y-6" onSubmit={handleSubmit}>
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                Email address
               </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                required
-                value={formData.email}
-                onChange={handleInputChange}
-                className="w-full px-4 py-3 bg-gray-50 border-0 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors pl-10"
-                placeholder="Email address"
-                disabled={loading}
-              />
-              <FiMail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              <div className="mt-1 relative">
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                />
+                <FiMail className="absolute right-3 top-2.5 text-gray-400" />
+              </div>
             </div>
 
-            <div className="relative">
-              <label htmlFor="password" className="sr-only">
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                 Password
               </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                required
-                value={formData.password}
-                onChange={handleInputChange}
-                className="w-full px-4 py-3 bg-gray-50 border-0 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors pl-10"
-                placeholder="Password"
-                disabled={loading}
-              />
-              <FiLock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-            </div>
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full flex items-center justify-center px-4 py-3 rounded-lg bg-black text-white hover:bg-gray-900 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {loading ? (
-              <div className="flex items-center">
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-3" />
-                Processing...
+              <div className="mt-1 relative">
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  autoComplete="current-password"
+                  required
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                />
+                <FiLock className="absolute right-3 top-2.5 text-gray-400" />
               </div>
-            ) : (
-              'Login as Admin'
-            )}
-          </button>
-        </form>
+            </div>
+
+            <div>
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+              >
+                {loading ? 'Signing in...' : 'Sign in'}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );

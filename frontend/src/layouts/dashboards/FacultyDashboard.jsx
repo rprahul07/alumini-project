@@ -1,5 +1,4 @@
-import React from 'react';
-import { useAuth } from '../../contexts/AuthContext';
+import React, { useState, useEffect } from 'react';
 import ProfileCard from '../../components/dashboard/ProfileCard';
 import Sidebar from '../../components/dashboard/Sidebar';
 import {
@@ -135,7 +134,14 @@ const AlumniRegistrationCard = ({ name, graduationYear, department, email, onApp
 );
 
 const FacultyDashboard = () => {
-  const { user } = useAuth();
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      setUser(JSON.parse(userData));
+    }
+  }, []);
 
   const upcomingEvents = [
     {

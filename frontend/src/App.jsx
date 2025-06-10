@@ -1,9 +1,15 @@
 import React from 'react';
-import { RouterProvider } from 'react-router-dom';
-import { router } from './routes';
+import { BrowserRouter } from 'react-router-dom';
+import AppRoutes from './routes';
+import { Toaster } from 'react-hot-toast';
 
-const App = () => {
-  return <RouterProvider router={router} />;
-};
+function App() {
+  return (
+    <BrowserRouter>
+      <Toaster position="top-right" />
+      <AppRoutes />
+    </BrowserRouter>
+  );
+}
 
 export default App;

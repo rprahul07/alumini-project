@@ -1,5 +1,4 @@
-import React from 'react';
-import { useAuth } from '../../contexts/AuthContext';
+import React, { useState, useEffect } from 'react';
 import ProfileCard from '../../components/dashboard/ProfileCard';
 import Sidebar from '../../components/dashboard/Sidebar';
 import {
@@ -213,15 +212,22 @@ const JobBoard = () => {
 };
 
 const AlumniDashboard = () => {
-  const { user } = useAuth();
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      setUser(JSON.parse(userData));
+    }
+  }, []);
 
   const upcomingEvents = [
     {
       date: 'MAY 15',
-      title: 'Tech Talk: Future of AI',
+      title: 'Alumni Meetup',
       time: '2:00 PM - 4:00 PM',
       location: 'Main Auditorium',
-      tags: ['In-Person', 'Panel']
+      tags: ['In-Person', 'Networking']
     },
     {
       date: 'MAY 20',
@@ -253,10 +259,10 @@ const AlumniDashboard = () => {
         {/* Welcome Section */}
         <div className="mb-6">
           <h1 className="text-lg font-medium text-gray-900">
-            Welcome back, {user?.fullName || 'John'}! 👋
+            Welcome back, {user?.fullName || 'Alumni'}! 👋
           </h1>
           <p className="text-sm text-gray-500 mt-1">
-            Here's what's happening in your alumni network today.
+            Here's what's happening in your alumni dashboard today.
           </p>
         </div>
 

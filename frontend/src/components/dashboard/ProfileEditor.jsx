@@ -12,18 +12,19 @@ import {
   ArrowLeftIcon,
   TrashIcon
 } from '@heroicons/react/24/outline';
-const baseApi = 'http://localhost:5000';
-const ProfileEditor = ({ userId, userRole }) => {
+import { FiUpload, FiX } from 'react-icons/fi';
+
+const ProfileEditor = () => {
   const navigate = useNavigate();
   const { showAlert } = useAlert();
-
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
     phoneNumber: '',
     profilePhoto: null,
-    userRole: userRole || '',
+    userRole: '',
     bio: '',
     collegeRollNumber: '',
     batch: { startYear: '', endYear: '' },
@@ -34,52 +35,66 @@ const ProfileEditor = ({ userId, userRole }) => {
     currentCompany: '',
     previousRoles: [],
     previousCompanies: [],
-    designation: ''
+    designation: '',
+    address: '',
+    currentSemester: '',
+    linkedinUrl: '',
+    twitterUrl: '',
+    githubUrl: '',
+    profilePicture: null
   });
 
   useEffect(() => {
-    if (!userId) return;
-
     const fetchProfile = async () => {
       try {
-        const { data } = await axios.get(`${baseApi}/api/student/profile/get`);
-        if (data) {
-          setFormData(prev => ({
-            ...prev,
-            fullName: data.fullName || '',
-            email: data.email || '',
-            phoneNumber: data.phoneNumber || '',
-            profilePhoto: data.photoUrl || null,
-            userRole: data.role || userRole,
-            bio: data.bio || '',
-            ...(data.role === 'student' && {
-              collegeRollNumber: data.student?.rollNumber || '',
-              department: data.department || '',
-              batch: data.student?.batch || { startYear: '', endYear: '' },
-              linkedInProfile: data.linkedInProfile || ''
+        const response = await axios.get('/api/student/profile/get/', {
+          withCredentials: true
+        });
+        console.log('Profile data:', response.data);
+        if (response.data.success) {
+          const profileData = response.data.data;
+          setFormData({
+            fullName: profileData.fullName || '',
+            email: profileData.email || '',
+            phoneNumber: profileData.phoneNumber || '',
+            profilePhoto: profileData.profilePicture || null,
+            userRole: profileData.role || '',
+            bio: profileData.bio || '',
+            department: profileData.department || '',
+            address: profileData.address || '',
+            currentSemester: profileData.currentSemester || '',
+            linkedinUrl: profileData.linkedinUrl || '',
+            twitterUrl: profileData.twitterUrl || '',
+            githubUrl: profileData.githubUrl || '',
+            ...(profileData.role === 'student' && {
+              collegeRollNumber: profileData.rollNumber || '',
+              batch: profileData.batch || { startYear: '', endYear: '' },
+              linkedInProfile: profileData.linkedInProfile || ''
             }),
-            ...(data.role === 'alumni' && {
-              graduationYear: data.graduationYear || '',
-              department: data.department || '',
-              currentJobTitle: data.currentJobTitle || '',
-              currentCompany: data.currentCompany || '',
-              previousRoles: data.previousRoles || [],
-              previousCompanies: data.previousCompanies || [],
-              linkedInProfile: data.linkedInProfile || ''
+            ...(profileData.role === 'alumni' && {
+              graduationYear: profileData.graduationYear || '',
+              currentJobTitle: profileData.currentJobTitle || '',
+              currentCompany: profileData.currentCompany || '',
+              previousRoles: profileData.previousRoles || [],
+              previousCompanies: profileData.previousCompanies || [],
+              linkedInProfile: profileData.linkedInProfile || ''
             }),
-            ...(data.role === 'faculty' && {
-              department: data.department || '',
-              designation: data.designation || ''
+            ...(profileData.role === 'faculty' && {
+              designation: profileData.designation || ''
             }),
-          }));
+            profilePicture: null
+          });
         }
-      } catch (err) {
-        showAlert('Error fetching profile data', 'error');
+      } catch (error) {
+        console.error('Error fetching profile:', error);
+        setError('Failed to load profile data');
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchProfile();
-  }, [userId, userRole, showAlert]);
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
@@ -98,55 +113,32 @@ const ProfileEditor = ({ userId, userRole }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    setError(null);
 
     try {
-      let profilePhotoUrl = formData.profilePhoto ;
+      const formDataToSend = new FormData();
+      Object.keys(formData).forEach(key => {
+        if (formData[key] !== null) {
+          formDataToSend.append(key, formData[key]);
+        }
+      });
 
-      if (formData.profilePhoto instanceof File) {
-        const fd = new FormData();
-        fd.append('profilePhoto', formData.profilePhoto);
-        const uploadRes = await axios.post(`${baseApi}/profile/${userId}/upload-photo`, fd);
-        profilePhotoUrl = uploadRes.data.profilePhotoUrl;
+      const response = await axios.put('/api/student/profile/update/', formDataToSend, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        },
+        withCredentials: true
+      });
+
+      if (response.data.success) {
+        showAlert('Profile updated successfully!', 'success');
+        navigate('/profile');
+      } else {
+        throw new Error(response.data.message || 'Failed to update profile');
       }
-
-      const updateData = {
-        fullName: formData.fullName,
-        email: formData.email,
-        phoneNumber: formData.phoneNumber,
-        photoUrl: profilePhotoUrl,
-        role: formData.userRole,
-        bio: formData.bio,
-        department: formData.department,
-        linkedInProfile: formData.linkedInProfile,
-        ...(formData.userRole === 'student' && {
-          student: {
-            rollNumber: formData.collegeRollNumber,
-            batch: formData.batch
-          }
-        }),
-        ...(formData.userRole === 'alumni' && {
-          graduationYear: formData.graduationYear,
-          currentJobTitle: formData.currentJobTitle,
-          currentCompany: formData.currentCompany,
-          previousRoles: formData.previousRoles,
-          previousCompanies: formData.previousCompanies
-        }),
-        ...(formData.userRole === 'faculty' && {
-          designation: formData.designation
-        }),
-      };
-
-      const { data } = await axios.put(`${baseApi}/api/profile/${userId}`, updateData);
-      showAlert('Profile updated successfully!', 'success');
-      navigate('/dashboard');
     } catch (error) {
-      showAlert(
-        error.response?.data?.message || 'Error updating profile',
-        'error'
-      );
-    } finally {
-      setLoading(false);
+      console.error('Error updating profile:', error);
+      setError('Failed to update profile');
     }
   };
 
@@ -154,8 +146,10 @@ const ProfileEditor = ({ userId, userRole }) => {
     if (!formData.profilePhoto) return;
     try {
       setLoading(true);
-      const { data } = await axios.delete(`${baseApi}/api/profile/${userId}/delete-photo`);
-      if (data) {
+      const response = await axios.delete('/api/student/profile/delete-photo', {
+        withCredentials: true
+      });
+      if (response.data.success) {
         setFormData(prev => ({ ...prev, profilePhoto: null }));
         showAlert('Profile photo deleted successfully!', 'success');
       }
@@ -169,6 +163,21 @@ const ProfileEditor = ({ userId, userRole }) => {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="bg-white rounded-xl shadow-sm p-6">
+        <div className="animate-pulse">
+          <div className="h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
+          <div className="space-y-4">
+            <div className="h-10 bg-gray-200 rounded"></div>
+            <div className="h-10 bg-gray-200 rounded"></div>
+            <div className="h-10 bg-gray-200 rounded"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 py-12">
       <div className="max-w-4xl mx-auto px-4">
@@ -176,7 +185,7 @@ const ProfileEditor = ({ userId, userRole }) => {
           <div className="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-indigo-600 to-purple-600">
             <div className="flex items-center justify-between">
               <button
-                onClick={() => navigate('/dashboard')}
+                onClick={() => navigate('/profile')}
                 className="text-white hover:text-indigo-100 transition-colors"
               >
                 <ArrowLeftIcon className="w-6 h-6" />
@@ -279,6 +288,21 @@ const ProfileEditor = ({ userId, userRole }) => {
                     />
                   </div>
                 </div>
+
+                <div>
+                  <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">Address</label>
+                  <div className="relative">
+                    <PencilIcon className="absolute left-3 top-3 h-5 w-5 text-indigo-500" />
+                    <input
+                      type="text"
+                      id="address"
+                      name="address"
+                      value={formData.address}
+                      onChange={handleChange}
+                      className="pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg w-full"
+                    />
+                  </div>
+                </div>
               </div>
 
               <div className="mt-6">
@@ -312,6 +336,55 @@ const ProfileEditor = ({ userId, userRole }) => {
                   handleChange={handleChange}
                   setFormData={setFormData}
                 />
+              </div>
+            </div>
+
+            {/* LinkedIn, Twitter, GitHub URLs */}
+            <div className="mb-8">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">Social Media Links</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                  <label htmlFor="linkedinUrl" className="block text-sm font-medium text-gray-700 mb-1">LinkedIn</label>
+                  <div className="relative">
+                    <PencilIcon className="absolute left-3 top-3 h-5 w-5 text-indigo-500" />
+                    <input
+                      type="url"
+                      id="linkedinUrl"
+                      name="linkedinUrl"
+                      value={formData.linkedinUrl}
+                      onChange={handleChange}
+                      className="pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg w-full"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label htmlFor="twitterUrl" className="block text-sm font-medium text-gray-700 mb-1">Twitter</label>
+                  <div className="relative">
+                    <PencilIcon className="absolute left-3 top-3 h-5 w-5 text-indigo-500" />
+                    <input
+                      type="url"
+                      id="twitterUrl"
+                      name="twitterUrl"
+                      value={formData.twitterUrl}
+                      onChange={handleChange}
+                      className="pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg w-full"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label htmlFor="githubUrl" className="block text-sm font-medium text-gray-700 mb-1">GitHub</label>
+                  <div className="relative">
+                    <PencilIcon className="absolute left-3 top-3 h-5 w-5 text-indigo-500" />
+                    <input
+                      type="url"
+                      id="githubUrl"
+                      name="githubUrl"
+                      value={formData.githubUrl}
+                      onChange={handleChange}
+                      className="pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg w-full"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
 

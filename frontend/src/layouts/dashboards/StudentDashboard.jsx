@@ -1,5 +1,4 @@
-import React from 'react';
-import { useAuth } from '../../contexts/AuthContext';
+import React, { useState, useEffect } from 'react';
 import ProfileCard from '../../components/dashboard/ProfileCard';
 import Sidebar from '../../components/dashboard/Sidebar';
 import {
@@ -217,7 +216,14 @@ const JobBoard = () => {
 };
 
 const StudentDashboard = () => {
-  const { user } = useAuth();
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      setUser(JSON.parse(userData));
+    }
+  }, []);
 
   const upcomingEvents = [
     {
@@ -249,35 +255,16 @@ const StudentDashboard = () => {
     }
   ];
 
-  const jobListings = [
-    {
-      position: 'Software Engineer',
-      company: 'TechCorp',
-      location: 'New York',
-      type: 'Full-time',
-      posted: '2 days ago',
-      action: 'Apply'
-    },
-    {
-      position: 'Data Analyst',
-      company: 'DataFlow',
-      location: 'Remote',
-      type: 'Contract',
-      posted: '1 week ago',
-      action: 'Apply'
-    }
-  ];
-
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Section */}
         <div className="mb-6">
           <h1 className="text-lg font-medium text-gray-900">
-            Welcome back, {user?.fullName || 'John'}! 👋
+            Welcome back, {user?.fullName || 'Student'}! 👋
           </h1>
           <p className="text-sm text-gray-500 mt-1">
-            Here's what's happening in your alumni network today.
+            Here's what's happening in your student dashboard today.
           </p>
         </div>
 

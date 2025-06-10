@@ -3,19 +3,29 @@ import { useNavigate } from "react-router-dom";
 
 const DashboardRedirect = () => {
   const navigate = useNavigate();
-  const role = localStorage.getItem("selectedRole"); // Default to student if no role is set
+  const role = localStorage.getItem("selectedRole");
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
-    if (role === "student") {
-      navigate("/dashboard/student", { replace: true });
-    } else if (role === "faculty") {
-      navigate("/dashboard/faculty", { replace: true });
-    } else if (role === "alumni") {
-      navigate("/dashboard/alumni", { replace: true });
-    } else {
-      navigate("/unauthorized", { replace: true });
+    if (!token) {
+      navigate("/login", { replace: true });
+      return;
     }
-  }, [role, navigate]);
+
+    switch (role) {
+      case "student":
+        navigate("/dashboard/student", { replace: true });
+        break;
+      case "faculty":
+        navigate("/dashboard/faculty", { replace: true });
+        break;
+      case "alumni":
+        navigate("/dashboard/alumni", { replace: true });
+        break;
+      default:
+        navigate("/unauthorized", { replace: true });
+    }
+  }, [role, token, navigate]);
 
   return null;
 };

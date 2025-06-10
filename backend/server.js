@@ -18,7 +18,7 @@ console.log("Environment variables loaded");
 const PORT = process.env.PORT || 5001;
 
 const app = express();
-const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:3000";
+const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173"; // Updated to match Vite's default port
 
 console.log(`Server configuration: PORT=${PORT}, CLIENT_URL=${CLIENT_URL}`);
 
@@ -30,10 +30,11 @@ app.use((req, res, next) => {
   next();
 });
 
+// CORS configuration
 const corsOptions = {
   origin: CLIENT_URL,
   credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE","PATCH", "OPTIONS"],
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: [
     "Content-Type",
     "Authorization",
@@ -42,10 +43,17 @@ const corsOptions = {
     "Accept",
     "Origin",
   ],
+  exposedHeaders: ["Set-Cookie"],
+  preflightContinue: false,
+  optionsSuccessStatus: 204
 };
 
-app.options("*", cors(corsOptions));
+// Apply CORS middleware
 app.use(cors(corsOptions));
+
+// Enable pre-flight requests for all routes
+app.options('*', cors(corsOptions));
+
 app.use(express.json());
 app.use(cookieParser());
 
@@ -58,7 +66,9 @@ app.get("/api/csrf-token", (req, res) => {
   console.log("CSRF token requested");
   res.json({ csrfToken: "dummy-csrf-token" });
 });
+
 app.use("/uploads", express.static("uploads"));
+
 // Routes
 app.use("/api/auth", authRouter);
 app.use("/api/admin", adminRouter);

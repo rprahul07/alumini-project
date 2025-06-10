@@ -2,8 +2,7 @@
 import React, { useState } from 'react';
 import { FcGoogle } from 'react-icons/fc';
 import { EnvelopeIcon, LockClosedIcon, UserIcon, PhoneIcon, AcademicCapIcon, BriefcaseIcon, UserGroupIcon, BuildingOfficeIcon } from '@heroicons/react/24/outline';
-import Alert from '../components/Alert';
-import useAlert from '../hooks/useAlert';
+import { FiEye, FiEyeOff } from 'react-icons/fi';
 
 const AuthForm = ({
   authType,
@@ -11,8 +10,9 @@ const AuthForm = ({
   onSubmit,
   error,
   loading,
+  lockoutStatus,
+  loginAttempts,
 }) => {
-  const { alert, showAlert, clearAlert, handleError } = useAlert();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -27,6 +27,7 @@ const AuthForm = ({
     companyName: '',
     designation: '',
   });
+  const [showPassword, setShowPassword] = useState(false);
   const [formErrors, setFormErrors] = useState({});
 
   const validateForm = () => {
@@ -87,12 +88,8 @@ const AuthForm = ({
       }
     }
 
-    if (Object.keys(errors).length > 0) {
-      const firstError = Object.values(errors)[0];
-      showAlert(firstError, 'error');
-    }
-
-    return errors;
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
   const handleInputChange = (e) => {
@@ -111,60 +108,48 @@ const AuthForm = ({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    clearAlert();
     
-    const errors = validateForm();
-    if (Object.keys(errors).length > 0) {
-      setFormErrors(errors);
-      return;
-    }
+    if (validateForm()) {
+      try {
+        if (authType === 'login') {
+          const loginData = {
+            email: formData.email,
+            password: formData.password,
+            role: userRole,
+          };
+          await onSubmit(loginData);
+        } else {
+          const registerData = {
+            email: formData.email,
+            password: formData.password,
+            confirmPassword: formData.confirmPassword,
+            fullName: formData.fullName,
+            phoneNumber: formData.phoneNumber,
+            department: formData.department,
+            role: userRole,
+          };
 
-    try {
-      if (authType === 'login') {
-        const loginData = {
-          email: formData.email,
-          password: formData.password,
-          role: userRole,
-        };
-        await onSubmit(loginData);
-      } else {
-        const registerData = {
-          email: formData.email,
-          password: formData.password,
-          confirmPassword: formData.confirmPassword,
-          fullName: formData.fullName,
-          phoneNumber: formData.phoneNumber,
-          department: formData.department,
-          role: userRole,
-        };
-
-        if (userRole === 'student') {
+          if (userRole === 'student') {
+              Object.assign(registerData, {
+                currentSemester: parseInt(formData.currentSemester),
+                rollNumber: formData.rollNumber,
+              });
+          } else if (userRole === 'alumni') {
             Object.assign(registerData, {
-              currentSemester: parseInt(formData.currentSemester),
-              rollNumber: formData.rollNumber,
+              graduationYear: parseInt(formData.graduationYear),
+              currentJobTitle: formData.currentJobTitle,
+              companyName: formData.companyName,
             });
-        } else if (userRole === 'alumni') {
-          Object.assign(registerData, {
-            graduationYear: parseInt(formData.graduationYear),
-            currentJobTitle: formData.currentJobTitle,
-            companyName: formData.companyName,
-          });
-        } else if (userRole === 'faculty') {
-          Object.assign(registerData, {
-            designation: formData.designation,
-          });
-        }
+          } else if (userRole === 'faculty') {
+            Object.assign(registerData, {
+              designation: formData.designation,
+            });
+          }
 
-        await onSubmit(registerData);
-      }
-    } catch (err) {
-      handleError(err);
-      if (err.message.includes('Invalid email or password')) {
-        showAlert('Invalid email or password. Please try again.', 'error');
-      } else if (err.message.includes('Email already exists')) {
-        showAlert('This email is already registered. Please try logging in.', 'error');
-      } else {
-        showAlert(err.message || 'An error occurred. Please try again.', 'error');
+          await onSubmit(registerData);
+        }
+      } catch (err) {
+        console.error('Form submission error:', err);
       }
     }
   };
@@ -173,25 +158,21 @@ const AuthForm = ({
     // TODO: Implement Google Sign In
   };
 
+  if (lockoutStatus) {
+    return (
+      <div className="text-center p-4 bg-red-50 rounded-xl">
+        <h3 className="text-red-600 font-medium mb-2">Account Locked</h3>
+        <p className="text-sm text-gray-600">
+          {lockoutStatus.message}
+          <br />
+          Please try again in {Math.ceil(lockoutStatus.remainingTime / 60)} minutes
+        </p>
+      </div>
+    );
+  }
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {alert && (
-        <Alert
-          type={alert.type}
-          message={alert.message}
-          onClose={clearAlert}
-          className="mb-4"
-        />
-      )}
-
-      {error && (
-        <Alert
-          type="error"
-          message={error}
-          className="mb-4"
-        />
-      )}
-
       <div className="space-y-4">
         <button
           type="button"
@@ -484,12 +465,9 @@ const AuthForm = ({
           <label htmlFor="password" className="block text-sm font-medium text-gray-700">
             Password
           </label>
-          <div className="mt-1 relative rounded-lg shadow-sm">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <LockClosedIcon className="h-5 w-5 text-indigo-500" />
-            </div>
+          <div className="relative">
             <input
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               id="password"
               name="password"
               value={formData.password}
@@ -499,6 +477,13 @@ const AuthForm = ({
               disabled={loading}
               required
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            >
+              {showPassword ? <FiEyeOff size={20} /> : <FiEye size={20} />}
+            </button>
           </div>
           {formErrors.password && (
             <p className="mt-1 text-sm text-red-600">{formErrors.password}</p>
@@ -530,6 +515,12 @@ const AuthForm = ({
               <p className="mt-1 text-sm text-red-600">{formErrors.confirmPassword}</p>
             )}
           </div>
+        )}
+
+        {loginAttempts > 0 && loginAttempts < 5 && (
+          <p className="text-sm text-red-600">
+            {5 - loginAttempts} login attempts remaining
+          </p>
         )}
 
         <div>

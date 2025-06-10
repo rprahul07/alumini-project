@@ -1,5 +1,4 @@
-import React from 'react';
-import { useAuth } from '../../contexts/AuthContext';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/dashboard/Sidebar';
 import ProfileCard from '../../components/dashboard/ProfileCard';
@@ -13,7 +12,14 @@ import {
 } from '@heroicons/react/24/outline';
 
 const AdminDashboard = () => {
-  const { user } = useAuth();
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      setUser(JSON.parse(userData));
+    }
+  }, []);
 
   const menuItems = [
     { title: 'User Verification', icon: UserGroupIcon, path: '/admin/users' },

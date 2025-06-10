@@ -1,194 +1,468 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { FiArrowLeft } from "react-icons/fi";
-import AuthForm from "./AuthForm";
-import useAlert from "../hooks/useAlert";
-import Alert from "../components/Alert";
-import { validateForm } from "../utils/validation";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from '../config/axios';
+import { FiUser, FiMail, FiPhone, FiLock, FiEye, FiEyeOff, FiBriefcase, FiCalendar, FiBook, FiAward } from 'react-icons/fi';
+import toast from 'react-hot-toast';
 
-const MAX_LOGIN_ATTEMPTS = 5;
-const LOCKOUT_DURATION = 15 * 60 * 1000; // 15 minutes
-
-const AuthPage = ({ onAuthSuccess = () => {} }) => {
+const AuthPage = () => {
   const navigate = useNavigate();
-  const { alert, showAlert, clearAlert } = useAlert();
+  const [authType, setAuthType] = useState('login');
+  const [userRole, setUserRole] = useState('student');
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({
+    fullName: '',
+    email: '',
+    phoneNumber: '',
+    password: '',
+    confirmPassword: '',
+    department: '',
+    // Student specific fields
+    currentSemester: '',
+    rollNumber: '',
+    // Alumni specific fields
+    currentJobTitle: '',
+    companyName: '',
+    graduationYear: '',
+    // Faculty specific fields
+    designation: ''
+  });
+  const [error, setError] = useState('');
 
-  const [authType, setAuthType] = useState("login");
-  const [userRole, setUserRole] = useState(localStorage.getItem("selectedRole"));
-  const [isLoading, setIsLoading] = useState(false);
-  const [isLocked, setIsLocked] = useState(false);
-  const [lockoutTime, setLockoutTime] = useState(0);
-  const [loginAttempts, setLoginAttempts] = useState(0);
-
-  useEffect(() => {
-    const lock = JSON.parse(localStorage.getItem("authLockout"));
-    if (lock) {
-      const delta = Date.now() - lock.timestamp;
-      if (delta < LOCKOUT_DURATION) {
-        setIsLocked(true);
-        setLockoutTime((LOCKOUT_DURATION - delta) / 1000);
-        setLoginAttempts(lock.attempts);
-        showAlert(`Account locked. Try again in ${Math.ceil((LOCKOUT_DURATION - delta) / 60000)} minutes.`, 'error');
-      } else {
-        localStorage.removeItem("authLockout");
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    
+    // Handle current semester as integer
+    if (name === 'currentSemester') {
+      const semesterValue = parseInt(value);
+      if (isNaN(semesterValue) || semesterValue < 1 || semesterValue > 8) {
+        setError('Current semester must be a number between 1 and 8');
+        return;
       }
+      setFormData(prev => ({
+        ...prev,
+        [name]: semesterValue
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
     }
-  }, [showAlert]);
+    setError('');
+  };
 
-  useEffect(() => {
-    if (!isLocked) return;
-    const timer = setInterval(() => {
-      setLockoutTime((s) => {
-        if (s <= 1) {
-          clearInterval(timer);
-          setIsLocked(false);
-          localStorage.removeItem("authLockout");
-          clearAlert();
-          return 0;
-        }
-        return s - 1;
-      });
-    }, 1000);
-    return () => clearInterval(timer);
-  }, [isLocked, clearAlert]);
+  const handleRoleChange = (e) => {
+    const newRole = e.target.value;
+    setUserRole(newRole);
+    // Reset role-specific fields when role changes
+    setFormData(prev => ({
+      ...prev,
+      currentSemester: '',
+      rollNumber: '',
+      currentJobTitle: '',
+      companyName: '',
+      graduationYear: '',
+      designation: ''
+    }));
+  };
 
-  const handleSubmit = async (formData) => {
-    clearAlert();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
 
-    if (isLocked) {
-      showAlert(`Account locked. Try again in ${Math.ceil(lockoutTime / 60)} minutes.`, 'error');
-      return;
-    }
-
-    const validationErrors = validateForm(formData, authType, userRole);
-    if (Object.keys(validationErrors).length) return;
-
-    setIsLoading(true);
     try {
-      const apiData = { ...formData, role: userRole };
-      let response;
+      const endpoint = authType === 'login' ? '/api/auth/login' : '/api/auth/register';
+      const submitData = authType === 'login' ? {
+        email: formData.email,
+        password: formData.password,
+        role: userRole
+      } : {
+        ...formData,
+        role: userRole,
+        currentSemester: formData.role === 'student' ? parseInt(formData.currentSemester) : undefined
+      };
 
-      if (authType === "login") {
-        response = await axios.post("/api/auth/login/", apiData);
-        const { data } = response;
+      console.log('Submitting data:', submitData);
 
-        if (data.success) {
-          localStorage.setItem("userRole", userRole);
-          onAuthSuccess(userRole);
-          showAlert("Successfully logged in!", "success");
-
-          setTimeout(() => {
-            let rolePath = "/dashboard";
-            if (userRole === "student") rolePath = "/dashboard/student";
-            else if (userRole === "faculty") rolePath = "/dashboard/faculty";
-            else if (userRole === "alumni") rolePath = "/dashboard/alumni";
-            else rolePath = "/unauthorized";
-
-            navigate(rolePath);
-          }, 500);
-        } else {
-          handleFailedLogin();
-          showAlert(data.message || "Login failed. Please check your credentials.", "error");
-        }
-
-      } else {
-        response = await axios.post("/api/auth/signup/", apiData);
-        const { data } = response;
+      const response = await axios.post(endpoint, submitData, {
+        withCredentials: true // Important for handling cookies
+      });
+      console.log('Server response:', response.data);
+      
+      if (response.data.success && response.data.data) {
+        // Store user data only
+        const userData = {
+          id: response.data.data._id || response.data.data.id,
+          fullName: response.data.data.fullName,
+          email: response.data.data.email,
+          role: response.data.data.role
+        };
+        console.log('Storing user data:', userData);
+        localStorage.setItem('user', JSON.stringify(userData));
         
-
-        if (data.success) {
-          setAuthType("login");
-          showAlert("Account created successfully! Please log in.", "success");
-        } else {
-          showAlert(data.message || "Registration failed.", "error");
-        }
+        toast.success(response.data.message || (authType === 'login' ? 'Login successful!' : 'Registration successful!'));
+        
+        // Redirect based on role
+        const role = response.data.data.role.toLowerCase();
+        console.log('Redirecting to dashboard for role:', role);
+        
+        // Use replace to prevent back-button issues
+        navigate('/dashboard', { replace: true });
+      } else {
+        throw new Error(response.data.message || 'Authentication failed');
       }
     } catch (err) {
-      console.error("Auth error:", err);
-      const message = err?.response?.data?.message || "Something went wrong.";
-      showAlert(message, "error");
+      console.error('Authentication error:', err);
+      setError(err.response?.data?.message || err.message || 'Authentication failed');
+      toast.error(err.response?.data?.message || err.message || 'Authentication failed');
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
-  const handleFailedLogin = () => {
-    const attempts = loginAttempts + 1;
-    setLoginAttempts(attempts);
-
-    if (attempts >= MAX_LOGIN_ATTEMPTS) {
-      setIsLocked(true);
-      setLockoutTime(LOCKOUT_DURATION / 1000);
-      localStorage.setItem("authLockout", JSON.stringify({ timestamp: Date.now(), attempts }));
-      showAlert(`Too many failed attempts. Account locked for ${LOCKOUT_DURATION / 60000} minutes.`, "error");
-    } else {
-      showAlert(`Invalid credentials. ${MAX_LOGIN_ATTEMPTS - attempts} attempts remaining.`, "error");
+  const renderRoleSpecificFields = () => {
+    switch (userRole) {
+      case 'student':
+        return (
+          <>
+            <div>
+              <label htmlFor="currentSemester" className="block text-sm font-medium text-gray-700">
+                Current Semester
+              </label>
+              <div className="mt-1 relative">
+                <input
+                  id="currentSemester"
+                  name="currentSemester"
+                  type="number"
+                  min="1"
+                  max="8"
+                  required
+                  value={formData.currentSemester}
+                  onChange={handleInputChange}
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  placeholder="Enter your current semester (1-8)"
+                />
+                <FiCalendar className="absolute right-3 top-2.5 text-gray-400" />
+              </div>
+              <p className="mt-1 text-sm text-gray-500">Enter a number between 1 and 8</p>
+            </div>
+            <div>
+              <label htmlFor="rollNumber" className="block text-sm font-medium text-gray-700">
+                Roll Number
+              </label>
+              <div className="mt-1 relative">
+                <input
+                  id="rollNumber"
+                  name="rollNumber"
+                  type="text"
+                  required
+                  value={formData.rollNumber}
+                  onChange={handleInputChange}
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  placeholder="Enter your roll number"
+                />
+                <FiUser className="absolute right-3 top-2.5 text-gray-400" />
+              </div>
+            </div>
+          </>
+        );
+      case 'alumni':
+        return (
+          <>
+            <div>
+              <label htmlFor="graduationYear" className="block text-sm font-medium text-gray-700">
+                Graduation Year
+              </label>
+              <div className="mt-1 relative">
+                <input
+                  id="graduationYear"
+                  name="graduationYear"
+                  type="text"
+                  required
+                  value={formData.graduationYear}
+                  onChange={handleInputChange}
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  placeholder="Enter your graduation year"
+                />
+                <FiCalendar className="absolute right-3 top-2.5 text-gray-400" />
+              </div>
+            </div>
+            <div>
+              <label htmlFor="currentJobTitle" className="block text-sm font-medium text-gray-700">
+                Current Job Title
+              </label>
+              <div className="mt-1 relative">
+                <input
+                  id="currentJobTitle"
+                  name="currentJobTitle"
+                  type="text"
+                  required
+                  value={formData.currentJobTitle}
+                  onChange={handleInputChange}
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  placeholder="Enter your current job title"
+                />
+                <FiBriefcase className="absolute right-3 top-2.5 text-gray-400" />
+              </div>
+            </div>
+            <div>
+              <label htmlFor="companyName" className="block text-sm font-medium text-gray-700">
+                Company Name
+              </label>
+              <div className="mt-1 relative">
+                <input
+                  id="companyName"
+                  name="companyName"
+                  type="text"
+                  required
+                  value={formData.companyName}
+                  onChange={handleInputChange}
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  placeholder="Enter your company name"
+                />
+                <FiAward className="absolute right-3 top-2.5 text-gray-400" />
+              </div>
+            </div>
+          </>
+        );
+      case 'faculty':
+        return (
+          <div>
+            <label htmlFor="designation" className="block text-sm font-medium text-gray-700">
+              Designation
+            </label>
+            <div className="mt-1 relative">
+              <input
+                id="designation"
+                name="designation"
+                type="text"
+                required
+                value={formData.designation}
+                onChange={handleInputChange}
+                className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                placeholder="Enter your designation"
+              />
+              <FiAward className="absolute right-3 top-2.5 text-gray-400" />
+            </div>
+          </div>
+        );
+      default:
+        return null;
     }
-  };
-
-  const toggleAuthType = () => {
-    setAuthType(authType === "login" ? "register" : "login");
-    clearAlert();
-  };
-
-  const handleBack = () => {
-    localStorage.removeItem("selectedRole");
-    setUserRole(null);
-    clearAlert();
-    navigate("/role-selection");
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
-      <div className="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-        <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="text-center">
-            <h2 className="text-3xl font-extrabold text-gray-900 bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">
-              {authType === "login" ? "Welcome Back!" : "Join Our Community"}
-            </h2>
-            <p className="mt-2 text-sm text-gray-600">
-              {authType === "login" ? "Sign in to access your dashboard" : "Create your account to get started"}
-            </p>
-          </div>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 to-purple-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg">
+        <div>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            {authType === 'login' ? 'Welcome Back!' : 'Create Account'}
+          </h2>
+          <p className="mt-2 text-center text-sm text-gray-600">
+            {authType === 'login' 
+              ? 'Sign in to access your account' 
+              : 'Join our community and connect with others'}
+          </p>
         </div>
 
-        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="bg-white/80 backdrop-blur-sm py-8 px-4 shadow-xl sm:rounded-2xl sm:px-10 border border-gray-100">
-            <div className="flex items-center justify-between mb-8">
-              <button
-                onClick={handleBack}
-                className="inline-flex items-center text-indigo-600 hover:text-indigo-700 font-medium text-sm transition-colors"
-              >
-                <FiArrowLeft className="w-4 h-4 mr-1" />
-                Back
-              </button>
+        <div className="mt-8 space-y-6">
+          {/* Auth Type Toggle */}
+          <div className="flex justify-center space-x-4">
+            <button
+              onClick={() => setAuthType('login')}
+              className={`px-4 py-2 rounded-md transition-colors ${
+                authType === 'login'
+                  ? 'bg-indigo-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              Login
+            </button>
+            <button
+              onClick={() => setAuthType('register')}
+              className={`px-4 py-2 rounded-md transition-colors ${
+                authType === 'register'
+                  ? 'bg-indigo-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              Register
+            </button>
+          </div>
 
-              <button
-                onClick={toggleAuthType}
-                className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-sm font-medium rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-200"
-              >
-                {authType === "login" ? "Create Account" : "Sign In"}
-              </button>
-            </div>
+          {/* Role Selection */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Select Role
+            </label>
+            <select
+              value={userRole}
+              onChange={handleRoleChange}
+              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+            >
+              <option value="student">Student</option>
+              <option value="faculty">Faculty</option>
+              <option value="alumni">Alumni</option>
+            </select>
+          </div>
 
-            {alert && (
-              <Alert
-                type={alert.type}
-                message={alert.message}
-                onClose={clearAlert}
-                className="mb-6"
-              />
+          <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+            {authType === 'register' && (
+              <>
+                <div>
+                  <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">
+                    Full Name
+                  </label>
+                  <div className="mt-1 relative">
+                    <input
+                      id="fullName"
+                      name="fullName"
+                      type="text"
+                      required
+                      value={formData.fullName}
+                      onChange={handleInputChange}
+                      className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                      placeholder="Enter your full name"
+                    />
+                    <FiUser className="absolute right-3 top-2.5 text-gray-400" />
+                  </div>
+                </div>
+
+                <div>
+                  <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700">
+                    Phone Number
+                  </label>
+                  <div className="mt-1 relative">
+                    <input
+                      id="phoneNumber"
+                      name="phoneNumber"
+                      type="tel"
+                      required
+                      value={formData.phoneNumber}
+                      onChange={handleInputChange}
+                      className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                      placeholder="Enter your phone number"
+                    />
+                    <FiPhone className="absolute right-3 top-2.5 text-gray-400" />
+                  </div>
+                </div>
+
+                <div>
+                  <label htmlFor="department" className="block text-sm font-medium text-gray-700">
+                    Department
+                  </label>
+                  <div className="mt-1 relative">
+                    <input
+                      id="department"
+                      name="department"
+                      type="text"
+                      required
+                      value={formData.department}
+                      onChange={handleInputChange}
+                      className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                      placeholder="Enter your department"
+                    />
+                    <FiBook className="absolute right-3 top-2.5 text-gray-400" />
+                  </div>
+                </div>
+
+                {/* Role-specific fields */}
+                {renderRoleSpecificFields()}
+              </>
             )}
 
-            <AuthForm
-              authType={authType}
-              userRole={userRole}
-              onSubmit={handleSubmit}
-              error={null}
-              loading={isLoading}
-            />
-          </div>
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                Email address
+              </label>
+              <div className="mt-1 relative">
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  placeholder="Enter your email"
+                />
+                <FiMail className="absolute right-3 top-2.5 text-gray-400" />
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                Password
+              </label>
+              <div className="mt-1 relative">
+                <input
+                  id="password"
+                  name="password"
+                  type={showPassword ? 'text' : 'password'}
+                  autoComplete="current-password"
+                  required
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  placeholder="Enter your password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600"
+                >
+                  {showPassword ? <FiEyeOff /> : <FiEye />}
+                </button>
+              </div>
+            </div>
+
+            {authType === 'register' && (
+              <div>
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+                  Confirm Password
+                </label>
+                <div className="mt-1 relative">
+                  <input
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    type={showPassword ? 'text' : 'password'}
+                    required
+                    value={formData.confirmPassword}
+                    onChange={handleInputChange}
+                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    placeholder="Confirm your password"
+                  />
+                  <FiLock className="absolute right-3 top-2.5 text-gray-400" />
+                </div>
+              </div>
+            )}
+
+            {error && (
+              <div className="text-red-500 text-sm text-center bg-red-50 p-3 rounded-md">
+                {error}
+              </div>
+            )}
+
+            <div>
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                {loading ? (
+                  <div className="flex items-center">
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-3" />
+                    Processing...
+                  </div>
+                ) : (
+                  authType === 'login' ? 'Sign in' : 'Create Account'
+                )}
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
