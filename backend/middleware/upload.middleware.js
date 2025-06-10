@@ -28,8 +28,8 @@ const storage = multer.diskStorage({
     cb(null, uploadDir);
   },
   filename: function (req, file, cb) {
-    // Get userId from query parameter
-    const userId = req.query.userId;
+    // Get userId from request user object (set by auth middleware)
+    const userId = req.user?.id;
     const fileExtension = path.extname(file.originalname);
     const timestamp = Date.now();
 
@@ -44,4 +44,7 @@ export const uploadPhotoMiddleware = multer({
   storage: storage,
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
   fileFilter: fileFilter,
-}).single("photo");
+}).fields([
+  { name: 'photo', maxCount: 1 },
+  { name: 'profilePhoto', maxCount: 1 }
+]);

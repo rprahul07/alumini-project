@@ -2,12 +2,15 @@ import path from "path";
 import fs from "fs";
 
 export const handlePhotoUpload = async (req, currentPhotoUrl = null) => {
-  if (!req.file) {
+  // Check for photo in either field
+  const photoFile = req.files?.photo?.[0] || req.files?.profilePhoto?.[0];
+  
+  if (!photoFile) {
     return null;
   }
 
-  const userId = req.query.userId;
-  const newFilename = req.file.filename;
+  const userId = req.user?.id;
+  const newFilename = photoFile.filename;
 
   // Delete all existing photos for this user EXCEPT the new one
   try {

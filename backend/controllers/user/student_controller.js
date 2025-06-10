@@ -495,6 +495,7 @@ export const updateStudentById = async (req, res) => {
     });
   }
 };
+
 export const updateMyStudentProfile = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -511,6 +512,7 @@ export const updateMyStudentProfile = async (req, res) => {
       graduationYear,
     } = req.body;
 
+    // Check if user exists and is a student
     const user = await prisma.user.findUnique({
       where: { id: userId },
       include: {
@@ -539,8 +541,10 @@ export const updateMyStudentProfile = async (req, res) => {
       });
     }
 
+    // Handle photo upload
     const newPhotoUrl = await handlePhotoUpload(req, user.photoUrl);
 
+    // Prepare update data for User table
     const userUpdateData = {};
     if (fullName !== undefined) userUpdateData.fullName = fullName;
     if (email !== undefined) userUpdateData.email = email;
@@ -550,6 +554,7 @@ export const updateMyStudentProfile = async (req, res) => {
     if (linkedinUrl !== undefined) userUpdateData.linkedinUrl = linkedinUrl;
     if (newPhotoUrl) userUpdateData.photoUrl = newPhotoUrl;
 
+    // Prepare update data for Student table
     const studentUpdateData = {};
     if (currentSemester !== undefined) {
       const semesterInt = parseInt(currentSemester);
@@ -573,7 +578,9 @@ export const updateMyStudentProfile = async (req, res) => {
       studentUpdateData.graduationYear = yearInt;
     }
 
+    // Update both User and Student records using transaction
     const updatedData = await prisma.$transaction(async (prisma) => {
+      // Update User record if there's data to update
       if (Object.keys(userUpdateData).length > 0) {
         await prisma.user.update({
           where: { id: userId },
@@ -581,6 +588,7 @@ export const updateMyStudentProfile = async (req, res) => {
         });
       }
 
+      // Update Student record if there's data to update
       if (Object.keys(studentUpdateData).length > 0) {
         await prisma.student.update({
           where: { userId },
@@ -588,6 +596,7 @@ export const updateMyStudentProfile = async (req, res) => {
         });
       }
 
+      // Fetch the complete updated record
       return await prisma.user.findUnique({
         where: { id: userId },
         select: {
@@ -620,15 +629,21 @@ export const updateMyStudentProfile = async (req, res) => {
   } catch (error) {
     console.error("Error updating student profile:", error);
 
+    // Handle multer errors
     if (error instanceof multer.MulterError) {
       if (error.code === "LIMIT_FILE_SIZE") {
         return res.status(400).json({
           success: false,
-          message: "File size too large. Maximum is 5MB",
+          message: "File size too large. Maximum size is 5MB",
         });
       }
+      return res.status(400).json({
+        success: false,
+        message: "File upload error",
+      });
     }
 
+    // Handle file type error
     if (error.message.includes("Only image files are allowed")) {
       return res.status(400).json({
         success: false,
@@ -636,6 +651,7 @@ export const updateMyStudentProfile = async (req, res) => {
       });
     }
 
+    // Handle specific Prisma errors
     if (error.code === "P2002") {
       return res.status(400).json({
         success: false,
