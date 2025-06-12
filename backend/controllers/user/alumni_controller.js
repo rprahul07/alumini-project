@@ -173,19 +173,25 @@ export const getAllAlumni = async (req, res) => {
       where: whereClause,
       select: {
         id: true,
-        fullName: true,
-        email: true,
-        phoneNumber: true,
-        department: true,
-        createdAt: true,
-        photoUrl: true,
-        alumni: {
-          select: {
-            id: true,
-            graduationYear: true,
-            course: true,
-            currentJobTitle: true,
-            companyName: true,
+          fullName: true,
+          email: true,
+          phoneNumber: true,
+          department: true,
+          role: true,
+          photoUrl: true,
+          bio: true,
+          linkedinUrl: true,
+          twitterUrl: true,
+          githubUrl: true,
+          workExperience: true,
+          alumni: {
+            select: {
+              id: true,
+              graduationYear: true,
+              course: true,
+              currentJobTitle: true,
+              companyName: true,
+              company_role: true,
           },
         },
       },
@@ -305,10 +311,13 @@ export const updateAlumniById = async (req, res) => {
       department,
       bio,
       linkedinUrl,
+      twitterUrl,
+      githubUrl,
       graduationYear,
       course,
       currentJobTitle,
       companyName,
+      company_role,
       workExperience,
     } = req.body;
 
@@ -371,6 +380,9 @@ export const updateAlumniById = async (req, res) => {
     if (bio !== undefined) userUpdateData.bio = bio;
     if (linkedinUrl !== undefined) userUpdateData.linkedinUrl = linkedinUrl;
     if (newPhotoUrl) userUpdateData.photoUrl = newPhotoUrl;
+    if (twitterUrl !== undefined) userUpdateData.twitterUrl = twitterUrl;
+    if (githubUrl !== undefined) userUpdateData.githubUrl = githubUrl;
+    if (company_role !== undefined) userUpdateData.company_role = company_role;
 
     // Prepare update data for Alumni table
     const alumniUpdateData = {};
@@ -512,9 +524,11 @@ export const updateAlumniById = async (req, res) => {
     });
   }
 };
+
+// for updating the logged-in alumni's profile
 export const updateAlumniSelf = async (req, res) => {
   try {
-    const userId = req.user.id; // ✅ Securely extracted from the JWT
+    const userId = req.user.id;
 
     const {
       fullName,
@@ -523,22 +537,20 @@ export const updateAlumniSelf = async (req, res) => {
       department,
       bio,
       linkedinUrl,
+      twitterUrl,
+      githubUrl,
       graduationYear,
       course,
       currentJobTitle,
       companyName,
+      company_role,
       workExperience,
     } = req.body;
 
-    // Fetch user and alumni
     const user = await prisma.user.findUnique({
       where: { id: userId },
       include: {
-        alumni: {
-          include: {
-            workExperience: true,
-          },
-        },
+        alumni: true,
       },
     });
 
@@ -552,21 +564,19 @@ export const updateAlumniSelf = async (req, res) => {
     if (!user.alumni) {
       return res.status(404).json({
         success: false,
-        message: "Alumni profile not found for this user",
+        message: "Alumni profile not found",
       });
     }
 
-    if (user.role !== ROLES.ALUMNI) {
+    if (user.role !== "alumni") {
       return res.status(403).json({
         success: false,
         message: "Access denied. Only alumni can update their profile.",
       });
     }
 
-    // ✅ Handle photo upload
     const newPhotoUrl = await handlePhotoUpload(req, user.photoUrl);
 
-    // Prepare update payloads
     const userUpdateData = {};
     if (fullName !== undefined) userUpdateData.fullName = fullName;
     if (email !== undefined) userUpdateData.email = email;
@@ -574,7 +584,18 @@ export const updateAlumniSelf = async (req, res) => {
     if (department !== undefined) userUpdateData.department = department;
     if (bio !== undefined) userUpdateData.bio = bio;
     if (linkedinUrl !== undefined) userUpdateData.linkedinUrl = linkedinUrl;
+    if (twitterUrl !== undefined) userUpdateData.twitterUrl = twitterUrl;
+    if (githubUrl !== undefined) userUpdateData.githubUrl = githubUrl;
     if (newPhotoUrl) userUpdateData.photoUrl = newPhotoUrl;
+    if (workExperience !== undefined) {
+      if (!Array.isArray(workExperience)) {
+        return res.status(400).json({
+          success: false,
+          message: "workExperience must be an array",
+        });
+      }
+      userUpdateData.workExperience = workExperience;
+    }
 
     const alumniUpdateData = {};
     if (graduationYear !== undefined) {
@@ -590,9 +611,9 @@ export const updateAlumniSelf = async (req, res) => {
     if (course !== undefined) alumniUpdateData.course = course;
     if (currentJobTitle !== undefined) alumniUpdateData.currentJobTitle = currentJobTitle;
     if (companyName !== undefined) alumniUpdateData.companyName = companyName;
+    if (company_role !== undefined) alumniUpdateData.company_role = company_role;
 
-    // Update within transaction
-    const updatedData = await prisma.$transaction(async (prisma) => {
+    const updatedUser = await prisma.$transaction(async (prisma) => {
       if (Object.keys(userUpdateData).length > 0) {
         await prisma.user.update({
           where: { id: userId },
@@ -607,29 +628,21 @@ export const updateAlumniSelf = async (req, res) => {
         });
       }
 
-      if (workExperience && Array.isArray(workExperience) && workExperience.length > 0) {
-        await prisma.alumniWorkExperience.createMany({
-          data: workExperience.map((exp) => ({
-            companyName: exp.companyName,
-            role: exp.role,
-            alumniId: user.alumni.id,
-          })),
-        });
-      }
-
-      // Fetch final result
       return await prisma.user.findUnique({
         where: { id: userId },
         select: {
           id: true,
-          email: true,
           fullName: true,
+          email: true,
           phoneNumber: true,
           department: true,
           role: true,
           photoUrl: true,
           bio: true,
           linkedinUrl: true,
+          twitterUrl: true,
+          githubUrl: true,
+          workExperience: true,
           alumni: {
             select: {
               id: true,
@@ -637,16 +650,7 @@ export const updateAlumniSelf = async (req, res) => {
               course: true,
               currentJobTitle: true,
               companyName: true,
-              workExperience: {
-                select: {
-                  id: true,
-                  companyName: true,
-                  role: true,
-                },
-                orderBy: {
-                  id: "asc",
-                },
-              },
+              company_role: true,
             },
           },
         },
@@ -656,10 +660,10 @@ export const updateAlumniSelf = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Profile updated successfully",
-      data: updatedData,
+      data: updatedUser,
     });
   } catch (error) {
-    console.error("Error updating alumni self:", error);
+    console.error("Error updating alumni profile:", error);
 
     if (error instanceof multer.MulterError) {
       return res.status(400).json({
@@ -675,6 +679,111 @@ export const updateAlumniSelf = async (req, res) => {
       });
     }
 
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
+
+
+// Function to get the logged-in alumni's profile
+
+export const getAlumniSelf = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        fullName: true,
+        email: true,
+        phoneNumber: true,
+        department: true,
+        photoUrl: true,
+        bio: true,
+        linkedinUrl: true,
+        twitterUrl: true,
+        githubUrl: true,
+        workExperience: true,
+        role: true,
+        alumni: {
+          select: {
+            id: true,
+            graduationYear: true,
+            course: true,
+            currentJobTitle: true,
+            companyName: true,
+            company_role: true,
+          },
+        },
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Alumni profile fetched successfully",
+      data: user,
+    });
+  } catch (error) {
+    console.error("Error fetching alumni profile:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
+
+
+export const deleteProfilePicture = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    // Fetch user to check if they have a profile picture
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        photoUrl: true,
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    if (!user.photoUrl) {
+      return res.status(400).json({
+        success: false,
+        message: "No profile picture to delete",
+      });
+    }
+
+    // Update user record to remove photoUrl
+    await prisma.user.update({
+      where: { id: userId },
+      data: { photoUrl: null },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Profile picture deleted successfully",
+    });
+  } catch (error) {
+    console.error("Error deleting profile picture:", error);
     return res.status(500).json({
       success: false,
       message: "Internal server error",

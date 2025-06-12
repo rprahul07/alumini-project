@@ -71,8 +71,7 @@ const AuthPage = () => {
     e.preventDefault();
     setLoading(true);
     setError('');
-
-    try {
+try {
       const endpoint = authType === 'login' ? '/api/auth/login' : '/api/auth/signup';
       const submitData = authType === 'login' ? {
         email: formData.email,
@@ -88,10 +87,10 @@ const AuthPage = () => {
         rollNumber: formData.rollNumber || '',
         // Remove undefined fields
         ...(userRole !== 'student' && { currentSemester: undefined }),
-        ...(userRole !== 'alumni' && { 
+        ...(userRole !== 'alumni' && {
           graduationYear: undefined,
           currentJobTitle: undefined,
-          companyName: undefined 
+          companyName: undefined
         }),
         ...(userRole !== 'faculty' && { designation: undefined })
       };
@@ -102,26 +101,33 @@ const AuthPage = () => {
         withCredentials: true // Important for handling cookies
       });
       console.log('Server response:', response.data);
-      
+
       if (response.data.success && response.data.data) {
-        // Store user data only
-        const userData = {
-          id: response.data.data._id || response.data.data.id,
-          fullName: response.data.data.fullName,
-          email: response.data.data.email,
-          role: response.data.data.role
-        };
-        console.log('Storing user data:', userData);
-        localStorage.setItem('user', JSON.stringify(userData));
-        
         toast.success(response.data.message || (authType === 'login' ? 'Login successful!' : 'Registration successful!'));
-        
-        // Redirect based on role
-        const role = response.data.data.role.toLowerCase();
-        console.log('Redirecting to dashboard for role:', role);
-        
-        // Use replace to prevent back-button issues
-        navigate('/dashboard', { replace: true });
+
+        // --- MODIFICATION STARTS HERE ---
+        if (authType === 'signup') {
+          // If it's a signup, redirect to the login page
+          console.log('Signup successful, redirecting to login page.');
+          navigate('/login', { replace: true }); // Assuming your login page route is '/login'
+        } else {
+          // If it's a login, store user data and redirect to dashboard
+          const userData = {
+            id: response.data.data._id || response.data.data.id,
+            fullName: response.data.data.fullName,
+            email: response.data.data.email,
+            role: response.data.data.role
+          };
+          console.log('Storing user data:', userData);
+          localStorage.setItem('user', JSON.stringify(userData));
+
+          // Redirect based on role after successful login
+          const role = response.data.data.role.toLowerCase();
+          console.log('Login successful, redirecting to dashboard for role:', role);
+          navigate('/dashboard', { replace: true });
+        }
+        // --- MODIFICATION ENDS HERE ---
+
       } else {
         throw new Error(response.data.message || 'Authentication failed');
       }
@@ -133,7 +139,6 @@ const AuthPage = () => {
       setLoading(false);
     }
   };
-
   const renderRoleSpecificFields = () => {
     switch (userRole) {
       case 'student':

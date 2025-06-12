@@ -7,9 +7,12 @@ import {
   CalendarIcon,
   MapPinIcon,
   ClockIcon,
-  TagIcon
+  AcademicCapIcon, // For Mentorship
+  SparklesIcon,    // For Clubs/Activities
+  ArrowRightIcon, // Added for 'View All' buttons
 } from '@heroicons/react/24/outline';
 
+// --- StatCard Component (Re-used and slightly enhanced) ---
 const StatCard = ({ title, value, Icon, color, progress, progressText }) => {
   const getColorClasses = (color) => {
     switch (color) {
@@ -19,67 +22,87 @@ const StatCard = ({ title, value, Icon, color, progress, progressText }) => {
         return 'bg-green-100 text-green-800';
       case 'purple':
         return 'bg-purple-100 text-purple-800';
+      case 'yellow': // Added yellow for new stats
+        return 'bg-yellow-100 text-yellow-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }
   };
 
+  const getProgressBarColor = (color) => {
+    switch (color) {
+      case 'blue':
+        return 'bg-blue-500';
+      case 'green':
+        return 'bg-green-500';
+      case 'purple':
+        return 'bg-purple-500';
+      case 'yellow':
+        return 'bg-yellow-500';
+      default:
+        return 'bg-gray-500';
+    }
+  };
+
   return (
-    <div className="bg-white rounded-xl shadow-sm p-6">
+    <div className="bg-white rounded-xl shadow-md p-6 transform transition duration-300 hover:scale-[1.02] hover:shadow-lg">
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm font-medium text-gray-500">{title}</p>
-          <p className="text-2xl font-semibold text-gray-900 mt-1">{value}</p>
+          <p className="text-3xl font-bold text-gray-900 mt-2">{value}</p>
         </div>
         {Icon && (
           <div className={`p-3 rounded-full ${getColorClasses(color)}`}>
-            <Icon className="h-6 w-6" />
+            <Icon className="h-7 w-7" />
           </div>
         )}
       </div>
-      <div className="mt-4">
-        <div className="w-full bg-gray-100 rounded-full h-2">
-          <div
-            className={`h-2 rounded-full ${getColorClasses(color)}`}
-            style={{ width: `${progress}%` }}
-          />
+      {progress !== undefined && ( // Only show progress if 'progress' prop is provided
+        <div className="mt-5">
+          <div className="w-full bg-gray-200 rounded-full h-2">
+            <div
+              className={`h-2 rounded-full ${getProgressBarColor(color)}`}
+              style={{ width: `${progress}%` }}
+              aria-valuenow={progress}
+              aria-valuemin="0"
+              aria-valuemax="100"
+            />
+          </div>
+          <p className="text-xs text-gray-500 mt-2">{progressText}</p>
         </div>
-        <p className="text-xs text-gray-500 mt-2">{progressText}</p>
-      </div>
+      )}
     </div>
   );
 };
 
+// --- EventCard Component (Re-used with minor styling adjustment) ---
 const EventCard = ({ date, title, time, location, tags }) => {
-  // Split date into month and day
   const [month, day] = date.split(' ');
 
   return (
-    <div className="flex items-start space-x-4 p-4 border-b border-gray-100 last:border-b-0">
-      {/* Date Box */}
-      <div className="flex-shrink-0 w-16 bg-gray-100 rounded-lg p-2 text-center">
-        <div className="text-xs font-medium text-gray-500 uppercase">{month}</div>
-        <div className="text-2xl font-bold text-gray-900">{day}</div>
+    <div className="flex items-start space-x-5 p-4 hover:bg-gray-50 rounded-lg transition-colors duration-200">
+      <div className="flex-shrink-0 w-20 h-20 bg-indigo-50 rounded-xl flex flex-col items-center justify-center border border-indigo-100">
+        <div className="text-sm font-semibold text-indigo-700 uppercase leading-none">{month}</div>
+        <div className="text-3xl font-bold text-indigo-900 leading-none mt-1">{day}</div>
       </div>
 
-      {/* Event Details */}
       <div className="flex-1">
-        <h3 className="text-base font-semibold text-gray-900">{title}</h3>
-        <div className="mt-1 space-y-1">
-          <div className="flex items-center text-sm text-gray-500">
-            <ClockIcon className="h-4 w-4 mr-1.5" />
-            {time}
+        <h3 className="text-lg font-semibold text-gray-900 mb-1">{title}</h3>
+        <div className="space-y-1 text-gray-600">
+          <div className="flex items-center text-sm">
+            <ClockIcon className="h-4 w-4 mr-2 text-gray-500" />
+            <span>{time}</span>
           </div>
-          <div className="flex items-center text-sm text-gray-500">
-            <MapPinIcon className="h-4 w-4 mr-1.5" />
-            {location}
+          <div className="flex items-center text-sm">
+            <MapPinIcon className="h-4 w-4 mr-2 text-gray-500" />
+            <span>{location}</span>
           </div>
         </div>
-        <div className="flex flex-wrap gap-2 mt-2">
+        <div className="flex flex-wrap gap-2 mt-3">
           {tags.map((tag, index) => (
             <span
               key={index}
-              className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"
+              className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800"
             >
               {tag}
             </span>
@@ -90,131 +113,158 @@ const EventCard = ({ date, title, time, location, tags }) => {
   );
 };
 
+// --- MentorCard Component ---
 const MentorCard = ({ name, title, tags }) => (
-  <div className="flex items-start space-x-4 p-4 border-b border-gray-100 last:border-b-0">
-    {/* Profile Image */}
+  <div className="flex items-start space-x-4 p-4 hover:bg-gray-50 rounded-lg transition-colors duration-200">
     <div className="flex-shrink-0">
       <img
-        src="/default-avatar.png"
+        src="/default-avatar.png" // Consider dynamic mentor photo here if available
         alt={name}
-        className="w-12 h-12 rounded-full object-cover"
+        className="w-14 h-14 rounded-full object-cover border border-gray-200"
       />
     </div>
 
-    {/* Mentor Details */}
     <div className="flex-1">
       <h3 className="text-base font-semibold text-gray-900">{name}</h3>
       <p className="text-sm text-gray-500 mt-0.5">{title}</p>
-      <div className="flex flex-wrap gap-2 mt-2">
+      <div className="flex flex-wrap gap-2 mt-3">
         {tags.map((tag, index) => (
           <span
             key={index}
-            className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+            className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
           >
             {tag}
           </span>
         ))}
       </div>
-      <button className="mt-3 text-xs font-medium text-indigo-600 border border-indigo-200 rounded-full px-3 py-1 hover:bg-indigo-50 transition-colors">
+      <button className="mt-4 text-sm font-medium text-indigo-600 border border-indigo-300 rounded-full px-4 py-1.5 hover:bg-indigo-50 transition-colors shadow-sm">
         Request Mentorship
       </button>
     </div>
   </div>
 );
 
+// --- JobBoard Component (Re-used as is) ---
 const JobBoard = () => {
   const jobs = [
     {
-      position: "Software Engineer",
-      company: "Tech Solutions Inc.",
-      location: "New York, NY",
-      type: "Full-time",
+      position: "Software Engineer Intern",
+      company: "Innovate Solutions",
+      location: "Bengaluru, India",
+      type: "Internship",
       posted: "2 days ago",
-      department: "Engineering"
+      department: "Software Engineering"
     },
     {
-      position: "UX Designer",
-      company: "Design Studio",
+      position: "Product Design Intern",
+      company: "Creative Minds Co.",
       location: "Remote",
-      type: "Contract",
+      type: "Internship",
       posted: "1 week ago",
-      department: "Design"
+      department: "Product Design"
     },
     {
-      position: "Product Manager",
-      company: "Innovation Labs",
-      location: "San Francisco, CA",
-      type: "Full-time",
+      position: "Data Analytics Trainee",
+      company: "Analytics Hub",
+      location: "Mumbai, India",
+      type: "Full-time", // Could be full-time for freshers
       posted: "3 days ago",
-      department: "Product"
+      department: "Data Science"
+    },
+    {
+      position: "Junior Marketing Associate",
+      company: "Growth Marketing Ltd.",
+      location: "Kochi, India",
+      type: "Full-time",
+      posted: "4 days ago",
+      department: "Marketing"
     }
   ];
 
   return (
-    <div className="bg-white rounded-xl shadow-sm p-6">
-      {/* Header */}
+    <div className="bg-white rounded-xl shadow-md p-6">
       <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center space-x-2">
-          <BriefcaseIcon className="h-5 w-5 text-gray-600" />
-          <h2 className="text-lg font-semibold text-gray-900">Job Board</h2>
+        <div className="flex items-center space-x-3">
+          <BriefcaseIcon className="h-6 w-6 text-indigo-600" />
+          <h2 className="text-xl font-bold text-gray-900">Recent Job & Internship Opportunities</h2>
         </div>
-        <button className="text-sm text-indigo-600 hover:underline">View All</button>
+        <button className="text-sm text-indigo-600 hover:text-indigo-800 flex items-center group">
+          View All <ArrowRightIcon className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
+        </button>
       </div>
 
-      {/* Table */}
       <div className="overflow-x-auto">
-        <div className="min-w-full">
-          {/* Table Header */}
-          <div className="grid grid-cols-6 gap-4 bg-gray-50 px-4 py-2 rounded-t-lg">
-            <div className="uppercase text-xs text-gray-500 font-medium tracking-wide">Position</div>
-            <div className="uppercase text-xs text-gray-500 font-medium tracking-wide">Company</div>
-            <div className="uppercase text-xs text-gray-500 font-medium tracking-wide">Location</div>
-            <div className="uppercase text-xs text-gray-500 font-medium tracking-wide">Type</div>
-            <div className="uppercase text-xs text-gray-500 font-medium tracking-wide">Posted</div>
-            <div className="uppercase text-xs text-gray-500 font-medium tracking-wide">Action</div>
-          </div>
-
-          {/* Table Body */}
-          <div className="divide-y divide-gray-100">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Position & Department
+              </th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Company
+              </th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Location
+              </th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Type
+              </th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Posted
+              </th>
+              <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Action
+              </th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
             {jobs.map((job, index) => (
-              <div key={index} className="grid grid-cols-6 gap-4 px-4 py-3 hover:bg-gray-50">
-                <div>
-                  <div className="text-sm font-semibold text-gray-800">{job.position}</div>
-                  <div className="text-xs text-gray-500">{job.department}</div>
-                </div>
-                <div className="text-sm text-gray-700">{job.company}</div>
-                <div className="text-sm text-gray-700">{job.location}</div>
-                <div>
-                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                    job.type === 'Full-time' 
-                      ? 'bg-green-100 text-green-800' 
-                      : 'bg-blue-100 text-blue-800'
+              <tr key={index} className="hover:bg-gray-50">
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="text-sm font-semibold text-gray-900">{job.position}</div>
+                  <div className="text-xs text-gray-500 mt-1">{job.department}</div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="text-sm text-gray-700">{job.company}</div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="text-sm text-gray-700">{job.location}</div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                    job.type === 'Full-time'
+                      ? 'bg-green-100 text-green-800'
+                      : job.type === 'Internship'
+                      ? 'bg-yellow-100 text-yellow-800'
+                      : 'bg-blue-100 text-blue-800' // For Contract, etc.
                   }`}>
                     {job.type}
                   </span>
-                </div>
-                <div className="text-sm text-gray-500">{job.posted}</div>
-                <div>
-                  <button className="text-sm font-medium text-indigo-600 hover:underline">
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="text-sm text-gray-500">{job.posted}</div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <button className="text-indigo-600 hover:text-indigo-800 transition-colors">
                     Apply
                   </button>
-                </div>
-              </div>
+                </td>
+              </tr>
             ))}
-          </div>
-        </div>
+          </tbody>
+        </table>
       </div>
 
-      {/* Bottom Note */}
       <div className="mt-6 text-center">
-        <span className="inline-block text-sm text-indigo-700 bg-gray-100 px-3 py-1 rounded-full">
-          ** Coming Soon ** More job postings will be added
+        <span className="inline-block text-sm text-indigo-700 bg-indigo-50 px-4 py-2 rounded-full border border-indigo-200">
+          ** Coming Soon ** More opportunities will be added
         </span>
       </div>
     </div>
   );
 };
 
+// --- StudentDashboard Main Component ---
 const StudentDashboard = () => {
   const [user, setUser] = useState(null);
 
@@ -227,18 +277,25 @@ const StudentDashboard = () => {
 
   const upcomingEvents = [
     {
-      date: 'MAY 15',
-      title: 'Tech Talk: Future of AI',
-      time: '2:00 PM - 4:00 PM',
-      location: 'Main Auditorium',
-      tags: ['In-Person', 'Panel']
+      date: 'JUL 18',
+      title: 'Workshop: Mastering React Hooks',
+      time: '1:00 PM - 3:00 PM',
+      location: 'Computer Lab 3, Block A',
+      tags: ['Technical', 'Hands-on']
     },
     {
-      date: 'MAY 20',
-      title: 'Career Fair 2024',
-      time: '10:00 AM - 5:00 PM',
-      location: 'Virtual',
-      tags: ['Virtual', 'Career']
+      date: 'AUG 02',
+      title: 'Career Fair 2025: Internship Focus',
+      time: '10:00 AM - 4:00 PM',
+      location: 'University Gymnasium',
+      tags: ['Internship', 'Networking']
+    },
+    {
+      date: 'AUG 25',
+      title: 'Guest Lecture: Blockchain Beyond Crypto',
+      time: '11:00 AM - 12:30 PM',
+      location: 'Online Webinar',
+      tags: ['Virtual', 'Innovation']
     }
   ];
 
@@ -246,87 +303,127 @@ const StudentDashboard = () => {
     {
       name: 'Dr. Sarah Johnson',
       title: 'Senior Software Engineer at Google',
-      tags: ['Software Development', 'Career Guidance']
+      tags: ['Software Development', 'Career Guidance', 'AI/ML']
     },
     {
       name: 'Prof. Michael Chen',
       title: 'Research Director at Microsoft',
-      tags: ['AI/ML', 'Research']
+      tags: ['AI/ML', 'Research', 'Academic Guidance']
+    },
+    {
+      name: 'Priya Sharma',
+      title: 'Product Manager at Flipkart (Alumni)',
+      tags: ['Product Management', 'Startup Insights', 'E-commerce']
+    }
+  ];
+
+  const clubsAndActivities = [
+    {
+      name: 'Code Club',
+      members: '150+ members',
+      iconColor: 'blue',
+      description: 'Weekly coding challenges and hackathons.'
+    },
+    {
+      name: 'Robotics Team',
+      members: '40 members',
+      iconColor: 'green',
+      description: 'Building and competing with autonomous robots.'
+    },
+    {
+      name: 'Entrepreneurship Cell',
+      members: '80+ members',
+      iconColor: 'purple',
+      description: 'Ideation sessions and startup mentorship.'
     }
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         {/* Welcome Section */}
-        <div className="mb-6">
-          <h1 className="text-lg font-medium text-gray-900">
-            Welcome back, {user?.fullName || 'Student'}! 👋
+        <div className="mb-8">
+          <h1 className="text-4xl font-extrabold text-gray-900 leading-tight">
+            Welcome back, <span className="text-indigo-600">{user?.fullName || 'Student'}</span>! 👋
           </h1>
-          <p className="text-sm text-gray-500 mt-1">
-            Here's what's happening in your student dashboard today.
+          <p className="text-lg text-gray-600 mt-2">
+            Your personalized dashboard to explore opportunities and connect with the community.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-10">
           {/* Left Column - Profile and Navigation */}
-          <div className="lg:col-span-1 space-y-6">
+          <div className="lg:col-span-1 space-y-8">
             <ProfileCard />
             <Sidebar />
           </div>
 
           {/* Right Column - Main Content */}
-          <div className="lg:col-span-3 space-y-8">
+          <div className="lg:col-span-3 space-y-10">
             {/* Quick Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <StatCard
-                title="Network Size"
-                value="12,458"
-                Icon={UserGroupIcon}
+                title="Total Courses"
+                value="24"
+                Icon={AcademicCapIcon}
                 color="blue"
-                progress={75}
-                progressText="75% of alumni connected"
+                progress={80}
+                progressText="80% completion rate"
               />
               <StatCard
-                title="Job Opportunities"
-                value="156"
-                Icon={BriefcaseIcon}
-                color="green"
-                progress={60}
-                progressText="60% match rate"
+                title="Active Clubs"
+                value={clubsAndActivities.length} // Dynamic count
+                Icon={SparklesIcon}
+                color="yellow" // New color
+                progress={90}
+                progressText="90% student participation"
               />
               <StatCard
                 title="Upcoming Events"
-                value="8"
+                value={upcomingEvents.length} // Dynamic count
                 Icon={CalendarIcon}
                 color="purple"
-                progress={40}
-                progressText="40% RSVP rate"
+                progress={65}
+                progressText="65% registered for next event"
               />
             </div>
 
             {/* Events and Mentorship Section */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {/* Upcoming Events Section */}
-              <div className="bg-white rounded-xl shadow-sm p-6">
-                <h2 className="text-xl font-bold text-gray-900 mb-6">Upcoming Events</h2>
-                <div className="divide-y divide-gray-100">
+              <div className="bg-white rounded-xl shadow-md p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-xl font-bold text-gray-900">Upcoming Events</h2>
+                  <button className="text-sm text-indigo-600 hover:text-indigo-800 flex items-center group">
+                    View All <ArrowRightIcon className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
+                  </button>
+                </div>
+                <div className="divide-y divide-gray-100 -mx-4 -mt-4">
                   {upcomingEvents.map((event, index) => (
                     <EventCard key={index} {...event} />
                   ))}
                 </div>
-                <p className="text-sm text-gray-500 text-center mt-6">** Coming Soon ** More events will be added</p>
+                <p className="text-sm text-gray-500 text-center mt-6">
+                  ** Coming Soon ** More events will be added
+                </p>
               </div>
 
               {/* Mentorship Opportunities Section */}
-              <div className="bg-white rounded-xl shadow-sm p-6">
-                <h2 className="text-xl font-bold text-gray-900 mb-6">Mentorship Opportunities</h2>
-                <div className="divide-y divide-gray-100">
+              <div className="bg-white rounded-xl shadow-md p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-xl font-bold text-gray-900">Mentorship Opportunities ({mentors.length})</h2>
+                  <button className="text-sm text-indigo-600 hover:text-indigo-800 flex items-center group">
+                    View All <ArrowRightIcon className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
+                  </button>
+                </div>
+                <div className="divide-y divide-gray-100 -mx-4 -mt-4">
                   {mentors.map((mentor, index) => (
                     <MentorCard key={index} {...mentor} />
                   ))}
                 </div>
-                <p className="text-sm text-gray-500 text-center mt-6">** Coming Soon ** More mentors will be added</p>
+                <p className="text-sm text-gray-500 text-center mt-6">
+                  ** Coming Soon ** More mentors will be added
+                </p>
               </div>
             </div>
 

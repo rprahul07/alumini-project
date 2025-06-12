@@ -167,13 +167,18 @@ export const getAllFaculty = async (req, res) => {
     const faculty = await prisma.user.findMany({
       where: whereClause,
       select: {
-        id: true,
-        fullName: true,
+       id: true,
         email: true,
+        fullName: true,
         phoneNumber: true,
         department: true,
-        createdAt: true,
+        role: true,
         photoUrl: true,
+        bio: true,
+        linkedinUrl: true,
+        twitterUrl: true,
+        githubUrl: true,
+        workExperience: true,
         faculty: {
           select: {
             id: true,
@@ -296,7 +301,12 @@ export const updateFacultyById = async (req, res) => {
       department,
       bio,
       linkedinUrl,
+      twitterUrl,
+      githubUrl,
+      workExperience,
       designation,
+
+
     } = req.body;
 
     if (!userId) {
@@ -353,6 +363,18 @@ export const updateFacultyById = async (req, res) => {
     if (bio !== undefined) userUpdateData.bio = bio;
     if (linkedinUrl !== undefined) userUpdateData.linkedinUrl = linkedinUrl;
     if (newPhotoUrl) userUpdateData.photoUrl = newPhotoUrl;
+    if (twitterUrl !== undefined) userUpdateData.twitterUrl = twitterUrl;
+    if (githubUrl !== undefined) userUpdateData.githubUrl = githubUrl;
+    if (workExperience !== undefined) {
+      try {
+        userUpdateData.workExperience = JSON.parse(workExperience);
+      } catch (error) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid work experience data",
+        });
+      }
+    }
 
     // Prepare update data for Faculty table
     const facultyUpdateData = {};
@@ -453,7 +475,64 @@ export const updateFacultyById = async (req, res) => {
     });
   }
 };
+export const getMyFacultyProfile = async (req, res) => {
+  try {
+    const userId = req.user.id;
 
+    // Fetch user along with their faculty profile
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        email: true,
+        fullName: true,
+        phoneNumber: true,
+        department: true,
+        role: true,
+        photoUrl: true,
+        bio: true,
+        linkedinUrl: true,
+        twitterUrl: true,
+        githubUrl: true,
+        workExperience: true,
+        faculty: {
+          select: {
+            id: true,
+            designation: true,
+          },
+        },
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    if (user.role !== 'faculty' || !user.faculty) {
+      return res.status(403).json({
+        success: false,
+        message: "User is not authorized or doesn't have a faculty profile",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Faculty profile fetched successfully",
+      data: user,
+    });
+
+  } catch (error) {
+    console.error("Error fetching faculty profile:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
 export const updateMyFacultyProfile = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -465,10 +544,13 @@ export const updateMyFacultyProfile = async (req, res) => {
       department,
       bio,
       linkedinUrl,
+      twitterUrl,
+      githubUrl,
+      workExperience,
       designation,
     } = req.body;
 
-    // Check if user exists and is a faculty
+    // Fetch user and check role
     const user = await prisma.user.findUnique({
       where: { id: userId },
       include: {
@@ -483,6 +565,13 @@ export const updateMyFacultyProfile = async (req, res) => {
       });
     }
 
+    if (user.role !== 'faculty') {
+      return res.status(403).json({
+        success: false,
+        message: "User is not authorized to update this profile",
+      });
+    }
+
     if (!user.faculty) {
       return res.status(404).json({
         success: false,
@@ -490,15 +579,10 @@ export const updateMyFacultyProfile = async (req, res) => {
       });
     }
 
-    if (user.role !== ROLES.FACULTY) {
-      return res.status(403).json({
-        success: false,
-        message: "User is not authorized to update this profile",
-      });
-    }
-
+    // Handle new photo upload
     const newPhotoUrl = await handlePhotoUpload(req, user.photoUrl);
 
+    // Prepare user update data
     const userUpdateData = {};
     if (fullName !== undefined) userUpdateData.fullName = fullName;
     if (email !== undefined) userUpdateData.email = email;
@@ -506,11 +590,15 @@ export const updateMyFacultyProfile = async (req, res) => {
     if (department !== undefined) userUpdateData.department = department;
     if (bio !== undefined) userUpdateData.bio = bio;
     if (linkedinUrl !== undefined) userUpdateData.linkedinUrl = linkedinUrl;
+    if (twitterUrl !== undefined) userUpdateData.twitterUrl = twitterUrl;
+    if (githubUrl !== undefined) userUpdateData.githubUrl = githubUrl;
+    if (workExperience !== undefined) userUpdateData.workExperience = JSON.parse(workExperience);
     if (newPhotoUrl) userUpdateData.photoUrl = newPhotoUrl;
 
     const facultyUpdateData = {};
     if (designation !== undefined) facultyUpdateData.designation = designation;
 
+    // Perform update transaction
     const updated = await prisma.$transaction(async (prisma) => {
       if (Object.keys(userUpdateData).length > 0) {
         await prisma.user.update({
@@ -538,6 +626,9 @@ export const updateMyFacultyProfile = async (req, res) => {
           photoUrl: true,
           bio: true,
           linkedinUrl: true,
+          twitterUrl: true,
+          githubUrl: true,
+          workExperience: true,
           faculty: {
             select: {
               id: true,
@@ -555,6 +646,7 @@ export const updateMyFacultyProfile = async (req, res) => {
       message: "Faculty profile updated successfully",
       data: updated,
     });
+
   } catch (error) {
     console.error("Error updating faculty profile:", error);
 
@@ -587,3 +679,49 @@ export const updateMyFacultyProfile = async (req, res) => {
   }
 };
 
+export const deleteProfilePicture = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    // Fetch user to check if they have a profile picture
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        photoUrl: true,
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    if (!user.photoUrl) {
+      return res.status(400).json({
+        success: false,
+        message: "No profile picture to delete",
+      });
+    }
+
+    // Update user record to remove photoUrl
+    await prisma.user.update({
+      where: { id: userId },
+      data: { photoUrl: null },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Profile picture deleted successfully",
+    });
+  } catch (error) {
+    console.error("Error deleting profile picture:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};

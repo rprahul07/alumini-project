@@ -124,17 +124,20 @@ export const getStudentById = async (req, res) => {
       where: { id: userIdInt },
       select: {
         id: true,
-        email: true,
-        fullName: true,
-        phoneNumber: true,
-        department: true,
-        role: true,
-        photoUrl: true,
-        student: {
-          select: {
-            id: true,
-            currentSemester: true,
-            rollNumber: true,
+          email: true,
+          fullName: true,
+          phoneNumber: true,
+          department: true,
+          role: true,
+          photoUrl: true,
+          bio: true,
+          linkedinUrl: true,
+          student: {
+            select: {
+              id: true,
+              currentSemester: true,
+              rollNumber: true,
+              graduationYear: true,
           },
         },
       },
@@ -185,18 +188,21 @@ export const getAllStudents = async (req, res) => {
     const students = await prisma.user.findMany({
       where: whereClause,
       select: {
-        id: true,
-        fullName: true,
-        email: true,
-        phoneNumber: true,
-        department: true,
-        createdAt: true,
-        photoUrl: true,
-        student: {
-          select: {
-            id: true,
-            currentSemester: true,
-            rollNumber: true,
+       id: true,
+          email: true,
+          fullName: true,
+          phoneNumber: true,
+          department: true,
+          role: true,
+          photoUrl: true,
+          bio: true,
+          linkedinUrl: true,
+          student: {
+            select: {
+              id: true,
+              currentSemester: true,
+              rollNumber: true,
+              graduationYear: true,
           },
         },
       },
@@ -315,6 +321,8 @@ export const updateStudentById = async (req, res) => {
       department,
       bio,
       linkedinUrl,
+      twitterUrl,
+      githubUrl,
       currentSemester,
       rollNumber,
       graduationYear,
@@ -431,6 +439,8 @@ export const updateStudentById = async (req, res) => {
           photoUrl: true,
           bio: true,
           linkedinUrl: true,
+          twitterUrl: true,
+          githubUrl: true,
           student: {
             select: {
               id: true,
@@ -507,6 +517,8 @@ export const updateMyStudentProfile = async (req, res) => {
       department,
       bio,
       linkedinUrl,
+      twitterUrl,
+      githubUrl,
       currentSemester,
       rollNumber,
       graduationYear,
@@ -553,6 +565,8 @@ export const updateMyStudentProfile = async (req, res) => {
     if (bio !== undefined) userUpdateData.bio = bio;
     if (linkedinUrl !== undefined) userUpdateData.linkedinUrl = linkedinUrl;
     if (newPhotoUrl) userUpdateData.photoUrl = newPhotoUrl;
+    if (twitterUrl !== undefined) userUpdateData.twitterUrl = twitterUrl;
+    if (githubUrl !== undefined) userUpdateData.githubUrl = githubUrl;
 
     // Prepare update data for Student table
     const studentUpdateData = {};
@@ -609,6 +623,8 @@ export const updateMyStudentProfile = async (req, res) => {
           photoUrl: true,
           bio: true,
           linkedinUrl: true,
+          twitterUrl: true,
+          githubUrl: true,
           student: {
             select: {
               id: true,
@@ -729,5 +745,37 @@ export const getMyStudentProfile = async (req, res) => {
       message: 'Failed to retrieve profile',
       error: error.message
     });
+  }
+};
+
+export const deleteProfilePicture = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    // Check if user exists
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    // Update the user's photoUrl to null
+    await prisma.user.update({
+      where: { id: userId },
+      data: { photoUrl: null },
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Profile picture deleted successfully",
+    });
+  } catch (error) {
+    console.error("Error deleting profile picture:", error);
+    handleError(error, req, res);
   }
 };

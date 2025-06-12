@@ -8,6 +8,8 @@ import {
   getAlumniById,
   updateAlumniById,
   updateAlumniSelf,
+  getAlumniSelf,
+  deleteProfilePicture
 } from "../controllers/user/alumni_controller.js";
 
 const router = express.Router();
@@ -20,5 +22,7 @@ router.get("/:userId", getAlumniById);
 router.delete("/:userId", deleteAlumniById);
 router.patch("/:userId", updateAlumniById);
 router.patch("/profile/update", updateAlumniSelf);
+router.get("/profile/get", getAlumniSelf);
+router.delete("/profile/delete-photo", deleteProfilePicture);
 
 export default router;

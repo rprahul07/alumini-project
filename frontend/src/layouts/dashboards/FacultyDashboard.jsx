@@ -3,16 +3,19 @@ import ProfileCard from '../../components/dashboard/ProfileCard';
 import Sidebar from '../../components/dashboard/Sidebar';
 import {
   UserGroupIcon,
-  BriefcaseIcon,
+  BriefcaseIcon, // Can be repurposed for placements/industry links
   CalendarIcon,
   MapPinIcon,
   ClockIcon,
-  TagIcon,
   CheckCircleIcon,
   XCircleIcon,
-  BookOpenIcon
+  BookOpenIcon, // For courses/research
+  ClipboardDocumentListIcon, // For pending tasks/approvals
+  AcademicCapIcon, // For student-related stats
+  ArrowRightIcon, // For "View All" buttons
 } from '@heroicons/react/24/outline';
 
+// --- StatCard Component (Enhanced for Faculty needs) ---
 const StatCard = ({ title, value, Icon, color, progress, progressText }) => {
   const getColorClasses = (color) => {
     switch (color) {
@@ -22,64 +25,87 @@ const StatCard = ({ title, value, Icon, color, progress, progressText }) => {
         return 'bg-green-100 text-green-800';
       case 'purple':
         return 'bg-purple-100 text-purple-800';
+      case 'red': // New color for attention
+        return 'bg-red-100 text-red-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }
   };
 
+  const getProgressBarColor = (color) => {
+    switch (color) {
+      case 'blue':
+        return 'bg-blue-500';
+      case 'green':
+        return 'bg-green-500';
+      case 'purple':
+        return 'bg-purple-500';
+      case 'red':
+        return 'bg-red-500';
+      default:
+        return 'bg-gray-500';
+    }
+  };
+
   return (
-    <div className="bg-white rounded-xl shadow-sm p-6">
+    <div className="bg-white rounded-xl shadow-md p-6 transform transition duration-300 hover:scale-[1.02] hover:shadow-lg">
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm font-medium text-gray-500">{title}</p>
-          <p className="text-2xl font-semibold text-gray-900 mt-1">{value}</p>
+          <p className="text-3xl font-bold text-gray-900 mt-2">{value}</p>
         </div>
         {Icon && (
           <div className={`p-3 rounded-full ${getColorClasses(color)}`}>
-            <Icon className="h-6 w-6" />
+            <Icon className="h-7 w-7" />
           </div>
         )}
       </div>
-      <div className="mt-4">
-        <div className="w-full bg-gray-100 rounded-full h-2">
-          <div
-            className={`h-2 rounded-full ${getColorClasses(color)}`}
-            style={{ width: `${progress}%` }}
-          />
+      {progress !== undefined && (
+        <div className="mt-5">
+          <div className="w-full bg-gray-200 rounded-full h-2">
+            <div
+              className={`h-2 rounded-full ${getProgressBarColor(color)}`}
+              style={{ width: `${progress}%` }}
+              aria-valuenow={progress}
+              aria-valuemin="0"
+              aria-valuemax="100"
+            />
+          </div>
+          <p className="text-xs text-gray-500 mt-2">{progressText}</p>
         </div>
-        <p className="text-xs text-gray-500 mt-2">{progressText}</p>
-      </div>
+      )}
     </div>
   );
 };
 
+// --- EventCard Component (Re-used with adjusted styling for consistency) ---
 const EventCard = ({ date, title, time, location, tags }) => {
   const [month, day] = date.split(' ');
 
   return (
-    <div className="flex items-start space-x-4 p-4 border-b border-gray-100 last:border-b-0">
-      <div className="flex-shrink-0 w-16 bg-gray-100 rounded-lg p-2 text-center">
-        <div className="text-xs font-medium text-gray-500 uppercase">{month}</div>
-        <div className="text-2xl font-bold text-gray-900">{day}</div>
+    <div className="flex items-start space-x-5 p-4 hover:bg-gray-50 rounded-lg transition-colors duration-200">
+      <div className="flex-shrink-0 w-20 h-20 bg-indigo-50 rounded-xl flex flex-col items-center justify-center border border-indigo-100">
+        <div className="text-sm font-semibold text-indigo-700 uppercase leading-none">{month}</div>
+        <div className="text-3xl font-bold text-indigo-900 leading-none mt-1">{day}</div>
       </div>
 
       <div className="flex-1">
-        <h3 className="text-base font-semibold text-gray-900">{title}</h3>
-        <div className="mt-1 space-y-1">
-          <div className="flex items-center text-sm text-gray-500">
-            <ClockIcon className="h-4 w-4 mr-1.5" />
-            {time}
+        <h3 className="text-lg font-semibold text-gray-900 mb-1">{title}</h3>
+        <div className="space-y-1 text-gray-600">
+          <div className="flex items-center text-sm">
+            <ClockIcon className="h-4 w-4 mr-2 text-gray-500" />
+            <span>{time}</span>
           </div>
-          <div className="flex items-center text-sm text-gray-500">
-            <MapPinIcon className="h-4 w-4 mr-1.5" />
-            {location}
+          <div className="flex items-center text-sm">
+            <MapPinIcon className="h-4 w-4 mr-2 text-gray-500" />
+            <span>{location}</span>
           </div>
         </div>
-        <div className="flex flex-wrap gap-2 mt-2">
+        <div className="flex flex-wrap gap-2 mt-3">
           {tags.map((tag, index) => (
             <span
               key={index}
-              className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"
+              className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800"
             >
               {tag}
             </span>
@@ -90,42 +116,37 @@ const EventCard = ({ date, title, time, location, tags }) => {
   );
 };
 
+// --- AlumniRegistrationCard Component (Enhanced for clarity and interaction) ---
 const AlumniRegistrationCard = ({ name, graduationYear, department, email, onApprove, onReject }) => (
-  <div className="flex items-start space-x-4 p-4 border-b border-gray-100 last:border-b-0">
+  <div className="flex items-start space-x-4 p-4 hover:bg-gray-50 rounded-lg transition-colors duration-200">
     <div className="flex-shrink-0">
       <img
-        src="/default-avatar.png"
+        src="/default-avatar.png" // Replace with dynamic avatar if available
         alt={name}
-        className="w-12 h-12 rounded-full object-cover"
+        className="w-14 h-14 rounded-full object-cover border border-gray-200"
       />
     </div>
 
     <div className="flex-1">
       <h3 className="text-base font-semibold text-gray-900">{name}</h3>
-      <div className="mt-1 space-y-1">
-        <p className="text-sm text-gray-500">
-          <span className="font-medium">Graduation Year:</span> {graduationYear}
-        </p>
-        <p className="text-sm text-gray-500">
-          <span className="font-medium">Department:</span> {department}
-        </p>
-        <p className="text-sm text-gray-500">
-          <span className="font-medium">Email:</span> {email}
-        </p>
+      <div className="mt-1 space-y-1 text-sm text-gray-600">
+        <p><span className="font-medium text-gray-700">Graduation:</span> {graduationYear}</p>
+        <p><span className="font-medium text-gray-700">Department:</span> {department}</p>
+        <p className="flex items-center"><span className="font-medium text-gray-700 mr-1">Email:</span> <a href={`mailto:${email}`} className="text-indigo-600 hover:underline">{email}</a></p>
       </div>
-      <div className="flex gap-2 mt-3">
+      <div className="flex gap-3 mt-4">
         <button
           onClick={onApprove}
-          className="flex items-center px-3 py-1.5 text-sm font-medium text-green-700 bg-green-50 rounded-full hover:bg-green-100 transition-colors"
+          className="flex items-center px-4 py-2 text-sm font-medium text-green-700 bg-green-100 rounded-full hover:bg-green-200 transition-colors duration-200 shadow-sm"
         >
-          <CheckCircleIcon className="h-4 w-4 mr-1.5" />
+          <CheckCircleIcon className="h-4 w-4 mr-2" />
           Approve
         </button>
         <button
           onClick={onReject}
-          className="flex items-center px-3 py-1.5 text-sm font-medium text-red-700 bg-red-50 rounded-full hover:bg-red-100 transition-colors"
+          className="flex items-center px-4 py-2 text-sm font-medium text-red-700 bg-red-100 rounded-full hover:bg-red-200 transition-colors duration-200 shadow-sm"
         >
-          <XCircleIcon className="h-4 w-4 mr-1.5" />
+          <XCircleIcon className="h-4 w-4 mr-2" />
           Reject
         </button>
       </div>
@@ -133,6 +154,40 @@ const AlumniRegistrationCard = ({ name, graduationYear, department, email, onApp
   </div>
 );
 
+// --- CourseProgressCard Component (New for Faculty) ---
+const CourseProgressCard = ({ courseName, studentsEnrolled, averageGrade, progressPercentage }) => {
+  const getProgressColor = (progress) => {
+    if (progress < 40) return 'bg-red-500';
+    if (progress < 70) return 'bg-yellow-500';
+    return 'bg-green-500';
+  };
+
+  return (
+    <div className="bg-white rounded-xl shadow-md p-6">
+      <h3 className="text-lg font-semibold text-gray-900 mb-2">{courseName}</h3>
+      <p className="text-sm text-gray-600">Enrolled: <span className="font-medium">{studentsEnrolled} students</span></p>
+      <p className="text-sm text-gray-600 mt-1">Avg. Grade: <span className="font-medium">{averageGrade}</span></p>
+      <div className="mt-4">
+        <p className="text-xs font-medium text-gray-500 mb-1">Overall Progress:</p>
+        <div className="w-full bg-gray-200 rounded-full h-2">
+          <div
+            className={`h-2 rounded-full ${getProgressColor(progressPercentage)}`}
+            style={{ width: `${progressPercentage}%` }}
+            aria-valuenow={progressPercentage}
+            aria-valuemin="0"
+            aria-valuemax="100"
+          />
+        </div>
+        <p className="text-xs text-gray-500 mt-2">{progressPercentage}% Course Completion</p>
+      </div>
+      <button className="mt-5 text-sm font-medium text-indigo-600 hover:text-indigo-800 flex items-center group">
+        View Details <ArrowRightIcon className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
+      </button>
+    </div>
+  );
+};
+
+// --- FacultyDashboard Main Component ---
 const FacultyDashboard = () => {
   const [user, setUser] = useState(null);
 
@@ -145,67 +200,106 @@ const FacultyDashboard = () => {
 
   const upcomingEvents = [
     {
-      date: 'MAY 15',
-      title: 'Faculty Development Workshop',
-      time: '10:00 AM - 12:00 PM',
-      location: 'Conference Room A',
-      tags: ['In-Person', 'Workshop']
+      date: 'JUL 12', // Updated date
+      title: 'Department Meeting: Curriculum Review',
+      time: '11:00 AM - 1:00 PM',
+      location: 'Faculty Meeting Room 2',
+      tags: ['Internal', 'Meeting']
     },
     {
-      date: 'MAY 20',
-      title: 'Research Symposium',
-      time: '9:00 AM - 5:00 PM',
+      date: 'JUL 25', // Updated date
+      title: 'Guest Lecture: Advanced AI Ethics',
+      time: '3:00 PM - 4:30 PM',
       location: 'Main Auditorium',
-      tags: ['In-Person', 'Academic']
-    }
+      tags: ['Public', 'Academic']
+    },
+    {
+        date: 'AUG 05', // New event
+        title: 'Thesis Defense Committee Session',
+        time: '9:00 AM - 12:00 PM',
+        location: 'Research Lab, Block C',
+        tags: ['Internal', 'Research']
+      }
   ];
 
   const pendingRegistrations = [
     {
-      name: 'John Smith',
-      graduationYear: '2023',
-      department: 'Computer Science',
-      email: 'john.smith@example.com'
+      name: 'Priya Rajan',
+      graduationYear: '2024',
+      department: 'Electronics & Communication Engg.',
+      email: 'priya.rajan@example.com'
     },
     {
-      name: 'Emma Wilson',
-      graduationYear: '2022',
-      department: 'Information Technology',
-      email: 'emma.wilson@example.com'
+      name: 'Ahmed Khan',
+      graduationYear: '2023',
+      department: 'Mechanical Engineering',
+      email: 'ahmed.khan@example.com'
     }
   ];
 
+  const courseData = [
+    {
+      courseName: 'Data Structures & Algorithms',
+      studentsEnrolled: 95,
+      averageGrade: 'B+',
+      progressPercentage: 85
+    },
+    {
+      courseName: 'Machine Learning Fundamentals',
+      studentsEnrolled: 62,
+      averageGrade: 'A-',
+      progressPercentage: 70
+    },
+    {
+      courseName: 'Compiler Design',
+      studentsEnrolled: 40,
+      averageGrade: 'C',
+      progressPercentage: 55
+    }
+  ];
+
+  // Placeholder functions for approve/reject actions
+  const handleApproveRegistration = (name) => {
+    console.log(`Approved alumni registration for ${name}`);
+    // In a real application, you'd send an API request here
+  };
+
+  const handleRejectRegistration = (name) => {
+    console.log(`Rejected alumni registration for ${name}`);
+    // In a real application, you'd send an API request here
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-emerald-50"> {/* New background gradient */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         {/* Welcome Section */}
-        <div className="mb-6">
-          <h1 className="text-lg font-medium text-gray-900">
-            Welcome back, {user?.fullName || 'Professor'}! 👋
+        <div className="mb-8">
+          <h1 className="text-4xl font-extrabold text-gray-900 leading-tight">
+            Welcome back, <span className="text-emerald-700">{user?.fullName || 'Professor'}</span>! 👋
           </h1>
-          <p className="text-sm text-gray-500 mt-1">
-            Here's what's happening in your faculty dashboard today.
+          <p className="text-lg text-gray-600 mt-2">
+            Your comprehensive dashboard for academic oversight and community engagement.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-10">
           {/* Left Column - Profile and Navigation */}
-          <div className="lg:col-span-1 space-y-6">
+          <div className="lg:col-span-1 space-y-8">
             <ProfileCard />
             <Sidebar />
           </div>
 
           {/* Right Column - Main Content */}
-          <div className="lg:col-span-3 space-y-8">
+          <div className="lg:col-span-3 space-y-10">
             {/* Quick Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <StatCard
-                title="Total Students"
+                title="Your Students"
                 value="156"
-                Icon={UserGroupIcon}
+                Icon={AcademicCapIcon}
                 color="blue"
                 progress={75}
-                progressText="75% attendance rate"
+                progressText="75% average attendance"
               />
               <StatCard
                 title="Research Projects"
@@ -213,46 +307,78 @@ const FacultyDashboard = () => {
                 Icon={BookOpenIcon}
                 color="green"
                 progress={60}
-                progressText="60% completion rate"
+                progressText="60% projects in progress"
               />
               <StatCard
-                title="Upcoming Events"
-                value="4"
-                Icon={CalendarIcon}
-                color="purple"
-                progress={40}
-                progressText="40% participation rate"
+                title="Pending Approvals"
+                value={pendingRegistrations.length} // Dynamic count
+                Icon={ClipboardDocumentListIcon}
+                color="red" // Use red for urgent attention
+                progress={100} // Assuming pending means 100% "pending" tasks
+                progressText="Alumni registrations awaiting review"
               />
             </div>
 
-            {/* Events and Alumni Registration Section */}
+            {/* Main Content Rows */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {/* Upcoming Events Section */}
-              <div className="bg-white rounded-xl shadow-sm p-6">
-                <h2 className="text-xl font-bold text-gray-900 mb-6">Upcoming Events</h2>
-                <div className="divide-y divide-gray-100">
+              <div className="bg-white rounded-xl shadow-md p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-xl font-bold text-gray-900">Upcoming Events</h2>
+                  <button className="text-sm text-indigo-600 hover:text-indigo-800 flex items-center group">
+                    View All <ArrowRightIcon className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
+                  </button>
+                </div>
+                <div className="divide-y divide-gray-100 -mx-4 -mt-4">
                   {upcomingEvents.map((event, index) => (
                     <EventCard key={index} {...event} />
                   ))}
                 </div>
-                <p className="text-sm text-gray-500 text-center mt-6">** Coming Soon ** More events will be added</p>
+                <p className="text-sm text-gray-500 text-center mt-6">
+                  ** Coming Soon ** More events will be added
+                </p>
               </div>
 
-              {/* Alumni Registration Section */}
-              <div className="bg-white rounded-xl shadow-sm p-6">
-                <h2 className="text-xl font-bold text-gray-900 mb-6">Pending Alumni Registrations</h2>
-                <div className="divide-y divide-gray-100">
+              {/* Pending Alumni Registrations Section */}
+              <div className="bg-white rounded-xl shadow-md p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-xl font-bold text-gray-900">Pending Alumni Registrations ({pendingRegistrations.length})</h2>
+                  <button className="text-sm text-indigo-600 hover:text-indigo-800 flex items-center group">
+                    View All <ArrowRightIcon className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
+                  </button>
+                </div>
+                <div className="divide-y divide-gray-100 -mx-4 -mt-4">
                   {pendingRegistrations.map((registration, index) => (
                     <AlumniRegistrationCard
                       key={index}
                       {...registration}
-                      onApprove={() => console.log('Approve registration:', registration.name)}
-                      onReject={() => console.log('Reject registration:', registration.name)}
+                      onApprove={() => handleApproveRegistration(registration.name)}
+                      onReject={() => handleRejectRegistration(registration.name)}
                     />
                   ))}
                 </div>
-                <p className="text-sm text-gray-500 text-center mt-6">** Coming Soon ** More registrations will be added</p>
+                <p className="text-sm text-gray-500 text-center mt-6">
+                  ** Coming Soon ** More registrations will be added
+                </p>
               </div>
+            </div>
+
+            {/* Your Courses Overview Section (New for Faculty) */}
+            <div className="bg-white rounded-xl shadow-md p-6">
+                <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-xl font-bold text-gray-900">Your Courses Overview</h2>
+                    <button className="text-sm text-indigo-600 hover:text-indigo-800 flex items-center group">
+                        View All <ArrowRightIcon className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
+                    </button>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {courseData.map((course, index) => (
+                        <CourseProgressCard key={index} {...course} />
+                    ))}
+                </div>
+                <p className="text-sm text-gray-500 text-center mt-6">
+                  ** Coming Soon ** Detailed course analytics
+                </p>
             </div>
           </div>
         </div>

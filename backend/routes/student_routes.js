@@ -7,6 +7,7 @@ import {
   updateStudentById,
   updateMyStudentProfile,
   getMyStudentProfile,
+  deleteProfilePicture
 } from "../controllers/user/student_controller.js";
 
 const router = express.Router();
@@ -16,7 +17,7 @@ router.get("/:userId", getStudentById);
 router.delete("/:userId", deleteStudentById);
 router.patch("/:userId", updateStudentById);
 router.patch("/profile/update", updateMyStudentProfile);
-router.get("/profile/get", getMyStudentProfile); // Assuming this is for self-update
+router.get("/profile/get", getMyStudentProfile); 
+router.delete("/profile/delete-photo", deleteProfilePicture);
 
 export default router;
-  

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import axios from '../../config/axios';
+import axios from '../../config/axios'; // Assuming axios is configured correctly
 import { useNavigate } from 'react-router-dom';
-import useAlert from '../../hooks/useAlert';
-import RoleSpecificProfileForm from './RoleSpecificProfileForm';
+import useAlert from '../../hooks/useAlert'; // Assuming useAlert hook exists for notifications
+import RoleSpecificProfileForm from './RoleSpecificProfileForm'; // This component needs to exist and handle role-specific fields
 import {
   CameraIcon,
   UserIcon,
@@ -11,21 +11,19 @@ import {
   PencilIcon,
   ArrowLeftIcon,
   TrashIcon,
-  XMarkIcon
-} from '@heroicons/react/24/outline';
-// FiUpload and FiX are not used in the current render logic, but kept if you plan to use them
-// import { FiUpload, FiX } from 'react-icons/fi';
+  XMarkIcon,
+} from '@heroicons/react/24/outline'; // Heroicons for UI
 
 const ProfileEditor = () => {
   const navigate = useNavigate();
-  const { showAlert } = useAlert();
+  const { showAlert } = useAlert(); // Custom hook for showing alerts
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
     phoneNumber: '',
-    profilePhoto: null, // This will hold either a File object or a photo URL string
+    profilePhoto: null, // This will hold either a File object (for new upload) or a photo URL string (from fetched data)
     userRole: '', // This will be set from the fetched user data
     bio: '',
     department: '',
@@ -33,37 +31,37 @@ const ProfileEditor = () => {
     twitterUrl: '',
     githubUrl: '',
     // Student specific fields
-    currentSemester: '',
+    currentSemester: '', // Keep as string for input, convert to number on submit
     rollNumber: '',
-    graduationYear: '', // Shared between student and alumni
-    batch: {
-      startYear: '',
-      endYear: ''
-    },
+    graduationYear: '', // Keep as string for input, convert to number on submit
+
     // Alumni specific fields
     currentJobTitle: '',
     companyName: '',
+    course: '',
     // Faculty specific fields
-    designation: ''
+    designation: '',
   });
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
+        setLoading(true); // Ensure loading is true when starting fetch
         const userData = localStorage.getItem('user');
         if (!userData) {
           console.error('User data not found in localStorage');
-          throw new Error('User data not found');
+          showAlert('User data not found. Please log in again.', 'error');
+          navigate('/login'); // Redirect to login if no user data
+          return;
         }
 
         const parsedUser = JSON.parse(userData);
         console.log('Fetching profile for user role:', parsedUser.role);
-        // Construct the GET endpoint dynamically based on user role
         const getEndpoint = `/api/${parsedUser.role}/profile/get/`;
         console.log('GET request URL:', getEndpoint);
 
         const response = await axios.get(getEndpoint, {
-          withCredentials: true
+          withCredentials: true,
         });
 
         console.log('Raw profile fetch response:', response);
@@ -76,63 +74,71 @@ const ProfileEditor = () => {
             fullName: profileData.fullName || '',
             email: profileData.email || '',
             phoneNumber: profileData.phoneNumber || '',
-            profilePhoto: profileData.photoUrl || null, // Set the URL here
+            profilePhoto: profileData.photoUrl || null, // Set the URL here if exists
             userRole: profileData.role || '',
             bio: profileData.bio || '',
             department: profileData.department || '',
             linkedinUrl: profileData.linkedinUrl || '',
             twitterUrl: profileData.twitterUrl || '',
             githubUrl: profileData.githubUrl || '',
-            // Role specific fields
-            ...(profileData.role === 'student' && {
-              currentSemester: profileData.student?.currentSemester || '',
-              rollNumber: profileData.student?.rollNumber || '',
-              graduationYear: profileData.student?.graduationYear || '',
-              batch: {
-                startYear: profileData.student?.batch?.startYear || '',
-                endYear: profileData.student?.batch?.endYear || ''
-              }
-            }),
-            ...(profileData.role === 'alumni' && {
-              graduationYear: profileData.alumni?.graduationYear || '',
-              currentJobTitle: profileData.alumni?.currentJobTitle || '',
-              companyName: profileData.alumni?.companyName || ''
-            }),
-            ...(profileData.role === 'faculty' && {
-              designation: profileData.faculty?.designation || ''
-            }),
+            // Initialize all role-specific fields to empty strings for consistency
+            currentSemester: '',
+            rollNumber: '',
+            graduationYear: '',
+            currentJobTitle: '',
+            companyName: '',
+            course: '',
+            designation: '',
           };
+
+          // Apply role-specific data received from API
+          if (profileData.role === 'student' && profileData.student) {
+            newFormData.currentSemester = profileData.student.currentSemester?.toString() || ''; // Convert number to string for input
+            newFormData.rollNumber = profileData.student.rollNumber || '';
+            newFormData.graduationYear = profileData.student.graduationYear?.toString() || ''; // Convert number to string for input
+          } else if (profileData.role === 'alumni' && profileData.alumni) {
+            newFormData.graduationYear = profileData.alumni.graduationYear?.toString() || ''; // Convert number to string for input
+            newFormData.currentJobTitle = profileData.alumni.currentJobTitle || '';
+            newFormData.companyName = profileData.alumni.companyName || '';
+            newFormData.course = profileData.alumni.course || '';
+          } else if (profileData.role === 'faculty' && profileData.faculty) {
+            newFormData.designation = profileData.faculty.designation || '';
+          }
 
           console.log('Setting form data with:', newFormData);
           setFormData(newFormData);
         } else {
           console.error('Profile fetch failed:', response.data.message || 'Unknown error');
           setError(response.data.message || 'Failed to load profile data');
+          showAlert(response.data.message || 'Failed to load profile data', 'error');
         }
       } catch (error) {
         console.error('Error fetching profile:', error);
         setError(error.response?.data?.message || 'Failed to load profile data. Please check your network or server.');
+        showAlert(error.response?.data?.message || 'Failed to load profile data. Please check your network or server.', 'error');
       } finally {
         setLoading(false);
       }
     };
 
     fetchProfile();
-  }, []);
+  }, [navigate, showAlert]); // Add navigate and showAlert to dependencies if they are stable
 
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
 
     if (type === 'file') {
-      setFormData(prev => ({ ...prev, profilePhoto: files[0] }));
-    } else if (name.includes('.')) { // Handles nested objects like batch.startYear
+      setFormData((prev) => ({ ...prev, profilePhoto: files[0] }));
+    } else if (name.includes('.')) {
+      // Handles nested objects like batch.startYear (though your current structure doesn't use this directly in formData,
+      // RoleSpecificProfileForm might. If not needed, this block can be removed)
       const [parent, child] = name.split('.');
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        [parent]: { ...prev[parent], [child]: value }
+        [parent]: { ...prev[parent], [child]: value },
       }));
     } else {
-      setFormData(prev => ({ ...prev, [name]: value }));
+      setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
 
@@ -150,59 +156,88 @@ const ProfileEditor = () => {
       const parsedUser = JSON.parse(userData);
       const formDataToSend = new FormData();
 
-      // Add only the fields that the backend expects
-      const fieldsToSend = {
-        fullName: formData.fullName,
-        email: formData.email,
-        phoneNumber: formData.phoneNumber,
-        department: formData.department,
-        bio: formData.bio || null,
-        linkedinUrl: formData.linkedinUrl || null,
-        currentSemester: formData.currentSemester,
-        rollNumber: formData.rollNumber,
-        graduationYear: formData.graduationYear || null
-      };
+      // Add common fields
+      formDataToSend.append('fullName', formData.fullName);
+      formDataToSend.append('email', formData.email);
+      formDataToSend.append('phoneNumber', formData.phoneNumber);
+      formDataToSend.append('department', formData.department);
+      formDataToSend.append('bio', formData.bio || ''); // Send empty string instead of null if bio is empty
+      formDataToSend.append('linkedinUrl', formData.linkedinUrl || '');
+      formDataToSend.append('twitterUrl', formData.twitterUrl || '');
+      formDataToSend.append('githubUrl', formData.githubUrl || '');
 
-      // Append each field to FormData
-      Object.entries(fieldsToSend).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
-          formDataToSend.append(key, value);
+      // Add role-specific fields only if they have a value
+      if (parsedUser.role === 'student') {
+        if (formData.currentSemester) {
+          formDataToSend.append('currentSemester', formData.currentSemester);
         }
-      });
+        formDataToSend.append('rollNumber', formData.rollNumber || ''); // Ensure it's not null/undefined
+        if (formData.graduationYear) {
+          formDataToSend.append('graduationYear', formData.graduationYear);
+        }
+      } else if (parsedUser.role === 'alumni') {
+        if (formData.graduationYear) {
+          formDataToSend.append('graduationYear', formData.graduationYear);
+        }
+        formDataToSend.append('currentJobTitle', formData.currentJobTitle || '');
+        formDataToSend.append('companyName', formData.companyName || '');
+        formDataToSend.append('course', formData.course || '');
+      } else if (parsedUser.role === 'faculty') {
+        formDataToSend.append('designation', formData.designation || '');
+      }
 
-      // Add profile photo if it's a File object
+      // Add profile photo if it's a File object (meaning a new one was selected)
       if (formData.profilePhoto instanceof File) {
         formDataToSend.append('photo', formData.profilePhoto);
       }
 
-      // Log the form data being sent
-      console.log('Form data before sending:', formData);
-      console.log('FormData entries being sent:', Object.fromEntries(formDataToSend));
+      // Log the form data being sent for debugging
+      console.log('Form data before sending:');
+      for (let [key, value] of formDataToSend.entries()) {
+        console.log(`${key}: ${value}`);
+      }
 
-      const response = await axios.patch(`/api/student/profile/update`, formDataToSend, {
+      const response = await axios.patch(`/api/${parsedUser.role}/profile/update`, formDataToSend, {
         headers: {
-          'Content-Type': 'multipart/form-data'
+          'Content-Type': 'multipart/form-data', // Crucial for sending files and mixed data
         },
-        withCredentials: true
+        withCredentials: true,
       });
 
       console.log('Update response:', response.data);
 
       if (response.data.success) {
-        // Update local storage with new user data
+        // Update local storage with new user data from the response if necessary
+        // This assumes your backend sends back updated user data in `response.data.data`
         const updatedUserData = {
-          ...parsedUser,
-          ...response.data.data
+          ...parsedUser, // Keep existing user info like _id, token etc.
+          // IMPORTANT: Merge only the top-level fields that can be updated in the User model.
+          // Role-specific nested data (student, alumni, faculty) is typically not merged directly
+          // into the root user object in localStorage if it's stored separately in the DB.
+          // For simplicity, I'm just merging the top-level user fields returned in the response.
+          // If your `response.data.data` contains the full nested profile, adjust this.
+          fullName: response.data.data.fullName,
+          email: response.data.data.email, // Email should generally not change or require re-login
+          phoneNumber: response.data.data.phoneNumber,
+          photoUrl: response.data.data.photoUrl,
+          bio: response.data.data.bio,
+          department: response.data.data.department,
+          linkedinUrl: response.data.data.linkedinUrl,
+          twitterUrl: response.data.data.twitterUrl,
+          githubUrl: response.data.data.githubUrl,
+          // You might need to update other fields here if they are part of the 'user' object
+          // and are relevant for local storage (e.g., if you store role-specific IDs).
         };
         localStorage.setItem('user', JSON.stringify(updatedUserData));
-        
-        // Show success message
+
         showAlert('Profile updated successfully!', 'success');
-        
-        // Navigate back to profile view
+
+        // Navigate back to profile view after a short delay
         setTimeout(() => {
           navigate('/profile');
         }, 1000);
+      } else {
+        showAlert(response.data.message || 'Failed to update profile.', 'error');
       }
     } catch (error) {
       console.error('Error updating profile:', error);
@@ -214,9 +249,14 @@ const ProfileEditor = () => {
 
   const handleDeletePhoto = async () => {
     // Only attempt to delete if there's an existing photo URL (not a newly selected File)
+    // and if formData.profilePhoto is not null or empty string.
     if (!formData.profilePhoto || formData.profilePhoto instanceof File) {
-      showAlert('No profile photo to delete or photo is unsaved.', 'info');
+      showAlert('No existing profile photo to delete.', 'info');
       return;
+    }
+
+    if (!window.confirm('Are you sure you want to delete your profile photo?')) {
+      return; // User cancelled
     }
 
     try {
@@ -231,29 +271,31 @@ const ProfileEditor = () => {
       console.log('DELETE photo URL:', deletePhotoEndpoint);
 
       const response = await axios.delete(deletePhotoEndpoint, {
-        withCredentials: true
+        withCredentials: true,
       });
 
       if (response.data.success) {
-        setFormData(prev => ({ ...prev, profilePhoto: null })); // Clear photo from state
+        setFormData((prev) => ({ ...prev, profilePhoto: null })); // Clear photo from state
+        // Optionally, update localStorage if the photoUrl is stored there
+        const updatedUserData = {
+          ...parsedUser,
+          photoUrl: null, // Set photoUrl to null in localStorage
+        };
+        localStorage.setItem('user', JSON.stringify(updatedUserData));
+
         showAlert('Profile photo deleted successfully!', 'success');
-        // Optionally update local storage if the backend response includes updated user data
-        // For simplicity, you might need another fetch or just rely on the next profile load
-        // if photoUrl is part of the main user object in local storage.
       } else {
         showAlert(response.data.message || 'Error deleting profile photo', 'error');
       }
     } catch (error) {
       console.error('Error deleting profile photo:', error);
-      showAlert(
-        error.response?.data?.message || 'Failed to delete profile photo',
-        'error'
-      );
+      showAlert(error.response?.data?.message || 'Failed to delete profile photo', 'error');
     } finally {
       setLoading(false);
     }
   };
 
+  // Loading state UI
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 flex items-center justify-center">
@@ -274,7 +316,7 @@ const ProfileEditor = () => {
     );
   }
 
-  // If there's an error after loading, display it
+  // Error state UI after initial load
   if (error) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 flex items-center justify-center">
@@ -316,8 +358,8 @@ const ProfileEditor = () => {
                     <img
                       src={
                         formData.profilePhoto instanceof File
-                          ? URL.createObjectURL(formData.profilePhoto)
-                          : formData.profilePhoto
+                          ? URL.createObjectURL(formData.profilePhoto) // For new file preview
+                          : formData.profilePhoto // For existing URL
                       }
                       alt="Profile"
                       className="w-full h-full object-cover"
@@ -343,7 +385,7 @@ const ProfileEditor = () => {
                     />
                   </label>
                   {/* Show delete button only if there's an existing photo URL (not a new File) */}
-                  {formData.profilePhoto && !(formData.profilePhoto instanceof File) && (
+                  {formData.profilePhoto && typeof formData.profilePhoto === 'string' && ( // Check if it's a string URL
                     <button
                       type="button"
                       onClick={handleDeletePhoto}
@@ -358,7 +400,7 @@ const ProfileEditor = () => {
                   {formData.profilePhoto instanceof File && (
                     <button
                       type="button"
-                      onClick={() => setFormData(prev => ({ ...prev, profilePhoto: null }))}
+                      onClick={() => setFormData((prev) => ({ ...prev, profilePhoto: null }))}
                       className="bg-gray-500 text-white p-3 rounded-full shadow-lg cursor-pointer hover:bg-gray-600 transition-colors transform hover:scale-105"
                       title="Clear selected photo"
                     >
@@ -369,7 +411,7 @@ const ProfileEditor = () => {
               </div>
               <p className="mt-4 text-sm text-gray-500">
                 {formData.profilePhoto
-                  ? 'Click the camera icon to update or trash icon to remove your photo'
+                  ? (formData.profilePhoto instanceof File ? 'New photo selected. Click save to upload.' : 'Click the camera icon to update or trash icon to remove your photo')
                   : 'Click the camera icon to add a profile photo'}
               </p>
             </div>
@@ -407,7 +449,7 @@ const ProfileEditor = () => {
                       onChange={handleChange}
                       className="pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg w-full bg-gray-100 cursor-not-allowed"
                       required
-                      readOnly // Email is usually not editable
+                      readOnly // Email is usually not editable as it might be the primary identifier
                       placeholder="Your email address"
                     />
                   </div>
@@ -464,21 +506,23 @@ const ProfileEditor = () => {
             </div>
 
             {/* Role-specific fields */}
-            <div className="mb-8 p-6 bg-gray-50 rounded-xl shadow-inner">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 border-b pb-2 border-gray-200">
-                {formData.userRole === 'student' ? 'Academic Information' :
-                  formData.userRole === 'alumni' ? 'Professional Information' :
-                    formData.userRole === 'faculty' ? 'Faculty Information' : 'Additional Information'}
-              </h3>
-              <div className="bg-white rounded-lg p-6 border border-gray-100">
-                <RoleSpecificProfileForm
-                  role={formData.userRole}
-                  formData={formData}
-                  handleChange={handleChange}
-                  setFormData={setFormData}
-                />
+            {formData.userRole && ( // Only render if userRole is set (after data fetch)
+              <div className="mb-8 p-6 bg-gray-50 rounded-xl shadow-inner">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4 border-b pb-2 border-gray-200">
+                  {formData.userRole === 'student' ? 'Academic Information' :
+                    formData.userRole === 'alumni' ? 'Professional Information' :
+                      formData.userRole === 'faculty' ? 'Faculty Information' : 'Additional Information'}
+                </h3>
+                <div className="bg-white rounded-lg p-6 border border-gray-100">
+                  <RoleSpecificProfileForm
+                    role={formData.userRole}
+                    formData={formData}
+                    handleChange={handleChange}
+                    setFormData={setFormData} // Pass setFormData for direct state updates
+                  />
+                </div>
               </div>
-            </div>
+            )}
 
             {/* LinkedIn, Twitter, GitHub URLs */}
             <div className="mb-8 p-6 bg-gray-50 rounded-xl shadow-inner">
@@ -532,11 +576,11 @@ const ProfileEditor = () => {
               </div>
             </div>
 
-            {/* Submit */}
+            {/* Submit Button */}
             <div className="flex justify-end pt-4 border-t border-gray-200 mt-6">
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading} // Disable button while loading (saving)
                 className="px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-lg shadow-md hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105"
               >
                 {loading ? 'Saving...' : 'Save Profile'}

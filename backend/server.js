@@ -18,6 +18,7 @@ console.log("Environment variables loaded");
 const PORT = process.env.PORT || 5001;
 
 const app = express();
+app.use(express.json());
 const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173"; // Updated to match Vite's default port
 
 console.log(`Server configuration: PORT=${PORT}, CLIENT_URL=${CLIENT_URL}`);
