@@ -132,16 +132,18 @@ export const login = async (req, res) => {
       throw new AppError("Invalid email or password", 401);
     }
 
-    generateTokenAndSetCookie(user.id, role, res);
+    const token = generateTokenAndSetCookie(user.id, role, res);
 
-    res.status(200).json(
-      createResponse(true, "Logged in successfully", {
-        _id: user.id,
+    res.status(200).json({
+      success: true,
+      token,
+      user: {
+        id: user.id,
         fullName: user.fullName,
         email: user.email,
         role,
-      })
-    );
+      }
+    });
   } catch (error) {
     handleError(error, req, res);
   }

@@ -66,6 +66,7 @@ export const login = async (req, res) => {
       throw new AppError("Please provide email, password and role", 400);
     }
 
+    // Find user by email and role
     const user = await findUserByRole(email, role, {
       id: true,
       fullName: true,
@@ -73,12 +74,28 @@ export const login = async (req, res) => {
       password: true,
     });
 
-    if (!user || !(await verifyPassword(password, user.password))) {
-      throw new AppError("Invalid emkjnfwjail or password", 401);
+    // If no user found or password doesn't match, return generic error
+    if (!user) {
+      throw new AppError("Invalid email or password", 401);
     }
 
+    // Verify password using bcrypt
+    const isPasswordValid = await verifyPassword(password, user.password);
+    
+    if (!isPasswordValid) {
+      // Log the attempt for debugging
+      console.log('Failed login attempt:', {
+        email,
+        role,
+        passwordMatch: isPasswordValid
+      });
+      throw new AppError("Invalid email or password", 401);
+    }
+
+    // Generate JWT token and set cookie
     generateTokenAndSetCookie(user.id, role, res);
 
+    // Return success response
     res.status(200).json(
       createResponse(true, "Logged in successfully", {
         _id: user.id,

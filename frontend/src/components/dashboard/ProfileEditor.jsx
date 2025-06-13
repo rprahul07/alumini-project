@@ -208,16 +208,10 @@ const ProfileEditor = () => {
 
       if (response.data.success) {
         // Update local storage with new user data from the response if necessary
-        // This assumes your backend sends back updated user data in `response.data.data`
         const updatedUserData = {
-          ...parsedUser, // Keep existing user info like _id, token etc.
-          // IMPORTANT: Merge only the top-level fields that can be updated in the User model.
-          // Role-specific nested data (student, alumni, faculty) is typically not merged directly
-          // into the root user object in localStorage if it's stored separately in the DB.
-          // For simplicity, I'm just merging the top-level user fields returned in the response.
-          // If your `response.data.data` contains the full nested profile, adjust this.
+          ...parsedUser,
           fullName: response.data.data.fullName,
-          email: response.data.data.email, // Email should generally not change or require re-login
+          email: response.data.data.email,
           phoneNumber: response.data.data.phoneNumber,
           photoUrl: response.data.data.photoUrl,
           bio: response.data.data.bio,
@@ -225,16 +219,14 @@ const ProfileEditor = () => {
           linkedinUrl: response.data.data.linkedinUrl,
           twitterUrl: response.data.data.twitterUrl,
           githubUrl: response.data.data.githubUrl,
-          // You might need to update other fields here if they are part of the 'user' object
-          // and are relevant for local storage (e.g., if you store role-specific IDs).
         };
         localStorage.setItem('user', JSON.stringify(updatedUserData));
 
         showAlert('Profile updated successfully!', 'success');
 
-        // Navigate back to profile view after a short delay
+        // Refresh the current page after a short delay
         setTimeout(() => {
-          navigate('/profile');
+          window.location.reload();
         }, 1000);
       } else {
         showAlert(response.data.message || 'Failed to update profile.', 'error');

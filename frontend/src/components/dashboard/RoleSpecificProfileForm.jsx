@@ -47,32 +47,6 @@ const RoleSpecificProfileForm = ({ role, formData, handleChange, setFormData }) 
             />
           </div>
           <div className="mb-4">
-            <label htmlFor="batch.startYear" className="block text-sm font-medium text-gray-700 mb-1">
-              Batch Start Year
-            </label>
-            <input
-              type="number"
-              id="batch.startYear"
-              name="batch.startYear"
-              value={formData.batch?.startYear || ''}
-              onChange={handleChange}
-              className="block w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
-            />
-          </div>
-          <div className="mb-4">
-            <label htmlFor="batch.endYear" className="block text-sm font-medium text-gray-700 mb-1">
-              Batch End Year
-            </label>
-            <input
-              type="number"
-              id="batch.endYear"
-              name="batch.endYear"
-              value={formData.batch?.endYear || ''}
-              onChange={handleChange}
-              className="block w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
-            />
-          </div>
-          <div className="mb-4">
             <label htmlFor="linkedinUrl" className="block text-sm font-medium text-gray-700 mb-1">
               LinkedIn Profile URL
             </label>

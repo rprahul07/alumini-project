@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axios from '../config/axios';
 import { FiMail, FiLock } from 'react-icons/fi';
 import toast from 'react-hot-toast';
@@ -11,6 +11,27 @@ const AdminLogin = () => {
   });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Check if user is already logged in
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const userStr = localStorage.getItem('user');
+    
+    if (token && userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        if (user.role === 'admin' && location.pathname === '/admin/login') {
+          navigate('/admin/dashboard', { replace: true });
+        }
+      } catch (error) {
+        // Clear invalid data
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        localStorage.removeItem('role');
+      }
+    }
+  }, [navigate, location]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -22,26 +43,50 @@ const AdminLogin = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (loading) return;
     setLoading(true);
 
     try {
-      const response = await axios.post('/api/auth/login', {
-        ...formData,
+      const loginResponse = await axios.post('/api/auth/login', {
+        email: formData.email,
+        password: formData.password,
         role: 'admin'
-      });
+      }, { withCredentials: true });
 
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
+      const { data } = loginResponse;
       
-      toast.success('Login successful! Redirecting to admin dashboard...');
+      if (!data || !data.success) {
+        throw new Error('Login failed');
+      }
+
+      const userData = data.data || data.user;
+      const token = data.token;
+
+      if (!userData || !token || userData.role !== 'admin') {
+        throw new Error('Invalid credentials or not an admin');
+      }
+
+      // Store auth data
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(userData));
+      localStorage.setItem('role', 'admin');
       
-      // Add a small delay to show the success message
+      toast.success('Login successful!');
+
+      // Small delay before navigation to ensure storage is complete
       setTimeout(() => {
-        navigate('/admin/logs', { replace: true });
-      }, 1500);
+        if (location.pathname === '/admin/login') {
+          navigate('/admin/dashboard', { replace: true });
+        }
+      }, 100);
+      
     } catch (err) {
-      console.error('Admin login error:', err);
-      toast.error(err.response?.data?.message || 'Login failed. Please check your credentials.');
+      console.error('Admin login error:', {
+        message: err.message,
+        response: err.response?.data,
+      });
+      const errorMessage = err.response?.data?.message || err.message || 'Login failed. Please try again.';
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -53,6 +98,9 @@ const AdminLogin = () => {
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
           Admin Login
         </h2>
+        <p className="mt-2 text-center text-sm text-gray-600">
+          Use admin@example.com / password to login
+        </p>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">

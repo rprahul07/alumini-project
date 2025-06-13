@@ -5,7 +5,7 @@ import MainLayout from '../layouts/MainLayout';
 import StudentDashboard from '../layouts/dashboards/StudentDashboard';
 import FacultyDashboard from '../layouts/dashboards/FacultyDashboard';
 import AlumniDashboard from '../layouts/dashboards/AlumniDashboard';
-import AdminDashboard from '../layouts/dashboards/AdminDashboard';
+import AdminDashboard from '../components/dashboard/AdminDashboard';
 import ProfileCard from '../components/dashboard/ProfileCard';
 import ProfileEditor from '../components/dashboard/ProfileEditor';
 import UnauthorizedPage from '../pages/UnauthorizedPage';
@@ -36,6 +36,10 @@ const DashboardRoute = () => {
   const location = useLocation();
   const userData = localStorage.getItem('user');
 
+  if (!userData) {
+    return <Navigate to="/login" replace state={{ from: location }} />;
+  }
+
   try {
     const user = JSON.parse(userData);
     const role = user.role.toLowerCase();
@@ -48,7 +52,7 @@ const DashboardRoute = () => {
       case 'alumni':
         return <AlumniDashboard />;
       case 'admin':
-        return <AdminDashboard />;
+        return <Navigate to="/admin/dashboard" replace />;
       default:
         return <Navigate to="/unauthorized" replace />;
     }
@@ -74,8 +78,16 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       >
+        {/* Default route redirects to dashboard */}
         <Route index element={<Navigate to="/dashboard" replace />} />
+        
+        {/* Dashboard routes */}
         <Route path="dashboard" element={<DashboardRoute />} />
+        <Route path="dashboard/student" element={<StudentDashboard />} />
+        <Route path="dashboard/faculty" element={<FacultyDashboard />} />
+        <Route path="dashboard/alumni" element={<AlumniDashboard />} />
+        
+        {/* Profile routes */}
         <Route path="profile" element={<ProfileCard />} />
         <Route path="profile/edit" element={<ProfileEditor />} />
       </Route>

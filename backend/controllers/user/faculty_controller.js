@@ -93,12 +93,13 @@ export const getFacultyById = async (req, res) => {
       });
     }
 
-    const userIdInt = parseInt(req.query.userId);
+    const userIdInt = parseInt(userId);
     if (isNaN(userIdInt)) {
       return res
         .status(400)
         .json({ success: false, message: "Invalid user ID" });
     }
+
     const user = await prisma.user.findUnique({
       where: { id: userIdInt },
       select: {
@@ -167,7 +168,7 @@ export const getAllFaculty = async (req, res) => {
     const faculty = await prisma.user.findMany({
       where: whereClause,
       select: {
-       id: true,
+        id: true,
         email: true,
         fullName: true,
         phoneNumber: true,
@@ -191,8 +192,11 @@ export const getAllFaculty = async (req, res) => {
       orderBy: { createdAt: "desc" },
     });
 
+    // Add userId property
+    const facultyWithUserId = faculty.map(f => ({ ...f, userId: f.id }));
+
     const response = {
-      faculty,
+      faculty: facultyWithUserId,
       pagination: {
         currentPage: parseInt(page),
         totalPages: Math.ceil(totalCount / parseInt(limit)),
@@ -214,7 +218,6 @@ export const getAllFaculty = async (req, res) => {
 export const deleteFacultyById = async (req, res) => {
   try {
     const { userId } = req.params;
-
     if (!userId) {
       return res.status(400).json({
         success: false,
@@ -222,11 +225,12 @@ export const deleteFacultyById = async (req, res) => {
       });
     }
 
-    const userIdInt = parseInt(req.query.userId);
+    const userIdInt = parseInt(userId);
     if (isNaN(userIdInt)) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Invalid user ID" });
+      return res.status(400).json({
+        success: false,
+        message: "Invalid user ID",
+      });
     }
     // Check if user exists and is a faculty
     const user = await prisma.user.findUnique({
@@ -292,23 +296,7 @@ export const deleteFacultyById = async (req, res) => {
 
 export const updateFacultyById = async (req, res) => {
   try {
-    const userId = req.query.userId;
-
-    const {
-      fullName,
-      email,
-      phoneNumber,
-      department,
-      bio,
-      linkedinUrl,
-      twitterUrl,
-      githubUrl,
-      workExperience,
-      designation,
-
-
-    } = req.body;
-
+    const { userId } = req.params;
     if (!userId) {
       return res.status(400).json({
         success: false,
@@ -318,9 +306,10 @@ export const updateFacultyById = async (req, res) => {
 
     const userIdInt = parseInt(userId);
     if (isNaN(userIdInt)) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Invalid user ID" });
+      return res.status(400).json({
+        success: false,
+        message: "Invalid user ID",
+      });
     }
 
     // Check if user exists and is a faculty

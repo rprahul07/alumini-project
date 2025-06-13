@@ -82,8 +82,7 @@ export const registerAlumni = async (req, res) => {
 
 export const getAlumniById = async (req, res) => {
   try {
-    const { userId } = req.params; // or use req.query if you prefer ?userId=
-
+    const { userId } = req.params;
     if (!userId) {
       return res.status(400).json({
         success: false,
@@ -91,8 +90,7 @@ export const getAlumniById = async (req, res) => {
       });
     }
 
-    const userIdInt = parseInt(req.query.userId); // use req.query.userId if needed
-
+    const userIdInt = parseInt(userId);
     if (isNaN(userIdInt)) {
       return res.status(400).json({
         success: false,
@@ -173,25 +171,25 @@ export const getAllAlumni = async (req, res) => {
       where: whereClause,
       select: {
         id: true,
-          fullName: true,
-          email: true,
-          phoneNumber: true,
-          department: true,
-          role: true,
-          photoUrl: true,
-          bio: true,
-          linkedinUrl: true,
-          twitterUrl: true,
-          githubUrl: true,
-          workExperience: true,
-          alumni: {
-            select: {
-              id: true,
-              graduationYear: true,
-              course: true,
-              currentJobTitle: true,
-              companyName: true,
-              company_role: true,
+        fullName: true,
+        email: true,
+        phoneNumber: true,
+        department: true,
+        role: true,
+        photoUrl: true,
+        bio: true,
+        linkedinUrl: true,
+        twitterUrl: true,
+        githubUrl: true,
+        workExperience: true,
+        alumni: {
+          select: {
+            id: true,
+            graduationYear: true,
+            course: true,
+            currentJobTitle: true,
+            companyName: true,
+            company_role: true,
           },
         },
       },
@@ -200,8 +198,11 @@ export const getAllAlumni = async (req, res) => {
       orderBy: { createdAt: "desc" },
     });
 
+    // Add userId property
+    const alumniWithUserId = alumni.map(a => ({ ...a, userId: a.id }));
+
     const response = {
-      alumni,
+      alumni: alumniWithUserId,
       pagination: {
         currentPage: parseInt(page),
         totalPages: Math.ceil(totalCount / parseInt(limit)),
@@ -223,7 +224,6 @@ export const getAllAlumni = async (req, res) => {
 export const deleteAlumniById = async (req, res) => {
   try {
     const { userId } = req.params;
-
     if (!userId) {
       return res.status(400).json({
         success: false,
@@ -231,11 +231,12 @@ export const deleteAlumniById = async (req, res) => {
       });
     }
 
-    const userIdInt = parseInt(req.query.userId);
+    const userIdInt = parseInt(userId);
     if (isNaN(userIdInt)) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Invalid user ID" });
+      return res.status(400).json({
+        success: false,
+        message: "Invalid user ID",
+      });
     }
 
     // Check if user exists and is an alumni
@@ -302,25 +303,7 @@ export const deleteAlumniById = async (req, res) => {
 
 export const updateAlumniById = async (req, res) => {
   try {
-    const userId = req.query.userId;
-
-    const {
-      fullName,
-      email,
-      phoneNumber,
-      department,
-      bio,
-      linkedinUrl,
-      twitterUrl,
-      githubUrl,
-      graduationYear,
-      course,
-      currentJobTitle,
-      companyName,
-      company_role,
-      workExperience,
-    } = req.body;
-
+    const { userId } = req.params;
     if (!userId) {
       return res.status(400).json({
         success: false,
@@ -330,9 +313,10 @@ export const updateAlumniById = async (req, res) => {
 
     const userIdInt = parseInt(userId);
     if (isNaN(userIdInt)) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Invalid user ID" });
+      return res.status(400).json({
+        success: false,
+        message: "Invalid user ID",
+      });
     }
 
     // Check if user exists and is an alumni

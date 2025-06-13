@@ -102,32 +102,41 @@ try {
       });
       console.log('Server response:', response.data);
 
-      if (response.data.success && response.data.data) {
+      const userObj = response.data.data || response.data.user;
+      if (response.data.success && userObj) {
         toast.success(response.data.message || (authType === 'login' ? 'Login successful!' : 'Registration successful!'));
 
-        // --- MODIFICATION STARTS HERE ---
-        if (authType === 'signup') {
-          // If it's a signup, redirect to the login page
+        if (authType === 'register') {
           console.log('Signup successful, redirecting to login page.');
-          navigate('/login', { replace: true }); // Assuming your login page route is '/login'
+          console.log('Signup response:', response);
+          navigate('/login', { replace: true });
         } else {
           // If it's a login, store user data and redirect to dashboard
           const userData = {
-            id: response.data.data._id || response.data.data.id,
-            fullName: response.data.data.fullName,
-            email: response.data.data.email,
-            role: response.data.data.role
+            id: userObj._id || userObj.id,
+            fullName: userObj.fullName,
+            email: userObj.email,
+            role: userObj.role
           };
           console.log('Storing user data:', userData);
           localStorage.setItem('user', JSON.stringify(userData));
+          // Store token and role in localStorage
+          if (response.data.token) {
+            localStorage.setItem('token', response.data.token);
+          }
+          localStorage.setItem('role', userObj.role.toLowerCase());
 
           // Redirect based on role after successful login
-          const role = response.data.data.role.toLowerCase();
+          const role = userObj.role.toLowerCase();
           console.log('Login successful, redirecting to dashboard for role:', role);
-          navigate('/dashboard', { replace: true });
+          
+          // Redirect to the appropriate dashboard
+          if (role === 'admin') {
+            navigate('/admin/dashboard', { replace: true });
+          } else {
+            navigate(`/dashboard/${role}`, { replace: true });
+          }
         }
-        // --- MODIFICATION ENDS HERE ---
-
       } else {
         throw new Error(response.data.message || 'Authentication failed');
       }

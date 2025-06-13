@@ -113,31 +113,32 @@ export const getStudentById = async (req, res) => {
       });
     }
 
-    const userIdInt = parseInt(req.query.userId);
+    const userIdInt = parseInt(userId);
     if (isNaN(userIdInt)) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Invalid user ID" });
+      return res.status(400).json({
+        success: false,
+        message: "Invalid user ID",
+      });
     }
 
     const user = await prisma.user.findUnique({
       where: { id: userIdInt },
       select: {
         id: true,
-          email: true,
-          fullName: true,
-          phoneNumber: true,
-          department: true,
-          role: true,
-          photoUrl: true,
-          bio: true,
-          linkedinUrl: true,
-          student: {
-            select: {
-              id: true,
-              currentSemester: true,
-              rollNumber: true,
-              graduationYear: true,
+        email: true,
+        fullName: true,
+        phoneNumber: true,
+        department: true,
+        role: true,
+        photoUrl: true,
+        bio: true,
+        linkedinUrl: true,
+        student: {
+          select: {
+            id: true,
+            currentSemester: true,
+            rollNumber: true,
+            graduationYear: true,
           },
         },
       },
@@ -188,21 +189,21 @@ export const getAllStudents = async (req, res) => {
     const students = await prisma.user.findMany({
       where: whereClause,
       select: {
-       id: true,
-          email: true,
-          fullName: true,
-          phoneNumber: true,
-          department: true,
-          role: true,
-          photoUrl: true,
-          bio: true,
-          linkedinUrl: true,
-          student: {
-            select: {
-              id: true,
-              currentSemester: true,
-              rollNumber: true,
-              graduationYear: true,
+        id: true,
+        email: true,
+        fullName: true,
+        phoneNumber: true,
+        department: true,
+        role: true,
+        photoUrl: true,
+        bio: true,
+        linkedinUrl: true,
+        student: {
+          select: {
+            id: true,
+            currentSemester: true,
+            rollNumber: true,
+            graduationYear: true,
           },
         },
       },
@@ -211,8 +212,11 @@ export const getAllStudents = async (req, res) => {
       orderBy: { createdAt: "desc" },
     });
 
+    // Add userId property
+    const studentsWithUserId = students.map(s => ({ ...s, userId: s.id }));
+
     const response = {
-      students,
+      students: studentsWithUserId,
       pagination: {
         currentPage: parseInt(page),
         totalPages: Math.ceil(totalCount / parseInt(limit)),
@@ -234,7 +238,6 @@ export const getAllStudents = async (req, res) => {
 export const deleteStudentById = async (req, res) => {
   try {
     const { userId } = req.params;
-
     if (!userId) {
       return res.status(400).json({
         success: false,
@@ -242,11 +245,12 @@ export const deleteStudentById = async (req, res) => {
       });
     }
 
-    const userIdInt = parseInt(req.query.userId);
+    const userIdInt = parseInt(userId);
     if (isNaN(userIdInt)) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Invalid user ID" });
+      return res.status(400).json({
+        success: false,
+        message: "Invalid user ID",
+      });
     }
 
     // Check if user exists and is a student
@@ -313,21 +317,7 @@ export const deleteStudentById = async (req, res) => {
 
 export const updateStudentById = async (req, res) => {
   try {
-    const userId = req.query.userId;
-    const {
-      fullName,
-      email,
-      phoneNumber,
-      department,
-      bio,
-      linkedinUrl,
-      twitterUrl,
-      githubUrl,
-      currentSemester,
-      rollNumber,
-      graduationYear,
-    } = req.body;
-
+    const { userId } = req.params;
     if (!userId) {
       return res.status(400).json({
         success: false,
@@ -342,6 +332,20 @@ export const updateStudentById = async (req, res) => {
         message: "Invalid user ID",
       });
     }
+
+    const {
+      fullName,
+      email,
+      phoneNumber,
+      department,
+      bio,
+      linkedinUrl,
+      twitterUrl,
+      githubUrl,
+      currentSemester,
+      rollNumber,
+      graduationYear,
+    } = req.body;
 
     // Check if user exists and is a student
     const user = await prisma.user.findUnique({

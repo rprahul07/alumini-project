@@ -41,12 +41,42 @@ export const validatePassword = (password) => {
 };
 
 export const hashPassword = async (password) => {
-  const salt = await bcrypt.genSalt(10);
-  return bcrypt.hash(password, salt);
+  try {
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    console.log('Password hashed successfully:', {
+      originalLength: password.length,
+      hashedLength: hashedPassword.length
+    });
+    return hashedPassword;
+  } catch (error) {
+    console.error('Error hashing password:', error);
+    throw new AppError('Error processing password', 500);
+  }
 };
 
 export const verifyPassword = async (plainPassword, hashedPassword) => {
-  return bcrypt.compare(plainPassword, hashedPassword);
+  try {
+    if (!plainPassword || !hashedPassword) {
+      console.error('Missing password or hash:', {
+        hasPlainPassword: Boolean(plainPassword),
+        hasHashedPassword: Boolean(hashedPassword)
+      });
+      return false;
+    }
+
+    console.log('Verifying password:', {
+      plainPasswordLength: plainPassword.length,
+      hashedPasswordLength: hashedPassword.length
+    });
+
+    const isValid = await bcrypt.compare(plainPassword, hashedPassword);
+    console.log('Password verification result:', isValid);
+    return isValid;
+  } catch (error) {
+    console.error('Error verifying password:', error);
+    return false;
+  }
 };
 
 export const checkEmailExists = async (email) => {
@@ -85,7 +115,10 @@ export const findUserByRole = async (
       break;
   }
 
-  return prisma.user.findUnique({
+  // Debug logging
+  console.log("findUserByRole query:", { where, select: { ...select, ...include } });
+
+  const user = await prisma.user.findUnique({
     where,
     select: {
       ...select,
@@ -95,6 +128,13 @@ export const findUserByRole = async (
         : {}),
     },
   });
+
+  console.log("findUserByRole result:", user ? {
+    ...user,
+    password: user.password ? `[Hash length: ${user.password.length}]` : undefined
+  } : null);
+  
+  return user;
 };
 
 export const createUser = async (userData, role) => {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { FiEdit2, FiLinkedin, FiTwitter, FiGithub } from 'react-icons/fi';
+import { FiEdit2, FiLinkedin, FiTwitter, FiGithub, FiArrowLeft } from 'react-icons/fi';
 import axios from '../../config/axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const ProfileCard = () => {
   const [user, setUser] = useState(null);
@@ -9,6 +9,10 @@ const ProfileCard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Check if we're in the admin dashboard
+  const isInAdminDashboard = location.pathname.includes('/admin');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -59,9 +63,6 @@ const ProfileCard = () => {
             <Info label="Current Semester" value={profile.student?.currentSemester} />
             {profile.student?.graduationYear && (
               <Info label="Expected Graduation" value={profile.student.graduationYear} />
-            )}
-            {(profile.student?.batch?.startYear && profile.student?.batch?.endYear) && (
-              <Info label="Batch" value={`${profile.student.batch.startYear} - ${profile.student.batch.endYear}`} />
             )}
           </>
         );
@@ -128,6 +129,17 @@ const ProfileCard = () => {
 
   return (
     <div className="bg-white rounded-xl shadow-lg p-8 max-w-2xl mx-auto my-10 border border-gray-100">
+      {/* Add back button if in admin dashboard */}
+      {isInAdminDashboard && (
+        <button
+          onClick={() => navigate('/admin/dashboard')}
+          className="mb-4 inline-flex items-center space-x-1 text-sm px-3 py-1.5 bg-indigo-500 text-white rounded-md hover:bg-indigo-600 shadow"
+        >
+          <FiArrowLeft className="h-4 w-4" />
+          <span>Back to Dashboard</span>
+        </button>
+      )}
+
       <div className="flex items-center justify-start mb-6 space-x-6">
         <img
           src={profile.photoUrl || 'https://via.placeholder.com/150/EEEEEE/888888?text=No+Photo'}

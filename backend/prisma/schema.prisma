@@ -8,52 +8,50 @@ datasource db {
 }
 
 model User {
-  id            Int       @id @default(autoincrement())
-  fullName      String    @map("full_name") @db.VarChar(100)
-  email         String    @unique @db.VarChar(100)
-  password      String    @db.VarChar(255)
-  phoneNumber   String?   @map("phone_number") @db.VarChar(20)
-  department    String?   @db.VarChar(100)
-  role          Role
-  photoUrl      String?   @map("photo_url") @db.VarChar(500)
-  bio           String?   @db.Text
-  linkedinUrl   String?   @map("linkedin_url") @db.VarChar(500)
-  workExperience Json?    @map("work_experience") // ✅ Add this field
-  twitterUrl   String?   @map("twitter_url") @db.VarChar(500)
-  githubUrl    String?   @map("github_url") @db.VarChar(500)
-
-  createdAt     DateTime  @default(now()) @map("created_at")
-  admin         Admin?
-  alumni        Alumni?
-  faculty       Faculty?
-  student       Student?
+  id             Int      @id @default(autoincrement())
+  fullName       String   @map("full_name") @db.VarChar(100)
+  email          String   @unique @db.VarChar(100)
+  password       String   @db.VarChar(255)
+  phoneNumber    String?  @map("phone_number") @db.VarChar(20)
+  department     String?  @db.VarChar(100)
+  role           Role
+  createdAt      DateTime @default(now()) @map("created_at")
+  photoUrl       String?  @map("photo_url") @db.VarChar(500)
+  bio            String?
+  linkedinUrl    String?  @map("linkedin_url") @db.VarChar(500)
+  workExperience Json?    @map("work_experience")
+  githubUrl      String?  @map("github_url") @db.VarChar(500)
+  twitterUrl     String?  @map("twitter_url") @db.VarChar(500)
+  admin          Admin?
+  alumni         Alumni?
+  faculty        Faculty?
+  student        Student?
 
   @@index([email])
   @@map("users")
 }
 
 model Alumni {
-  id              Int      @id @default(autoincrement())
-  graduationYear  Int      @map("graduation_year")
-  course          String?  @db.VarChar(100)
-  currentJobTitle String   @map("current_job_title") @db.VarChar(100)
-  companyName     String   @map("company_name") @db.VarChar(100)
-  userId          Int      @unique @map("user_id")
-  company_role   String?  @map("company_role") @db.VarChar(100)
-  user            User     @relation(fields: [userId], references: [id])
-  // ❌ Removed workExperience relation
+  id              Int     @id @default(autoincrement())
+  graduationYear  Int     @map("graduation_year")
+  course          String? @db.VarChar(100)
+  currentJobTitle String  @map("current_job_title") @db.VarChar(100)
+  companyName     String  @map("company_name") @db.VarChar(100)
+  userId          Int     @unique @map("user_id")
+  company_role    String? @map("company_role") @db.VarChar(100)
+  user            User    @relation(fields: [userId], references: [id])
 
   @@map("alumni")
 }
 
 model Student {
   id              Int    @id @default(autoincrement())
-  currentSemester Int    @map("current_semester") @db.Integer
   rollNumber      String @unique @map("roll_number") @db.VarChar(50)
-  batch_startYear Int?   @map("batch_start_year") @db.Integer
-  batch_endYear   Int?   @map("batch_end_year") @db.Integer
-  graduationYear  Int?   @map("graduation_year")
   userId          Int    @unique @map("user_id")
+  currentSemester Int    @map("current_semester")
+  graduationYear  Int?   @map("graduation_year")
+  batch_endYear   Int?   @map("batch_end_year")
+  batch_startYear Int?   @map("batch_start_year")
   user            User   @relation(fields: [userId], references: [id])
 
   @@map("students")

@@ -1,80 +1,91 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Users, GraduationCap, Briefcase, Settings, HelpCircle, BellRing, BarChart2, ShieldCheck, Search, Plus, Home, User } from 'lucide-react'; // Using lucide-react for icons
+import React, { useState, useEffect } from 'react';
+import { 
+  FiUsers, 
+  FiBook, 
+  FiBriefcase, 
+  FiSettings, 
+  FiHelpCircle, 
+  FiBell, 
+  FiBarChart2, 
+  FiShield, 
+  FiSearch, 
+  FiPlus, 
+  FiHome, 
+  FiUser,
+  FiMenu,
+  FiX
+} from 'react-icons/fi';
 import apiService from '../../middleware/api';
-
-// --- Mock AuthContext ---
-// This context provides a mock authentication state for the dashboard.
-const AuthContext = createContext(null);
-
-export const useAuth = () => {
-  return useContext(AuthContext);
-};
-
-const AuthProvider = ({ children }) => {
-  // Mock user data for demonstration purposes
-  const [user, setUser] = useState({
-    name: 'Admin User',
-    email: 'admin@example.com',
-    phone: '123-456-7890',
-    role: 'admin', // Set role to 'admin' for testing protected routes
-    avatar: 'https://placehold.co/100x100/A78BFA/FFFFFF?text=AU' // Placeholder avatar
-  });
-
-  // You would typically have sign-in/sign-out logic here
-  const signIn = (userData) => setUser(userData);
-  const signOut = () => setUser(null);
-
-  const value = { user, signIn, signOut };
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-};
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
 
 // --- ProtectedRoute Component ---
-// This component acts as a route guard, ensuring only admin users can access the dashboard.
-const ProtectedRoute = ({ children, allowedRoles = ['admin'] }) => {
-  const { user } = useAuth();
+const ProtectedRoute = ({ children }) => {
+  const navigate = useNavigate();
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate async auth check
-    const checkAuth = setTimeout(() => {
-      if (user && allowedRoles.includes(user.role)) {
+    const checkAuth = () => {
+      const token = localStorage.getItem('token');
+      const userData = localStorage.getItem('user');
+      
+      if (!token || !userData) {
+        navigate('/admin/login', { replace: true });
+        return;
+      }
+
+      try {
+        const user = JSON.parse(userData);
+        if (user.role === 'admin') {
         setIsAuthorized(true);
       } else {
-        setIsAuthorized(false);
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          navigate('/admin/login', { replace: true });
+        }
+      } catch (error) {
+        console.error('Error parsing user data:', error);
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        navigate('/admin/login', { replace: true });
       }
+      
       setIsLoading(false);
-    }, 100); // Small delay to simulate auth loading
+    };
 
-    return () => clearTimeout(checkAuth);
-  }, [user, allowedRoles]);
+    checkAuth();
+  }, [navigate]);
 
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <p className="text-gray-600 text-lg">Loading authentication...</p>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
+          <p className="text-gray-600 text-lg mt-4">Loading authentication...</p>
+        </div>
       </div>
     );
   }
 
   if (!isAuthorized) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-red-50 text-red-800 p-8 rounded-lg shadow-xl m-4">
-        <h2 className="text-4xl font-bold mb-4">Access Denied</h2>
-        <p className="text-xl">You do not have the necessary permissions to view this page.</p>
-        <p className="mt-4 text-gray-600">Please log in with an administrator account.</p>
-      </div>
-    );
+    return null;
   }
 
   return children;
 };
 
-// --- Mock Navbar Component ---
-// A simple navigation bar for the application.
+// --- Navbar Component ---
 const Navbar = () => {
-  const { user } = useAuth();
+  const navigate = useNavigate();
+  const userData = localStorage.getItem('user');
+  const user = userData ? JSON.parse(userData) : null;
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    navigate('/admin/login');
+  };
 
   return (
     <nav className="bg-white shadow-sm p-4 flex justify-between items-center rounded-b-2xl z-10 relative">
@@ -83,13 +94,19 @@ const Navbar = () => {
       </div>
       <div className="flex items-center space-x-4">
         {user ? (
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-4">
             <img
               className="h-8 w-8 rounded-full border-2 border-indigo-300"
-              src={user.avatar}
+              src={user.avatar || 'https://placehold.co/100x100/A78BFA/FFFFFF?text=AU'}
               alt="User Avatar"
             />
             <span className="font-medium text-gray-700 hidden sm:block">{user.name}</span>
+            <button
+              onClick={handleLogout}
+              className="text-sm text-red-600 hover:text-red-800"
+            >
+              Logout
+            </button>
           </div>
         ) : (
           <span className="text-gray-500">Guest</span>
@@ -99,27 +116,26 @@ const Navbar = () => {
   );
 };
 
-// --- Mock Sidebar Component ---
-// A responsive sidebar with navigation links for the dashboard.
+// --- Sidebar Component ---
 const Sidebar = ({ onNavigate }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isUserManagementExpanded, setIsUserManagementExpanded] = useState(false);
 
   // Main menu items
   const mainMenuItems = [
-    { title: 'Dashboard', icon: Home, view: 'dashboard' },
+    { title: 'Dashboard', icon: FiHome, view: 'dashboard' },
   ];
 
   // User Management submenu items
   const userManagementItems = [
-    { title: 'Student', icon: GraduationCap, view: 'students' },
-    { title: 'Alumni', icon: Briefcase, view: 'alumni' },
-    { title: 'Faculty', icon: User, view: 'faculty' },
+    { title: 'Student', icon: FiBook, view: 'students' },
+    { title: 'Alumni', icon: FiBriefcase, view: 'alumni' },
+    { title: 'Faculty', icon: FiUser, view: 'faculty' },
   ];
 
   const handleNavigationClick = (view) => {
     onNavigate(view);
-    setIsOpen(false); // Close sidebar on mobile after navigation
+    setIsOpen(false);
   };
 
   return (
@@ -130,9 +146,7 @@ const Sidebar = ({ onNavigate }) => {
           onClick={() => setIsOpen(!isOpen)}
           className="p-2 text-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
         >
-          <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
+          {isOpen ? <FiX className="h-6 w-6" /> : <FiMenu className="h-6 w-6" />}
         </button>
       </div>
 
@@ -155,9 +169,7 @@ const Sidebar = ({ onNavigate }) => {
             onClick={() => setIsOpen(false)}
             className="text-gray-500 hover:text-gray-700 focus:outline-none"
           >
-            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
+            <FiX className="h-6 w-6" />
           </button>
         </div>
         <div className="p-4">
@@ -181,7 +193,7 @@ const Sidebar = ({ onNavigate }) => {
                   className="w-full text-left flex items-center justify-between space-x-3 p-3 text-gray-700 rounded-xl hover:bg-indigo-50 hover:text-indigo-700 transition-colors duration-200 group"
                 >
                   <div className="flex items-center space-x-3">
-                    <Users className="h-6 w-6 text-gray-500 group-hover:text-indigo-600" />
+                    <FiUsers className="h-6 w-6 text-gray-500 group-hover:text-indigo-600" />
                     <span className="font-medium">User Management</span>
                   </div>
                   <svg
@@ -209,13 +221,12 @@ const Sidebar = ({ onNavigate }) => {
                   </ul>
                 )}
               </li>
-              {/* Other potential static menu items if needed */}
               <li className="mb-3">
                 <button
                   onClick={() => onNavigate('settings')}
                   className="w-full text-left flex items-center space-x-3 p-3 text-gray-700 rounded-xl hover:bg-indigo-50 hover:text-indigo-700 transition-colors duration-200 group"
                 >
-                  <Settings className="h-6 w-6 text-gray-500 group-hover:text-indigo-600" />
+                  <FiSettings className="h-6 w-6 text-gray-500 group-hover:text-indigo-600" />
                   <span className="font-medium">Settings</span>
                 </button>
               </li>
@@ -224,7 +235,7 @@ const Sidebar = ({ onNavigate }) => {
                   onClick={() => onNavigate('help')}
                   className="w-full text-left flex items-center space-x-3 p-3 text-gray-700 rounded-xl hover:bg-indigo-50 hover:text-indigo-700 transition-colors duration-200 group"
                 >
-                  <HelpCircle className="h-6 w-6 text-gray-500 group-hover:text-indigo-600" />
+                  <FiHelpCircle className="h-6 w-6 text-gray-500 group-hover:text-indigo-600" />
                   <span className="font-medium">Help</span>
                 </button>
               </li>
@@ -318,7 +329,7 @@ const UserVerificationTable = ({ users, onVerify, onReject }) => {
         <h2 className="text-2xl font-bold text-gray-900">User Verification</h2>
         <div className="relative w-full sm:w-auto">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <Search className="h-5 w-5 text-gray-400" />
+            <FiSearch className="h-5 w-5 text-gray-400" />
           </div>
           <input
             type="text"
@@ -425,7 +436,7 @@ const AnnouncementsSection = ({ announcements, onCreate }) => {
           onClick={onCreate}
           className="bg-indigo-600 text-white px-6 py-2.5 rounded-xl hover:bg-indigo-700 transition-colors duration-200 font-medium flex items-center space-x-2 shadow-md hover:shadow-lg"
         >
-          <Plus className="h-5 w-5" />
+          <FiPlus className="h-5 w-5" />
           <span>Create New</span>
         </button>
       </div>
@@ -435,7 +446,7 @@ const AnnouncementsSection = ({ announcements, onCreate }) => {
           announcements.map((announcement) => (
             <div key={announcement.id} className="bg-gray-50 p-5 rounded-xl border border-gray-200 flex items-start space-x-4">
               <div className="flex-shrink-0">
-                <BellRing className="h-8 w-8 text-indigo-500" />
+                <FiBell className="h-8 w-8 text-indigo-500" />
               </div>
               <div className="flex-grow">
                 <h3 className="text-lg font-semibold text-gray-900">{announcement.title}</h3>
@@ -469,7 +480,7 @@ const UserTableDisplay = ({ userType, users, onUpdateUser, onDeleteUser }) => {
   const [modalAction, setModalAction] = useState(null); // 'delete' or 'update'
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [selectedUserName, setSelectedUserName] = useState('');
-
+  const navigate = useNavigate();
 
   const filteredUsers = users.filter(user =>
     Object.values(user).some(value =>
@@ -488,8 +499,7 @@ const UserTableDisplay = ({ userType, users, onUpdateUser, onDeleteUser }) => {
     if (modalAction === 'delete') {
       onDeleteUser(selectedUserId, userType);
     } else if (modalAction === 'update') {
-      // In a real app, this would open a form/modal to edit the user
-      alert(`Simulating update for user ID: ${selectedUserId} (${selectedUserName}). A form/modal would appear here.`);
+      navigate(`/admin/edit-user/${userType}/${selectedUserId}`);
     }
     setIsConfirmModalOpen(false);
     setSelectedUserId(null);
@@ -531,7 +541,7 @@ const UserTableDisplay = ({ userType, users, onUpdateUser, onDeleteUser }) => {
 
       <div className="relative mb-6">
         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <Search className="h-5 w-5 text-gray-400" />
+          <FiSearch className="h-5 w-5 text-gray-400" />
         </div>
         <input
           type="text"
@@ -556,24 +566,28 @@ const UserTableDisplay = ({ userType, users, onUpdateUser, onDeleteUser }) => {
           <tbody className="bg-white divide-y divide-gray-200">
             {filteredUsers.length > 0 ? (
               filteredUsers.map((user) => (
-                <tr key={user.id}>
+                <tr key={user.userId}>
                   {displayedHeaders.map(header => (
-                    <td key={`${user.id}-${header.key}`} className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td key={`${user.userId}-${header.key}`} className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {header.key === 'actions' ? (
+                        user.userId ? (
                         <div className="flex space-x-2">
                           <button
-                            onClick={() => handleActionClick('update', user.id, user.fullName)}
+                              onClick={() => handleActionClick('update', user.userId, user.fullName)}
                             className="text-indigo-600 hover:text-indigo-900 transition-colors duration-200 px-3 py-1 bg-indigo-50 rounded-lg text-xs"
                           >
                             Update
                           </button>
                           <button
-                            onClick={() => handleActionClick('delete', user.id, user.fullName)}
+                              onClick={() => handleActionClick('delete', user.userId, user.fullName)}
                             className="text-red-600 hover:text-red-900 transition-colors duration-200 px-3 py-1 bg-red-50 rounded-lg text-xs"
                           >
                             Delete by ID
                           </button>
                         </div>
+                        ) : (
+                          <span className="text-xs text-gray-400">No userId</span>
+                        )
                       ) : (
                         user[header.key] || ''
                       )}
@@ -604,12 +618,13 @@ const UserTableDisplay = ({ userType, users, onUpdateUser, onDeleteUser }) => {
 };
 
 
-// --- AdminDashboard Component (User's original code with new integrations) ---
+// --- AdminDashboard Component ---
 const AdminDashboard = () => {
-  const { user } = useAuth();
+  const userData = localStorage.getItem('user');
+  const user = userData ? JSON.parse(userData) : null;
   const [activeView, setActiveView] = useState('dashboard');
-
-  // Loading and error states
+  const [dashboardStats, setDashboardStats] = useState(null);
+  const [adminProfile, setAdminProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -638,6 +653,26 @@ const AdminDashboard = () => {
   ]);
 
   useEffect(() => {
+    const fetchAdminData = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const [statsRes, profileRes] = await Promise.all([
+          apiService.raw.get('/api/admin/dashboard-stats'),
+          apiService.raw.get('/api/admin/profile')
+        ]);
+        setDashboardStats(statsRes.data.data);
+        setAdminProfile(profileRes.data.data);
+      } catch (err) {
+        setError(err.message || 'Failed to fetch admin data');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAdminData();
+  }, []);
+
+  useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       setError(null);
@@ -647,11 +682,14 @@ const AdminDashboard = () => {
           apiService.raw.get('/api/alumni/getall'),
           apiService.raw.get('/api/faculty/getall'),
         ]);
-        setStudents(studentsRes.data.data.students || []);
-        setAlumni(alumniRes.data.data.alumni || []);
-        setFaculty(facultyRes.data.data.faculty || []);
+
+        // Update state with the fetched data
+        setStudents(studentsRes.data?.data?.students || []);
+        setAlumni(alumniRes.data?.data?.alumni || []);
+        setFaculty(facultyRes.data?.data?.faculty || []);
       } catch (err) {
-        setError(err.message || 'Failed to fetch data');
+        console.error('Error fetching data:', err);
+        setError(err.response?.data?.message || 'Failed to fetch data. Please try again later.');
       } finally {
         setLoading(false);
       }
@@ -682,38 +720,85 @@ const AdminDashboard = () => {
   };
 
   const handleDeleteUser = async (id, type) => {
+    if (!id) {
+      toast.error('Invalid user ID');
+      return;
+    }
+    // Only proceed if id is truthy (userId must be present)
     try {
       setLoading(true);
       let endpoint = '';
-      if (type === 'students') {
+      switch (type) {
+        case 'students':
         endpoint = `/api/student/${id}`;
-      } else if (type === 'alumni') {
+          break;
+        case 'alumni':
         endpoint = `/api/alumni/${id}`;
-      } else if (type === 'faculty') {
+          break;
+        case 'faculty':
         endpoint = `/api/faculty/${id}`;
+          break;
+        default:
+          throw new Error('Invalid user type');
       }
       await apiService.raw.delete(endpoint);
-      // Refetch data after deletion
+      // ...refetch logic...
       const [studentsRes, alumniRes, facultyRes] = await Promise.all([
         apiService.raw.get('/api/student/getall'),
         apiService.raw.get('/api/alumni/getall'),
         apiService.raw.get('/api/faculty/getall'),
       ]);
-      setStudents(studentsRes.data.data.students || []);
-      setAlumni(alumniRes.data.data.alumni || []);
-      setFaculty(facultyRes.data.data.faculty || []);
+      setStudents(studentsRes.data?.data?.students || []);
+      setAlumni(alumniRes.data?.data?.alumni || []);
+      setFaculty(facultyRes.data?.data?.faculty || []);
+      toast.success('User deleted successfully');
     } catch (err) {
-      setError(err.message || 'Failed to delete user');
+      console.error('Error deleting user:', err);
+      toast.error(err.response?.data?.message || 'Failed to delete user. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleUpdateUser = (id, type, updatedData) => {
-    // This function would typically take updatedData and modify the state.
-    // For now, it's just a placeholder to trigger the confirmation.
-    console.log(`Update user ID: ${id} of type ${type} with data:`, updatedData);
-    // In a real app, you'd integrate with a backend API here.
+  const handleUpdateUser = async (id, type, updatedData) => {
+    if (!id) {
+      toast.error('Invalid user ID');
+      return;
+    }
+    // Only proceed if id is truthy (userId must be present)
+    try {
+      setLoading(true);
+      let endpoint = '';
+      switch (type) {
+        case 'students':
+          endpoint = `/api/student/${id}`;
+          break;
+        case 'alumni':
+          endpoint = `/api/alumni/${id}`;
+          break;
+        case 'faculty':
+          endpoint = `/api/faculty/${id}`;
+          break;
+        default:
+          throw new Error('Invalid user type');
+      }
+      await apiService.raw.patch(endpoint, updatedData);
+      // ...refetch logic...
+      const [studentsRes, alumniRes, facultyRes] = await Promise.all([
+        apiService.raw.get('/api/student/getall'),
+        apiService.raw.get('/api/alumni/getall'),
+        apiService.raw.get('/api/faculty/getall'),
+      ]);
+      setStudents(studentsRes.data?.data?.students || []);
+      setAlumni(alumniRes.data?.data?.alumni || []);
+      setFaculty(facultyRes.data?.data?.faculty || []);
+      toast.success('User updated successfully');
+    } catch (err) {
+      console.error('Error updating user:', err);
+      toast.error(err.response?.data?.message || 'Failed to update user. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const renderContent = () => {
@@ -729,47 +814,66 @@ const AdminDashboard = () => {
           <>
             <div className="mb-8">
               <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-              <p className="text-gray-500 mt-2">Welcome back, {user?.name || 'Admin'}</p>
+              <p className="text-gray-500 mt-2">Welcome back, {adminProfile?.name || user?.name || 'Admin'}</p>
+              {adminProfile && (
+                <div className="mt-2 text-sm text-gray-600">
+                  <span>Email: {adminProfile.email}</span> | <span>Role: {adminProfile.role}</span>
             </div>
-            
-            <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
-              <ProfileCard isProfileComplete={user?.name && user?.email && user?.phone} />
+              )}
             </div>
-            
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-              {/* Metric Cards */}
               <div className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600">Total Logins</p>
-                    <p className="text-2xl font-bold text-gray-900 mt-1">1,245</p>
+                    <p className="text-sm font-medium text-gray-600">Total Users</p>
+                    <p className="text-2xl font-bold text-gray-900 mt-1">{dashboardStats?.totalUsers ?? '-'}</p>
                   </div>
                   <div className="bg-indigo-100 p-3 rounded-xl">
-                    <User className="h-6 w-6 text-indigo-600" />
+                    <FiUser className="h-6 w-6 text-indigo-600" />
                   </div>
                 </div>
               </div>
-
               <div className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600">Total Posts</p>
-                    <p className="text-2xl font-bold text-gray-900 mt-1">876</p>
+                    <p className="text-sm font-medium text-gray-600">Total Alumni</p>
+                    <p className="text-2xl font-bold text-gray-900 mt-1">{dashboardStats?.totalAlumni ?? '-'}</p>
                   </div>
                   <div className="bg-purple-100 p-3 rounded-xl">
-                    <BellRing className="h-6 w-6 text-purple-600" />
+                    <FiBriefcase className="h-6 w-6 text-purple-600" />
                   </div>
                 </div>
               </div>
-
               <div className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600">Mentorship Matches</p>
-                    <p className="text-2xl font-bold text-gray-900 mt-1">432</p>
+                    <p className="text-sm font-medium text-gray-600">Total Students</p>
+                    <p className="text-2xl font-bold text-gray-900 mt-1">{dashboardStats?.totalStudents ?? '-'}</p>
+                  </div>
+                  <div className="bg-green-100 p-3 rounded-xl">
+                    <FiBook className="h-6 w-6 text-green-600" />
+                  </div>
+                </div>
+              </div>
+              <div className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">Total Faculty</p>
+                    <p className="text-2xl font-bold text-gray-900 mt-1">{dashboardStats?.totalFaculty ?? '-'}</p>
+                  </div>
+                  <div className="bg-yellow-100 p-3 rounded-xl">
+                    <FiUsers className="h-6 w-6 text-yellow-600" />
+                  </div>
+                </div>
+              </div>
+              <div className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">Total Admins</p>
+                    <p className="text-2xl font-bold text-gray-900 mt-1">{dashboardStats?.totalAdmins ?? '-'}</p>
                   </div>
                   <div className="bg-pink-100 p-3 rounded-xl">
-                    <BarChart2 className="h-6 w-6 text-pink-600" />
+                    <FiShield className="h-6 w-6 text-pink-600" />
                   </div>
                 </div>
               </div>
@@ -837,7 +941,7 @@ const AdminDashboard = () => {
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 font-inter">
       <Navbar />
       <div className="flex flex-col lg:flex-row">
-        <Sidebar onNavigate={setActiveView} /> {/* Pass navigation handler to Sidebar */}
+        <Sidebar onNavigate={setActiveView} />
         <main className="flex-1 p-4 sm:p-6 lg:p-8">
           <div className="max-w-7xl mx-auto">
             {renderContent()}
@@ -849,13 +953,10 @@ const AdminDashboard = () => {
 };
 
 // --- Main App Component ---
-// This is the entry point of the React application.
 export default function App() {
   return (
-    <AuthProvider>
-      <ProtectedRoute allowedRoles={['admin']}>
+    <ProtectedRoute>
         <AdminDashboard />
       </ProtectedRoute>
-    </AuthProvider>
   );
 }
