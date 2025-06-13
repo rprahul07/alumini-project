@@ -3,7 +3,7 @@ import { validateForm } from "../utils/validation";
 
 // Create axios instance with default config
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5001",
+  baseURL: import.meta.env.VITE_API_URL || "http://43.204.96.201:5001",
   headers: {
     "Content-Type": "application/json",
   },
