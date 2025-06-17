@@ -94,13 +94,14 @@ export const editEventByIdForAdmin = async (req, res) => {
         message: "Event not found.",
       });
     }
+
+    const updateData = {};
+
     const imageUrl = await handlePhotoUpload(req, null, "event", eventId);
     if (imageUrl) {
-      await updateEventImage(eventId, imageUrl);
-      result.data.imageUrl = imageUrl;
+      updateData.imageUrl = imageUrl;
     }
     // Prepare update data
-    const updateData = {};
 
     if (eventData.name !== undefined) updateData.name = eventData.name.trim();
     if (eventData.date !== undefined) {
