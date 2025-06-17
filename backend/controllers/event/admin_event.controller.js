@@ -1,5 +1,8 @@
 import prisma from "../../lib/prisma.js";
-import { deletePhotoById } from "../../utils/handlePhotoUpload.utils.js";
+import {
+  deletePhotoById,
+  updateEventImage,
+} from "../../utils/handlePhotoUpload.utils.js";
 
 export const createEventForAdmin = async (req, res) => {
   if (req.user.role !== "admin") {
@@ -12,14 +15,18 @@ export const createEventForAdmin = async (req, res) => {
 
   const userId = req.user.id;
   const userRole = req.user.role;
-  const imageUrl = await handlePhotoUpload(req, null, "event");
   const eventData = {
     ...req.body,
-    imageUrl,
+    imageUrl: null,
   };
 
   const result = await createEventForUser(userId, userRole, eventData);
-
+  const eventId = result.data.id;
+  const imageUrl = await handlePhotoUpload(req, null, "event", eventId);
+  if (imageUrl) {
+    await updateEventImage(eventId, imageUrl);
+    result.data.imageUrl = imageUrl;
+  }
   return res.status(result.statusCode).json({
     success: result.success,
     message: result.message,
@@ -87,7 +94,11 @@ export const editEventByIdForAdmin = async (req, res) => {
         message: "Event not found.",
       });
     }
-
+    const imageUrl = await handlePhotoUpload(req, null, "event", eventId);
+    if (imageUrl) {
+      await updateEventImage(eventId, imageUrl);
+      result.data.imageUrl = imageUrl;
+    }
     // Prepare update data
     const updateData = {};
 
