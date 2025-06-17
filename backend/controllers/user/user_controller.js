@@ -20,7 +20,7 @@ export const signup = async (req, res) => {
     // });
 
     const { password, confirmPassword, role } = req.body;
-
+    console.log("role" + req.body);
     if (!role) {
       throw new AppError("Role is required", 400);
     }
@@ -142,7 +142,7 @@ export const login = async (req, res) => {
         fullName: user.fullName,
         email: user.email,
         role,
-      }
+      },
     });
   } catch (error) {
     handleError(error, req, res);

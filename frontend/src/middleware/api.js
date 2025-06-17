@@ -3,7 +3,7 @@ import { validateForm } from "../utils/validation";
 
 // Create axios instance with default config
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://43.204.96.201:5001",
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5001",
   headers: {
     "Content-Type": "application/json",
   },
@@ -22,19 +22,19 @@ const fetchCsrfToken = async () => {
       return csrfToken;
     }
 
-    const response = await api.get('/api/csrf-token');
+    const response = await api.get("/api/csrf-token");
     csrfToken = response.data.csrfToken;
     tokenExpiry = Date.now() + TOKEN_REFRESH_INTERVAL;
     return csrfToken;
   } catch (error) {
-    throw new Error('Failed to fetch CSRF token. Please try again.');
+    throw new Error("Failed to fetch CSRF token. Please try again.");
   }
 };
 
 // Handle API response
 const handleApiResponse = (response) => {
   if (response.data.success === false) {
-    throw new Error(response.data.message || 'API request failed');
+    throw new Error(response.data.message || "API request failed");
   }
   return response.data;
 };
@@ -42,9 +42,9 @@ const handleApiResponse = (response) => {
 // Add request interceptor for CSRF token
 api.interceptors.request.use(
   async (config) => {
-    if (config.method !== 'get') {
+    if (config.method !== "get") {
       const token = await fetchCsrfToken();
-      config.headers['X-CSRF-Token'] = token;
+      config.headers["X-CSRF-Token"] = token;
     }
     return config;
   },
@@ -58,21 +58,25 @@ api.interceptors.response.use(
     if (error.response?.status === 403) {
       csrfToken = null;
       tokenExpiry = null;
-      throw new Error("Session expired. Please refresh the page and try again.");
+      throw new Error(
+        "Session expired. Please refresh the page and try again."
+      );
     }
-    
+
     if (error.response?.status === 401) {
       throw new Error("Invalid email or password.");
     }
 
     if (error.response?.status === 409) {
-      throw new Error("This email is already registered. Please use a different email or login.");
+      throw new Error(
+        "This email is already registered. Please use a different email or login."
+      );
     }
-    
+
     throw new Error(
-      error.response?.data?.message || 
-      error.message || 
-      "An unexpected error occurred. Please try again."
+      error.response?.data?.message ||
+        error.message ||
+        "An unexpected error occurred. Please try again."
     );
   }
 );
@@ -86,7 +90,7 @@ const authAPI = {
 
     const data = {
       ...credentials,
-      role: credentials.role.toLowerCase()
+      role: credentials.role.toLowerCase(),
     };
 
     const response = await api.post("/api/auth/login", data);
@@ -101,7 +105,7 @@ const authAPI = {
 
     const data = {
       ...userData,
-      role: userData.role.toLowerCase()
+      role: userData.role.toLowerCase(),
     };
 
     const response = await api.post("/api/auth/register", data);
@@ -116,7 +120,7 @@ const authAPI = {
   checkAuth: async () => {
     const response = await api.get("/api/auth/check");
     return handleApiResponse(response);
-  }
+  },
 };
 
 // User Profile APIs
@@ -126,39 +130,48 @@ const profileAPI = {
       const response = await api.get("/api/student/profile");
       return handleApiResponse(response);
     } catch (error) {
-      throw new Error(error.response?.data?.message || 'Failed to fetch profile');
+      throw new Error(
+        error.response?.data?.message || "Failed to fetch profile"
+      );
     }
   },
 
   updateProfile: async (profileData) => {
     try {
       // If profileData is FormData (contains file), don't set Content-Type
-      const config = profileData instanceof FormData ? {} : {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      };
+      const config =
+        profileData instanceof FormData
+          ? {}
+          : {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            };
 
       const response = await api.put("/api/profile", profileData, config);
       return handleApiResponse(response);
     } catch (error) {
-      throw new Error(error.response?.data?.message || 'Failed to update profile');
+      throw new Error(
+        error.response?.data?.message || "Failed to update profile"
+      );
     }
   },
 
   uploadProfilePhoto: async (photoFile) => {
     try {
       const formData = new FormData();
-      formData.append('profilePhoto', photoFile);
+      formData.append("profilePhoto", photoFile);
 
       const response = await api.post("/api/profile/photo", formData, {
         headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+          "Content-Type": "multipart/form-data",
+        },
       });
       return handleApiResponse(response);
     } catch (error) {
-      throw new Error(error.response?.data?.message || 'Failed to upload profile photo');
+      throw new Error(
+        error.response?.data?.message || "Failed to upload profile photo"
+      );
     }
   },
 
@@ -167,16 +180,18 @@ const profileAPI = {
       const response = await api.delete("/api/profile/photo");
       return handleApiResponse(response);
     } catch (error) {
-      throw new Error(error.response?.data?.message || 'Failed to delete profile photo');
+      throw new Error(
+        error.response?.data?.message || "Failed to delete profile photo"
+      );
     }
-  }
+  },
 };
 
 // Export API services
 const apiService = {
   auth: authAPI,
   profile: profileAPI,
-  raw: api
+  raw: api,
 };
 
 export { authAPI, profileAPI };

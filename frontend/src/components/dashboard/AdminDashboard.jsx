@@ -1,23 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  FiUsers, 
-  FiBook, 
-  FiBriefcase, 
-  FiSettings, 
-  FiHelpCircle, 
-  FiBell, 
-  FiBarChart2, 
-  FiShield, 
-  FiSearch, 
-  FiPlus, 
-  FiHome, 
+import React, { useState, useEffect } from "react";
+import {
+  FiUsers,
+  FiBook,
+  FiBriefcase,
+  FiSettings,
+  FiHelpCircle,
+  FiBell,
+  FiBarChart2,
+  FiShield,
+  FiSearch,
+  FiPlus,
+  FiHome,
   FiUser,
   FiMenu,
-  FiX
-} from 'react-icons/fi';
-import apiService from '../../middleware/api';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-hot-toast';
+  FiX,
+} from "react-icons/fi";
+import apiService from "../../middleware/api";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
 
 // --- ProtectedRoute Component ---
 const ProtectedRoute = ({ children }) => {
@@ -27,30 +27,30 @@ const ProtectedRoute = ({ children }) => {
 
   useEffect(() => {
     const checkAuth = () => {
-      const token = localStorage.getItem('token');
-      const userData = localStorage.getItem('user');
-      
+      const token = localStorage.getItem("token");
+      const userData = localStorage.getItem("user");
+
       if (!token || !userData) {
-        navigate('/admin/login', { replace: true });
+        navigate("/admin/login", { replace: true });
         return;
       }
 
       try {
         const user = JSON.parse(userData);
-        if (user.role === 'admin') {
-        setIsAuthorized(true);
-      } else {
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
-          navigate('/admin/login', { replace: true });
+        if (user.role === "admin") {
+          setIsAuthorized(true);
+        } else {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          navigate("/admin/login", { replace: true });
         }
       } catch (error) {
-        console.error('Error parsing user data:', error);
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        navigate('/admin/login', { replace: true });
+        console.error("Error parsing user data:", error);
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        navigate("/admin/login", { replace: true });
       }
-      
+
       setIsLoading(false);
     };
 
@@ -62,7 +62,9 @@ const ProtectedRoute = ({ children }) => {
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
-          <p className="text-gray-600 text-lg mt-4">Loading authentication...</p>
+          <p className="text-gray-600 text-lg mt-4">
+            Loading authentication...
+          </p>
         </div>
       </div>
     );
@@ -78,13 +80,13 @@ const ProtectedRoute = ({ children }) => {
 // --- Navbar Component ---
 const Navbar = () => {
   const navigate = useNavigate();
-  const userData = localStorage.getItem('user');
+  const userData = localStorage.getItem("user");
   const user = userData ? JSON.parse(userData) : null;
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    navigate('/admin/login');
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/admin/login");
   };
 
   return (
@@ -97,10 +99,15 @@ const Navbar = () => {
           <div className="flex items-center space-x-4">
             <img
               className="h-8 w-8 rounded-full border-2 border-indigo-300"
-              src={user.avatar || 'https://placehold.co/100x100/A78BFA/FFFFFF?text=AU'}
+              src={
+                user.avatar ||
+                "https://placehold.co/100x100/A78BFA/FFFFFF?text=AU"
+              }
               alt="User Avatar"
             />
-            <span className="font-medium text-gray-700 hidden sm:block">{user.name}</span>
+            <span className="font-medium text-gray-700 hidden sm:block">
+              {user.name}
+            </span>
             <button
               onClick={handleLogout}
               className="text-sm text-red-600 hover:text-red-800"
@@ -119,18 +126,19 @@ const Navbar = () => {
 // --- Sidebar Component ---
 const Sidebar = ({ onNavigate }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isUserManagementExpanded, setIsUserManagementExpanded] = useState(false);
+  const [isUserManagementExpanded, setIsUserManagementExpanded] =
+    useState(false);
 
   // Main menu items
   const mainMenuItems = [
-    { title: 'Dashboard', icon: FiHome, view: 'dashboard' },
+    { title: "Dashboard", icon: FiHome, view: "dashboard" },
   ];
 
   // User Management submenu items
   const userManagementItems = [
-    { title: 'Student', icon: FiBook, view: 'students' },
-    { title: 'Alumni', icon: FiBriefcase, view: 'alumni' },
-    { title: 'Faculty', icon: FiUser, view: 'faculty' },
+    { title: "Student", icon: FiBook, view: "students" },
+    { title: "Alumni", icon: FiBriefcase, view: "alumni" },
+    { title: "Faculty", icon: FiUser, view: "faculty" },
   ];
 
   const handleNavigationClick = (view) => {
@@ -146,7 +154,11 @@ const Sidebar = ({ onNavigate }) => {
           onClick={() => setIsOpen(!isOpen)}
           className="p-2 text-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
         >
-          {isOpen ? <FiX className="h-6 w-6" /> : <FiMenu className="h-6 w-6" />}
+          {isOpen ? (
+            <FiX className="h-6 w-6" />
+          ) : (
+            <FiMenu className="h-6 w-6" />
+          )}
         </button>
       </div>
 
@@ -161,7 +173,7 @@ const Sidebar = ({ onNavigate }) => {
       {/* Sidebar */}
       <aside
         className={`fixed inset-y-0 left-0 w-64 bg-white shadow-xl transform ${
-          isOpen ? 'translate-x-0' : '-translate-x-full'
+          isOpen ? "translate-x-0" : "-translate-x-full"
         } lg:relative lg:translate-x-0 transition-transform duration-300 ease-in-out z-40 lg:z-auto rounded-r-2xl lg:rounded-none p-4`}
       >
         <div className="flex justify-end lg:hidden">
@@ -173,7 +185,9 @@ const Sidebar = ({ onNavigate }) => {
           </button>
         </div>
         <div className="p-4">
-          <h3 className="text-lg font-semibold text-gray-800 mb-6">Dashboard Menu</h3>
+          <h3 className="text-lg font-semibold text-gray-800 mb-6">
+            Dashboard Menu
+          </h3>
           <nav>
             <ul>
               {mainMenuItems.map((item) => (
@@ -189,7 +203,9 @@ const Sidebar = ({ onNavigate }) => {
               ))}
               <li className="mb-3">
                 <button
-                  onClick={() => setIsUserManagementExpanded(!isUserManagementExpanded)}
+                  onClick={() =>
+                    setIsUserManagementExpanded(!isUserManagementExpanded)
+                  }
                   className="w-full text-left flex items-center justify-between space-x-3 p-3 text-gray-700 rounded-xl hover:bg-indigo-50 hover:text-indigo-700 transition-colors duration-200 group"
                 >
                   <div className="flex items-center space-x-3">
@@ -198,11 +214,18 @@ const Sidebar = ({ onNavigate }) => {
                   </div>
                   <svg
                     className={`h-5 w-5 transition-transform duration-200 ${
-                      isUserManagementExpanded ? 'rotate-90' : ''
+                      isUserManagementExpanded ? "rotate-90" : ""
                     }`}
-                    fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
                   >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5l7 7-7 7"
+                    />
                   </svg>
                 </button>
                 {isUserManagementExpanded && (
@@ -223,7 +246,7 @@ const Sidebar = ({ onNavigate }) => {
               </li>
               <li className="mb-3">
                 <button
-                  onClick={() => onNavigate('settings')}
+                  onClick={() => onNavigate("settings")}
                   className="w-full text-left flex items-center space-x-3 p-3 text-gray-700 rounded-xl hover:bg-indigo-50 hover:text-indigo-700 transition-colors duration-200 group"
                 >
                   <FiSettings className="h-6 w-6 text-gray-500 group-hover:text-indigo-600" />
@@ -232,7 +255,7 @@ const Sidebar = ({ onNavigate }) => {
               </li>
               <li className="mb-3">
                 <button
-                  onClick={() => onNavigate('help')}
+                  onClick={() => onNavigate("help")}
                   className="w-full text-left flex items-center space-x-3 p-3 text-gray-700 rounded-xl hover:bg-indigo-50 hover:text-indigo-700 transition-colors duration-200 group"
                 >
                   <FiHelpCircle className="h-6 w-6 text-gray-500 group-hover:text-indigo-600" />
@@ -252,21 +275,51 @@ const Sidebar = ({ onNavigate }) => {
 const ProfileCard = ({ isProfileComplete }) => {
   return (
     <div className="flex items-center space-x-4 bg-gradient-to-r from-indigo-50 to-purple-50 p-4 rounded-xl shadow-inner">
-      <div className={`p-3 rounded-full ${isProfileComplete ? 'bg-green-100' : 'bg-red-100'}`}>
+      <div
+        className={`p-3 rounded-full ${
+          isProfileComplete ? "bg-green-100" : "bg-red-100"
+        }`}
+      >
         {isProfileComplete ? (
-          <svg className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <svg
+            className="h-6 w-6 text-green-600"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
           </svg>
         ) : (
-          <svg className="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <svg
+            className="h-6 w-6 text-red-600"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
           </svg>
         )}
       </div>
       <div>
         <h3 className="font-semibold text-gray-800">Profile Status</h3>
-        <p className={`text-sm ${isProfileComplete ? 'text-green-700' : 'text-red-700'}`}>
-          {isProfileComplete ? 'Your profile is complete!' : 'Please complete your profile details.'}
+        <p
+          className={`text-sm ${
+            isProfileComplete ? "text-green-700" : "text-red-700"
+          }`}
+        >
+          {isProfileComplete
+            ? "Your profile is complete!"
+            : "Please complete your profile details."}
         </p>
       </div>
     </div>
@@ -301,25 +354,30 @@ const ConfirmationModal = ({ isOpen, title, message, onConfirm, onCancel }) => {
   );
 };
 
-
 // --- User Verification Table Component ---
 const UserVerificationTable = ({ users, onVerify, onReject }) => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterStatus, setFilterStatus] = useState('All');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterStatus, setFilterStatus] = useState("All");
 
-  const filteredUsers = users.filter(user => {
-    const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          user.email.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = filterStatus === 'All' || user.status === filterStatus;
+  const filteredUsers = users.filter((user) => {
+    const matchesSearch =
+      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus =
+      filterStatus === "All" || user.status === filterStatus;
     return matchesSearch && matchesStatus;
   });
 
   const getStatusClass = (status) => {
     switch (status) {
-      case 'Pending': return 'bg-yellow-100 text-yellow-800';
-      case 'Approved': return 'bg-green-100 text-green-800';
-      case 'Rejected': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case "Pending":
+        return "bg-yellow-100 text-yellow-800";
+      case "Approved":
+        return "bg-green-100 text-green-800";
+      case "Rejected":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -340,19 +398,24 @@ const UserVerificationTable = ({ users, onVerify, onReject }) => {
           />
         </div>
       </div>
-      
+
       <div className="flex flex-wrap gap-3 mb-6">
-        {['All', 'Pending', 'Approved', 'Rejected'].map(status => (
+        {["All", "Pending", "Approved", "Rejected"].map((status) => (
           <button
             key={status}
             onClick={() => setFilterStatus(status)}
             className={`px-4 py-2 rounded-xl font-medium transition-colors ${
               filterStatus === status
-                ? 'bg-indigo-600 text-white hover:bg-indigo-700'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                ? "bg-indigo-600 text-white hover:bg-indigo-700"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
             }`}
           >
-            {status} ({users.filter(u => status === 'All' || u.status === status).length})
+            {status} (
+            {
+              users.filter((u) => status === "All" || u.status === status)
+                .length
+            }
+            )
           </button>
         ))}
       </div>
@@ -361,16 +424,28 @@ const UserVerificationTable = ({ users, onVerify, onReject }) => {
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider rounded-tl-xl">
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider rounded-tl-xl"
+              >
                 Name
               </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
                 Email
               </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
                 Status
               </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider rounded-tr-xl">
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider rounded-tr-xl"
+              >
                 Actions
               </th>
             </tr>
@@ -386,12 +461,16 @@ const UserVerificationTable = ({ users, onVerify, onReject }) => {
                     {user.email}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusClass(user.status)}`}>
+                    <span
+                      className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusClass(
+                        user.status
+                      )}`}
+                    >
                       {user.status}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    {user.status === 'Pending' ? (
+                    {user.status === "Pending" ? (
                       <div className="flex space-x-2">
                         <button
                           onClick={() => onVerify(user.id)}
@@ -407,14 +486,19 @@ const UserVerificationTable = ({ users, onVerify, onReject }) => {
                         </button>
                       </div>
                     ) : (
-                        <span className="text-gray-500 text-xs">No actions needed</span>
+                      <span className="text-gray-500 text-xs">
+                        No actions needed
+                      </span>
                     )}
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="4" className="px-6 py-4 text-center text-sm text-gray-500">
+                <td
+                  colSpan="4"
+                  className="px-6 py-4 text-center text-sm text-gray-500"
+                >
                   No users found matching your criteria.
                 </td>
               </tr>
@@ -431,7 +515,9 @@ const AnnouncementsSection = ({ announcements, onCreate }) => {
   return (
     <div className="bg-white rounded-2xl shadow-lg p-8">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 space-y-4 sm:space-y-0">
-        <h2 className="text-2xl font-bold text-gray-900">Announcements & Events</h2>
+        <h2 className="text-2xl font-bold text-gray-900">
+          Announcements & Events
+        </h2>
         <button
           onClick={onCreate}
           className="bg-indigo-600 text-white px-6 py-2.5 rounded-xl hover:bg-indigo-700 transition-colors duration-200 font-medium flex items-center space-x-2 shadow-md hover:shadow-lg"
@@ -440,17 +526,24 @@ const AnnouncementsSection = ({ announcements, onCreate }) => {
           <span>Create New</span>
         </button>
       </div>
-      
+
       <div className="space-y-4">
         {announcements.length > 0 ? (
           announcements.map((announcement) => (
-            <div key={announcement.id} className="bg-gray-50 p-5 rounded-xl border border-gray-200 flex items-start space-x-4">
+            <div
+              key={announcement.id}
+              className="bg-gray-50 p-5 rounded-xl border border-gray-200 flex items-start space-x-4"
+            >
               <div className="flex-shrink-0">
                 <FiBell className="h-8 w-8 text-indigo-500" />
               </div>
               <div className="flex-grow">
-                <h3 className="text-lg font-semibold text-gray-900">{announcement.title}</h3>
-                <p className="text-gray-600 mt-1 text-sm">{announcement.content}</p>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  {announcement.title}
+                </h3>
+                <p className="text-gray-600 mt-1 text-sm">
+                  {announcement.content}
+                </p>
                 <div className="flex items-center text-gray-500 text-xs mt-2 space-x-3">
                   <span>{announcement.date}</span>
                   <span>|</span>
@@ -458,8 +551,12 @@ const AnnouncementsSection = ({ announcements, onCreate }) => {
                 </div>
               </div>
               <div className="flex-shrink-0 flex space-x-2">
-                <button className="text-gray-500 hover:text-gray-700 px-2 py-1 rounded-md text-sm">Edit</button>
-                <button className="text-red-500 hover:text-red-700 px-2 py-1 rounded-md text-sm">Delete</button>
+                <button className="text-gray-500 hover:text-gray-700 px-2 py-1 rounded-md text-sm">
+                  Edit
+                </button>
+                <button className="text-red-500 hover:text-red-700 px-2 py-1 rounded-md text-sm">
+                  Delete
+                </button>
               </div>
             </div>
           ))
@@ -475,16 +572,18 @@ const AnnouncementsSection = ({ announcements, onCreate }) => {
 
 // --- UserTableDisplay Component (for Student, Alumni, Faculty) ---
 const UserTableDisplay = ({ userType, users, onUpdateUser, onDeleteUser }) => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [modalAction, setModalAction] = useState(null); // 'delete' or 'update'
   const [selectedUserId, setSelectedUserId] = useState(null);
-  const [selectedUserName, setSelectedUserName] = useState('');
+  const [selectedUserName, setSelectedUserName] = useState("");
   const navigate = useNavigate();
 
-  const filteredUsers = users.filter(user =>
-    Object.values(user).some(value =>
-      typeof value === 'string' && value.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredUsers = users.filter((user) =>
+    Object.values(user).some(
+      (value) =>
+        typeof value === "string" &&
+        value.toLowerCase().includes(searchTerm.toLowerCase())
     )
   );
 
@@ -496,41 +595,44 @@ const UserTableDisplay = ({ userType, users, onUpdateUser, onDeleteUser }) => {
   };
 
   const handleConfirmAction = () => {
-    if (modalAction === 'delete') {
+    if (modalAction === "delete") {
       onDeleteUser(selectedUserId, userType);
-    } else if (modalAction === 'update') {
+    } else if (modalAction === "update") {
       navigate(`/admin/edit-user/${userType}/${selectedUserId}`);
     }
     setIsConfirmModalOpen(false);
     setSelectedUserId(null);
-    setSelectedUserName('');
+    setSelectedUserName("");
     setModalAction(null);
   };
 
   const handleCancelAction = () => {
     setIsConfirmModalOpen(false);
     setSelectedUserId(null);
-    setSelectedUserName('');
+    setSelectedUserName("");
     setModalAction(null);
+  };
+  const getValueByKeyPath = (obj, keyPath) => {
+    return keyPath.split(".").reduce((acc, key) => acc?.[key], obj);
   };
 
   const headers = [
-    { key: 'fullName', label: 'Full Name' },
-    { key: 'email', label: 'Email' },
-    { key: 'phone', label: 'Phone' },
-    { key: 'department', label: 'Department' },
-    { key: 'major', label: 'Major' }, // Specific to students
-    { key: 'gradYear', label: 'Graduation Year' }, // Specific to alumni
-    { key: 'position', label: 'Position' }, // Specific to faculty
-    { key: 'actions', label: 'Actions' },
+    { key: "fullName", label: "Full Name" },
+    { key: "email", label: "Email" },
+    { key: "phoneNumber", label: "Phone" },
+    { key: "department", label: "Department" },
+    { key: "department", label: "Major" }, // Specific to students
+    { key: "alumni.graduationYear", label: "Graduation Year" }, // Specific to alumni
+    { key: "position", label: "Position" }, // Specific to faculty
+    { key: "actions", label: "Actions" },
   ];
 
   // Filter headers based on userType to only show relevant ones
-  const displayedHeaders = headers.filter(header => {
-    if (header.key === 'major' && userType !== 'students') return false;
-    if (header.key === 'gradYear' && userType !== 'alumni') return false;
-    if (header.key === 'position' && userType !== 'faculty') return false;
-    return header.key !== 'userID' && header.key !== 'password'; // Explicitly exclude
+  const displayedHeaders = headers.filter((header) => {
+    if (header.key === "major" && userType !== "students") return false;
+    if (header.key === "gradYear" && userType !== "alumni") return false;
+    if (header.key === "position" && userType !== "faculty") return false;
+    return header.key !== "userID" && header.key !== "password"; // Explicitly exclude
   });
 
   return (
@@ -556,8 +658,12 @@ const UserTableDisplay = ({ userType, users, onUpdateUser, onDeleteUser }) => {
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              {displayedHeaders.map(header => (
-                <th key={header.key} scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider first:rounded-tl-xl last:rounded-tr-xl">
+              {displayedHeaders.map((header) => (
+                <th
+                  key={header.key}
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider first:rounded-tl-xl last:rounded-tr-xl"
+                >
                   {header.label}
                 </th>
               ))}
@@ -567,29 +673,46 @@ const UserTableDisplay = ({ userType, users, onUpdateUser, onDeleteUser }) => {
             {filteredUsers.length > 0 ? (
               filteredUsers.map((user) => (
                 <tr key={user.userId}>
-                  {displayedHeaders.map(header => (
-                    <td key={`${user.userId}-${header.key}`} className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {header.key === 'actions' ? (
+                  {displayedHeaders.map((header) => (
+                    <td
+                      key={`${user.userId}-${header.key}`}
+                      className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"
+                    >
+                      {header.key === "actions" ? (
                         user.userId ? (
-                        <div className="flex space-x-2">
-                          <button
-                              onClick={() => handleActionClick('update', user.userId, user.fullName)}
-                            className="text-indigo-600 hover:text-indigo-900 transition-colors duration-200 px-3 py-1 bg-indigo-50 rounded-lg text-xs"
-                          >
-                            Update
-                          </button>
-                          <button
-                              onClick={() => handleActionClick('delete', user.userId, user.fullName)}
-                            className="text-red-600 hover:text-red-900 transition-colors duration-200 px-3 py-1 bg-red-50 rounded-lg text-xs"
-                          >
-                            Delete by ID
-                          </button>
-                        </div>
+                          <div className="flex space-x-2">
+                            <button
+                              onClick={() =>
+                                handleActionClick(
+                                  "update",
+                                  user.userId,
+                                  user.fullName
+                                )
+                              }
+                              className="text-indigo-600 hover:text-indigo-900 transition-colors duration-200 px-3 py-1 bg-indigo-50 rounded-lg text-xs"
+                            >
+                              Update
+                            </button>
+                            <button
+                              onClick={() =>
+                                handleActionClick(
+                                  "delete",
+                                  user.userId,
+                                  user.fullName
+                                )
+                              }
+                              className="text-red-600 hover:text-red-900 transition-colors duration-200 px-3 py-1 bg-red-50 rounded-lg text-xs"
+                            >
+                              Delete by ID
+                            </button>
+                          </div>
                         ) : (
-                          <span className="text-xs text-gray-400">No userId</span>
+                          <span className="text-xs text-gray-400">
+                            No userId
+                          </span>
                         )
                       ) : (
-                        user[header.key] || ''
+                        getValueByKeyPath(user, header.key) || "-"
                       )}
                     </td>
                   ))}
@@ -597,7 +720,10 @@ const UserTableDisplay = ({ userType, users, onUpdateUser, onDeleteUser }) => {
               ))
             ) : (
               <tr>
-                <td colSpan={displayedHeaders.length} className="px-6 py-4 text-center text-sm text-gray-500">
+                <td
+                  colSpan={displayedHeaders.length}
+                  className="px-6 py-4 text-center text-sm text-gray-500"
+                >
                   No {userType} found.
                 </td>
               </tr>
@@ -608,8 +734,12 @@ const UserTableDisplay = ({ userType, users, onUpdateUser, onDeleteUser }) => {
 
       <ConfirmationModal
         isOpen={isConfirmModalOpen}
-        title={modalAction === 'delete' ? 'Confirm Deletion' : 'Confirm Update'}
-        message={modalAction === 'delete' ? `Are you sure you want to delete ${selectedUserName}? This action cannot be undone.` : `Are you sure you want to update ${selectedUserName}?`}
+        title={modalAction === "delete" ? "Confirm Deletion" : "Confirm Update"}
+        message={
+          modalAction === "delete"
+            ? `Are you sure you want to delete ${selectedUserName}? This action cannot be undone.`
+            : `Are you sure you want to update ${selectedUserName}?`
+        }
         onConfirm={handleConfirmAction}
         onCancel={handleCancelAction}
       />
@@ -617,12 +747,11 @@ const UserTableDisplay = ({ userType, users, onUpdateUser, onDeleteUser }) => {
   );
 };
 
-
 // --- AdminDashboard Component ---
 const AdminDashboard = () => {
-  const userData = localStorage.getItem('user');
+  const userData = localStorage.getItem("user");
   const user = userData ? JSON.parse(userData) : null;
-  const [activeView, setActiveView] = useState('dashboard');
+  const [activeView, setActiveView] = useState("dashboard");
   const [dashboardStats, setDashboardStats] = useState(null);
   const [adminProfile, setAdminProfile] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -635,21 +764,82 @@ const AdminDashboard = () => {
 
   // Dummy data for User Verification (still part of dashboard overview)
   const [usersToVerify, setUsersToVerify] = useState([
-    { id: 'u1', name: 'Alice Johnson', email: 'alice.j@example.com', status: 'Pending' },
-    { id: 'u2', name: 'Bob Williams', email: 'bob.w@example.com', status: 'Approved' },
-    { id: 'u3', name: 'Charlie Brown', email: 'charlie.b@example.com', status: 'Pending' },
-    { id: 'u4', name: 'Diana Prince', email: 'diana.p@example.com', status: 'Rejected' },
-    { id: 'u5', name: 'Eve Adams', email: 'eve.a@example.com', status: 'Pending' },
-    { id: 'u6', name: 'Frank White', email: 'frank.w@example.com', status: 'Approved' },
-    { id: 'u7', name: 'Grace Hopper', email: 'grace.h@example.com', status: 'Pending' },
-    { id: 'u8', name: 'Henry Ford', email: 'henry.f@example.com', status: 'Approved' },
+    {
+      id: "u1",
+      name: "Alice Johnson",
+      email: "alice.j@example.com",
+      status: "Pending",
+    },
+    {
+      id: "u2",
+      name: "Bob Williams",
+      email: "bob.w@example.com",
+      status: "Approved",
+    },
+    {
+      id: "u3",
+      name: "Charlie Brown",
+      email: "charlie.b@example.com",
+      status: "Pending",
+    },
+    {
+      id: "u4",
+      name: "Diana Prince",
+      email: "diana.p@example.com",
+      status: "Rejected",
+    },
+    {
+      id: "u5",
+      name: "Eve Adams",
+      email: "eve.a@example.com",
+      status: "Pending",
+    },
+    {
+      id: "u6",
+      name: "Frank White",
+      email: "frank.w@example.com",
+      status: "Approved",
+    },
+    {
+      id: "u7",
+      name: "Grace Hopper",
+      email: "grace.h@example.com",
+      status: "Pending",
+    },
+    {
+      id: "u8",
+      name: "Henry Ford",
+      email: "henry.f@example.com",
+      status: "Approved",
+    },
   ]);
 
   // Dummy data for Announcements & Events (still part of dashboard overview)
   const [announcements, setAnnouncements] = useState([
-    { id: 'a1', title: 'Community Guidelines Update', content: 'Our community guidelines have been updated. Please review the new terms.', date: '2024-05-15', type: 'Announcement' },
-    { id: 'a2', title: 'Webinar: Mastering Mentorship', content: 'Join our free webinar on effective mentorship strategies on June 20th.', date: '2024-06-20', type: 'Event' },
-    { id: 'a3', title: 'Platform Maintenance Notice', content: 'Scheduled maintenance will occur on June 10th from 2 AM to 4 AM UTC.', date: '2024-06-10', type: 'Announcement' },
+    {
+      id: "a1",
+      title: "Community Guidelines Update",
+      content:
+        "Our community guidelines have been updated. Please review the new terms.",
+      date: "2024-05-15",
+      type: "Announcement",
+    },
+    {
+      id: "a2",
+      title: "Webinar: Mastering Mentorship",
+      content:
+        "Join our free webinar on effective mentorship strategies on June 20th.",
+      date: "2024-06-20",
+      type: "Event",
+    },
+    {
+      id: "a3",
+      title: "Platform Maintenance Notice",
+      content:
+        "Scheduled maintenance will occur on June 10th from 2 AM to 4 AM UTC.",
+      date: "2024-06-10",
+      type: "Announcement",
+    },
   ]);
 
   useEffect(() => {
@@ -658,13 +848,13 @@ const AdminDashboard = () => {
       setError(null);
       try {
         const [statsRes, profileRes] = await Promise.all([
-          apiService.raw.get('/api/admin/dashboard-stats'),
-          apiService.raw.get('/api/admin/profile')
+          apiService.raw.get("/api/admin/dashboard-stats"),
+          apiService.raw.get("/api/admin/profile"),
         ]);
         setDashboardStats(statsRes.data.data);
         setAdminProfile(profileRes.data.data);
       } catch (err) {
-        setError(err.message || 'Failed to fetch admin data');
+        setError(err.message || "Failed to fetch admin data");
       } finally {
         setLoading(false);
       }
@@ -678,18 +868,20 @@ const AdminDashboard = () => {
       setError(null);
       try {
         const [studentsRes, alumniRes, facultyRes] = await Promise.all([
-          apiService.raw.get('/api/student/getall'),
-          apiService.raw.get('/api/alumni/getall'),
-          apiService.raw.get('/api/faculty/getall'),
+          apiService.raw.get("/api/student/getall"),
+          apiService.raw.get("/api/alumni/getall"),
+          apiService.raw.get("/api/faculty/getall"),
         ]);
-
         // Update state with the fetched data
         setStudents(studentsRes.data?.data?.students || []);
         setAlumni(alumniRes.data?.data?.alumni || []);
         setFaculty(facultyRes.data?.data?.faculty || []);
       } catch (err) {
-        console.error('Error fetching data:', err);
-        setError(err.response?.data?.message || 'Failed to fetch data. Please try again later.');
+        console.error("Error fetching data:", err);
+        setError(
+          err.response?.data?.message ||
+            "Failed to fetch data. Please try again later."
+        );
       } finally {
         setLoading(false);
       }
@@ -698,17 +890,17 @@ const AdminDashboard = () => {
   }, []);
 
   const handleVerifyUser = (id) => {
-    setUsersToVerify(prevUsers =>
-      prevUsers.map(user =>
-        user.id === id ? { ...user, status: 'Approved' } : user
+    setUsersToVerify((prevUsers) =>
+      prevUsers.map((user) =>
+        user.id === id ? { ...user, status: "Approved" } : user
       )
     );
   };
 
   const handleRejectUser = (id) => {
-    setUsersToVerify(prevUsers =>
-      prevUsers.map(user =>
-        user.id === id ? { ...user, status: 'Rejected' } : user
+    setUsersToVerify((prevUsers) =>
+      prevUsers.map((user) =>
+        user.id === id ? { ...user, status: "Rejected" } : user
       )
     );
   };
@@ -716,45 +908,50 @@ const AdminDashboard = () => {
   const handleCreateAnnouncement = () => {
     // This will open a modal or navigate to a creation page in a real app.
     // For this demo, we'll use a placeholder modal.
-    alert('Create New Announcement/Event functionality goes here. A proper modal for input would appear!');
+    alert(
+      "Create New Announcement/Event functionality goes here. A proper modal for input would appear!"
+    );
   };
 
   const handleDeleteUser = async (id, type) => {
     if (!id) {
-      toast.error('Invalid user ID');
+      toast.error("Invalid user ID");
       return;
     }
     // Only proceed if id is truthy (userId must be present)
     try {
       setLoading(true);
-      let endpoint = '';
+      let endpoint = "";
       switch (type) {
-        case 'students':
-        endpoint = `/api/student/${id}`;
+        case "students":
+          endpoint = `/api/student/${id}`;
           break;
-        case 'alumni':
-        endpoint = `/api/alumni/${id}`;
+        case "alumni":
+          endpoint = `/api/alumni/${id}`;
           break;
-        case 'faculty':
-        endpoint = `/api/faculty/${id}`;
+        case "faculty":
+          endpoint = `/api/faculty/${id}`;
           break;
         default:
-          throw new Error('Invalid user type');
+          throw new Error("Invalid user type");
       }
       await apiService.raw.delete(endpoint);
       // ...refetch logic...
       const [studentsRes, alumniRes, facultyRes] = await Promise.all([
-        apiService.raw.get('/api/student/getall'),
-        apiService.raw.get('/api/alumni/getall'),
-        apiService.raw.get('/api/faculty/getall'),
+        apiService.raw.get("/api/student/getall"),
+        apiService.raw.get("/api/alumni/getall"),
+        apiService.raw.get("/api/faculty/getall"),
       ]);
       setStudents(studentsRes.data?.data?.students || []);
       setAlumni(alumniRes.data?.data?.alumni || []);
       setFaculty(facultyRes.data?.data?.faculty || []);
-      toast.success('User deleted successfully');
+      toast.success("User deleted successfully");
     } catch (err) {
-      console.error('Error deleting user:', err);
-      toast.error(err.response?.data?.message || 'Failed to delete user. Please try again.');
+      console.error("Error deleting user:", err);
+      toast.error(
+        err.response?.data?.message ||
+          "Failed to delete user. Please try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -762,40 +959,43 @@ const AdminDashboard = () => {
 
   const handleUpdateUser = async (id, type, updatedData) => {
     if (!id) {
-      toast.error('Invalid user ID');
+      toast.error("Invalid user ID");
       return;
     }
     // Only proceed if id is truthy (userId must be present)
     try {
       setLoading(true);
-      let endpoint = '';
+      let endpoint = "";
       switch (type) {
-        case 'students':
+        case "students":
           endpoint = `/api/student/${id}`;
           break;
-        case 'alumni':
+        case "alumni":
           endpoint = `/api/alumni/${id}`;
           break;
-        case 'faculty':
+        case "faculty":
           endpoint = `/api/faculty/${id}`;
           break;
         default:
-          throw new Error('Invalid user type');
+          throw new Error("Invalid user type");
       }
       await apiService.raw.patch(endpoint, updatedData);
       // ...refetch logic...
       const [studentsRes, alumniRes, facultyRes] = await Promise.all([
-        apiService.raw.get('/api/student/getall'),
-        apiService.raw.get('/api/alumni/getall'),
-        apiService.raw.get('/api/faculty/getall'),
+        apiService.raw.get("/api/student/getall"),
+        apiService.raw.get("/api/alumni/getall"),
+        apiService.raw.get("/api/faculty/getall"),
       ]);
       setStudents(studentsRes.data?.data?.students || []);
       setAlumni(alumniRes.data?.data?.alumni || []);
       setFaculty(facultyRes.data?.data?.faculty || []);
-      toast.success('User updated successfully');
+      toast.success("User updated successfully");
     } catch (err) {
-      console.error('Error updating user:', err);
-      toast.error(err.response?.data?.message || 'Failed to update user. Please try again.');
+      console.error("Error updating user:", err);
+      toast.error(
+        err.response?.data?.message ||
+          "Failed to update user. Please try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -803,30 +1003,41 @@ const AdminDashboard = () => {
 
   const renderContent = () => {
     if (loading) {
-      return <div className="text-center py-10 text-gray-500">Loading data...</div>;
+      return (
+        <div className="text-center py-10 text-gray-500">Loading data...</div>
+      );
     }
     if (error) {
       return <div className="text-center py-10 text-red-500">{error}</div>;
     }
     switch (activeView) {
-      case 'dashboard':
+      case "dashboard":
         return (
           <>
             <div className="mb-8">
-              <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-              <p className="text-gray-500 mt-2">Welcome back, {adminProfile?.name || user?.name || 'Admin'}</p>
+              <h1 className="text-3xl font-bold text-gray-900">
+                Admin Dashboard
+              </h1>
+              <p className="text-gray-500 mt-2">
+                Welcome back, {adminProfile?.name || user?.name || "Admin"}
+              </p>
               {adminProfile && (
                 <div className="mt-2 text-sm text-gray-600">
-                  <span>Email: {adminProfile.email}</span> | <span>Role: {adminProfile.role}</span>
-            </div>
+                  <span>Email: {adminProfile.email}</span> |{" "}
+                  <span>Role: {adminProfile.role}</span>
+                </div>
               )}
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
               <div className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600">Total Users</p>
-                    <p className="text-2xl font-bold text-gray-900 mt-1">{dashboardStats?.totalUsers ?? '-'}</p>
+                    <p className="text-sm font-medium text-gray-600">
+                      Total Users
+                    </p>
+                    <p className="text-2xl font-bold text-gray-900 mt-1">
+                      {dashboardStats?.totalUsers ?? "-"}
+                    </p>
                   </div>
                   <div className="bg-indigo-100 p-3 rounded-xl">
                     <FiUser className="h-6 w-6 text-indigo-600" />
@@ -836,8 +1047,12 @@ const AdminDashboard = () => {
               <div className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600">Total Alumni</p>
-                    <p className="text-2xl font-bold text-gray-900 mt-1">{dashboardStats?.totalAlumni ?? '-'}</p>
+                    <p className="text-sm font-medium text-gray-600">
+                      Total Alumni
+                    </p>
+                    <p className="text-2xl font-bold text-gray-900 mt-1">
+                      {dashboardStats?.totalAlumni ?? "-"}
+                    </p>
                   </div>
                   <div className="bg-purple-100 p-3 rounded-xl">
                     <FiBriefcase className="h-6 w-6 text-purple-600" />
@@ -847,8 +1062,12 @@ const AdminDashboard = () => {
               <div className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600">Total Students</p>
-                    <p className="text-2xl font-bold text-gray-900 mt-1">{dashboardStats?.totalStudents ?? '-'}</p>
+                    <p className="text-sm font-medium text-gray-600">
+                      Total Students
+                    </p>
+                    <p className="text-2xl font-bold text-gray-900 mt-1">
+                      {dashboardStats?.totalStudents ?? "-"}
+                    </p>
                   </div>
                   <div className="bg-green-100 p-3 rounded-xl">
                     <FiBook className="h-6 w-6 text-green-600" />
@@ -858,8 +1077,12 @@ const AdminDashboard = () => {
               <div className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600">Total Faculty</p>
-                    <p className="text-2xl font-bold text-gray-900 mt-1">{dashboardStats?.totalFaculty ?? '-'}</p>
+                    <p className="text-sm font-medium text-gray-600">
+                      Total Faculty
+                    </p>
+                    <p className="text-2xl font-bold text-gray-900 mt-1">
+                      {dashboardStats?.totalFaculty ?? "-"}
+                    </p>
                   </div>
                   <div className="bg-yellow-100 p-3 rounded-xl">
                     <FiUsers className="h-6 w-6 text-yellow-600" />
@@ -869,8 +1092,12 @@ const AdminDashboard = () => {
               <div className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600">Total Admins</p>
-                    <p className="text-2xl font-bold text-gray-900 mt-1">{dashboardStats?.totalAdmins ?? '-'}</p>
+                    <p className="text-sm font-medium text-gray-600">
+                      Total Admins
+                    </p>
+                    <p className="text-2xl font-bold text-gray-900 mt-1">
+                      {dashboardStats?.totalAdmins ?? "-"}
+                    </p>
                   </div>
                   <div className="bg-pink-100 p-3 rounded-xl">
                     <FiShield className="h-6 w-6 text-pink-600" />
@@ -891,7 +1118,7 @@ const AdminDashboard = () => {
             />
           </>
         );
-      case 'students':
+      case "students":
         return (
           <UserTableDisplay
             userType="students"
@@ -900,7 +1127,7 @@ const AdminDashboard = () => {
             onDeleteUser={handleDeleteUser}
           />
         );
-      case 'alumni':
+      case "alumni":
         return (
           <UserTableDisplay
             userType="alumni"
@@ -909,7 +1136,7 @@ const AdminDashboard = () => {
             onDeleteUser={handleDeleteUser}
           />
         );
-      case 'faculty':
+      case "faculty":
         return (
           <UserTableDisplay
             userType="faculty"
@@ -918,19 +1145,21 @@ const AdminDashboard = () => {
             onDeleteUser={handleDeleteUser}
           />
         );
-      case 'settings':
+      case "settings":
         return (
-            <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">Settings</h2>
-                <p className="text-gray-700">Settings content will go here.</p>
-            </div>
+          <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">Settings</h2>
+            <p className="text-gray-700">Settings content will go here.</p>
+          </div>
         );
-      case 'help':
+      case "help":
         return (
-            <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">Help & Support</h2>
-                <p className="text-gray-700">Help content will go here.</p>
-            </div>
+          <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+              Help & Support
+            </h2>
+            <p className="text-gray-700">Help content will go here.</p>
+          </div>
         );
       default:
         return null;
@@ -943,9 +1172,7 @@ const AdminDashboard = () => {
       <div className="flex flex-col lg:flex-row">
         <Sidebar onNavigate={setActiveView} />
         <main className="flex-1 p-4 sm:p-6 lg:p-8">
-          <div className="max-w-7xl mx-auto">
-            {renderContent()}
-          </div>
+          <div className="max-w-7xl mx-auto">{renderContent()}</div>
         </main>
       </div>
     </div>
@@ -956,7 +1183,7 @@ const AdminDashboard = () => {
 export default function App() {
   return (
     <ProtectedRoute>
-        <AdminDashboard />
-      </ProtectedRoute>
+      <AdminDashboard />
+    </ProtectedRoute>
   );
 }

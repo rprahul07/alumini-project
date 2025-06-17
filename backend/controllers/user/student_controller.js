@@ -213,7 +213,7 @@ export const getAllStudents = async (req, res) => {
     });
 
     // Add userId property
-    const studentsWithUserId = students.map(s => ({ ...s, userId: s.id }));
+    const studentsWithUserId = students.map((s) => ({ ...s, userId: s.id }));
 
     const response = {
       students: studentsWithUserId,
@@ -697,21 +697,21 @@ export const updateMyStudentProfile = async (req, res) => {
 export const getMyStudentProfile = async (req, res) => {
   try {
     const userId = req.user.id;
-    console.log('Getting profile for user ID:', userId);
+    console.log("Getting profile for user ID:", userId);
 
     const user = await prisma.user.findUnique({
       where: { id: userId },
       include: {
-        student: true
-      }
+        student: true,
+      },
     });
 
-    console.log('Found user:', user);
+    console.log("Found user:", user);
 
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: 'User not found'
+        message: "User not found",
       });
     }
 
@@ -728,26 +728,28 @@ export const getMyStudentProfile = async (req, res) => {
       linkedinUrl: user.linkedinUrl,
       twitterUrl: user.twitterUrl,
       githubUrl: user.githubUrl,
-      student: user.student ? {
-        currentSemester: user.student.currentSemester,
-        rollNumber: user.student.rollNumber,
-        graduationYear: user.student.graduationYear
-      } : null
+      student: user.student
+        ? {
+            currentSemester: user.student.currentSemester,
+            rollNumber: user.student.rollNumber,
+            graduationYear: user.student.graduationYear,
+          }
+        : null,
     };
 
-    console.log('Sending profile data:', profileData);
+    console.log("Sending profile data:", profileData);
 
     res.status(200).json({
       success: true,
-      message: 'Profile retrieved successfully',
-      data: profileData
+      message: "Profile retrieved successfully",
+      data: profileData,
     });
   } catch (error) {
-    console.error('Error in getMyStudentProfile:', error);
+    console.error("Error in getMyStudentProfile:", error);
     res.status(500).json({
       success: false,
-      message: 'Failed to retrieve profile',
-      error: error.message
+      message: "Failed to retrieve profile",
+      error: error.message,
     });
   }
 };

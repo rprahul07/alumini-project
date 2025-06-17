@@ -18,7 +18,6 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-// Multer storage configuration
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     const uploadDir = "uploads/";
@@ -28,23 +27,30 @@ const storage = multer.diskStorage({
     cb(null, uploadDir);
   },
   filename: function (req, file, cb) {
-    // Get userId from request user object (set by auth middleware)
     const userId = req.user?.id;
     const fileExtension = path.extname(file.originalname);
     const timestamp = Date.now();
 
-    // Create filename with userId: user-123-1749454738301.jpg
-    const filename = `user-${userId}-${timestamp}${fileExtension}`;
+    // Different filename patterns based on field name
+    let filename;
+    if (file.fieldname === "eventPhoto") {
+      // For events: event-userId-timestamp.jpg
+      filename = `event-${userId}-${timestamp}${fileExtension}`;
+    } else {
+      // For user profiles: user-userId-timestamp.jpg (existing pattern)
+      filename = `user-${userId}-${timestamp}${fileExtension}`;
+    }
+
     cb(null, filename);
   },
 });
 
-// Multer middleware - single export
 export const uploadPhotoMiddleware = multer({
   storage: storage,
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
   fileFilter: fileFilter,
 }).fields([
-  { name: 'photo', maxCount: 1 },
-  { name: 'profilePhoto', maxCount: 1 }
+  { name: "photo", maxCount: 1 }, // User profile photo
+  { name: "profilePhoto", maxCount: 1 }, // Alternative user profile photo
+  { name: "eventPhoto", maxCount: 1 }, // Event photo
 ]);

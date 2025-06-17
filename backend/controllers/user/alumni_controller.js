@@ -199,7 +199,7 @@ export const getAllAlumni = async (req, res) => {
     });
 
     // Add userId property
-    const alumniWithUserId = alumni.map(a => ({ ...a, userId: a.id }));
+    const alumniWithUserId = alumni.map((a) => ({ ...a, userId: a.id }));
 
     const response = {
       alumni: alumniWithUserId,
@@ -593,9 +593,11 @@ export const updateAlumniSelf = async (req, res) => {
       alumniUpdateData.graduationYear = gradYear;
     }
     if (course !== undefined) alumniUpdateData.course = course;
-    if (currentJobTitle !== undefined) alumniUpdateData.currentJobTitle = currentJobTitle;
+    if (currentJobTitle !== undefined)
+      alumniUpdateData.currentJobTitle = currentJobTitle;
     if (companyName !== undefined) alumniUpdateData.companyName = companyName;
-    if (company_role !== undefined) alumniUpdateData.company_role = company_role;
+    if (company_role !== undefined)
+      alumniUpdateData.company_role = company_role;
 
     const updatedUser = await prisma.$transaction(async (prisma) => {
       if (Object.keys(userUpdateData).length > 0) {
@@ -671,7 +673,6 @@ export const updateAlumniSelf = async (req, res) => {
   }
 };
 
-
 // Function to get the logged-in alumni's profile
 
 export const getAlumniSelf = async (req, res) => {
@@ -727,7 +728,6 @@ export const getAlumniSelf = async (req, res) => {
     });
   }
 };
-
 
 export const deleteProfilePicture = async (req, res) => {
   try {

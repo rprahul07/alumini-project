@@ -46,14 +46,14 @@ const corsOptions = {
   ],
   exposedHeaders: ["Set-Cookie"],
   preflightContinue: false,
-  optionsSuccessStatus: 204
+  optionsSuccessStatus: 204,
 };
 
 // Apply CORS middleware
 app.use(cors(corsOptions));
 
 // Enable pre-flight requests for all routes
-app.options('*', cors(corsOptions));
+app.options("*", cors(corsOptions));
 
 app.use(express.json());
 app.use(cookieParser());
@@ -73,9 +73,9 @@ app.use("/uploads", express.static("uploads"));
 // Routes
 app.use("/api/auth", authRouter);
 app.use("/api/admin", adminRouter);
-app.use("/api/alumni", uploadPhotoMiddleware, alumniRouter);
-app.use("/api/student", uploadPhotoMiddleware, studentRouter);
-app.use("/api/faculty", uploadPhotoMiddleware, facultyRouter);
+app.use("/api/alumni", alumniRouter);
+app.use("/api/student", studentRouter);
+app.use("/api/faculty", facultyRouter);
 
 // Error handler for Prisma errors
 app.use((err, req, res, next) => {

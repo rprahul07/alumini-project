@@ -7,18 +7,36 @@ import {
   updateFacultyById,
   updateMyFacultyProfile,
   getMyFacultyProfile,
-  deleteProfilePicture
+  deleteProfilePicture,
 } from "../controllers/user/faculty_controller.js";
+import {
+  createEventForFaculty,
+  deleteEventForFaculty,
+  editEventForFaculty,
+} from "../controllers/event/faculty_event.controller.js";
+import {
+  getAllEvents,
+  getEventById,
+  searchEvents,
+} from "../controllers/event/event.controller.js";
+import { uploadPhotoMiddleware } from "../middleware/upload.middleware.js";
 
 const router = express.Router();
-router.get("/getall", protect, getAllFaculty);
-router.get("/:userId", protect, getFacultyById);
-router.delete("/:userId", protect, deleteFacultyById);
-router.patch("/:userId", protect, updateFacultyById);
-router.patch("/profile/update", protect, updateMyFacultyProfile);
-router.get("/profile/get", protect, getMyFacultyProfile);
+router.use(protect);
+router.get("/getall", getAllFaculty);
+router.get("/:userId", getFacultyById);
+router.delete("/:userId", deleteFacultyById);
+router.patch("/:userId", updateFacultyById);
+
+router.get("/event/all", getAllEvents);
+router.post("/event/create", uploadPhotoMiddleware, createEventForFaculty);
+router.patch("/event/:id", uploadPhotoMiddleware, editEventForFaculty);
+router.delete("/event/:id", uploadPhotoMiddleware, deleteEventForFaculty);
+router.get("/event/:id", getEventById);
+router.get("/event/search", searchEvents);
+
+router.patch("/profile/update", uploadPhotoMiddleware, updateMyFacultyProfile);
+router.get("/profile/get", getMyFacultyProfile);
 router.delete("/profile/delete-photo", deleteProfilePicture);
-
-
 
 export default router;
