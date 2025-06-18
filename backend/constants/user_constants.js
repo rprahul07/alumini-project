@@ -8,15 +8,12 @@ export const ROLES = {
 export const VALID_ROLES = Object.values(ROLES);
 
 export const PASSWORD_REQUIREMENTS = {
-  minLength: 12,
+  minLength: 8,
+  maxLength: 12,
   patterns: {
     uppercase: /[A-Z]/,
     lowercase: /[a-z]/,
-    number: /\d/,
     special: /[!@#$%^&*(),.?":{}|<>]/,
-    consecutive: /(.)\1{2,}/,
-    sequential:
-      /(abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn|mno|nop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz)/i,
   },
   commonPasswords: [
     "password",

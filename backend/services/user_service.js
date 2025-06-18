@@ -6,14 +6,8 @@ import { AppError } from "../utils/response.utils.js";
 export const validatePassword = (password) => {
   const {
     minLength,
-    patterns: {
-      uppercase,
-      lowercase,
-      number,
-      special,
-      consecutive,
-      sequential,
-    },
+    maxLength,
+    patterns: { uppercase, lowercase, special },
     commonPasswords,
   } = PASSWORD_REQUIREMENTS;
 
@@ -23,18 +17,15 @@ export const validatePassword = (password) => {
 
   const isValid =
     password.length >= minLength &&
+    password.length <= maxLength &&
     uppercase.test(password) &&
     lowercase.test(password) &&
-    number.test(password) &&
     special.test(password) &&
-    !consecutive.test(password) &&
-    !sequential.test(password) &&
     !hasCommonPattern;
 
   if (!isValid) {
     throw new AppError(
-      "Password must be at least 12 characters long and include uppercase, lowercase, number, and special character. " +
-        "It cannot contain 3+ consecutive identical characters, sequential characters, or common patterns.",
+      "Password must be 8 to 12 characters long and include at least one uppercase letter, one lowercase letter, and one special character. Common passwords are not allowed.",
       400
     );
   }
@@ -44,37 +35,37 @@ export const hashPassword = async (password) => {
   try {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-    console.log('Password hashed successfully:', {
+    console.log("Password hashed successfully:", {
       originalLength: password.length,
-      hashedLength: hashedPassword.length
+      hashedLength: hashedPassword.length,
     });
     return hashedPassword;
   } catch (error) {
-    console.error('Error hashing password:', error);
-    throw new AppError('Error processing password', 500);
+    console.error("Error hashing password:", error);
+    throw new AppError("Error processing password", 500);
   }
 };
 
 export const verifyPassword = async (plainPassword, hashedPassword) => {
   try {
     if (!plainPassword || !hashedPassword) {
-      console.error('Missing password or hash:', {
+      console.error("Missing password or hash:", {
         hasPlainPassword: Boolean(plainPassword),
-        hasHashedPassword: Boolean(hashedPassword)
+        hasHashedPassword: Boolean(hashedPassword),
       });
       return false;
     }
 
-    console.log('Verifying password:', {
+    console.log("Verifying password:", {
       plainPasswordLength: plainPassword.length,
-      hashedPasswordLength: hashedPassword.length
+      hashedPasswordLength: hashedPassword.length,
     });
 
     const isValid = await bcrypt.compare(plainPassword, hashedPassword);
-    console.log('Password verification result:', isValid);
+    console.log("Password verification result:", isValid);
     return isValid;
   } catch (error) {
-    console.error('Error verifying password:', error);
+    console.error("Error verifying password:", error);
     return false;
   }
 };
@@ -116,7 +107,10 @@ export const findUserByRole = async (
   }
 
   // Debug logging
-  console.log("findUserByRole query:", { where, select: { ...select, ...include } });
+  console.log("findUserByRole query:", {
+    where,
+    select: { ...select, ...include },
+  });
 
   const user = await prisma.user.findUnique({
     where,
@@ -129,11 +123,18 @@ export const findUserByRole = async (
     },
   });
 
-  console.log("findUserByRole result:", user ? {
-    ...user,
-    password: user.password ? `[Hash length: ${user.password.length}]` : undefined
-  } : null);
-  
+  console.log(
+    "findUserByRole result:",
+    user
+      ? {
+          ...user,
+          password: user.password
+            ? `[Hash length: ${user.password.length}]`
+            : undefined,
+        }
+      : null
+  );
+
   return user;
 };
 
