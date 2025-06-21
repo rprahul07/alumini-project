@@ -15,6 +15,7 @@ import {
   searchEvents,
 } from "../controllers/event/event.controller.js";
 import { uploadPhotoMiddleware } from "../middleware/upload.middleware.js";
+import { registerEventsForStudents } from "../controllers/event/student_event.controller.js";
 
 const router = express.Router();
 router.use(protect);
@@ -23,6 +24,7 @@ router.get("/getall", getAllStudents);
 router.get("/event/all", getAllEvents);
 router.get("/event/search", searchEvents);
 router.get("/event/:id", getEventById);
+router.post("/event/:id", registerEventsForStudents);
 
 router.patch("/profile/update", uploadPhotoMiddleware, updateMyStudentProfile);
 router.get("/profile/get", getMyStudentProfile);

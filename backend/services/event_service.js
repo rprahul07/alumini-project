@@ -91,6 +91,7 @@ export const createEventForUser = async (userId, userRole, eventData) => {
       location: newEvent.location,
       organizer: newEvent.organizer,
       imageUrl: newEvent.imageUrl,
+      status: newEvent.status,
       createdAt: newEvent.createdAt,
       createdBy: {
         id: newEvent.user.id,
@@ -493,6 +494,269 @@ export const deleteEventForUser = async (userId, userRole, eventId) => {
       statusCode: 500,
       message: "Failed to delete event",
       error: error.message,
+    };
+  }
+};
+export const registerForEvents = async (userId, userRole, eventId) => {
+  try {
+    console.log(
+      "Registering user ID:",
+      userId,
+      "with role:",
+      userRole,
+      "for event ID:",
+      eventId
+    );
+
+    // Validate event ID - convert to integer
+    const eventIdInt = parseInt(eventId);
+    if (!eventId || isNaN(eventIdInt)) {
+      throw new Error("Invalid event ID provided.");
+    }
+
+    // Fetch the event to check its status and capacity
+    const event = await prisma.event.findUnique({
+      where: { id: eventIdInt },
+      select: {
+        id: true,
+        name: true,
+        status: true,
+        registeredUsers: true,
+        maxCapacity: true,
+        date: true,
+        time: true,
+        location: true,
+      },
+    });
+
+    // Check if event exists
+    if (!event) {
+      throw new Error("Event not found.");
+    }
+
+    // Check if event is approved
+    if (event.status !== "approved") {
+      throw new Error("Cannot register for events that are not approved.");
+    }
+
+    // Check if event date has passed
+    if (new Date(event.date) < new Date()) {
+      throw new Error("Cannot register for past events.");
+    }
+
+    // Check if user is already registered
+    if (event.registeredUsers.includes(userId)) {
+      throw new Error("You are already registered for this event.");
+    }
+
+    // Check capacity limit
+    if (
+      event.maxCapacity &&
+      event.registeredUsers.length >= event.maxCapacity
+    ) {
+      throw new Error("Event is at full capacity.");
+    }
+
+    // Register user by pushing userId to registeredUsers array
+    const updatedEvent = await prisma.event.update({
+      where: { id: eventIdInt },
+      data: {
+        registeredUsers: {
+          push: userId,
+        },
+      },
+      select: {
+        id: true,
+        name: true,
+        registeredUsers: true,
+        maxCapacity: true,
+        date: true,
+        time: true,
+        location: true,
+      },
+    });
+
+    // Log the activity
+    await prisma.activityLog.create({
+      data: {
+        userId: userId,
+        action: "EVENT_REGISTERED",
+        details: {
+          eventId: updatedEvent.id,
+          eventName: updatedEvent.name,
+        },
+        userType: userRole,
+      },
+    });
+
+    console.log(`User ${userId} registered for event: ${updatedEvent.name}`);
+
+    // Return success response data (not HTTP response)
+    return {
+      success: true,
+      message: "Successfully registered for the event",
+      data: {
+        eventId: updatedEvent.id,
+        eventName: updatedEvent.name,
+        eventDate: updatedEvent.date,
+        eventTime: updatedEvent.time,
+        eventLocation: updatedEvent.location,
+        registeredCount: updatedEvent.registeredUsers.length,
+        maxCapacity: updatedEvent.maxCapacity,
+      },
+    };
+  } catch (error) {
+    console.error("Error in registerForEvents:", error);
+
+    // Return error response data (not HTTP response)
+    return {
+      success: false,
+      message: error.message || "Failed to register for event",
+      error: error.code === "P2025" ? "Event not found" : error.message,
+    };
+  }
+};
+export const getMyEvents = async (userId, userRole, options = {}) => {
+  try {
+    console.log(
+      "Fetching created events for user ID:",
+      userId,
+      "with role:",
+      userRole
+    );
+
+    const { page = 1, limit = 10, status = "all" } = options;
+
+    const pageNumber = parseInt(page);
+    const pageSize = parseInt(limit);
+    const skip = (pageNumber - 1) * pageSize;
+
+    // Build where clause to get events created by the user
+    const whereClause = {
+      userId: userId, // Events created by the user
+    };
+
+    if (status !== "all") {
+      const validStatuses = ["approved", "pending", "rejected"];
+      if (validStatuses.includes(status)) {
+        whereClause.status = status;
+      }
+    }
+
+    // Get total count for pagination
+    const totalEvents = await prisma.event.count({
+      where: whereClause,
+    });
+
+    // Fetch events with pagination
+    const events = await prisma.event.findMany({
+      where: whereClause,
+      orderBy: {
+        date: "asc",
+      },
+      skip,
+      take: pageSize,
+      include: {
+        user: {
+          select: {
+            id: true,
+            fullName: true,
+            email: true,
+            role: true,
+            photoUrl: true,
+            department: true,
+          },
+        },
+      },
+    });
+
+    console.log(
+      `Found ${events.length} created events out of ${totalEvents} total for user ${userId}`
+    );
+
+    // Format the response data
+    const formattedEvents = events.map((event) => ({
+      id: event.id,
+      name: event.name,
+      date: event.date,
+      time: event.time,
+      type: event.type,
+      description: event.description,
+      location: event.location,
+      organizer: event.organizer,
+      imageUrl: event.imageUrl,
+      status: event.status,
+      maxCapacity: event.maxCapacity,
+      registeredCount: event.registeredUsers.length,
+      isRegistered: event.registeredUsers.includes(userId),
+      isCreator: true, // Always true since we're fetching user's created events
+      createdAt: event.createdAt,
+      updatedAt: event.updatedAt,
+      createdBy: {
+        id: event.user.id,
+        fullName: event.user.fullName,
+        email: event.user.email,
+        role: event.user.role,
+        photoUrl: event.user.photoUrl,
+        department: event.user.department,
+      },
+    }));
+
+    // Calculate pagination metadata
+    const totalPages = Math.ceil(totalEvents / pageSize);
+    const hasNextPage = pageNumber < totalPages;
+    const hasPreviousPage = pageNumber > 1;
+
+    // Categorize events by status and date
+    const now = new Date();
+    const categorizedEvents = {
+      upcoming: formattedEvents.filter(
+        (event) => new Date(event.date) > now && event.status === "approved"
+      ),
+      past: formattedEvents.filter(
+        (event) => new Date(event.date) <= now && event.status === "approved"
+      ),
+      pending: formattedEvents.filter((event) => event.status === "pending"),
+      cancelled: formattedEvents.filter((event) => event.status === "rejected"),
+      created: formattedEvents.filter((event) => event.isCreator), // Events created by user (all in this case)
+    };
+
+    // Return success response data (not HTTP response)
+    return {
+      success: true,
+      message:
+        totalEvents === 0
+          ? "User hasn't created any events yet"
+          : "User's created events retrieved successfully",
+      data: {
+        events: formattedEvents,
+        categorized: categorizedEvents,
+        summary: {
+          totalCreated: totalEvents,
+          upcoming: categorizedEvents.upcoming.length,
+          past: categorizedEvents.past.length,
+          pending: categorizedEvents.pending.length,
+          cancelled: categorizedEvents.cancelled.length,
+          created: categorizedEvents.created.length,
+        },
+        pagination: {
+          currentPage: pageNumber,
+          totalPages,
+          totalEvents,
+          eventsPerPage: pageSize,
+          hasNextPage,
+          hasPreviousPage,
+        },
+      },
+    };
+  } catch (error) {
+    console.error("Error in getMyEvents:", error);
+
+    // Return error response data (not HTTP response)
+    return {
+      success: false,
+      message: error.message || "Failed to retrieve user's created events",
+      error: error.code === "P2025" ? "No events found" : error.message,
     };
   }
 };

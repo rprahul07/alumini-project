@@ -32,10 +32,11 @@ export const getEventById = async (req, res) => {
       });
     }
 
-    // Fetch the event by ID
+    // Fetch the event by ID - only approved events
     const event = await prisma.event.findUnique({
       where: {
         id: eventId,
+        status: "approved", // Only show approved events
       },
       include: {
         user: {
@@ -55,11 +56,11 @@ export const getEventById = async (req, res) => {
     if (!event) {
       return res.status(404).json({
         success: false,
-        message: "Event not found.",
+        message: "Event not found or not approved.",
       });
     }
 
-    console.log(`Found event: ${event.name} for ${userRole}`);
+    console.log(`Found approved event: ${event.name} for ${userRole}`);
 
     // Format the response data
     const formattedEvent = {
@@ -72,6 +73,7 @@ export const getEventById = async (req, res) => {
       location: event.location,
       organizer: event.organizer,
       imageUrl: event.imageUrl,
+      status: event.status,
       createdAt: event.createdAt,
       updatedAt: event.updatedAt,
       createdBy: {
@@ -107,7 +109,7 @@ export const getEventById = async (req, res) => {
     if (error.code === "P2025") {
       return res.status(404).json({
         success: false,
-        message: "Event not found.",
+        message: "Event not found or not approved.",
       });
     }
 
@@ -118,13 +120,14 @@ export const getEventById = async (req, res) => {
     });
   }
 };
+
 export const getAllEvents = async (req, res) => {
   try {
     const userId = req.user.id;
     const userRole = req.user.role;
 
     console.log(
-      "Fetching all events for user ID:",
+      "Fetching all approved events for user ID:",
       userId,
       "with role:",
       userRole
@@ -145,11 +148,18 @@ export const getAllEvents = async (req, res) => {
     const pageSize = parseInt(limit);
     const skip = (pageNumber - 1) * pageSize;
 
-    // Get total count for pagination
-    const totalEvents = await prisma.event.count();
+    // Get total count for pagination - only approved events
+    const totalEvents = await prisma.event.count({
+      where: {
+        status: "approved",
+      },
+    });
 
-    // Fetch events with pagination
+    // Fetch events with pagination - only approved events
     const events = await prisma.event.findMany({
+      where: {
+        status: "approved",
+      },
       orderBy: {
         date: "asc",
       },
@@ -168,7 +178,9 @@ export const getAllEvents = async (req, res) => {
       },
     });
 
-    console.log(`Found ${events.length} events out of ${totalEvents} total`);
+    console.log(
+      `Found ${events.length} approved events out of ${totalEvents} total`
+    );
 
     // Format the response data
     const formattedEvents = events.map((event) => ({
@@ -181,6 +193,7 @@ export const getAllEvents = async (req, res) => {
       location: event.location,
       organizer: event.organizer,
       imageUrl: event.imageUrl,
+      status: event.status,
       createdAt: event.createdAt,
       updatedAt: event.updatedAt,
       createdBy: {
@@ -199,7 +212,7 @@ export const getAllEvents = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "Events retrieved successfully",
+      message: "Approved events retrieved successfully",
       data: {
         events: formattedEvents,
         pagination: {
@@ -221,13 +234,14 @@ export const getAllEvents = async (req, res) => {
     });
   }
 };
+
 export const searchEvents = async (req, res) => {
   try {
     const userId = req.user.id;
     const userRole = req.user.role;
 
     console.log(
-      "Searching events for user ID:",
+      "Searching approved events for user ID:",
       userId,
       "with role:",
       userRole
@@ -259,8 +273,10 @@ export const searchEvents = async (req, res) => {
     // Valid departments
     const validDepartments = ["CSE", "MECH", "Civil", "EEE", "IT", "EC"];
 
-    // Build where clause for filtering
-    const whereClause = {};
+    // Build where clause for filtering - always include approved status
+    const whereClause = {
+      status: "approved", // Only show approved events
+    };
 
     // Search functionality - search in name, description, location, organizer
     if (search && search.trim()) {
@@ -285,7 +301,7 @@ export const searchEvents = async (req, res) => {
       whereClause.type = { contains: type.trim(), mode: "insensitive" };
     }
 
-    console.log("Search filters applied:", {
+    console.log("Search filters applied (approved events only):", {
       search: search.trim(),
       department: department.toUpperCase(),
       type: type.trim(),
@@ -293,7 +309,7 @@ export const searchEvents = async (req, res) => {
       sortOrder,
     });
 
-    // Get total count for pagination with filters
+    // Get total count for pagination with filters - only approved events
     const totalEvents = await prisma.event.count({
       where: whereClause,
     });
@@ -312,7 +328,7 @@ export const searchEvents = async (req, res) => {
       orderBy.date = "asc"; // default sorting
     }
 
-    // Fetch events with search, filtering, and pagination
+    // Fetch events with search, filtering, and pagination - only approved events
     const events = await prisma.event.findMany({
       where: whereClause,
       orderBy,
@@ -333,7 +349,7 @@ export const searchEvents = async (req, res) => {
     });
 
     console.log(
-      `Found ${events.length} events out of ${totalEvents} total matching the search criteria`
+      `Found ${events.length} approved events out of ${totalEvents} total matching the search criteria`
     );
 
     // Format the response data
@@ -347,6 +363,7 @@ export const searchEvents = async (req, res) => {
       location: event.location,
       organizer: event.organizer,
       imageUrl: event.imageUrl,
+      status: event.status,
       createdAt: event.createdAt,
       updatedAt: event.updatedAt,
       createdBy: {
@@ -368,8 +385,8 @@ export const searchEvents = async (req, res) => {
       success: true,
       message:
         totalEvents === 0
-          ? "No events found matching your criteria"
-          : "Events retrieved successfully",
+          ? "No approved events found matching your criteria"
+          : "Approved events retrieved successfully",
       data: {
         events: formattedEvents,
         pagination: {

@@ -16,6 +16,8 @@ import {
   createEventForAlumni,
   deleteEventForAlumni,
   editEventForAlumni,
+  getMyEventsForAlumni,
+  registerEventsForAlumni,
 } from "../controllers/event/alumni_event.controller.js";
 import {
   getAllEvents,
@@ -36,9 +38,11 @@ router.delete("/profile/delete-photo", deleteProfilePicture);
 router.get("/event/all", getAllEvents);
 router.get("/event/search", searchEvents);
 router.post("/event/create", uploadPhotoMiddleware, createEventForAlumni);
+router.get("/event/my", getMyEventsForAlumni);
 router.patch("/event/:id", uploadPhotoMiddleware, editEventForAlumni);
 router.delete("/event/:id", uploadPhotoMiddleware, deleteEventForAlumni);
 router.get("/event/:id", getEventById);
+router.post("/event/:id", registerEventsForAlumni);
 
 router.get("/:userId", getAlumniById);
 router.delete("/:userId", deleteAlumniById);

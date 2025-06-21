@@ -76,23 +76,27 @@ model Admin {
 }
 
 model Event {
-  id          Int      @id @default(autoincrement())
-  userId      Int      @map("user_id")
-  name        String   @db.VarChar(200)
-  date        DateTime
-  time        String   @db.VarChar(20)
-  type        String   @db.VarChar(100)
-  description String?  @db.Text
-  location    String   @db.VarChar(200)
-  organizer   String   @db.VarChar(100)
-  imageUrl    String?  @map("image_url") @db.VarChar(500)
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
-  user        User     @relation(fields: [userId], references: [id])
+  id              Int         @id @default(autoincrement())
+  userId          Int         @map("user_id")
+  name            String      @db.VarChar(200)
+  date            DateTime
+  time            String      @db.VarChar(20)
+  type            String      @db.VarChar(100)
+  description     String?     @db.Text
+  location        String      @db.VarChar(200)
+  organizer       String      @db.VarChar(100)
+  imageUrl        String?     @map("image_url") @db.VarChar(500)
+  status          EventStatus @default(pending)
+  registeredUsers Int[]       @map("registered_users") // Array of user IDs
+  maxCapacity     Int?        @map("max_capacity") // Optional capacity limit
+  createdAt       DateTime    @default(now()) @map("created_at")
+  updatedAt       DateTime    @updatedAt @map("updated_at")
+  user            User        @relation(fields: [userId], references: [id])
 
   @@index([userId])
   @@index([date])
   @@index([type])
+  @@index([status])
   @@map("events")
 }
 
@@ -135,4 +139,10 @@ enum Role {
   alumni
   faculty
   admin
+}
+
+enum EventStatus {
+  pending
+  approved
+  rejected
 }

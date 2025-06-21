@@ -7,11 +7,13 @@ import {
   createAdmin,
 } from "../controllers/admin/admin_controller.js";
 import {
+  approveEventById,
   createEventForAdmin,
   deleteEventByIdForAdmin,
   editEventByIdForAdmin,
   getAllEventsForAdmin,
   getEventByIdForAdmin,
+  getEventRegisteredUsers,
 } from "../controllers/event/admin_event.controller.js";
 import { deleteAlumniById } from "../controllers/user/alumni_controller.js";
 import { uploadPhotoMiddleware } from "../middleware/upload.middleware.js";
@@ -33,8 +35,10 @@ router.post("/create", createAdmin);
 
 router.post("/event/create", uploadPhotoMiddleware, createEventForAdmin);
 router.get("/event/all", getAllEventsForAdmin);
+router.post("/event/:id", approveEventById);
 router.patch("/event/:id", uploadPhotoMiddleware, editEventByIdForAdmin);
 router.get("/event/:id", getEventByIdForAdmin);
 router.delete("/event/:id", deleteEventByIdForAdmin);
+router.get("/event/users/:id", getEventRegisteredUsers);
 
 export default router;

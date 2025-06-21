@@ -12,7 +12,6 @@ export const protect = async (req, res, next) => {
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // Normalize role to lowercase
     const roleLower = decoded.role.toLowerCase();
 
     if (!VALID_ROLES.includes(roleLower)) {

@@ -1,6 +1,9 @@
+import { env } from "process";
 import prisma from "../../lib/prisma.js";
+import { createEventForUser } from "../../services/event_service.js";
 import {
   deletePhotoById,
+  handlePhotoUpload,
   updateEventImage,
 } from "../../utils/handlePhotoUpload.utils.js";
 
@@ -395,6 +398,7 @@ export const getEventByIdForAdmin = async (req, res) => {
       location: event.location,
       organizer: event.organizer,
       imageUrl: event.imageUrl,
+      status: event.status,
       createdAt: event.createdAt,
       updatedAt: event.updatedAt,
       createdBy: {
@@ -506,6 +510,7 @@ export const getAllEventsForAdmin = async (req, res) => {
       location: event.location,
       organizer: event.organizer,
       imageUrl: event.imageUrl,
+      status: event.status,
       createdAt: event.createdAt,
       updatedAt: event.updatedAt,
       createdBy: {
@@ -544,6 +549,363 @@ export const getAllEventsForAdmin = async (req, res) => {
       success: false,
       message: "Failed to retrieve events",
       error: error.message,
+    });
+  }
+};
+
+export const approveEventById = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const userRole = req.user.role;
+    const eventId = parseInt(req.params.id);
+
+    console.log(
+      "Approving event ID:",
+      eventId,
+      "by user ID:",
+      userId,
+      "with role:",
+      userRole
+    );
+
+    // Restrict access to admin only
+    if (userRole !== "admin") {
+      return res.status(403).json({
+        success: false,
+        message: "Access denied. Only admin can approve events.",
+      });
+    }
+
+    // Validate event ID
+    if (!eventId || isNaN(eventId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid event ID provided.",
+      });
+    }
+
+    // Check if event exists and get current status
+    const existingEvent = await prisma.event.findUnique({
+      where: { id: eventId },
+      select: { id: true, name: true, status: true },
+    });
+
+    if (!existingEvent) {
+      return res.status(404).json({
+        success: false,
+        message: "Event not found.",
+      });
+    }
+
+    // Check if event is already approved
+    if (existingEvent.status === "approved") {
+      return res.status(400).json({
+        success: false,
+        message: "Event is already approved.",
+      });
+    }
+
+    // Update event status to approved
+    const updatedEvent = await prisma.event.update({
+      where: { id: eventId },
+      data: { status: "approved" },
+      include: {
+        user: {
+          select: {
+            id: true,
+            fullName: true,
+            email: true,
+            role: true,
+          },
+        },
+      },
+    });
+
+    // Log the activity
+    await prisma.activityLog.create({
+      data: {
+        userId: userId,
+        action: "EVENT_APPROVED",
+        details: {
+          eventId: updatedEvent.id,
+          eventName: updatedEvent.name,
+          approvedBy: userId,
+        },
+        userType: "admin",
+      },
+    });
+
+    console.log(`Event approved: ${updatedEvent.name} by admin ${userId}`);
+
+    // Format response data
+    const responseData = {
+      id: updatedEvent.id,
+      name: updatedEvent.name,
+      status: updatedEvent.status,
+      date: updatedEvent.date,
+      time: updatedEvent.time,
+      location: updatedEvent.location,
+      organizer: updatedEvent.organizer,
+      createdBy: {
+        id: updatedEvent.user.id,
+        fullName: updatedEvent.user.fullName,
+        email: updatedEvent.user.email,
+        role: updatedEvent.user.role,
+      },
+    };
+
+    return res.status(200).json({
+      success: true,
+      message: "Event approved successfully",
+      data: responseData,
+    });
+  } catch (error) {
+    console.error("Error in approveEventById:", error);
+
+    // Handle Prisma specific errors
+    if (error.code === "P2025") {
+      return res.status(404).json({
+        success: false,
+        message: "Event not found.",
+      });
+    }
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to approve event",
+      error: error.message,
+    });
+  }
+};
+export const getEventRegisteredUsers = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const userRole = req.user.role;
+    const eventId = parseInt(req.params.id);
+
+    // Check if user is admin
+    if (req.user.role !== "admin") {
+      return res.status(403).json({
+        success: false,
+        message: "Access denied. Only admins can view registered users.",
+        error: "Insufficient permissions",
+      });
+    }
+
+    console.log(
+      "Fetching registered users for event ID:",
+      eventId,
+      "by admin:",
+      userId
+    );
+
+    const { page = 1, limit = 10 } = req.query;
+
+    const pageNumber = parseInt(page);
+    const pageSize = parseInt(limit);
+    const skip = (pageNumber - 1) * pageSize;
+
+    // First, get the event to check if it exists and get registered user IDs
+    const event = await prisma.event.findUnique({
+      where: {
+        id: eventId,
+      },
+      select: {
+        id: true,
+        name: true,
+        registeredUsers: true,
+        maxCapacity: true,
+        status: true,
+      },
+    });
+
+    if (!event) {
+      return res.status(404).json({
+        success: false,
+        message: "Event not found",
+        error: "Event with the specified ID does not exist",
+      });
+    }
+
+    const registeredUserIds = event.registeredUsers;
+    const totalRegisteredUsers = registeredUserIds.length;
+
+    console.log(
+      `Event "${event.name}" has ${totalRegisteredUsers} registered users`
+    );
+
+    if (totalRegisteredUsers === 0) {
+      return res.status(200).json({
+        success: true,
+        message: "No users registered for this event yet",
+        data: {
+          event: {
+            id: event.id,
+            name: event.name,
+            status: event.status,
+            maxCapacity: event.maxCapacity,
+          },
+          registeredUsers: [],
+          summary: {
+            totalRegistered: 0,
+            availableSpots: event.maxCapacity ? event.maxCapacity - 0 : null,
+          },
+          pagination: {
+            currentPage: pageNumber,
+            totalPages: 0,
+            totalUsers: 0,
+            usersPerPage: pageSize,
+            hasNextPage: false,
+            hasPreviousPage: false,
+          },
+        },
+      });
+    }
+
+    // Get paginated user IDs for this page
+    const paginatedUserIds = registeredUserIds.slice(skip, skip + pageSize);
+
+    // Fetch user details for the paginated user IDs
+    const users = await prisma.user.findMany({
+      where: {
+        id: {
+          in: paginatedUserIds,
+        },
+      },
+      select: {
+        id: true,
+        fullName: true,
+        email: true,
+        phoneNumber: true,
+        role: true,
+        department: true,
+        photoUrl: true,
+        createdAt: true,
+        // Include role-specific details
+        student: {
+          select: {
+            rollNumber: true,
+            currentSemester: true,
+            graduationYear: true,
+          },
+        },
+        alumni: {
+          select: {
+            graduationYear: true,
+            course: true,
+            currentJobTitle: true,
+            companyName: true,
+          },
+        },
+        faculty: {
+          select: {
+            designation: true,
+          },
+        },
+      },
+      orderBy: {
+        fullName: "asc",
+      },
+    });
+
+    // Format user data
+    const formattedUsers = users.map((user) => {
+      const baseUser = {
+        id: user.id,
+        fullName: user.fullName,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        role: user.role,
+        department: user.department,
+        photoUrl: user.photoUrl,
+        registeredAt: user.createdAt, // This would ideally be the registration date for the event
+      };
+
+      // Add role-specific information
+      switch (user.role) {
+        case "student":
+          if (user.student) {
+            baseUser.roleDetails = {
+              rollNumber: user.student.rollNumber,
+              currentSemester: user.student.currentSemester,
+              graduationYear: user.student.graduationYear,
+            };
+          }
+          break;
+        case "alumni":
+          if (user.alumni) {
+            baseUser.roleDetails = {
+              graduationYear: user.alumni.graduationYear,
+              course: user.alumni.course,
+              currentJobTitle: user.alumni.currentJobTitle,
+              companyName: user.alumni.companyName,
+            };
+          }
+          break;
+        case "faculty":
+          if (user.faculty) {
+            baseUser.roleDetails = {
+              designation: user.faculty.designation,
+            };
+          }
+          break;
+        case "admin":
+          baseUser.roleDetails = {
+            type: "Administrator",
+          };
+          break;
+      }
+
+      return baseUser;
+    });
+
+    // Calculate pagination metadata
+    const totalPages = Math.ceil(totalRegisteredUsers / pageSize);
+    const hasNextPage = pageNumber < totalPages;
+    const hasPreviousPage = pageNumber > 1;
+
+    // Group users by role for summary
+    const usersByRole = formattedUsers.reduce((acc, user) => {
+      acc[user.role] = (acc[user.role] || 0) + 1;
+      return acc;
+    }, {});
+
+    return res.status(200).json({
+      success: true,
+      message: `Retrieved ${formattedUsers.length} registered users for event "${event.name}"`,
+      data: {
+        event: {
+          id: event.id,
+          name: event.name,
+          status: event.status,
+          maxCapacity: event.maxCapacity,
+        },
+        registeredUsers: formattedUsers,
+        summary: {
+          totalRegistered: totalRegisteredUsers,
+          currentPageCount: formattedUsers.length,
+          availableSpots: event.maxCapacity
+            ? event.maxCapacity - totalRegisteredUsers
+            : null,
+          usersByRole: usersByRole,
+        },
+        pagination: {
+          currentPage: pageNumber,
+          totalPages,
+          totalUsers: totalRegisteredUsers,
+          usersPerPage: pageSize,
+          hasNextPage,
+          hasPreviousPage,
+        },
+      },
+    });
+  } catch (error) {
+    console.error("Error in getEventRegisteredUsers:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Failed to retrieve registered users for event",
+      error: error.code === "P2025" ? "Event not found" : error.message,
     });
   }
 };

@@ -13,6 +13,8 @@ import {
   createEventForFaculty,
   deleteEventForFaculty,
   editEventForFaculty,
+  getMyEventsForFaculty,
+  registerEventsForFaculty,
 } from "../controllers/event/faculty_event.controller.js";
 import {
   getAllEvents,
@@ -33,7 +35,9 @@ router.post("/event/create", uploadPhotoMiddleware, createEventForFaculty);
 router.patch("/event/:id", uploadPhotoMiddleware, editEventForFaculty);
 router.delete("/event/:id", uploadPhotoMiddleware, deleteEventForFaculty);
 router.get("/event/:id", getEventById);
+router.post("/event/:id", registerEventsForFaculty);
 router.get("/event/search", searchEvents);
+router.get("/event/my", getMyEventsForFaculty);
 
 router.patch("/profile/update", uploadPhotoMiddleware, updateMyFacultyProfile);
 router.get("/profile/get", getMyFacultyProfile);
