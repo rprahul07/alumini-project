@@ -4,11 +4,12 @@ export const createEventForUser = async (userId, userRole, eventData) => {
   try {
     console.log("Creating event for user ID:", userId, "with role:", userRole);
 
-    if (!["faculty", "alumni"].includes(userRole)) {
+    if (!["faculty", "alumni", "admin"].includes(userRole)) {
       return {
         success: false,
         statusCode: 403,
-        message: "Access denied. Only faculty and alumni can create events.",
+        message:
+          "Access denied. Only faculty and alumni and admin can create events.",
       };
     }
 
