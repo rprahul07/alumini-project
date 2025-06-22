@@ -5,10 +5,10 @@ import cors from "cors";
 import authRouter from "./routes/authentication_routes.js";
 import adminRouter from "./routes/admin_routes.js";
 import facultyRouter from "./routes/faculty_routes.js";
+import publicRouter from "./routes/public_routes.js";
 import studentRouter from "./routes/student_routes.js";
 import alumniRouter from "./routes/alumni_routes.js";
 import { AppError } from "./utils/response.utils.js";
-import { uploadPhotoMiddleware } from "./middleware/upload.middleware.js";
 
 // Load environment variables
 dotenv.config();
@@ -76,6 +76,7 @@ app.use("/api/admin", adminRouter);
 app.use("/api/alumni", alumniRouter);
 app.use("/api/student", studentRouter);
 app.use("/api/faculty", facultyRouter);
+app.use("/api/public", publicRouter);
 
 // Error handler for Prisma errors
 app.use((err, req, res, next) => {

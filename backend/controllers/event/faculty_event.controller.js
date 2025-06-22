@@ -8,6 +8,7 @@ import {
 import {
   deletePhotoById,
   handlePhotoUpload,
+  updateEventImage,
 } from "../../utils/handlePhotoUpload.utils.js";
 
 export const createEventForFaculty = async (req, res) => {
@@ -24,7 +25,7 @@ export const createEventForFaculty = async (req, res) => {
   const userRole = req.user.role;
   const eventData = {
     ...req.body,
-    imageUrl,
+    imageUrl: null,
   };
 
   const result = await createEventForUser(userId, userRole, eventData);

@@ -123,23 +123,16 @@ export const getEventById = async (req, res) => {
 
 export const getAllEvents = async (req, res) => {
   try {
-    const userId = req.user.id;
-    const userRole = req.user.role;
-
-    console.log(
-      "Fetching all approved events for user ID:",
-      userId,
-      "with role:",
-      userRole
-    );
+    // const userId = req.user.id;
+    // const userRole = req.user.role;
 
     // Check if user has permission to view events
-    if (!["faculty", "alumni", "admin", "student"].includes(userRole)) {
-      return res.status(403).json({
-        success: false,
-        message: "Access denied. You do not have permission to view events.",
-      });
-    }
+    // if (!["faculty", "alumni", "admin", "student"].includes(userRole)) {
+    //   return res.status(403).json({
+    //     success: false,
+    //     message: "Access denied. You do not have permission to view events.",
+    //   });
+    // }
 
     const { page = 1, limit = 10 } = req.query;
 
@@ -237,23 +230,16 @@ export const getAllEvents = async (req, res) => {
 
 export const searchEvents = async (req, res) => {
   try {
-    const userId = req.user.id;
-    const userRole = req.user.role;
-
-    console.log(
-      "Searching approved events for user ID:",
-      userId,
-      "with role:",
-      userRole
-    );
+    // const userId = req.user.id;
+    // const userRole = req.user.role;
 
     // Check if user has permission to view events
-    if (!["faculty", "alumni", "admin", "student"].includes(userRole)) {
-      return res.status(403).json({
-        success: false,
-        message: "Access denied. You do not have permission to view events.",
-      });
-    }
+    // if (!["faculty", "alumni", "admin", "student"].includes(userRole)) {
+    //   return res.status(403).json({
+    //     success: false,
+    //     message: "Access denied. You do not have permission to view events.",
+    //   });
+    // }
 
     const {
       page = 1,
