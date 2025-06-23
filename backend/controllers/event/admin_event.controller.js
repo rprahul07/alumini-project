@@ -128,6 +128,23 @@ export const editEventByIdForAdmin = async (req, res) => {
     if (eventData.imageUrl !== undefined)
       updateData.imageUrl = eventData.imageUrl?.trim() || null;
 
+    // Add maxCapacity handling
+    if (eventData.maxCapacity !== undefined) {
+      if (eventData.maxCapacity === null || eventData.maxCapacity === "") {
+        updateData.maxCapacity = null;
+      } else {
+        const capacity = parseInt(eventData.maxCapacity);
+        if (isNaN(capacity) || capacity < 0) {
+          return res.status(400).json({
+            success: false,
+            message:
+              "Invalid maxCapacity value. Must be a positive number or null.",
+          });
+        }
+        updateData.maxCapacity = capacity;
+      }
+    }
+
     // Update the event
     const updatedEvent = await prisma.event.update({
       where: { id: eventId },
@@ -159,6 +176,9 @@ export const editEventByIdForAdmin = async (req, res) => {
       location: updatedEvent.location,
       organizer: updatedEvent.organizer,
       imageUrl: updatedEvent.imageUrl,
+      maxCapacity: updatedEvent.maxCapacity,
+      status: updatedEvent.status,
+      registeredCount: updatedEvent.registeredUsers.length,
       createdAt: updatedEvent.createdAt,
       updatedAt: updatedEvent.updatedAt,
       createdBy: {
@@ -400,6 +420,7 @@ export const getEventByIdForAdmin = async (req, res) => {
       imageUrl: event.imageUrl,
       status: event.status,
       createdAt: event.createdAt,
+      maxCapacity: event.maxCapacity,
       updatedAt: event.updatedAt,
       createdBy: {
         id: event.user.id,
@@ -510,6 +531,7 @@ export const getAllEventsForAdmin = async (req, res) => {
       location: event.location,
       organizer: event.organizer,
       imageUrl: event.imageUrl,
+      maxCapacity: event.maxCapacity,
       status: event.status,
       createdAt: event.createdAt,
       updatedAt: event.updatedAt,

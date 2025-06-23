@@ -62,6 +62,9 @@ export const getEventById = async (req, res) => {
 
     console.log(`Found approved event: ${event.name} for ${userRole}`);
 
+    // Check if user is registered for this event
+    const isRegistered = event.registeredUsers.includes(userId);
+
     // Format the response data
     const formattedEvent = {
       id: event.id,
@@ -73,7 +76,10 @@ export const getEventById = async (req, res) => {
       location: event.location,
       organizer: event.organizer,
       imageUrl: event.imageUrl,
+      maxCapacity: event.maxCapacity,
       status: event.status,
+      isRegistered: isRegistered,
+      registeredCount: event.registeredUsers.length,
       createdAt: event.createdAt,
       updatedAt: event.updatedAt,
       createdBy: {
@@ -123,7 +129,7 @@ export const getEventById = async (req, res) => {
 
 export const getAllEvents = async (req, res) => {
   try {
-    // const userId = req.user.id;
+    const userId = req.user.id;
     // const userRole = req.user.role;
 
     // Check if user has permission to view events
@@ -176,27 +182,34 @@ export const getAllEvents = async (req, res) => {
     );
 
     // Format the response data
-    const formattedEvents = events.map((event) => ({
-      id: event.id,
-      name: event.name,
-      date: event.date,
-      time: event.time,
-      type: event.type,
-      description: event.description,
-      location: event.location,
-      organizer: event.organizer,
-      imageUrl: event.imageUrl,
-      status: event.status,
-      createdAt: event.createdAt,
-      updatedAt: event.updatedAt,
-      createdBy: {
-        id: event.user.id,
-        fullName: event.user.fullName,
-        email: event.user.email,
-        role: event.user.role,
-        photoUrl: event.user.photoUrl,
-      },
-    }));
+    const formattedEvents = events.map((event) => {
+      const isRegistered = event.registeredUsers.includes(userId);
+
+      return {
+        id: event.id,
+        name: event.name,
+        date: event.date,
+        time: event.time,
+        type: event.type,
+        description: event.description,
+        location: event.location,
+        organizer: event.organizer,
+        imageUrl: event.imageUrl,
+        maxCapacity: event.maxCapacity,
+        status: event.status,
+        isRegistered: isRegistered,
+        registeredCount: event.registeredUsers.length,
+        createdAt: event.createdAt,
+        updatedAt: event.updatedAt,
+        createdBy: {
+          id: event.user.id,
+          fullName: event.user.fullName,
+          email: event.user.email,
+          role: event.user.role,
+          photoUrl: event.user.photoUrl,
+        },
+      };
+    });
 
     // Calculate pagination metadata
     const totalPages = Math.ceil(totalEvents / pageSize);
@@ -230,7 +243,7 @@ export const getAllEvents = async (req, res) => {
 
 export const searchEvents = async (req, res) => {
   try {
-    // const userId = req.user.id;
+    const userId = req.user.id;
     // const userRole = req.user.role;
 
     // Check if user has permission to view events
@@ -339,28 +352,35 @@ export const searchEvents = async (req, res) => {
     );
 
     // Format the response data
-    const formattedEvents = events.map((event) => ({
-      id: event.id,
-      name: event.name,
-      date: event.date,
-      time: event.time,
-      type: event.type,
-      description: event.description,
-      location: event.location,
-      organizer: event.organizer,
-      imageUrl: event.imageUrl,
-      status: event.status,
-      createdAt: event.createdAt,
-      updatedAt: event.updatedAt,
-      createdBy: {
-        id: event.user.id,
-        fullName: event.user.fullName,
-        email: event.user.email,
-        role: event.user.role,
-        photoUrl: event.user.photoUrl,
-        department: event.user.department,
-      },
-    }));
+    const formattedEvents = events.map((event) => {
+      const isRegistered = event.registeredUsers.includes(userId);
+
+      return {
+        id: event.id,
+        name: event.name,
+        date: event.date,
+        time: event.time,
+        type: event.type,
+        description: event.description,
+        location: event.location,
+        organizer: event.organizer,
+        imageUrl: event.imageUrl,
+        maxCapacity: event.maxCapacity,
+        status: event.status,
+        isRegistered: isRegistered,
+        registeredCount: event.registeredUsers.length,
+        createdAt: event.createdAt,
+        updatedAt: event.updatedAt,
+        createdBy: {
+          id: event.user.id,
+          fullName: event.user.fullName,
+          email: event.user.email,
+          role: event.user.role,
+          photoUrl: event.user.photoUrl,
+          department: event.user.department,
+        },
+      };
+    });
 
     // Calculate pagination metadata
     const totalPages = Math.ceil(totalEvents / pageSize);

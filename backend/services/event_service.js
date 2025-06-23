@@ -23,6 +23,7 @@ export const createEventForUser = async (userId, userRole, eventData) => {
       location,
       organizer,
       imageUrl,
+      maxCapacity,
     } = eventData;
 
     // Validate required fields
@@ -66,6 +67,7 @@ export const createEventForUser = async (userId, userRole, eventData) => {
         location: location.trim(),
         organizer: organizer.trim(),
         imageUrl: imageUrl ? imageUrl.trim() : null,
+        maxCapacity: maxCapacity || null,
       },
       include: {
         user: {
@@ -93,6 +95,7 @@ export const createEventForUser = async (userId, userRole, eventData) => {
       organizer: newEvent.organizer,
       imageUrl: newEvent.imageUrl,
       status: newEvent.status,
+      maxCapacity: newEvent.maxCapacity,
       createdAt: newEvent.createdAt,
       createdBy: {
         id: newEvent.user.id,
@@ -175,6 +178,7 @@ export const editEventForUser = async (
         location: true,
         organizer: true,
         imageUrl: true,
+        maxCapacity: true,
       },
     });
 
@@ -205,6 +209,7 @@ export const editEventForUser = async (
       location,
       organizer,
       imageUrl,
+      maxCapacity,
     } = eventData;
 
     // Prepare update data (only include fields that are provided)
@@ -295,6 +300,10 @@ export const editEventForUser = async (
       updateData.imageUrl = imageUrl ? imageUrl.trim() : null;
     }
 
+    if (maxCapacity !== undefined) {
+      updateData.maxCapacity = maxCapacity || null;
+    }
+
     // Check if there's anything to update
     if (Object.keys(updateData).length === 0) {
       return {
@@ -333,6 +342,7 @@ export const editEventForUser = async (
       location: updatedEvent.location,
       organizer: updatedEvent.organizer,
       imageUrl: updatedEvent.imageUrl,
+      maxCapacity: updatedEvent.maxCapacity,
       createdAt: updatedEvent.createdAt,
       updatedAt: updatedEvent.updatedAt,
       createdBy: {
@@ -377,7 +387,6 @@ export const editEventForUser = async (
     };
   }
 };
-
 export const deleteEventForUser = async (userId, userRole, eventId) => {
   try {
     console.log(
