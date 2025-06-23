@@ -54,7 +54,7 @@ export const createEventForUser = async (userId, userRole, eventData) => {
         message: "Event date must be in the future.",
       };
     }
-
+    const parsedMaxCapacity = parseInt(maxCapacity);
     // Create the event
     const newEvent = await prisma.event.create({
       data: {
@@ -67,7 +67,7 @@ export const createEventForUser = async (userId, userRole, eventData) => {
         location: location.trim(),
         organizer: organizer.trim(),
         imageUrl: imageUrl ? imageUrl.trim() : null,
-        maxCapacity: maxCapacity || null,
+        maxCapacity: parsedMaxCapacity || null,
       },
       include: {
         user: {
@@ -301,7 +301,7 @@ export const editEventForUser = async (
     }
 
     if (maxCapacity !== undefined) {
-      updateData.maxCapacity = maxCapacity || null;
+      updateData.maxCapacity = parseInt(maxCapacity) || null;
     }
 
     // Check if there's anything to update
