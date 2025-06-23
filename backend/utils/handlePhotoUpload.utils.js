@@ -15,7 +15,10 @@ export const handlePhotoUpload = async (
   eventId = null
 ) => {
   console.log("req.files =", req.files);
-  const photoFile = req.files?.photo?.[0] || req.files?.profilePhoto?.[0];
+  const photoFile =
+    req.files?.photo?.[0] ||
+    req.files?.profilePhoto?.[0] ||
+    req.files?.eventPhoto?.[0];
   if (!photoFile) return null;
   const userId = req.user?.id;
   const timestamp = Date.now();
