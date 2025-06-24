@@ -2,21 +2,23 @@ import prisma from "../../lib/prisma.js";
 
 export const getEventById = async (req, res) => {
   try {
-    const userId = req.user.id;
-    const userRole = req.user.role;
+    // Check if user is authenticated
+    const userId = req.user?.id || null;
+    const userRole = req.user?.role || null;
+    const isAuthenticated = !!userId;
     const eventId = parseInt(req.params.id);
 
     console.log(
       "Fetching event ID:",
       eventId,
       "for user ID:",
-      userId,
+      userId || "public",
       "with role:",
-      userRole
+      userRole || "public"
     );
 
-    // Restrict access to faculty and alumni only
-    if (!["faculty", "alumni"].includes(userRole)) {
+    // For authenticated users, restrict access to faculty and alumni only
+    if (isAuthenticated && !["faculty", "alumni"].includes(userRole)) {
       return res.status(403).json({
         success: false,
         message:
@@ -60,10 +62,19 @@ export const getEventById = async (req, res) => {
       });
     }
 
-    console.log(`Found approved event: ${event.name} for ${userRole}`);
+    console.log(
+      `Found approved event: ${event.name} for ${
+        isAuthenticated ? userRole : "public"
+      }`
+    );
 
-    // Check if user is registered for this event
-    const isRegistered = event.registeredUsers.includes(userId);
+    // Check if user is registered for this event (only for authenticated users)
+    const isRegistered = isAuthenticated
+      ? event.registeredUsers.includes(userId)
+      : null;
+    const registeredCount = isAuthenticated
+      ? event.registeredUsers.length
+      : null;
 
     // Format the response data
     const formattedEvent = {
@@ -79,7 +90,7 @@ export const getEventById = async (req, res) => {
       maxCapacity: event.maxCapacity,
       status: event.status,
       isRegistered: isRegistered,
-      registeredCount: event.registeredUsers.length,
+      registeredCount: registeredCount,
       createdAt: event.createdAt,
       updatedAt: event.updatedAt,
       createdBy: {
@@ -92,15 +103,24 @@ export const getEventById = async (req, res) => {
       },
     };
 
-    // Add metadata for permissions
+    // Add metadata for permissions (only for authenticated users)
     const responseData = {
       event: formattedEvent,
-      metadata: {
-        canEdit: event.userId === userId || userRole === "faculty",
-        canDelete: event.userId === userId || userRole === "faculty",
-        viewerRole: userRole,
-        isCreator: event.userId === userId,
-      },
+      metadata: isAuthenticated
+        ? {
+            canEdit: event.userId === userId || userRole === "faculty",
+            canDelete: event.userId === userId || userRole === "faculty",
+            viewerRole: userRole,
+            isCreator: event.userId === userId,
+            isAuthenticated: true,
+          }
+        : {
+            canEdit: false,
+            canDelete: false,
+            viewerRole: "public",
+            isCreator: false,
+            isAuthenticated: false,
+          },
     };
 
     return res.status(200).json({
@@ -129,11 +149,13 @@ export const getEventById = async (req, res) => {
 
 export const getAllEvents = async (req, res) => {
   try {
-    const userId = req.user.id;
-    // const userRole = req.user.role;
+    // Check if user is authenticated
+    const userId = req.user?.id || null;
+    const userRole = req.user?.role || null;
+    const isAuthenticated = !!userId;
 
-    // Check if user has permission to view events
-    // if (!["faculty", "alumni", "admin", "student"].includes(userRole)) {
+    // For authenticated users, check permissions (commented out as in original)
+    // if (isAuthenticated && !["faculty", "alumni", "admin", "student"].includes(userRole)) {
     //   return res.status(403).json({
     //     success: false,
     //     message: "Access denied. You do not have permission to view events.",
@@ -178,12 +200,20 @@ export const getAllEvents = async (req, res) => {
     });
 
     console.log(
-      `Found ${events.length} approved events out of ${totalEvents} total`
+      `Found ${events.length} approved events out of ${totalEvents} total for ${
+        isAuthenticated ? userRole : "public"
+      }`
     );
 
     // Format the response data
     const formattedEvents = events.map((event) => {
-      const isRegistered = event.registeredUsers.includes(userId);
+      // Check registration status only for authenticated users
+      const isRegistered = isAuthenticated
+        ? event.registeredUsers.includes(userId)
+        : null;
+      const registeredCount = isAuthenticated
+        ? event.registeredUsers.length
+        : null;
 
       return {
         id: event.id,
@@ -198,7 +228,7 @@ export const getAllEvents = async (req, res) => {
         maxCapacity: event.maxCapacity,
         status: event.status,
         isRegistered: isRegistered,
-        registeredCount: event.registeredUsers.length,
+        registeredCount: registeredCount,
         createdAt: event.createdAt,
         updatedAt: event.updatedAt,
         createdBy: {
@@ -229,6 +259,10 @@ export const getAllEvents = async (req, res) => {
           hasNextPage,
           hasPreviousPage,
         },
+        metadata: {
+          isAuthenticated: isAuthenticated,
+          viewerRole: userRole || "public",
+        },
       },
     });
   } catch (error) {
@@ -243,11 +277,15 @@ export const getAllEvents = async (req, res) => {
 
 export const searchEvents = async (req, res) => {
   try {
-    const userId = req.user.id;
-    // const userRole = req.user.role;
+    // Check if user is authenticated
+    const userId = req.user?.id || null;
+    const userRole = req.user?.role || null;
+    const isAuthenticated = !!userId;
 
-    // Check if user has permission to view events
-    // if (!["faculty", "alumni", "admin", "student"].includes(userRole)) {
+    console.log("user: " + (userId || "public"));
+
+    // For authenticated users, check permissions (commented out as in original)
+    // if (isAuthenticated && !["faculty", "alumni", "admin", "student"].includes(userRole)) {
     //   return res.status(403).json({
     //     success: false,
     //     message: "Access denied. You do not have permission to view events.",
@@ -306,6 +344,7 @@ export const searchEvents = async (req, res) => {
       type: type.trim(),
       sortBy,
       sortOrder,
+      viewer: isAuthenticated ? userRole : "public",
     });
 
     // Get total count for pagination with filters - only approved events
@@ -348,12 +387,22 @@ export const searchEvents = async (req, res) => {
     });
 
     console.log(
-      `Found ${events.length} approved events out of ${totalEvents} total matching the search criteria`
+      `Found ${
+        events.length
+      } approved events out of ${totalEvents} total matching the search criteria for ${
+        isAuthenticated ? userRole : "public"
+      }`
     );
 
     // Format the response data
     const formattedEvents = events.map((event) => {
-      const isRegistered = event.registeredUsers.includes(userId);
+      // Check registration status only for authenticated users
+      const isRegistered = isAuthenticated
+        ? event.registeredUsers.includes(userId)
+        : null;
+      const registeredCount = isAuthenticated
+        ? event.registeredUsers.length
+        : null;
 
       return {
         id: event.id,
@@ -368,7 +417,7 @@ export const searchEvents = async (req, res) => {
         maxCapacity: event.maxCapacity,
         status: event.status,
         isRegistered: isRegistered,
-        registeredCount: event.registeredUsers.length,
+        registeredCount: registeredCount,
         createdAt: event.createdAt,
         updatedAt: event.updatedAt,
         createdBy: {
@@ -410,6 +459,10 @@ export const searchEvents = async (req, res) => {
           sortBy,
           sortOrder: sortOrder.toLowerCase(),
           validDepartments,
+        },
+        metadata: {
+          isAuthenticated: isAuthenticated,
+          viewerRole: userRole || "public",
         },
       },
     });
