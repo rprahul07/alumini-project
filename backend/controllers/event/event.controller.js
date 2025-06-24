@@ -308,7 +308,7 @@ export const searchEvents = async (req, res) => {
     const skip = (pageNumber - 1) * pageSize;
 
     // Valid departments
-    const validDepartments = ["CSE", "MECH", "Civil", "EEE", "IT", "EC"];
+    const validDepartments = ["CSE", "MECH", "Civil", "EEE", "IT", "EC", "MCA"];
 
     // Build where clause for filtering - always include approved status
     const whereClause = {
