@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import ProfileCard from '../../components/dashboard/ProfileCard';
-import Sidebar from '../../components/dashboard/Sidebar';
+import React from 'react';
+import Navbar from '../../components/Navbar';
+import ProfileCard from '../../components/ProfileCard';
+import Sidebar from '../../components/Sidebar';
 import {
   UserGroupIcon,
   BriefcaseIcon,
@@ -11,6 +12,7 @@ import {
   XCircleIcon,
   ArrowRightIcon,
 } from '@heroicons/react/24/outline';
+import { useAuth } from '../../contexts/AuthContext';
 
 // --- StatCard Component ---
 const StatCard = ({ title, value, Icon, color, progress, progressText }) => {
@@ -248,23 +250,15 @@ const JobBoard = () => {
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-500">{job.posted}</div>
+                  <div className="text-sm text-gray-700">{job.posted}</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <button className="text-indigo-600 hover:text-indigo-800 transition-colors" aria-label={`Apply for ${job.position} at ${job.company}`}>
-                    Apply
-                  </button>
+                  <button className="text-indigo-600 hover:text-indigo-900">Apply</button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
-      </div>
-
-      <div className="mt-6 text-center">
-        <span className="inline-block text-sm text-indigo-700 bg-indigo-50 px-4 py-2 rounded-full border border-indigo-200">
-          ** Coming Soon ** More job postings will be added
-        </span>
       </div>
     </section>
   );
@@ -272,180 +266,112 @@ const JobBoard = () => {
 
 // --- AlumniDashboard Main Component ---
 const AlumniDashboard = () => {
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    const userData = localStorage.getItem('user');
-    if (userData) {
-      setUser(JSON.parse(userData));
-    }
-  }, []);
-
+  const { user } = useAuth();
+  // Dummy data
+  const stats = [
+    { title: "Connections", value: 450, Icon: UserGroupIcon, color: "blue", progress: 75, progressText: "25 to next milestone" },
+    { title: "Events Attended", value: 25, Icon: CalendarIcon, color: "green", progress: 60, progressText: "5 events this year" },
+    { title: "Mentorships", value: 12, Icon: BriefcaseIcon, color: "purple", progress: 90, progressText: "3 new mentees" },
+  ];
+  
   const upcomingEvents = [
-    {
-      date: 'JUL 22',
-      title: 'Annual Alumni Global Meet',
-      time: '10:00 AM - 6:00 PM',
-      location: 'Virtual & Main Campus, Block C',
-      tags: ['Hybrid', 'Networking', 'Reunion'],
-    },
-    {
-      date: 'AUG 05',
-      title: 'Tech Alumni Speaker Series: AI in 2025',
-      time: '3:00 PM - 4:30 PM',
-      location: 'Online Webinar',
-      tags: ['Virtual', 'Tech', 'Learning'],
-    },
-    {
-      date: 'SEP 10',
-      title: 'Career Mentorship Workshop',
-      time: '11:00 AM - 1:00 PM',
-      location: 'Alumni Hall, Room 301',
-      tags: ['In-Person', 'Career', 'Mentorship'],
-    },
+    { date: 'JUL 28', title: 'Annual Alumni Meetup 2024', time: '6:00 PM', location: 'Grand Ballroom, Kochi', tags: ['Networking', 'Social'] },
+    { date: 'AUG 15', title: 'Tech Talk: The Future of AI', time: '11:00 AM', location: 'Virtual Event', tags: ['Tech', 'Webinar'] },
   ];
 
   const mentorshipRequests = [
-    {
-      studentName: 'John Smith',
-      department: 'Computer Science',
-      semester: '6',
-      message:
-        'I am a 3rd-year CS student keen on software development. Your experience at Innovate Solutions aligns perfectly with my interests. Could you spare some time for guidance?',
-    },
-    {
-      studentName: 'Emma Wilson',
-      department: 'Information Technology',
-      semester: '4',
-      message:
-        'As a 2nd-year IT student, I am exploring web development. I would greatly appreciate your insights into the industry and career paths.',
-    },
-    {
-      studentName: 'David Lee',
-      department: 'Electronics Engineering',
-      semester: '7',
-      message:
-        'I am passionate about hardware design and embedded systems. Your work at Tech Innovations is inspiring. I seek your advice on project selection and industry trends.',
-    },
+    { studentName: "Anjali Menon", department: "Computer Science", semester: 6, message: "Looking for guidance on full-stack development and career opportunities..." },
+    { studentName: "Rohan Kumar", department: "Mechanical", semester: 4, message: "Interested in learning about the automotive industry and higher studies options." },
   ];
-
+  
   const handleAcceptMentorship = (studentName) => {
-    console.log(`Accepted mentorship request from ${studentName}`);
+    // Handle accept logic
+    console.log(`Accepted mentorship for ${studentName}`);
   };
 
   const handleRejectMentorship = (studentName) => {
-    console.log(`Rejected mentorship request from ${studentName}`);
+    // Handle reject logic
+    console.log(`Rejected mentorship for ${studentName}`);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-indigo-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        {/* Welcome Section */}
-        <header className="mb-8" aria-label="Welcome message">
-          <h1 className="text-4xl font-extrabold text-gray-900 leading-tight">
-            Welcome back, <span className="text-indigo-600">{user?.fullName || 'Alumni'}</span>!
-          </h1>
-          <p className="text-lg text-gray-600 mt-2">
-            Your personalized dashboard to connect, contribute, and stay updated.
-          </p>
-        </header>
-
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-10">
-          {/* Left Column - Profile and Navigation */}
-          <aside className="lg:col-span-1 space-y-8" aria-label="Sidebar and profile section">
-            <ProfileCard />
-            <Sidebar />
-          </aside>
-
-          {/* Right Column - Main Content */}
-          <main className="lg:col-span-3 space-y-10" aria-label="Main dashboard content">
-            {/* Quick Stats */}
-            <section className="grid grid-cols-1 md:grid-cols-3 gap-6" aria-label="Quick stats summary">
-              <StatCard
-                title="Network Size"
-                value="12,458"
-                Icon={UserGroupIcon}
-                color="blue"
-                progress={75}
-                progressText="75% of alumni connected"
-              />
-              <StatCard
-                title="Job Opportunities"
-                value="156"
-                Icon={BriefcaseIcon}
-                color="green"
-                progress={60}
-                progressText="60% match rate"
-              />
-              <StatCard
-                title="Upcoming Events"
-                value={upcomingEvents.length}
-                Icon={CalendarIcon}
-                color="purple"
-                progress={40}
-                progressText="40% RSVP rate"
-              />
-            </section>
-
-            {/* Events and Mentorship Section */}
-            <section className="grid grid-cols-1 lg:grid-cols-2 gap-8" aria-label="Events and mentorship requests">
-              {/* Upcoming Events Section */}
-              <section className="bg-white rounded-xl shadow-md p-6" aria-label="Upcoming events">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-bold text-gray-900">Upcoming Events</h2>
-                  <button
-                    className="text-sm text-indigo-600 hover:text-indigo-800 flex items-center group"
-                    aria-label="View all upcoming events"
-                  >
-                    View All <ArrowRightIcon className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
-                  </button>
-                </div>
-                <div className="divide-y divide-gray-100 -mx-4 -mt-4" tabIndex="0">
-                  {upcomingEvents.map((event, index) => (
-                    <EventCard key={index} {...event} />
-                  ))}
-                </div>
-                <p className="text-sm text-gray-500 text-center mt-6 font-semibold">
-                  ** Coming Soon ** More events will be added
-                </p>
+    <>
+      <Navbar />
+      <div className="min-h-screen font-roboto">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Welcome Section */}
+          <header className="mb-4 mt-0" aria-label="Welcome message">
+            <h1 className="text-lg font-semibold text-gray-700 leading-tight">
+              Welcome back, <span className="text-green-500 font-bold">{user?.fullName || 'Alumni'}</span>!
+            </h1>
+            <p className="text-base text-gray-500 mt-1">
+              Your personalized dashboard to connect, contribute, and stay updated.
+            </p>
+          </header>
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-10">
+            {/* Left Column - Profile and Navigation */}
+            <aside className="lg:col-span-1 space-y-8" aria-label="Sidebar and profile section">
+              <ProfileCard />
+              <Sidebar />
+            </aside>
+            {/* Right Column - Main Content */}
+            <main className="lg:col-span-3 space-y-10" aria-label="Main dashboard content">
+              {/* Stats Section */}
+              <section className="grid grid-cols-1 md:grid-cols-3 gap-6" aria-labelledby="stats-heading">
+                <h2 id="stats-heading" className="sr-only">Your Statistics</h2>
+                {stats.map(stat => <StatCard key={stat.title} {...stat} />)}
               </section>
 
-              {/* Mentorship Requests Section */}
-              <section className="bg-white rounded-xl shadow-md p-6" aria-label="Mentorship requests">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-bold text-gray-900">
-                    Mentorship Requests ({mentorshipRequests.length})
-                  </h2>
-                  <button
-                    className="text-sm text-indigo-600 hover:text-indigo-800 flex items-center group"
-                    aria-label="View all mentorship requests"
-                  >
-                    View All <ArrowRightIcon className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
-                  </button>
-                </div>
-                <div className="divide-y divide-gray-100 -mx-4 -mt-4" tabIndex="0">
-                  {mentorshipRequests.map((request, index) => (
-                    <MentorshipRequestCard
-                      key={index}
-                      {...request}
-                      onAccept={() => handleAcceptMentorship(request.studentName)}
-                      onReject={() => handleRejectMentorship(request.studentName)}
-                    />
-                  ))}
-                </div>
-                <p className="text-sm text-gray-500 text-center mt-6 font-semibold">
-                  ** Coming Soon ** More requests will be added
-                </p>
-              </section>
-            </section>
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-10">
+                {/* Upcoming Events Section */}
+                <section aria-labelledby="events-heading">
+                  <div className="flex items-center justify-between mb-5">
+                    <div className="flex items-center space-x-3">
+                      <CalendarIcon className="h-6 w-6 text-indigo-600" aria-hidden="true" />
+                      <h2 id="events-heading" className="text-xl font-bold text-gray-900">Upcoming Events</h2>
+                    </div>
+                    <button className="text-sm text-indigo-600 hover:text-indigo-800 flex items-center group" aria-label="View all events">
+                      View All <ArrowRightIcon className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
+                    </button>
+                  </div>
+                  <div className="bg-white rounded-xl shadow-md p-4 space-y-2">
+                    {upcomingEvents.map((event, index) => <EventCard key={index} {...event} />)}
+                  </div>
+                </section>
 
-            {/* Job Board Section */}
-            <JobBoard />
-          </main>
+                {/* Mentorship Requests Section */}
+                <section aria-labelledby="mentorship-heading">
+                  <div className="flex items-center justify-between mb-5">
+                    <div className="flex items-center space-x-3">
+                      <UserGroupIcon className="h-6 w-6 text-indigo-600" aria-hidden="true" />
+                      <h2 id="mentorship-heading" className="text-xl font-bold text-gray-900">Mentorship Requests</h2>
+                    </div>
+                    <button className="text-sm text-indigo-600 hover:text-indigo-800 flex items-center group" aria-label="View all mentorship requests">
+                      View All <ArrowRightIcon className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
+                    </button>
+                  </div>
+                  <div className="bg-white rounded-xl shadow-md p-4 space-y-2">
+                    {mentorshipRequests.map((request, index) => (
+                      <MentorshipRequestCard
+                        key={index}
+                        {...request}
+                        onAccept={() => handleAcceptMentorship(request.studentName)}
+                        onReject={() => handleRejectMentorship(request.studentName)}
+                      />
+                    ))}
+                  </div>
+                </section>
+              </div>
+
+              {/* Job Board Section */}
+              <JobBoard />
+
+            </main>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
-export default AlumniDashboard;
+export default AlumniDashboard; 

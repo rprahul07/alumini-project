@@ -8,6 +8,7 @@ const AuthContext = createContext();
 
 // Key for storing user role in localStorage
 const USER_ROLE_KEY = 'userRole';
+const SELECTED_ROLE_KEY = 'selectedRole';
 
 // Custom hook to use auth context easily
 export function useAuth() {
@@ -22,6 +23,13 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedRole, setSelectedRoleState] = useState(() => localStorage.getItem(SELECTED_ROLE_KEY) || '');
+
+  // Helper to set selectedRole in state and localStorage
+  const setSelectedRole = (role) => {
+    setSelectedRoleState(role);
+    localStorage.setItem(SELECTED_ROLE_KEY, role);
+  };
 
   // Check authentication status on mount
   useEffect(() => {
@@ -30,22 +38,23 @@ export const AuthProvider = ({ children }) => {
         const response = await authAPI.checkAuth();
         if (response.success) {
           const storedRole = localStorage.getItem(USER_ROLE_KEY);
+          const role = storedRole || response.data.role;
           
           // Fetch complete profile data
           try {
-            const profileResponse = await profileAPI.getProfile();
+            const profileResponse = await profileAPI.getProfile(role);
             if (profileResponse.success) {
               const userWithProfile = {
                 ...response.data,
-                ...profileResponse.data,
-                role: storedRole || response.data.role
+                ...(profileResponse.data || {}),
+                role: role
               };
               setUser(userWithProfile);
             }
           } catch (profileError) {
             console.error('Error fetching profile:', profileError);
             // Still set user with basic data if profile fetch fails
-            const userWithRole = { ...response.data, role: storedRole || response.data.role };
+            const userWithRole = { ...response.data, role: role };
             setUser(userWithRole);
           }
         } else {
@@ -67,41 +76,46 @@ export const AuthProvider = ({ children }) => {
     setLoading(true);
     setError(null);
     try {
-      console.log('AuthContext - Login attempt with role:', data.role);
-      const response = await authAPI.login(data);
-      console.log('AuthContext - Login response:', response);
-      
+      // Clear old auth data before login
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      localStorage.removeItem('role');
+      localStorage.removeItem('selectedRole');
+      localStorage.removeItem('userRole');
+      // Use selectedRole if not provided
+      const loginRole = data.role || selectedRole;
+      const response = await authAPI.login({ ...data, role: loginRole });
       if (response.success) {
-        console.log('AuthContext - Setting role in localStorage:', data.role.toLowerCase());
-        localStorage.setItem(USER_ROLE_KEY, data.role.toLowerCase());
-        
+        // Always extract user object from response
+        const userObj = response.user || response.data?.user || response.data?.data || response.data;
+        const backendRole = (userObj.role || loginRole).toLowerCase();
+        // Set new auth data
+        localStorage.setItem('token', response.token);
+        localStorage.setItem('user', JSON.stringify(userObj));
+        localStorage.setItem('role', backendRole);
+        localStorage.setItem('selectedRole', backendRole);
+        localStorage.setItem('userRole', backendRole);
+        setSelectedRole(backendRole);
         // Fetch complete profile data after login
         try {
-          const profileResponse = await profileAPI.getProfile();
-          console.log('AuthContext - Profile response:', profileResponse);
-          
+          const profileResponse = await profileAPI.getProfile(backendRole);
           if (profileResponse.success) {
             const userWithProfile = {
-              ...response.data,
-              ...profileResponse.data,
-              role: data.role.toLowerCase()
+              ...userObj,
+              ...(profileResponse.data || {}),
+              role: backendRole
             };
-            console.log('AuthContext - Setting user with profile:', userWithProfile);
             setUser(userWithProfile);
             return { success: true, data: userWithProfile };
           }
         } catch (profileError) {
-          console.error('AuthContext - Profile fetch error:', profileError);
-          // Still set user with basic data if profile fetch fails
-          const userWithRole = { ...response.data, role: data.role.toLowerCase() };
-          console.log('AuthContext - Setting user with basic data:', userWithRole);
+          const userWithRole = { ...userObj, role: backendRole };
           setUser(userWithRole);
           return { success: true, data: userWithRole };
         }
       }
       return response;
     } catch (err) {
-      console.error('AuthContext - Login error:', err);
       setError(getErrorMessage(err).message);
       throw err;
     } finally {
@@ -115,15 +129,26 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await authAPI.logout();
       if (response.success) {
-        localStorage.removeItem(USER_ROLE_KEY);
+        // Remove all auth-related data from localStorage
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        localStorage.removeItem('role');
+        localStorage.removeItem('selectedRole');
+        localStorage.removeItem('userRole');
         setUser(null);
+        setSelectedRoleState('');
         setError(null);
       } else {
         throw new Error('Logout failed');
       }
     } catch (err) {
-      localStorage.removeItem(USER_ROLE_KEY);
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      localStorage.removeItem('role');
+      localStorage.removeItem('selectedRole');
+      localStorage.removeItem('userRole');
       setUser(null);
+      setSelectedRoleState('');
       setError(getErrorMessage(err).message);
       throw err;
     } finally {
@@ -150,7 +175,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Get user role from state or localStorage
-  const role = user?.role || localStorage.getItem(USER_ROLE_KEY) || null;
+  const role = user?.role || localStorage.getItem(USER_ROLE_KEY) || selectedRole || null;
   console.log('AuthContext - Current role:', role);
   console.log('AuthContext - Current user:', user);
 
@@ -159,12 +184,15 @@ export const AuthProvider = ({ children }) => {
       value={{
         user,
         role,
+        selectedRole,
+        setSelectedRole,
         loading,
         error,
         login,
         logout,
         register,
         clearError: () => setError(null),
+        setUser,
       }}
     >
       {children}

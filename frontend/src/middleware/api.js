@@ -1,14 +1,5 @@
-import axios from "axios";
+import axios from '../config/axios';
 import { validateForm } from "../utils/validation";
-
-// Create axios instance with default config
-const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5001",
-  headers: {
-    "Content-Type": "application/json",
-  },
-  withCredentials: true, // Enable sending cookies
-});
 
 // CSRF token management
 let csrfToken = null;
@@ -22,7 +13,7 @@ const fetchCsrfToken = async () => {
       return csrfToken;
     }
 
-    const response = await api.get("/api/csrf-token");
+    const response = await axios.get("/api/csrf-token");
     csrfToken = response.data.csrfToken;
     tokenExpiry = Date.now() + TOKEN_REFRESH_INTERVAL;
     return csrfToken;
@@ -40,7 +31,7 @@ const handleApiResponse = (response) => {
 };
 
 // Add request interceptor for CSRF token
-api.interceptors.request.use(
+axios.interceptors.request.use(
   async (config) => {
     if (config.method !== "get") {
       const token = await fetchCsrfToken();
@@ -52,7 +43,7 @@ api.interceptors.request.use(
 );
 
 // Add response interceptor for error handling
-api.interceptors.response.use(
+axios.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 403) {
@@ -93,7 +84,7 @@ const authAPI = {
       role: credentials.role.toLowerCase(),
     };
 
-    const response = await api.post("/api/auth/login", data);
+    const response = await axios.post("/api/auth/login", data);
     return handleApiResponse(response);
   },
 
@@ -108,26 +99,29 @@ const authAPI = {
       role: userData.role.toLowerCase(),
     };
 
-    const response = await api.post("/api/auth/register", data);
+    const response = await axios.post("/api/auth/signup", data);
     return handleApiResponse(response);
   },
 
   logout: async () => {
-    const response = await api.post("/api/auth/logout");
+    const response = await axios.post("/api/auth/logout");
     return handleApiResponse(response);
   },
 
   checkAuth: async () => {
-    const response = await api.get("/api/auth/check");
+    const response = await axios.get("/api/auth/check");
     return handleApiResponse(response);
   },
 };
 
 // User Profile APIs
 const profileAPI = {
-  getProfile: async () => {
+  getProfile: async (role) => {
+    if (!role) {
+      throw new Error("Role is required to fetch a profile.");
+    }
     try {
-      const response = await api.get("/api/student/profile");
+      const response = await axios.get(`/api/${role}/profile/get`);
       return handleApiResponse(response);
     } catch (error) {
       throw new Error(
@@ -148,7 +142,7 @@ const profileAPI = {
               },
             };
 
-      const response = await api.put("/api/profile", profileData, config);
+      const response = await axios.put("/api/profile", profileData, config);
       return handleApiResponse(response);
     } catch (error) {
       throw new Error(
@@ -162,7 +156,7 @@ const profileAPI = {
       const formData = new FormData();
       formData.append("profilePhoto", photoFile);
 
-      const response = await api.post("/api/profile/photo", formData, {
+      const response = await axios.post("/api/profile/photo", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -177,7 +171,7 @@ const profileAPI = {
 
   deleteProfilePhoto: async () => {
     try {
-      const response = await api.delete("/api/profile/photo");
+      const response = await axios.delete("/api/profile/photo");
       return handleApiResponse(response);
     } catch (error) {
       throw new Error(
@@ -191,7 +185,7 @@ const profileAPI = {
 const apiService = {
   auth: authAPI,
   profile: profileAPI,
-  raw: api,
+  raw: axios,
 };
 
 export { authAPI, profileAPI };

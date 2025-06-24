@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from '../config/axios';
 import { useEffect } from 'react';
 
 const BASE_URL = '/api/student/profile';

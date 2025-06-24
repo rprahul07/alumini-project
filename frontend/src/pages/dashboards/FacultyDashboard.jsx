@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import ProfileCard from '../../components/dashboard/ProfileCard';
-import Sidebar from '../../components/dashboard/Sidebar';
+import Navbar from '../../components/Navbar';
+import ProfileCard from '../../components/ProfileCard';
+import Sidebar from '../../components/Sidebar';
+import { useAuth } from '../../contexts/AuthContext';
 import {
   UserGroupIcon,
   BriefcaseIcon, // Can be repurposed for placements/industry links
@@ -189,14 +191,7 @@ const CourseProgressCard = ({ courseName, studentsEnrolled, averageGrade, progre
 
 // --- FacultyDashboard Main Component ---
 const FacultyDashboard = () => {
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    const userData = localStorage.getItem('user');
-    if (userData) {
-      setUser(JSON.parse(userData));
-    }
-  }, []);
+  const { user } = useAuth();
 
   const upcomingEvents = [
     {
@@ -270,121 +265,119 @@ const FacultyDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-emerald-50"> {/* New background gradient */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        {/* Welcome Section */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-extrabold text-gray-900 leading-tight">
-            Welcome back, <span className="text-emerald-700">{user?.fullName || 'Professor'}</span>! 👋
-          </h1>
-          <p className="text-lg text-gray-600 mt-2">
-            Your comprehensive dashboard for academic oversight and community engagement.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-10">
-          {/* Left Column - Profile and Navigation */}
-          <div className="lg:col-span-1 space-y-8">
-            <ProfileCard />
-            <Sidebar />
+    <>
+      <Navbar />
+      <div className="min-h-screen font-roboto">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Welcome Section */}
+          <div className="mb-4 mt-0">
+            <h1 className="text-lg font-semibold text-gray-700 leading-tight">
+              Welcome back, <span className="text-purple-500 font-bold">{user?.fullName || 'Professor'}</span>!
+            </h1>
+            <p className="text-base text-gray-500 mt-1">
+              Your comprehensive dashboard for academic oversight and community engagement.
+            </p>
           </div>
-
-          {/* Right Column - Main Content */}
-          <div className="lg:col-span-3 space-y-10">
-            {/* Quick Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <StatCard
-                title="Your Students"
-                value="156"
-                Icon={AcademicCapIcon}
-                color="blue"
-                progress={75}
-                progressText="75% average attendance"
-              />
-              <StatCard
-                title="Research Projects"
-                value="8"
-                Icon={BookOpenIcon}
-                color="green"
-                progress={60}
-                progressText="60% projects in progress"
-              />
-              <StatCard
-                title="Pending Approvals"
-                value={pendingRegistrations.length} // Dynamic count
-                Icon={ClipboardDocumentListIcon}
-                color="red" // Use red for urgent attention
-                progress={100} // Assuming pending means 100% "pending" tasks
-                progressText="Alumni registrations awaiting review"
-              />
-            </div>
-
-            {/* Main Content Rows */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {/* Upcoming Events Section */}
-              <div className="bg-white rounded-xl shadow-md p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-bold text-gray-900">Upcoming Events</h2>
-                  <button className="text-sm text-indigo-600 hover:text-indigo-800 flex items-center group">
-                    View All <ArrowRightIcon className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
-                  </button>
-                </div>
-                <div className="divide-y divide-gray-100 -mx-4 -mt-4">
-                  {upcomingEvents.map((event, index) => (
-                    <EventCard key={index} {...event} />
-                  ))}
-                </div>
-                <p className="text-sm text-gray-500 text-center mt-6">
-                  ** Coming Soon ** More events will be added
-                </p>
-              </div>
-
-              {/* Pending Alumni Registrations Section */}
-              <div className="bg-white rounded-xl shadow-md p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-bold text-gray-900">Pending Alumni Registrations ({pendingRegistrations.length})</h2>
-                  <button className="text-sm text-indigo-600 hover:text-indigo-800 flex items-center group">
-                    View All <ArrowRightIcon className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
-                  </button>
-                </div>
-                <div className="divide-y divide-gray-100 -mx-4 -mt-4">
-                  {pendingRegistrations.map((registration, index) => (
-                    <AlumniRegistrationCard
-                      key={index}
-                      {...registration}
-                      onApprove={() => handleApproveRegistration(registration.name)}
-                      onReject={() => handleRejectRegistration(registration.name)}
-                    />
-                  ))}
-                </div>
-                <p className="text-sm text-gray-500 text-center mt-6">
-                  ** Coming Soon ** More registrations will be added
-                </p>
-              </div>
-            </div>
-
-            {/* Your Courses Overview Section (New for Faculty) */}
-            <div className="bg-white rounded-xl shadow-md p-6">
-                <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-xl font-bold text-gray-900">Your Courses Overview</h2>
-                    <button className="text-sm text-indigo-600 hover:text-indigo-800 flex items-center group">
-                        View All <ArrowRightIcon className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-10">
+            {/* Left Column - Profile and Navigation */}
+            <aside className="lg:col-span-1 space-y-8" aria-label="Sidebar and profile section">
+              <ProfileCard />
+              <Sidebar />
+            </aside>
+            {/* Right Column - Main Content */}
+            <main className="lg:col-span-3 space-y-10">
+              {/* Quick Stats */}
+              <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <StatCard
+                  title="Your Students"
+                  value="156"
+                  Icon={AcademicCapIcon}
+                  color="blue"
+                  progress={75}
+                  progressText="75% average attendance"
+                />
+                <StatCard
+                  title="Research Projects"
+                  value="8"
+                  Icon={BookOpenIcon}
+                  color="green"
+                  progress={60}
+                  progressText="60% projects in progress"
+                />
+                <StatCard
+                  title="Pending Approvals"
+                  value={pendingRegistrations.length}
+                  Icon={ClipboardDocumentListIcon}
+                  color="red"
+                  progress={100}
+                  progressText="Alumni registrations awaiting review"
+                />
+              </section>
+              {/* Main Content Rows */}
+              <section className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Upcoming Events Section */}
+                <section className="bg-white rounded-xl shadow-md p-6">
+                  <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-xl font-bold text-gray-900">Upcoming Events</h2>
+                    <button className="text-sm text-purple-600 hover:text-purple-800 flex items-center group font-semibold rounded-full px-4 py-2 bg-purple-50 border border-purple-200 transition">
+                      View All <ArrowRightIcon className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
                     </button>
+                  </div>
+                  <div className="divide-y divide-gray-100 -mx-4 -mt-4">
+                    {upcomingEvents.map((event, index) => (
+                      <EventCard key={index} {...event} />
+                    ))}
+                  </div>
+                  <p className="text-sm text-gray-500 text-center mt-6 font-semibold">
+                    ** Coming Soon ** More events will be added
+                  </p>
+                </section>
+                {/* Pending Alumni Registrations Section */}
+                <section className="bg-white rounded-xl shadow-md p-6">
+                  <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-xl font-bold text-gray-900">Pending Alumni Registrations ({pendingRegistrations.length})</h2>
+                    <button className="text-sm text-purple-600 hover:text-purple-800 flex items-center group font-semibold rounded-full px-4 py-2 bg-purple-50 border border-purple-200 transition">
+                      View All <ArrowRightIcon className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
+                    </button>
+                  </div>
+                  <div className="divide-y divide-gray-100 -mx-4 -mt-4">
+                    {pendingRegistrations.map((registration, index) => (
+                      <AlumniRegistrationCard
+                        key={index}
+                        {...registration}
+                        onApprove={() => handleApproveRegistration(registration.name)}
+                        onReject={() => handleRejectRegistration(registration.name)}
+                      />
+                    ))}
+                  </div>
+                  <p className="text-sm text-gray-500 text-center mt-6 font-semibold">
+                    ** Coming Soon ** More registrations will be added
+                  </p>
+                </section>
+              </section>
+              {/* Your Courses Overview Section */}
+              <section className="bg-white rounded-xl shadow-md p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-xl font-bold text-gray-900">Your Courses Overview</h2>
+                  <button className="text-sm text-purple-600 hover:text-purple-800 flex items-center group font-semibold rounded-full px-4 py-2 bg-purple-50 border border-purple-200 transition">
+                    View All <ArrowRightIcon className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
+                  </button>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {courseData.map((course, index) => (
-                        <CourseProgressCard key={index} {...course} />
-                    ))}
+                  {courseData.map((course, index) => (
+                    <CourseProgressCard key={index} {...course} />
+                  ))}
                 </div>
-                <p className="text-sm text-gray-500 text-center mt-6">
+                <p className="text-sm text-gray-500 text-center mt-6 font-semibold">
                   ** Coming Soon ** Detailed course analytics
                 </p>
-            </div>
+              </section>
+            </main>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
-export default FacultyDashboard;
+export default FacultyDashboard; 

@@ -1,97 +1,90 @@
 import React from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import AuthPage from '../layouts/AuthPage';
-import MainLayout from '../layouts/MainLayout';
-import StudentDashboard from '../layouts/dashboards/StudentDashboard';
-import FacultyDashboard from '../layouts/dashboards/FacultyDashboard';
-import AlumniDashboard from '../layouts/dashboards/AlumniDashboard';
-import AdminDashboard from '../components/dashboard/AdminDashboard';
-import ProfileCard from '../components/dashboard/ProfileCard';
-import ProfileEditor from '../components/dashboard/ProfileEditor';
+import { useAuth } from '../contexts/AuthContext';
+import HomePage from '../pages/HomePage';
+import AuthPage from '../pages/AuthPage';
+import RoleSelection from '../pages/RoleSelection';
+import StudentDashboard from '../pages/dashboards/StudentDashboard';
+import FacultyDashboard from '../pages/dashboards/FacultyDashboard';
+import AlumniDashboard from '../pages/dashboards/AlumniDashboard';
+import ProfileCard from '../components/ProfileCard';
+import ProfileEditor from '../components/ProfileEditor';
+import EventsPage from '../pages/EventsPage';
 import UnauthorizedPage from '../pages/UnauthorizedPage';
 import NotFoundPage from '../pages/NotFoundPage';
+import AboutPage from '../pages/AboutPage';
+import AlumniPage from '../pages/AlumniPage';
+import ContactPage from '../pages/ContactPage';
 
-const ProtectedRoute = ({ children }) => {
+// Protected route for a specific role
+function ProtectedRoute({ children, allowedRoles }) {
+  const { user, loading } = useAuth();
   const location = useLocation();
-  const userData = localStorage.getItem('user');
-
-  if (!userData) {
-    return <Navigate to="/login" replace state={{ from: location }} />;
+  if (loading) return null; // Or a spinner
+  if (!user) return <Navigate to="/auth" replace state={{ from: location }} />;
+  if (allowedRoles && !allowedRoles.includes(user.role)) {
+    return <Navigate to="/unauthorized" replace />;
   }
-
-  try {
-    const user = JSON.parse(userData);
-    if (!user || !user.role) {
-      throw new Error('Invalid user data');
-    }
-    return children;
-  } catch (error) {
-    console.error('Error parsing user data:', error);
-    localStorage.removeItem('user');
-    return <Navigate to="/login" replace state={{ from: location }} />;
-  }
-};
-
-const DashboardRoute = () => {
-  const location = useLocation();
-  const userData = localStorage.getItem('user');
-
-  if (!userData) {
-    return <Navigate to="/login" replace state={{ from: location }} />;
-  }
-
-  try {
-    const user = JSON.parse(userData);
-    const role = user.role.toLowerCase();
-
-    switch (role) {
-      case 'student':
-        return <StudentDashboard />;
-      case 'faculty':
-        return <FacultyDashboard />;
-      case 'alumni':
-        return <AlumniDashboard />;
-      case 'admin':
-        return <Navigate to="/admin/dashboard" replace />;
-      default:
-        return <Navigate to="/unauthorized" replace />;
-    }
-  } catch (error) {
-    console.error('Error in DashboardRoute:', error);
-    return <Navigate to="/login" replace state={{ from: location }} />;
-  }
-};
+  return children;
+}
 
 const AppRoutes = () => {
   return (
     <Routes>
       {/* Public Routes */}
-      <Route path="/login" element={<AuthPage />} />
+      <Route path="/" element={<HomePage />} />
+      <Route path="/role-selection" element={<RoleSelection />} />
+      <Route path="/auth" element={<AuthPage />} />
+      <Route path="/events" element={<EventsPage />} />
       <Route path="/unauthorized" element={<UnauthorizedPage />} />
+      <Route path="/about" element={<AboutPage />} />
+      <Route path="/alumni" element={<AlumniPage />} />
+      <Route path="/contact" element={<ContactPage />} />
 
-      {/* Protected Routes */}
+      {/* Student Dashboard */}
       <Route
-        path="/"
+        path="/student/dashboard"
         element={
-          <ProtectedRoute>
-            <MainLayout />
+          <ProtectedRoute allowedRoles={['student']}>
+            <StudentDashboard />
           </ProtectedRoute>
         }
-      >
-        {/* Default route redirects to dashboard */}
-        <Route index element={<Navigate to="/dashboard" replace />} />
-        
-        {/* Dashboard routes */}
-        <Route path="dashboard" element={<DashboardRoute />} />
-        <Route path="dashboard/student" element={<StudentDashboard />} />
-        <Route path="dashboard/faculty" element={<FacultyDashboard />} />
-        <Route path="dashboard/alumni" element={<AlumniDashboard />} />
-        
-        {/* Profile routes */}
-        <Route path="profile" element={<ProfileCard />} />
-        <Route path="profile/edit" element={<ProfileEditor />} />
-      </Route>
-
+      />
+      {/* Faculty Dashboard */}
+      <Route
+        path="/faculty/dashboard"
+        element={
+          <ProtectedRoute allowedRoles={['faculty']}>
+            <FacultyDashboard />
+          </ProtectedRoute>
+        }
+      />
+      {/* Alumni Dashboard */}
+      <Route
+        path="/alumni/dashboard"
+        element={
+          <ProtectedRoute allowedRoles={['alumni']}>
+            <AlumniDashboard />
+          </ProtectedRoute>
+        }
+      />
+      {/* Profile routes (all logged-in users) */}
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <ProfileCard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/profile/edit"
+        element={
+          <ProtectedRoute>
+            <ProfileEditor />
+          </ProtectedRoute>
+        }
+      />
       {/* 404 Route */}
       <Route path="*" element={<NotFoundPage />} />
     </Routes>

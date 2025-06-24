@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import axios from '../config/axios';
 import { FiMail, FiLock } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import { useAuth } from '../contexts/AuthContext';
@@ -10,30 +9,17 @@ const AdminLogin = () => {
     email: '',
     password: ''
   });
-  const [loading, setLoading] = useState(false);
+  const [formError, setFormError] = useState('');
+  const { login, user, role, loading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const { login } = useAuth();
 
-  // Check if user is already logged in
+  // Redirect if already logged in as admin
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const userStr = localStorage.getItem('user');
-    
-    if (token && userStr) {
-      try {
-        const user = JSON.parse(userStr);
-        if (user.role === 'admin' && location.pathname === '/admin/login') {
-          navigate('/admin/dashboard', { replace: true });
-        }
-      } catch (error) {
-        // Clear invalid data
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        localStorage.removeItem('role');
-      }
+    if (user && role === 'admin' && location.pathname === '/admin/login') {
+      navigate('/admin/dashboard', { replace: true });
     }
-  }, [navigate, location]);
+  }, [user, role, navigate, location]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -45,8 +31,7 @@ const AdminLogin = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (loading) return;
-    setLoading(true);
+    setFormError('');
     try {
       const result = await login({
         email: formData.email,
@@ -57,12 +42,11 @@ const AdminLogin = () => {
         toast.success('Login successful!');
         navigate('/admin/dashboard', { replace: true });
       } else {
-        throw new Error(result.error || 'Login failed');
+        setFormError(result.error || 'Login failed');
       }
     } catch (err) {
+      setFormError(err.message || 'Login failed. Please try again.');
       toast.error(err.message || 'Login failed. Please try again.');
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -76,7 +60,6 @@ const AdminLogin = () => {
           Use admin@example.com / password to login
         </p>
       </div>
-
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           <form className="space-y-6" onSubmit={handleSubmit}>
@@ -98,7 +81,6 @@ const AdminLogin = () => {
                 <FiMail className="absolute right-3 top-2.5 text-gray-400" />
               </div>
             </div>
-
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                 Password
@@ -117,7 +99,7 @@ const AdminLogin = () => {
                 <FiLock className="absolute right-3 top-2.5 text-gray-400" />
               </div>
             </div>
-
+            {formError && <div className="text-red-500 text-sm">{formError}</div>}
             <div>
               <button
                 type="submit"

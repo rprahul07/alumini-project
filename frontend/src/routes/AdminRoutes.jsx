@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import AdminLogin from '../layouts/AdminLogin';
-import AdminDashboard from '../components/dashboard/AdminDashboard';
+import AdminDashboard from '../pages/dashboards/AdminDashboard';
 import EditUserPage from '../components/dashboard/EditUserPage';
 
 const AdminProtectedRoute = ({ children }) => {

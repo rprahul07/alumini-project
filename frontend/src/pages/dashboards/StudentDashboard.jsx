@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import ProfileCard from '../../components/dashboard/ProfileCard';
-import Sidebar from '../../components/dashboard/Sidebar';
+import Navbar from '../../components/Navbar';
+import ProfileCard from '../../components/ProfileCard';
+import Sidebar from '../../components/Sidebar';
+import { useAuth } from '../../contexts/AuthContext';
 import {
   UserGroupIcon,
   BriefcaseIcon,
@@ -266,14 +268,7 @@ const JobBoard = () => {
 
 // --- StudentDashboard Main Component ---
 const StudentDashboard = () => {
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    const userData = localStorage.getItem('user');
-    if (userData) {
-      setUser(JSON.parse(userData));
-    }
-  }, []);
+  const { user } = useAuth();
 
   const upcomingEvents = [
     {
@@ -339,101 +334,99 @@ const StudentDashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        {/* Welcome Section */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-extrabold text-gray-900 leading-tight">
-            Welcome back, <span className="text-indigo-600">{user?.fullName || 'Student'}</span>! 👋
-          </h1>
-          <p className="text-lg text-gray-600 mt-2">
-            Your personalized dashboard to explore opportunities and connect with the community.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-10">
-          {/* Left Column - Profile and Navigation */}
-          <div className="lg:col-span-1 space-y-8">
-            <ProfileCard />
-            <Sidebar />
+    <>
+      <Navbar />
+      <div className="min-h-screen font-roboto">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Welcome Section */}
+          <div className="mb-4 mt-0">
+            <h1 className="text-lg font-semibold text-gray-700 leading-tight">
+              Welcome back, <span className="text-indigo-500 font-bold">{user?.fullName || 'Student'}</span>!
+            </h1>
+            <p className="text-base text-gray-500 mt-1">
+              Your personalized dashboard to explore opportunities and connect with the community.
+            </p>
           </div>
-
-          {/* Right Column - Main Content */}
-          <div className="lg:col-span-3 space-y-10">
-            {/* Quick Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <StatCard
-                title="Total Courses"
-                value="24"
-                Icon={AcademicCapIcon}
-                color="blue"
-                progress={80}
-                progressText="80% completion rate"
-              />
-              <StatCard
-                title="Active Clubs"
-                value={clubsAndActivities.length} // Dynamic count
-                Icon={SparklesIcon}
-                color="yellow" // New color
-                progress={90}
-                progressText="90% student participation"
-              />
-              <StatCard
-                title="Upcoming Events"
-                value={upcomingEvents.length} // Dynamic count
-                Icon={CalendarIcon}
-                color="purple"
-                progress={65}
-                progressText="65% registered for next event"
-              />
-            </div>
-
-            {/* Events and Mentorship Section */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {/* Upcoming Events Section */}
-              <div className="bg-white rounded-xl shadow-md p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-bold text-gray-900">Upcoming Events</h2>
-                  <button className="text-sm text-indigo-600 hover:text-indigo-800 flex items-center group">
-                    View All <ArrowRightIcon className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
-                  </button>
-                </div>
-                <div className="divide-y divide-gray-100 -mx-4 -mt-4">
-                  {upcomingEvents.map((event, index) => (
-                    <EventCard key={index} {...event} />
-                  ))}
-                </div>
-                <p className="text-sm text-gray-500 text-center mt-6">
-                  ** Coming Soon ** More events will be added
-                </p>
-              </div>
-
-              {/* Mentorship Opportunities Section */}
-              <div className="bg-white rounded-xl shadow-md p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-bold text-gray-900">Mentorship Opportunities ({mentors.length})</h2>
-                  <button className="text-sm text-indigo-600 hover:text-indigo-800 flex items-center group">
-                    View All <ArrowRightIcon className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
-                  </button>
-                </div>
-                <div className="divide-y divide-gray-100 -mx-4 -mt-4">
-                  {mentors.map((mentor, index) => (
-                    <MentorCard key={index} {...mentor} />
-                  ))}
-                </div>
-                <p className="text-sm text-gray-500 text-center mt-6">
-                  ** Coming Soon ** More mentors will be added
-                </p>
-              </div>
-            </div>
-
-            {/* Job Board Section */}
-            <JobBoard />
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-10">
+            {/* Left Column - Profile and Navigation */}
+            <aside className="lg:col-span-1 space-y-8" aria-label="Sidebar and profile section">
+              <ProfileCard />
+              <Sidebar />
+            </aside>
+            {/* Right Column - Main Content */}
+            <main className="lg:col-span-3 space-y-10">
+              {/* Quick Stats */}
+              <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <StatCard
+                  title="Total Courses"
+                  value="24"
+                  Icon={AcademicCapIcon}
+                  color="blue"
+                  progress={80}
+                  progressText="80% completion rate"
+                />
+                <StatCard
+                  title="Active Clubs"
+                  value={clubsAndActivities.length}
+                  Icon={SparklesIcon}
+                  color="yellow"
+                  progress={90}
+                  progressText="90% student participation"
+                />
+                <StatCard
+                  title="Upcoming Events"
+                  value={upcomingEvents.length}
+                  Icon={CalendarIcon}
+                  color="purple"
+                  progress={65}
+                  progressText="65% registered for next event"
+                />
+              </section>
+              {/* Events and Mentorship Section */}
+              <section className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Upcoming Events Section */}
+                <section className="bg-white rounded-xl shadow-md p-6">
+                  <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-xl font-bold text-gray-900">Upcoming Events</h2>
+                    <button className="text-sm text-indigo-600 hover:text-indigo-800 flex items-center group font-semibold rounded-full px-4 py-2 bg-indigo-50 border border-indigo-200 transition">
+                      View All <ArrowRightIcon className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
+                    </button>
+                  </div>
+                  <div className="divide-y divide-gray-100 -mx-4 -mt-4">
+                    {upcomingEvents.map((event, index) => (
+                      <EventCard key={index} {...event} />
+                    ))}
+                  </div>
+                  <p className="text-sm text-gray-500 text-center mt-6 font-semibold">
+                    ** Coming Soon ** More events will be added
+                  </p>
+                </section>
+                {/* Mentorship Opportunities Section */}
+                <section className="bg-white rounded-xl shadow-md p-6">
+                  <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-xl font-bold text-gray-900">Mentorship Opportunities ({mentors.length})</h2>
+                    <button className="text-sm text-indigo-600 hover:text-indigo-800 flex items-center group font-semibold rounded-full px-4 py-2 bg-indigo-50 border border-indigo-200 transition">
+                      View All <ArrowRightIcon className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
+                    </button>
+                  </div>
+                  <div className="divide-y divide-gray-100 -mx-4 -mt-4">
+                    {mentors.map((mentor, index) => (
+                      <MentorCard key={index} {...mentor} />
+                    ))}
+                  </div>
+                  <p className="text-sm text-gray-500 text-center mt-6 font-semibold">
+                    ** Coming Soon ** More mentors will be added
+                  </p>
+                </section>
+              </section>
+              {/* Job Board Section */}
+              <JobBoard />
+            </main>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
-export default StudentDashboard;
+export default StudentDashboard; 
