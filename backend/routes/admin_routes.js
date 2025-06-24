@@ -17,6 +17,7 @@ import {
 } from "../controllers/event/admin_event.controller.js";
 import { deleteAlumniById } from "../controllers/user/alumni_controller.js";
 import { uploadPhotoMiddleware } from "../middleware/upload.middleware.js";
+import { searchEvents } from "../controllers/event/event.controller.js";
 
 const router = express.Router();
 
@@ -35,6 +36,7 @@ router.post("/create", createAdmin);
 
 router.post("/event/create", uploadPhotoMiddleware, createEventForAdmin);
 router.get("/event/all", getAllEventsForAdmin);
+router.get("/event/search", searchEvents);
 router.post("/event/:id", approveEventById);
 router.patch("/event/:id", uploadPhotoMiddleware, editEventByIdForAdmin);
 router.get("/event/:id", getEventByIdForAdmin);
