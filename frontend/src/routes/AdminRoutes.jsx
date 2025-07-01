@@ -3,6 +3,8 @@ import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import AdminLogin from '../layouts/AdminLogin';
 import AdminDashboard from '../pages/dashboards/AdminDashboard';
 import EditUserPage from '../components/dashboard/EditUserPage';
+import EditEvent from '../components/EditEvent';
+
 
 const AdminProtectedRoute = ({ children }) => {
   const [isChecking, setIsChecking] = useState(true);
@@ -76,6 +78,14 @@ const AdminRoutes = () => {
       <Route
         path="/"
         element={<Navigate to="/admin/dashboard" replace />}
+      />
+      <Route
+        path="/events/edit/:id"
+        element={
+          <AdminProtectedRoute>
+            <EditEvent />
+          </AdminProtectedRoute>
+        }
       />
     </Routes>
   );
