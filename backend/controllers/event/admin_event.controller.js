@@ -127,6 +127,7 @@ export const editEventByIdForAdmin = async (req, res) => {
       updateData.organizer = eventData.organizer.trim();
     if (eventData.imageUrl !== undefined)
       updateData.imageUrl = eventData.imageUrl?.trim() || null;
+    if (eventData.status !== undefined) updateData.status = eventData.status;
 
     // Add maxCapacity handling
     if (eventData.maxCapacity !== undefined) {
