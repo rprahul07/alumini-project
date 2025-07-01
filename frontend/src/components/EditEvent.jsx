@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import mockEvents from "../mock/mockAlumniEvents.json";
 import { useParams, useNavigate } from "react-router-dom";
 
 const eventTypes = ["Seminar", "Workshop", "Meetup"];
