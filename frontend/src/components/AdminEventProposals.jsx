@@ -243,6 +243,7 @@ const AdminEventProposals = () => {
                                       className="h-10 w-10 rounded-lg object-cover" 
                                       src={event.imageUrl} 
                                       alt={event.name}
+                                      loading="lazy"
                                     />
                                   ) : (
                                     <div className="h-10 w-10 rounded-lg bg-gray-200 flex items-center justify-center">
@@ -367,6 +368,7 @@ const AdminEventProposals = () => {
                   src={selectedEvent.imageUrl} 
                   alt={selectedEvent.name}
                   className="w-full h-full object-cover"
+                  loading="lazy"
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-100 to-indigo-200">
@@ -432,6 +434,7 @@ const AdminEventProposals = () => {
                         className="h-10 w-10 rounded-full object-cover" 
                         src={selectedEvent.createdBy.photoUrl} 
                         alt={selectedEvent.createdBy.fullName}
+                        loading="lazy"
                       />
                     ) : (
                       <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">

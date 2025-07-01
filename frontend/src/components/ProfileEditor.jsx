@@ -240,7 +240,7 @@ const ProfileEditor = () => {
           <p>Error: {error}</p>
           <button
             onClick={() => navigate('/profile')}
-            className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+            className="px-4 py-2 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition-colors w-full sm:w-auto text-sm mt-4"
           >
             Go Back to Profile
           </button>
@@ -250,16 +250,10 @@ const ProfileEditor = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 py-12">
-      <div className="max-w-4xl mx-auto px-4">
-        <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-indigo-600 to-purple-600">
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-semibold text-white">Edit Profile</h2>
-              <div className="w-6" />
-            </div>
-          </div>
-          <form onSubmit={handleSubmit} className="p-6">
+    <div className="min-h-screen bg-gray-50 py-8 px-2">
+      <div className="max-w-md mx-auto bg-white p-3 rounded-xl shadow-md">
+        <h2 className="text-xl font-bold text-gray-900 mb-4">Edit Profile</h2>
+        <form onSubmit={handleSubmit} className="space-y-2">
             <div className="flex flex-col items-center mb-8">
               <div className="relative group">
                 <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-white shadow-lg bg-gray-100 flex items-center justify-center text-gray-400">
@@ -298,7 +292,7 @@ const ProfileEditor = () => {
                       type="button"
                       onClick={handleDeletePhoto}
                       disabled={loading}
-                      className="bg-red-600 text-white p-3 rounded-full shadow-lg cursor-pointer hover:bg-red-700 transition-colors disabled:opacity-50 transform hover:scale-105"
+                    className="bg-gray-100 text-gray-700 p-3 rounded-full shadow-lg cursor-pointer hover:bg-gray-200"
                       title="Delete profile photo"
                     >
                       <TrashIcon className="w-6 h-6" />
@@ -308,7 +302,7 @@ const ProfileEditor = () => {
                     <button
                       type="button"
                       onClick={() => setFormData((prev) => ({ ...prev, profilePhoto: null }))}
-                      className="bg-gray-500 text-white p-3 rounded-full shadow-lg cursor-pointer hover:bg-gray-600 transition-colors transform hover:scale-105"
+                    className="bg-gray-100 text-gray-700 p-3 rounded-full shadow-lg cursor-pointer hover:bg-gray-200"
                       title="Clear selected photo"
                     >
                       <XMarkIcon className="w-6 h-6" />
@@ -337,7 +331,6 @@ const ProfileEditor = () => {
                       onChange={handleChange}
                       className="pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg w-full focus:ring-indigo-500 focus:border-indigo-500"
                       required
-                      placeholder="Your full name"
                     />
                   </div>
                 </div>
@@ -351,7 +344,7 @@ const ProfileEditor = () => {
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
-                      className="pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg w-full bg-gray-100 cursor-not-allowed"
+                    className="pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg w-full focus:ring-indigo-500 focus:border-indigo-500"
                       required
                       readOnly
                       placeholder="Your email address"
@@ -476,13 +469,12 @@ const ProfileEditor = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-lg shadow-md hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105"
+              className="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto text-sm"
               >
                 {loading ? 'Saving...' : 'Save Profile'}
               </button>
             </div>
           </form>
-        </div>
       </div>
     </div>
   );

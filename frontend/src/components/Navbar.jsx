@@ -115,7 +115,7 @@ const Navbar = ({ isHome = false }) => {
         <div className="flex justify-between h-12 items-center">
           <Link to="/" className={`flex items-center gap-2 text-lg font-bold ${textColor} transition-colors duration-300`}>
             <GiGraduateCap className="h-6 w-6" color={isHome ? '#4f46e5' : '#fff'} />
-            Alumni
+            Alumni Connect
           </Link>
           {/* Desktop Navigation Links */}
           <div className="hidden sm:flex sm:items-center sm:space-x-8">

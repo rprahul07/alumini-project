@@ -14,13 +14,13 @@ const DashboardRedirect = () => {
 
     switch (role) {
       case "student":
-        navigate("/dashboard/student", { replace: true });
+        navigate("/student/dashboard", { replace: true });
         break;
       case "faculty":
-        navigate("/dashboard/faculty", { replace: true });
+        navigate("/faculty/dashboard", { replace: true });
         break;
       case "alumni":
-        navigate("/dashboard/alumni", { replace: true });
+        navigate("/alumni/dashboard", { replace: true });
         break;
       default:
         navigate("/unauthorized", { replace: true });

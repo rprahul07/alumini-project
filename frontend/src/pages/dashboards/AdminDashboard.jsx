@@ -983,83 +983,6 @@ const AdminDashboard = () => {
                 Your admin dashboard for managing users, events, and more.
               </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-              <div className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">
-                      Total Users
-                    </p>
-                    <p className="text-2xl font-bold text-gray-900 mt-1">
-                      {dashboardStats?.totalUsers ?? "-"}
-                    </p>
-                  </div>
-                  <div className="bg-indigo-100 p-3 rounded-xl">
-                    <FiUser className="h-6 w-6 text-indigo-600" />
-                  </div>
-                </div>
-              </div>
-              <div className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">
-                      Total Alumni
-                    </p>
-                    <p className="text-2xl font-bold text-gray-900 mt-1">
-                      {dashboardStats?.totalAlumni ?? "-"}
-                    </p>
-                  </div>
-                  <div className="bg-purple-100 p-3 rounded-xl">
-                    <FiBriefcase className="h-6 w-6 text-purple-600" />
-                  </div>
-                </div>
-              </div>
-              <div className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">
-                      Total Students
-                    </p>
-                    <p className="text-2xl font-bold text-gray-900 mt-1">
-                      {dashboardStats?.totalStudents ?? "-"}
-                    </p>
-                  </div>
-                  <div className="bg-green-100 p-3 rounded-xl">
-                    <FiBook className="h-6 w-6 text-green-600" />
-                  </div>
-                </div>
-              </div>
-              <div className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">
-                      Total Faculty
-                    </p>
-                    <p className="text-2xl font-bold text-gray-900 mt-1">
-                      {dashboardStats?.totalFaculty ?? "-"}
-                    </p>
-                  </div>
-                  <div className="bg-yellow-100 p-3 rounded-xl">
-                    <FiUsers className="h-6 w-6 text-yellow-600" />
-                  </div>
-                </div>
-              </div>
-              <div className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">
-                      Total Admins
-                    </p>
-                    <p className="text-2xl font-bold text-gray-900 mt-1">
-                      {dashboardStats?.totalAdmins ?? "-"}
-                    </p>
-                  </div>
-                  <div className="bg-pink-100 p-3 rounded-xl">
-                    <FiShield className="h-6 w-6 text-pink-600" />
-                  </div>
-                </div>
-              </div>
-            </div>
 
             <UserVerificationTable
               users={usersToVerify}
@@ -1134,14 +1057,14 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen font-roboto">
+    <div className="min-h-screen font-roboto bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <Navbar />
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-10">
-          <aside className="lg:col-span-1 space-y-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-3">
+          <aside className="lg:col-span-1 space-y-4" aria-label="Sidebar and profile section">
             <Sidebar onNavigate={setActiveView} />
           </aside>
-          <main className="lg:col-span-3 space-y-10">
+          <main className="lg:col-span-3 space-y-5">
             {renderContent()}
           </main>
         </div>

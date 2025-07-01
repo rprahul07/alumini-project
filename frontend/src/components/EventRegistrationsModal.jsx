@@ -64,10 +64,10 @@ const EventRegistrationsModal = ({ event, isOpen, onClose, user }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2">
+      <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-hidden scrollbar-none">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b">
+        <div className="flex items-center justify-between p-3 border-b">
           <div>
             <h2 className="text-xl font-semibold text-gray-900">
               Event Registrations
@@ -86,7 +86,7 @@ const EventRegistrationsModal = ({ event, isOpen, onClose, user }) => {
 
         {/* Summary */}
         {summary && Object.keys(summary).length > 0 && (
-          <div className="bg-gray-50 px-6 py-4 border-b">
+          <div className="bg-gray-50 px-3 py-2 border-b">
             <div className="flex flex-wrap gap-4 text-sm">
               <div className="flex items-center">
                 <UserIcon className="h-4 w-4 mr-2 text-gray-500" />
@@ -105,7 +105,7 @@ const EventRegistrationsModal = ({ event, isOpen, onClose, user }) => {
         )}
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-y-auto scrollbar-none p-2" style={{ maxHeight: '50vh' }}>
           {loading ? (
             <div className="flex items-center justify-center py-8">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
@@ -117,9 +117,9 @@ const EventRegistrationsModal = ({ event, isOpen, onClose, user }) => {
               <p className="text-gray-600">No users registered for this event yet.</p>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-2">
               {registrations.map((user) => (
-                <div key={user.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div key={user.id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
                   <div className="flex items-center space-x-4">
                     {/* User Avatar */}
                     <div className="flex-shrink-0">
@@ -127,37 +127,34 @@ const EventRegistrationsModal = ({ event, isOpen, onClose, user }) => {
                         <img
                           src={user.photoUrl}
                           alt={user.fullName}
-                          className="h-10 w-10 rounded-full object-cover"
+                          className="h-7 w-7 rounded-full object-cover"
                         />
                       ) : (
-                        <div className="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center">
-                          <UserIcon className="h-5 w-5 text-indigo-600" />
+                        <div className="h-7 w-7 rounded-full bg-indigo-100 flex items-center justify-center">
+                          <UserIcon className="h-4 w-4 text-indigo-600" />
                         </div>
                       )}
                     </div>
 
                     {/* User Details */}
                     <div className="flex-1">
-                      <div className="flex items-center space-x-2">
-                        <h3 className="font-medium text-gray-900">{user.fullName}</h3>
-                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                      <div className="flex items-center space-x-1">
+                        <h3 className="font-medium text-gray-900 text-sm">{user.fullName}</h3>
+                        <span className="inline-flex items-center px-1 py-0.5 rounded-full text-[10px] font-medium bg-indigo-100 text-indigo-800">
                           {formatRole(user.role)}
                         </span>
                       </div>
-                      
-                      <div className="flex items-center text-sm text-gray-600 mt-1">
-                        <EnvelopeIcon className="h-4 w-4 mr-1" />
+                      <div className="flex items-center text-xs text-gray-600 mt-0.5">
+                        <EnvelopeIcon className="h-3 w-3 mr-1" />
                         {user.email}
                       </div>
-                      
                       {user.roleDetails && (
-                        <div className="text-sm text-gray-500 mt-1">
+                        <div className="text-xs text-gray-500 mt-0.5">
                           {getRoleDetails(user)}
                         </div>
                       )}
-                      
                       {user.department && (
-                        <div className="text-sm text-gray-500">
+                        <div className="text-xs text-gray-500">
                           Department: {user.department}
                         </div>
                       )}
@@ -171,30 +168,28 @@ const EventRegistrationsModal = ({ event, isOpen, onClose, user }) => {
 
         {/* Pagination */}
         {pagination && pagination.totalPages > 1 && (
-          <div className="flex items-center justify-between px-6 py-4 border-t bg-gray-50">
-            <div className="text-sm text-gray-600">
+          <div className="flex items-center justify-between px-3 py-2 border-t bg-gray-50">
+            <div className="text-xs text-gray-600">
               Showing {((pagination.currentPage - 1) * pagination.usersPerPage) + 1} to{' '}
               {Math.min(pagination.currentPage * pagination.usersPerPage, pagination.totalUsers)} of{' '}
               {pagination.totalUsers} users
             </div>
             
-            <div className="flex space-x-2">
+            <div className="flex space-x-1">
               <button
                 onClick={() => handlePageChange(pagination.currentPage - 1)}
                 disabled={!pagination.hasPreviousPage}
-                className="px-3 py-1 text-sm border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
+                className="px-2 py-0.5 text-xs border rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
               >
                 Previous
               </button>
-              
-              <span className="px-3 py-1 text-sm">
+              <span className="px-2 py-0.5 text-xs">
                 Page {pagination.currentPage} of {pagination.totalPages}
               </span>
-              
               <button
                 onClick={() => handlePageChange(pagination.currentPage + 1)}
                 disabled={!pagination.hasNextPage}
-                className="px-3 py-1 text-sm border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
+                className="px-2 py-0.5 text-xs border rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
               >
                 Next
               </button>

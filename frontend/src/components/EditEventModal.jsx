@@ -96,20 +96,20 @@ const EditEventModal = ({ isOpen, onClose, event, onEventUpdated }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center p-2 sm:p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-lg sm:max-w-md p-2 sm:p-6">
-        <div className="flex justify-between items-center mb-4">
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center p-1 sm:p-2">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-md sm:max-w-lg p-2 sm:p-4 max-h-[80vh] overflow-y-auto scrollbar-none">
+        <div className="flex justify-between items-center mb-2">
           <h2 className="text-base sm:text-lg font-bold">Edit Event</h2>
           <button onClick={onClose}><XMarkIcon className="h-6 w-6" /></button>
         </div>
-        <form onSubmit={handleSubmit} className="space-y-4 max-h-[70vh] overflow-y-auto pr-1 sm:pr-2">
+        <form onSubmit={handleSubmit} className="space-y-2 sm:space-y-4 max-h-[60vh] overflow-y-auto pr-1 sm:pr-2 text-sm sm:text-base">
           {/* Photo Upload */}
           <div>
             <label className="block text-sm font-medium text-gray-700">Event Photo</label>
             <div className="flex items-center gap-4 mt-1">
               <div className="w-20 h-20 rounded bg-gray-100 flex items-center justify-center overflow-hidden border">
                 {photoPreview ? (
-                  <img src={photoPreview} alt="Event" className="object-cover w-full h-full" />
+                  <img src={photoPreview} alt="Event" className="object-cover w-full h-full" loading="lazy" />
                 ) : (
                   <span className="text-gray-400 text-xs">No Photo</span>
                 )}

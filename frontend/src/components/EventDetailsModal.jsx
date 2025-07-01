@@ -65,10 +65,10 @@ const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
     event.registeredUsers.length >= event.maxCapacity;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-2 sm:p-4 z-50">
-      <div className="bg-white rounded-lg w-full max-w-2xl sm:max-w-lg max-h-[90vh] overflow-y-auto p-2 sm:p-6">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-1 sm:p-2 z-50">
+      <div className="bg-white rounded-lg w-full max-w-md sm:max-w-lg max-h-[80vh] overflow-y-auto scrollbar-none p-2 sm:p-4">
         {/* Header */}
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-2">
           <h2 className="text-base sm:text-lg font-bold text-gray-900">Event Details</h2>
           <button
             onClick={onClose}
@@ -79,12 +79,13 @@ const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
         </div>
 
         {/* Event Image */}
-        <div className="relative h-64 bg-gray-200">
+        <div className="relative h-40 sm:h-64 bg-gray-200">
           {event.imageUrl ? (
             <img 
               src={event.imageUrl} 
               alt={event.name}
               className="w-full h-full object-cover"
+              loading="lazy"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-100 to-indigo-200">
@@ -115,14 +116,14 @@ const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
         </div>
 
         {/* Event Content */}
-        <div className="p-6">
+        <div className="p-2 sm:p-4">
           {/* Event Title */}
-          <h3 className="text-2xl font-bold text-gray-900 mb-4">
+          <h3 className="text-lg sm:text-2xl font-bold text-gray-900 mb-2 sm:mb-4">
             {event.name}
           </h3>
 
           {/* Event Details */}
-          <div className="space-y-4 mb-6">
+          <div className="space-y-2 sm:space-y-4 mb-4 sm:mb-6">
             <div className="flex items-center text-gray-600">
               <CalendarIcon className="h-5 w-5 mr-3 text-gray-400" />
               <span className="font-medium">{formatDate(event.date)}</span>
@@ -145,14 +146,12 @@ const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
           </div>
 
           {/* Event Description */}
-          {event.description && (
-            <div className="mb-6">
-              <h4 className="text-lg font-semibold text-gray-900 mb-2">Description</h4>
-              <p className="text-gray-600 leading-relaxed">
-                {event.description}
-              </p>
-            </div>
-          )}
+          <div className="mb-4 sm:mb-6">
+            <h4 className="text-base sm:text-lg font-semibold text-gray-900 mb-1 sm:mb-2">Description</h4>
+            <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
+              {event.description}
+            </p>
+          </div>
 
           {/* Guest User CTA */}
           {!user && (
@@ -173,7 +172,7 @@ const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
           )}
 
           {/* Close Button */}
-          <div className="mt-6 flex flex-col sm:flex-row justify-end gap-2">
+          <div className="mt-4 flex flex-col sm:flex-row justify-end gap-2">
             <button
               onClick={onClose}
               className="px-4 py-2 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition-colors w-full sm:w-auto"

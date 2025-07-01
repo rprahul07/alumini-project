@@ -279,11 +279,11 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated, isMobileModal }) =>
   };
 
   return (
-    <div className={`fixed inset-0 bg-black bg-opacity-50 flex items-end sm:items-center justify-center p-0 sm:p-4 z-50`}>
-      <div className={`bg-white w-full max-w-full sm:max-w-4xl max-h-[90vh] overflow-y-auto ${isMobileModal ? 'rounded-t-2xl sm:rounded-lg' : 'rounded-lg'} ${isMobileModal ? 'pb-2 pt-3 px-2' : 'p-6'}`}>
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center p-1 sm:p-2">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-auto p-3 max-h-[80vh] overflow-y-auto scrollbar-none">
         {/* Header */}
-        <div className={`flex items-center justify-between ${isMobileModal ? 'px-3 pt-2 pb-2' : 'p-6'} border-b`}>
-          <h2 className={`text-lg sm:text-2xl font-bold text-gray-900`}>Create New Event</h2>
+        <div className="flex justify-between items-center mb-2">
+          <h2 className="text-lg sm:text-2xl font-bold text-gray-900">Create New Event</h2>
           <button
             onClick={handleClose}
             className="text-gray-400 hover:text-gray-600 transition-colors rounded-full p-2"
@@ -293,7 +293,7 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated, isMobileModal }) =>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className={`${isMobileModal ? 'px-3 py-2' : 'p-6'}`}>
+        <form onSubmit={handleSubmit} className="space-y-2 max-h-[60vh] overflow-y-auto pr-1 text-sm">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             {/* Event Name */}
             <div className="md:col-span-2">
@@ -306,9 +306,7 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated, isMobileModal }) =>
                 name="name"
                 value={formData.name}
                 onChange={handleInputChange}
-                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 ${errors.name ? 'border-red-500' : 'border-gray-300'} text-sm`}
-                placeholder="Enter event name"
-                maxLength={200}
+                className="mt-1 block w-full rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3"
               />
               {errors.name && <p className="mt-1 text-xs text-red-600">{errors.name}</p>}
             </div>

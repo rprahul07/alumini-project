@@ -267,52 +267,25 @@ const FacultyDashboard = () => {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen font-roboto">
+      <div className="min-h-screen font-roboto bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Welcome Section */}
-          <div className="mb-4 mt-0">
-            <h1 className="text-lg font-semibold text-gray-700 leading-tight">
-              Welcome back, <span className="text-purple-500 font-bold">{user?.fullName || 'Professor'}</span>!
-            </h1>
-            <p className="text-base text-gray-500 mt-1">
-              Your comprehensive dashboard for academic oversight and community engagement.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-10">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-3">
             {/* Left Column - Profile and Navigation */}
-            <aside className="lg:col-span-1 space-y-8" aria-label="Sidebar and profile section">
+            <aside className="lg:col-span-1 space-y-4" aria-label="Sidebar and profile section">
               <ProfileCard />
               <Sidebar />
             </aside>
             {/* Right Column - Main Content */}
-            <main className="lg:col-span-3 space-y-10">
-              {/* Quick Stats */}
-              <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <StatCard
-                  title="Your Students"
-                  value="156"
-                  Icon={AcademicCapIcon}
-                  color="blue"
-                  progress={75}
-                  progressText="75% average attendance"
-                />
-                <StatCard
-                  title="Research Projects"
-                  value="8"
-                  Icon={BookOpenIcon}
-                  color="green"
-                  progress={60}
-                  progressText="60% projects in progress"
-                />
-                <StatCard
-                  title="Pending Approvals"
-                  value={pendingRegistrations.length}
-                  Icon={ClipboardDocumentListIcon}
-                  color="red"
-                  progress={100}
-                  progressText="Alumni registrations awaiting review"
-                />
-              </section>
+            <main className="lg:col-span-3 space-y-5">
+              {/* Welcome Section */}
+              <div className="mb-3 mt-5 bg-white rounded-xl p-5">
+                <h1 className="text-2xl font-semibold text-gray-800 tracking-tight pt-0">
+                  Welcome back, <span className="text-purple-500 font-bold">{user?.fullName || 'Professor'}</span>!
+                </h1>
+                <p className="text-base text-gray-500">
+                  Your comprehensive dashboard for academic oversight and community engagement.
+                </p>
+              </div>
               {/* Main Content Rows */}
               <section className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Upcoming Events Section */}

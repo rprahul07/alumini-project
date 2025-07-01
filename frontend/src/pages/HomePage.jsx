@@ -215,7 +215,7 @@ const HomePage = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="stat-card bg-white rounded-xl p-6 text-center shadow-md relative overflow-hidden hover:shadow-lg transition-shadow">
                 <div className="absolute top-0 left-0 w-full h-1 bg-[#5A32EA]"></div>
-                <div className="stat-number text-4xl font-bold text-[#5A32EA] mb-2">
+                <div className="stat-number text-4xl font-bold text-black mb-2">
                   {animatedStats.alumniMembers.toLocaleString()}
                 </div>
                 <div className="stat-label text-sm text-gray-600 uppercase tracking-wider">
@@ -224,7 +224,7 @@ const HomePage = () => {
               </div>
               <div className="stat-card bg-white rounded-xl p-6 text-center shadow-md relative overflow-hidden hover:shadow-lg transition-shadow">
                 <div className="absolute top-0 left-0 w-full h-1 bg-[#5A32EA]"></div>
-                <div className="stat-number text-4xl font-bold text-[#5A32EA] mb-2">
+                <div className="stat-number text-4xl font-bold text-black mb-2">
                   {animatedStats.activeUsers.toLocaleString()}
                 </div>
                 <div className="stat-label text-sm text-gray-600 uppercase tracking-wider">
@@ -233,7 +233,7 @@ const HomePage = () => {
               </div>
               <div className="stat-card bg-white rounded-xl p-6 text-center shadow-md relative overflow-hidden hover:shadow-lg transition-shadow">
                 <div className="absolute top-0 left-0 w-full h-1 bg-[#5A32EA]"></div>
-                <div className="stat-number text-4xl font-bold text-[#5A32EA] mb-2">
+                <div className="stat-number text-4xl font-bold text-black mb-2">
                   {animatedStats.eventsHosted.toLocaleString()}
                 </div>
                 <div className="stat-label text-sm text-gray-600 uppercase tracking-wider">

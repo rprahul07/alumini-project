@@ -46,20 +46,6 @@ const RoleSpecificProfileForm = ({ role, formData, handleChange, setFormData }) 
               className="block w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
             />
           </div>
-          <div className="mb-4">
-            <label htmlFor="linkedinUrl" className="block text-sm font-medium text-gray-700 mb-1">
-              LinkedIn Profile URL
-            </label>
-            <input
-              type="url"
-              id="linkedinUrl"
-              name="linkedinUrl"
-              value={formData.linkedinUrl || ''}
-              onChange={handleChange}
-              className="block w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
-              placeholder="e.g., https://linkedin.com/in/yourprofile"
-            />
-          </div>
         </>
       )}
 
@@ -115,20 +101,6 @@ const RoleSpecificProfileForm = ({ role, formData, handleChange, setFormData }) 
               value={formData.companyName}
               onChange={handleChange}
               className="block w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
-            />
-          </div>
-          <div className="mb-4">
-            <label htmlFor="linkedInProfile" className="block text-sm font-medium text-gray-700 mb-1">
-              LinkedIn Profile URL
-            </label>
-            <input
-              type="url"
-              id="linkedInProfile"
-              name="linkedInProfile"
-              value={formData.linkedInProfile}
-              onChange={handleChange}
-              className="block w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
-              placeholder="e.g., https://linkedin.com/in/yourprofile"
             />
           </div>
         </>

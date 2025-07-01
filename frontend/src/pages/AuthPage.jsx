@@ -132,7 +132,7 @@ const AuthPage = () => {
                 required
                 value={formData.department}
                 onChange={handleInputChange}
-                className="input pl-10"
+                className="input pl-10 text-sm rounded-md w-full py-2 px-3 border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
                 placeholder="Department"
               />
               {iconMap.department}
@@ -181,7 +181,7 @@ const AuthPage = () => {
                 required
                 value={formData.department}
                 onChange={handleInputChange}
-                className="input pl-10"
+                className="input pl-10 text-sm rounded-md w-full py-2 px-3 border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
                 placeholder="Department"
               />
               {iconMap.department}
@@ -242,7 +242,7 @@ const AuthPage = () => {
                 required
                 value={formData.department}
                 onChange={handleInputChange}
-                className="input pl-10"
+                className="input pl-10 text-sm rounded-md w-full py-2 px-3 border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
                 placeholder="Department"
               />
               {iconMap.department}
@@ -269,155 +269,145 @@ const AuthPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="card border border-gray-100 rounded-2xl shadow-card hover:shadow-card-hover transition-shadow duration-200 w-full max-w-md p-8 sm:p-10 relative">
-        {/* Role badge */}
-        {selectedRole && (
-          <div className={`absolute -top-4 left-6 px-3 py-0.5 rounded-full shadow-sm text-xs font-semibold border ${roleColors[selectedRole] || 'bg-gray-50 text-gray-700'}`}
-            style={{ zIndex: 2 }}
-          >
-            {authType === 'login' ? 'Logging in as:' : 'Registering as:'} {roleLabels[selectedRole] || selectedRole}
-          </div>
-        )}
-        <div className="flex flex-col items-center mb-6 mt-2">
-          <h2 className="text-2xl font-bold text-gray-900 mb-1 tracking-tight">{authType === 'login' ? 'Welcome Back!' : 'Create Account'}</h2>
-          <p className="text-sm text-gray-500 mb-2">{authType === 'login' ? 'Sign in to access your account' : 'Join our community and connect with others'}</p>
-          {/* Auth Type Toggle */}
-          <div className="flex justify-center space-x-2 mt-2 mb-2">
-            <button
-              type="button"
-              onClick={() => setAuthType('login')}
-              className={`btn ${authType === 'login' ? 'btn-primary' : 'btn-secondary'}`}
-            >
-              Login
-            </button>
-            <button
-              type="button"
-              onClick={() => setAuthType('register')}
-              className={`btn ${authType === 'register' ? 'btn-primary' : 'btn-secondary'}`}
-            >
-              Register
-            </button>
-          </div>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 py-8 px-4">
+      <div className="max-w-md w-full space-y-6 p-6 bg-white rounded-xl shadow-lg border border-gray-100">
+        <div>
+          <h2 className="text-center text-2xl font-bold text-gray-900 mb-1">{authType === 'login' ? 'Sign in' : 'Register'} to your account</h2>
+          <p className="text-center text-gray-500 text-base mb-4">Welcome to the Alumni Portal</p>
         </div>
-        <form className="space-y-4" onSubmit={handleSubmit} autoComplete="off">
+        <form className="space-y-4" onSubmit={handleSubmit}>
           {authType === 'register' && (
-            <div className="form-group relative">
-              <label className="label" htmlFor="fullName">Full Name</label>
-              <input
-                id="fullName"
-                name="fullName"
-                type="text"
-                required
-                value={formData.fullName}
-                onChange={handleInputChange}
-                className="input pl-10"
-                placeholder="Full Name"
-              />
-              {iconMap.fullName}
+            <div className="relative">
+              <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="fullName">Full Name</label>
+              <div className="relative">
+                <input
+                  id="fullName"
+                  name="fullName"
+                  type="text"
+                  required
+                  value={formData.fullName}
+                  onChange={handleInputChange}
+                  className="h-12 pl-12 pr-4 w-full bg-gray-100 border border-gray-300 rounded-lg text-lg placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                  placeholder="Full Name"
+                />
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">{iconMap.fullName}</span>
+              </div>
             </div>
           )}
-          <div className="form-group relative">
-            <label className="label" htmlFor="email">Email</label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              required
-              value={formData.email}
-              onChange={handleInputChange}
-              className="input pl-10"
-              placeholder="Email"
-            />
-            {iconMap.email}
+          <div className="relative">
+            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="email">Email</label>
+            <div className="relative">
+              <input
+                id="email"
+                name="email"
+                type="email"
+                required
+                value={formData.email}
+                onChange={handleInputChange}
+                className="h-12 pl-12 pr-4 w-full bg-gray-100 border border-gray-300 rounded-lg text-lg placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                placeholder="Email"
+              />
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">{iconMap.email}</span>
+            </div>
           </div>
           {authType === 'register' && (
-            <div className="form-group relative">
-              <label className="label" htmlFor="phoneNumber">Phone Number</label>
-              <input
-                id="phoneNumber"
-                name="phoneNumber"
-                type="tel"
-                required
-                value={formData.phoneNumber}
-                onChange={handleInputChange}
-                className="input pl-10"
-                placeholder="Phone Number"
-              />
-              {iconMap.phoneNumber}
+            <div className="relative">
+              <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="phoneNumber">Phone Number</label>
+              <div className="relative">
+                <input
+                  id="phoneNumber"
+                  name="phoneNumber"
+                  type="tel"
+                  required
+                  value={formData.phoneNumber}
+                  onChange={handleInputChange}
+                  className="h-12 pl-12 pr-4 w-full bg-gray-100 border border-gray-300 rounded-lg text-lg placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                  placeholder="Phone Number"
+                />
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">{iconMap.phoneNumber}</span>
+              </div>
             </div>
           )}
-          <div className="form-group relative">
-            <label className="label" htmlFor="password">Password</label>
-            <input
-              id="password"
-              name="password"
-              type={showPassword ? 'text' : 'password'}
-              required
-              value={formData.password}
-              onChange={handleInputChange}
-              className="input pl-10 pr-10"
-              placeholder="Password"
-            />
-            {iconMap.password}
-            <button
-              type="button"
-              tabIndex={-1}
-              onClick={() => setShowPassword((show) => !show)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 focus:outline-none"
-              aria-label={showPassword ? 'Hide password' : 'Show password'}
-            >
-              {showPassword ? <FiEyeOff /> : <FiEye />}
-            </button>
-          </div>
-          {authType === 'register' && (
-            <div className="form-group relative">
-              <label className="label" htmlFor="confirmPassword">Confirm Password</label>
+          <div className="relative">
+            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="password">Password</label>
+            <div className="relative">
               <input
-                id="confirmPassword"
-                name="confirmPassword"
+                id="password"
+                name="password"
                 type={showPassword ? 'text' : 'password'}
                 required
-                value={formData.confirmPassword}
+                value={formData.password}
                 onChange={handleInputChange}
-                className="input pl-10 pr-10"
-                placeholder="Confirm Password"
+                className="h-12 pl-12 pr-12 w-full bg-gray-100 border border-gray-300 rounded-lg text-lg placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                placeholder="Password"
               />
-              {iconMap.confirmPassword}
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">{iconMap.password}</span>
               <button
                 type="button"
                 tabIndex={-1}
                 onClick={() => setShowPassword((show) => !show)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 focus:outline-none"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 focus:outline-none"
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
               >
                 {showPassword ? <FiEyeOff /> : <FiEye />}
               </button>
             </div>
+          </div>
+          {authType === 'register' && (
+            <div className="relative">
+              <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="confirmPassword">Confirm Password</label>
+              <div className="relative">
+                <input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type={showPassword ? 'text' : 'password'}
+                  required
+                  value={formData.confirmPassword}
+                  onChange={handleInputChange}
+                  className="h-12 pl-12 pr-12 w-full bg-gray-100 border border-gray-300 rounded-lg text-lg placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                  placeholder="Confirm Password"
+                />
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">{iconMap.confirmPassword}</span>
+                <button
+                  type="button"
+                  tabIndex={-1}
+                  onClick={() => setShowPassword((show) => !show)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 focus:outline-none"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? <FiEyeOff /> : <FiEye />}
+                </button>
+              </div>
+            </div>
           )}
           {/* Role-specific fields */}
-          {authType === 'register' && renderRoleSpecificFields()}
+          {authType === 'register' && (
+            <>
+              <div className="border-t border-gray-200 my-2"></div>
+              <div className="space-y-4">{renderRoleSpecificFields()}</div>
+            </>
+          )}
           {/* Error message */}
           {(formError || error) && (
-            <div className="error-message text-center animate-pulse">
+            <div className="text-red-600 mt-2 text-center text-sm font-medium animate-pulse">
               {formError || error}
             </div>
           )}
           <button
             type="submit"
-            className="btn btn-primary w-full mt-2 shadow"
+            className="h-12 w-full bg-indigo-600 text-white rounded-lg font-semibold text-base shadow hover:bg-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed mt-2"
             disabled={loading}
           >
             {loading ? 'Please wait...' : authType === 'login' ? 'Login' : 'Register'}
           </button>
         </form>
-        <div className="text-center mt-6">
-          <span className="text-gray-600 text-sm">
+        <div className="text-center mt-4">
+          <span className="text-gray-600 text-base">
             {authType === 'login' ? "Don't have an account?" : 'Already have an account?'}{' '}
           </span>
           <button
             onClick={() => { setAuthType(authType === 'login' ? 'register' : 'login'); setFormError(''); clearError(); }}
-            className="text-indigo-600 hover:underline font-semibold text-sm focus:outline-none"
+            className="text-indigo-600 hover:underline font-semibold text-base focus:outline-none ml-1"
           >
             {authType === 'login' ? 'Register' : 'Login'}
           </button>

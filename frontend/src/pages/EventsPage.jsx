@@ -83,8 +83,10 @@ const EventsPage = () => {
 
   // Fetch events when component mounts or filters change
   useEffect(() => {
-    fetchEvents();
-  }, [currentPage, searchTerm, selectedDepartment, selectedType, sortBy, sortOrder]);
+    if (!authLoading) {
+      fetchEvents();
+    }
+  }, [authLoading, currentPage, searchTerm, selectedDepartment, selectedType, sortBy, sortOrder]);
 
   // Handle search
   const handleSearch = (term) => {

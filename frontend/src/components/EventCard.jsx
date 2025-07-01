@@ -118,6 +118,7 @@ const EventCard = ({ event, user, onEventUpdate, showEdit, showDelete, onEdit, o
               src={event.imageUrl} 
               alt={event.name}
               className="w-full h-full object-cover"
+              loading="lazy"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-100 to-indigo-200">
@@ -134,8 +135,8 @@ const EventCard = ({ event, user, onEventUpdate, showEdit, showDelete, onEdit, o
             </div>
           )}
 
-          {/* Registration/Capacity Badge - only show for logged-in users */}
-          {!sm && isLoggedIn && (
+          {/* Registration/Capacity Badge - only show for logged-in users and not for admin */}
+          {!sm && isLoggedIn && user?.role !== 'admin' && (
             <div className="absolute top-3 right-3 z-10">
               <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold shadow-sm ${
                 maxCapacity
