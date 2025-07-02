@@ -19,6 +19,7 @@ import apiService from "../../middleware/api";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import Navbar from "../../components/Navbar";
+import AlumniEventSubmissions from "../../components/AlumniEventSubmissions";
 
 // --- ProtectedRoute Component ---
 const ProtectedRoute = ({ children }) => {
@@ -79,11 +80,11 @@ const ProtectedRoute = ({ children }) => {
 };
 
 // --- Sidebar Component ---
-const Sidebar = ({ onNavigate }) => {
+const Sidebar = ({ onNavigate, onEventSectionChange, activeView, eventSection }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isUserManagementExpanded, setIsUserManagementExpanded] =
     useState(false);
-
+  const [isEventManagementExpanded, setIsEventManagementExpanded] = useState(false);
   // Main menu items
   const mainMenuItems = [
     { title: "Dashboard", icon: FiHome, view: "dashboard" },
@@ -96,8 +97,17 @@ const Sidebar = ({ onNavigate }) => {
     { title: "Faculty", icon: FiUser, view: "faculty" },
   ];
 
-  const handleNavigationClick = (view) => {
+  const eventManagementItems = [
+    { title: "Alumni Events", icon: FiBriefcase, view: "event-management", section: "alumni" },
+    { title: "Faculty Events", icon: FiUser, view: "event-management", section: "faculty" },
+    { title: "Admin Events", icon: FiShield, view: "event-management", section: "admin" },
+  ];
+
+  const handleNavigationClick = (view, section) => {
     onNavigate(view);
+    if (view === "event-management" && section) {
+      onEventSectionChange(section);
+    }
     setIsOpen(false);
   };
 
@@ -109,23 +119,15 @@ const Sidebar = ({ onNavigate }) => {
           onClick={() => setIsOpen(!isOpen)}
           className="p-2 text-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
         >
-          {isOpen ? (
-            <FiX className="h-6 w-6" />
-          ) : (
-            <FiMenu className="h-6 w-6" />
-          )}
+          {isOpen ? <FiX className="h-6 w-6" /> : <FiMenu className="h-6 w-6" />}
         </button>
       </div>
-
-      {/* Sidebar backdrop for mobile */}
       {isOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
           onClick={() => setIsOpen(false)}
         ></div>
       )}
-
-      {/* Sidebar */}
       <aside
         className={`fixed inset-y-0 left-0 w-64 bg-white shadow-xl transform ${
           isOpen ? "translate-x-0" : "-translate-x-full"
@@ -149,18 +151,17 @@ const Sidebar = ({ onNavigate }) => {
                 <li key={item.title} className="mb-3">
                   <button
                     onClick={() => handleNavigationClick(item.view)}
-                    className="w-full text-left flex items-center space-x-3 p-3 text-gray-700 rounded-xl hover:bg-indigo-50 hover:text-indigo-700 transition-colors duration-200 group"
+                    className={`w-full text-left flex items-center space-x-3 p-3 text-gray-700 rounded-xl hover:bg-indigo-50 hover:text-indigo-700 transition-colors duration-200 group ${activeView === item.view ? 'bg-indigo-100' : ''}`}
                   >
                     <item.icon className="h-6 w-6 text-gray-500 group-hover:text-indigo-600" />
                     <span className="font-medium">{item.title}</span>
                   </button>
                 </li>
               ))}
+              {/* User Management Dropdown */}
               <li className="mb-3">
                 <button
-                  onClick={() =>
-                    setIsUserManagementExpanded(!isUserManagementExpanded)
-                  }
+                  onClick={() => setIsUserManagementExpanded(!isUserManagementExpanded)}
                   className="w-full text-left flex items-center justify-between space-x-3 p-3 text-gray-700 rounded-xl hover:bg-indigo-50 hover:text-indigo-700 transition-colors duration-200 group"
                 >
                   <div className="flex items-center space-x-3">
@@ -168,9 +169,7 @@ const Sidebar = ({ onNavigate }) => {
                     <span className="font-medium">User Management</span>
                   </div>
                   <svg
-                    className={`h-5 w-5 transition-transform duration-200 ${
-                      isUserManagementExpanded ? "rotate-90" : ""
-                    }`}
+                    className={`h-5 w-5 transition-transform duration-200 ${isUserManagementExpanded ? "rotate-90" : ""}`}
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -189,7 +188,47 @@ const Sidebar = ({ onNavigate }) => {
                       <li key={item.title}>
                         <button
                           onClick={() => handleNavigationClick(item.view)}
-                          className="w-full text-left flex items-center space-x-3 p-2 text-gray-600 rounded-lg hover:bg-indigo-100 hover:text-indigo-800 transition-colors duration-200"
+                          className={`w-full text-left flex items-center space-x-3 p-2 text-gray-600 rounded-lg hover:bg-indigo-100 hover:text-indigo-800 transition-colors duration-200 ${activeView === item.view ? 'bg-indigo-100' : ''}`}
+                        >
+                          <item.icon className="h-5 w-5 text-gray-400" />
+                          <span className="text-sm">{item.title}</span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </li>
+              {/* Event Management Dropdown */}
+              <li className="mb-3">
+                <button
+                  onClick={() => setIsEventManagementExpanded(!isEventManagementExpanded)}
+                  className="w-full text-left flex items-center justify-between space-x-3 p-3 text-gray-700 rounded-xl hover:bg-indigo-50 hover:text-indigo-700 transition-colors duration-200 group"
+                >
+                  <div className="flex items-center space-x-3">
+                    <FiBell className="h-6 w-6 text-gray-500 group-hover:text-indigo-600" />
+                    <span className="font-medium">Event Management</span>
+                  </div>
+                  <svg
+                    className={`h-5 w-5 transition-transform duration-200 ${isEventManagementExpanded ? "rotate-90" : ""}`}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </button>
+                {isEventManagementExpanded && (
+                  <ul className="ml-8 mt-2 space-y-2">
+                    {eventManagementItems.map((item) => (
+                      <li key={item.title}>
+                        <button
+                          onClick={() => handleNavigationClick(item.view, item.section)}
+                          className={`w-full text-left flex items-center space-x-3 p-2 text-gray-600 rounded-lg hover:bg-indigo-100 hover:text-indigo-800 transition-colors duration-200 ${(activeView === item.view && eventSection === item.section) ? 'bg-indigo-100' : ''}`}
                         >
                           <item.icon className="h-5 w-5 text-gray-400" />
                           <span className="text-sm">{item.title}</span>
@@ -707,6 +746,7 @@ const AdminDashboard = () => {
   const userData = localStorage.getItem("user");
   const user = userData ? JSON.parse(userData) : null;
   const [activeView, setActiveView] = useState("dashboard");
+  const [eventSection, setEventSection] = useState("alumni");
   const [dashboardStats, setDashboardStats] = useState(null);
   const [adminProfile, setAdminProfile] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -1102,6 +1142,10 @@ const AdminDashboard = () => {
             />
           )
         );
+      case "event-management":
+        return (
+          <AlumniEventSubmissions sectionDefault={eventSection} />
+        ); 
       case "settings":
         return (
           <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
@@ -1130,7 +1174,12 @@ const AdminDashboard = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-3">
           <aside className="lg:col-span-1 space-y-4" aria-label="Sidebar and profile section">
-            <Sidebar onNavigate={setActiveView} />
+            <Sidebar
+              onNavigate={setActiveView}
+              onEventSectionChange={setEventSection}
+              activeView={activeView}
+              eventSection={eventSection}
+            />
           </aside>
             <main className="lg:col-span-3 space-y-5 py-8">
             {renderContent()}
@@ -1140,7 +1189,7 @@ const AdminDashboard = () => {
     </div>
     </>
   );
-};
+};  
 
 // --- Main App Component ---
 export default function App() {
@@ -1149,4 +1198,4 @@ export default function App() {
       <AdminDashboard />
     </ProtectedRoute>
   );
-} 
+}
