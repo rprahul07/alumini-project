@@ -1124,19 +1124,21 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen font-roboto bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <Navbar />
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-3">
-          <aside className="lg:col-span-1 space-y-4" aria-label="Sidebar and profile section">
-            <Sidebar onNavigate={setActiveView} />
-          </aside>
-          <main className="lg:col-span-3 space-y-5">
-            {renderContent()}
-          </main>
+    <>
+      <Navbar />
+      <div className="min-h-screen font-roboto bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-3">
+            <aside className="lg:col-span-1 space-y-4" aria-label="Sidebar and profile section">
+              <Sidebar onNavigate={setActiveView} />
+            </aside>
+            <main className="lg:col-span-3 space-y-5 py-8">
+              {renderContent()}
+            </main>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
