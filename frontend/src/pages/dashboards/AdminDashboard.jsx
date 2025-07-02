@@ -1024,6 +1024,73 @@ const AdminDashboard = () => {
               </p>
             </div>
 
+            {/* --- Statistics Cards (Redesigned) --- */}
+            {dashboardStats && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
+                {/* Total Users */}
+                <div className="flex items-center bg-white shadow-md rounded-xl p-4 border-t-8 border-indigo-500 transition-transform transform hover:scale-105">
+                  <div className="flex-shrink-0 mr-4">
+                    <div className="bg-indigo-100 p-3 rounded-full">
+                      <FiUsers className="text-indigo-600 text-2xl" />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-gray-800">{dashboardStats.totalUsers}</div>
+                    <div className="text-gray-500 text-sm">Total Users</div>
+                  </div>
+                </div>
+                {/* Alumni */}
+                <div className="flex items-center bg-white shadow-md rounded-xl p-4 border-t-8 border-green-500 transition-transform transform hover:scale-105">
+                  <div className="flex-shrink-0 mr-4">
+                    <div className="bg-green-100 p-3 rounded-full">
+                      <FiBriefcase className="text-green-600 text-2xl" />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-gray-800">{dashboardStats.totalAlumni}</div>
+                    <div className="text-gray-500 text-sm">Alumni</div>
+                  </div>
+                </div>
+                {/* Students */}
+                <div className="flex items-center bg-white shadow-md rounded-xl p-4 border-t-8 border-blue-500 transition-transform transform hover:scale-105">
+                  <div className="flex-shrink-0 mr-4">
+                    <div className="bg-blue-100 p-3 rounded-full">
+                      <FiBook className="text-blue-600 text-2xl" />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-gray-800">{dashboardStats.totalStudents}</div>
+                    <div className="text-gray-500 text-sm">Students</div>
+                  </div>
+                </div>
+                {/* Faculty */}
+                <div className="flex items-center bg-white shadow-md rounded-xl p-4 border-t-8 border-yellow-500 transition-transform transform hover:scale-105">
+                  <div className="flex-shrink-0 mr-4">
+                    <div className="bg-yellow-100 p-3 rounded-full">
+                      <FiUser className="text-yellow-600 text-2xl" />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-gray-800">{dashboardStats.totalFaculty}</div>
+                    <div className="text-gray-500 text-sm">Faculty</div>
+                  </div>
+                </div>
+                {/* Admins */}
+                <div className="flex items-center bg-white shadow-md rounded-xl p-4 border-t-8 border-pink-500 transition-transform transform hover:scale-105">
+                  <div className="flex-shrink-0 mr-4">
+                    <div className="bg-pink-100 p-3 rounded-full">
+                      <FiShield className="text-pink-600 text-2xl" />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-gray-800">{dashboardStats.totalAdmins}</div>
+                    <div className="text-gray-500 text-sm">Admins</div>
+                  </div>
+                </div>
+              </div>
+            )}
+            {/* --- End Statistics Cards (Redesigned) --- */}
+
             <UserVerificationTable
               users={usersToVerify}
               onVerify={handleVerifyUser}
@@ -1101,9 +1168,10 @@ const AdminDashboard = () => {
   };
 
   return (
+    <>
+      <Navbar />
     <div className="min-h-screen font-roboto bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <Navbar />
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-3">
           <aside className="lg:col-span-1 space-y-4" aria-label="Sidebar and profile section">
             <Sidebar
@@ -1113,12 +1181,13 @@ const AdminDashboard = () => {
               eventSection={eventSection}
             />
           </aside>
-          <main className="lg:col-span-3 space-y-5">
+            <main className="lg:col-span-3 space-y-5 py-8">
             {renderContent()}
           </main>
         </div>
       </div>
     </div>
+    </>
   );
 };  
 

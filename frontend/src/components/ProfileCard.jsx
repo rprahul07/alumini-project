@@ -79,14 +79,14 @@ const ProfileCard = () => {
   const twoFields = getTwoFields();
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-8 max-w-sm mx-auto my-10 flex flex-col items-center border border-gray-100">
+    <div className="bg-white rounded-2xl shadow-lg p-6 max-w-xs mx-auto my-6 flex flex-col items-center border border-gray-100">
       <img
         src={user.photoUrl || 'https://via.placeholder.com/150/EEEEEE/888888?text=No+Photo'}
         alt={user.fullName || 'User'}
-        className="w-28 h-28 rounded-full object-cover border-4 border-indigo-200 shadow mb-4"
+        className="w-20 h-20 rounded-full object-cover border-2 border-indigo-200 shadow mb-3"
       />
-      <h2 className="text-2xl font-bold text-gray-900 text-center mb-1">{user.fullName || 'User'}</h2>
-      <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold mb-4 ${
+      <h2 className="text-xl font-bold text-gray-900 text-center mb-1">{user.fullName || 'User'}</h2>
+      <span className={`inline-block px-3 py-1 rounded-full text-sm font-semibold mb-3 ${
         user.role?.toLowerCase() === 'alumni'
           ? 'bg-green-100 text-green-700'
           : user.role?.toLowerCase() === 'student'
@@ -97,7 +97,7 @@ const ProfileCard = () => {
       }`}>
         {getRoleDisplay(user.role)}
       </span>
-      <div className="w-full flex flex-col items-center gap-2 mb-4">
+      <div className="w-full flex flex-col items-center gap-2 mb-3">
         {twoFields.map((field, idx) => (
           <div key={idx} className="text-sm text-gray-700 text-center">
             <span className="font-medium">{field.label}:</span> {field.value || 'N/A'}
@@ -105,7 +105,7 @@ const ProfileCard = () => {
         ))}
       </div>
       {(user.linkedinUrl || user.twitterUrl || user.githubUrl) && (
-        <div className="flex space-x-4 mb-4">
+        <div className="flex space-x-3 mb-3">
           {user.linkedinUrl && (
             <a href={user.linkedinUrl} target="_blank" rel="noopener noreferrer" title="LinkedIn">
               <FiLinkedin className="h-5 w-5 text-indigo-600 hover:text-indigo-800" />
@@ -125,7 +125,7 @@ const ProfileCard = () => {
       )}
       <button
         onClick={() => navigate('/profile/edit')}
-        className="mt-2 w-full flex items-center justify-center space-x-2 text-sm px-4 py-2 bg-indigo-500 text-white rounded-md hover:bg-indigo-600 shadow transition"
+        className="mt-2 w-full flex items-center justify-center space-x-2 text-sm rounded-full px-4 py-1.5 font-semibold bg-indigo-500 text-white hover:bg-indigo-600 shadow transition"
       >
         <FiEdit2 className="h-4 w-4" />
         <span>Edit Profile</span>

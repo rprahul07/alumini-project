@@ -196,7 +196,7 @@ const JobBoard = () => {
           <BriefcaseIcon className="h-6 w-6 text-indigo-600" aria-hidden="true" />
           <h2 className="text-xl font-bold text-gray-900">Recent Job Opportunities</h2>
         </div>
-        <button className="text-sm text-indigo-600 hover:text-indigo-800 flex items-center group" aria-label="View all job opportunities">
+        <button className="rounded-full px-4 py-1.5 text-sm font-semibold text-indigo-600 hover:text-indigo-800 flex items-center group" aria-label="View all job opportunities">
           View All <ArrowRightIcon className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
         </button>
       </div>
@@ -253,7 +253,7 @@ const JobBoard = () => {
                   <div className="text-sm text-gray-700">{job.posted}</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <button className="text-indigo-600 hover:text-indigo-900">Apply</button>
+                  <button className="rounded-full px-4 py-1.5 text-indigo-600 hover:text-indigo-900 font-semibold">Apply</button>
                 </td>
               </tr>
             ))}
@@ -330,7 +330,7 @@ const AlumniDashboard = () => {
                       <CalendarIcon className="h-6 w-6 text-indigo-600" aria-hidden="true" />
                       <h2 id="events-heading" className="text-xl font-bold text-gray-900">Upcoming Events</h2>
                     </div>
-                    <button className="text-sm text-indigo-600 hover:text-indigo-800 flex items-center group" aria-label="View all events">
+                    <button className="rounded-full px-4 py-1.5 text-sm font-semibold text-indigo-600 hover:text-indigo-800 flex items-center group" aria-label="View all events">
                       View All <ArrowRightIcon className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
                     </button>
                   </div>
@@ -346,7 +346,7 @@ const AlumniDashboard = () => {
                       <UserGroupIcon className="h-6 w-6 text-indigo-600" aria-hidden="true" />
                       <h2 id="mentorship-heading" className="text-xl font-bold text-gray-900">Mentorship Requests</h2>
                     </div>
-                    <button className="text-sm text-indigo-600 hover:text-indigo-800 flex items-center group" aria-label="View all mentorship requests">
+                    <button className="rounded-full px-4 py-1.5 text-sm font-semibold text-indigo-600 hover:text-indigo-800 flex items-center group" aria-label="View all mentorship requests">
                       View All <ArrowRightIcon className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
                     </button>
                   </div>

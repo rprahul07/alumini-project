@@ -94,9 +94,9 @@ const AdminAllEventsButton = () => {
 
   return (
     <>
-      <button onClick={handleOpenModal} className="bg-indigo-600 text-white font-semibold rounded-md px-3 py-1.5 text-sm shadow hover:bg-indigo-700 transition-colors">
+      <button onClick={handleOpenModal} className="rounded-full px-4 py-1.5 font-semibold bg-indigo-600 text-white text-sm shadow hover:bg-indigo-700 transition-colors flex items-center gap-2">
         <span className="hidden xs:inline">All Events</span>
-        <CalendarIcon className="h-5 w-5 inline-block xs:ml-0 align-text-bottom" />
+        <CalendarIcon className="h-5 w-5" />
       </button>
 
       {isModalOpen && (
@@ -142,9 +142,9 @@ const AdminAllEventsButton = () => {
                           <div className="text-xs text-gray-400 truncate">{event.location}</div>
                         </div>
                         <div className="flex flex-col gap-1 items-end ml-2">
-                          <button onClick={() => openEventDetails(event)} className="p-1 rounded hover:bg-gray-100" title="View"><EyeIcon className="h-5 w-5 text-indigo-600" /></button>
-                          <button onClick={() => handleEditEvent(event)} className="p-1 rounded hover:bg-gray-100" title="Edit"><PencilIcon className="h-5 w-5 text-green-600" /></button>
-                          <button onClick={() => handleDeleteEvent(event.id)} className="p-1 rounded hover:bg-gray-100" title="Delete" disabled={actionLoading === event.id}><TrashIcon className="h-5 w-5 text-red-600" /></button>
+                          <button onClick={() => openEventDetails(event)} className="rounded-full p-2 hover:bg-gray-100" title="View"><EyeIcon className="h-5 w-5 text-indigo-600" /></button>
+                          <button onClick={() => handleEditEvent(event)} className="rounded-full p-2 hover:bg-gray-100" title="Edit"><PencilIcon className="h-5 w-5 text-green-600" /></button>
+                          <button onClick={() => handleDeleteEvent(event.id)} className="rounded-full p-2 hover:bg-gray-100" title="Delete" disabled={actionLoading === event.id}><TrashIcon className="h-5 w-5 text-red-600" /></button>
                         </div>
                       </div>
                     ))}

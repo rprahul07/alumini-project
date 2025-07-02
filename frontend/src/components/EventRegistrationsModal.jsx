@@ -65,28 +65,25 @@ const EventRegistrationsModal = ({ event, isOpen, onClose, user }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2">
-      <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-hidden scrollbar-none">
+      <div className="bg-white/80 backdrop-blur rounded-2xl shadow-md max-w-lg w-full max-h-[80vh] overflow-hidden" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
         {/* Header */}
-        <div className="flex items-center justify-between p-3 border-b">
+        <div className="flex items-center justify-between p-4 border-b">
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">
-              Event Registrations
-            </h2>
-            <p className="text-sm text-gray-600 mt-1">
-              {event?.name}
-            </p>
+            <h2 className="text-lg font-bold text-gray-900 mb-0.5">Event Registrations</h2>
+            <p className="text-xs text-gray-600">{event?.name}</p>
           </div>
           <button
+            type="button"
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="rounded-full px-4 py-1.5 font-semibold bg-gray-200 text-gray-700 hover:bg-gray-300 transition w-full sm:w-auto"
           >
-            <XMarkIcon className="h-6 w-6" />
+            Close
           </button>
         </div>
 
         {/* Summary */}
         {summary && Object.keys(summary).length > 0 && (
-          <div className="bg-gray-50 px-3 py-2 border-b">
+          <div className="bg-gray-50/80 px-4 py-2 border-b rounded-t-2xl">
             <div className="flex flex-wrap gap-4 text-sm">
               <div className="flex items-center">
                 <UserIcon className="h-4 w-4 mr-2 text-gray-500" />
@@ -105,7 +102,7 @@ const EventRegistrationsModal = ({ event, isOpen, onClose, user }) => {
         )}
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto scrollbar-none p-2" style={{ maxHeight: '50vh' }}>
+        <div className="flex-1 overflow-y-auto p-2 no-scrollbar" style={{ maxHeight: '50vh' }}>
           {loading ? (
             <div className="flex items-center justify-center py-8">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
@@ -119,7 +116,7 @@ const EventRegistrationsModal = ({ event, isOpen, onClose, user }) => {
           ) : (
             <div className="space-y-2">
               {registrations.map((user) => (
-                <div key={user.id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                <div key={user.id} className="flex items-center justify-between p-2 bg-white/70 rounded-2xl shadow-sm border border-gray-100">
                   <div className="flex items-center space-x-4">
                     {/* User Avatar */}
                     <div className="flex-shrink-0">
@@ -168,7 +165,7 @@ const EventRegistrationsModal = ({ event, isOpen, onClose, user }) => {
 
         {/* Pagination */}
         {pagination && pagination.totalPages > 1 && (
-          <div className="flex items-center justify-between px-3 py-2 border-t bg-gray-50">
+          <div className="flex items-center justify-between px-4 py-2 border-t bg-gray-50/80 rounded-b-2xl">
             <div className="text-xs text-gray-600">
               Showing {((pagination.currentPage - 1) * pagination.usersPerPage) + 1} to{' '}
               {Math.min(pagination.currentPage * pagination.usersPerPage, pagination.totalUsers)} of{' '}
@@ -201,4 +198,9 @@ const EventRegistrationsModal = ({ event, isOpen, onClose, user }) => {
   );
 };
 
-export default EventRegistrationsModal; 
+export default EventRegistrationsModal;
+
+// Tailwind utility for hiding scrollbars
+// Add this to your global CSS (e.g., index.css):
+// .no-scrollbar::-webkit-scrollbar { display: none; }
+// .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; } 

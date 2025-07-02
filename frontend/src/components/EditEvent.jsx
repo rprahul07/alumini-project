@@ -72,7 +72,7 @@ const EditEvent = () => {
           <label className="block font-semibold">Image URL</label>
           <input type="text" name="imageUrl" value={form.imageUrl} onChange={handleChange} className="w-full border p-2 rounded" />
         </div>
-        <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">Save Changes</button>
+        <button type="submit" className="rounded-full px-4 py-1.5 font-semibold bg-blue-600 text-white shadow hover:bg-blue-700 transition">Save Changes</button>
       </form>
     </div>
   );

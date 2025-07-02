@@ -5,7 +5,7 @@ import { AppError, handleError } from "../utils/response.utils.js";
 
 export const protect = async (req, res, next) => {
   try {
-    const token = req.cookies.jwt;
+    const token = req.cookies.jwt || req.headers.authorization?.split(" ")[1];
     if (!token) {
       throw new AppError("Not authorized, no token", 401);
     }

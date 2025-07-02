@@ -1,6 +1,6 @@
 // ✅ Cleaned & Optimized - Placeholder-safe
 import React, { useState, useRef } from 'react';
-import { NavLink, Link, useNavigate } from 'react-router-dom';
+import { NavLink, Link, useNavigate, useLocation } from 'react-router-dom';
 import { FiMenu, FiX, FiBell, FiUser, FiLogOut } from 'react-icons/fi';
 import { GiGraduateCap } from 'react-icons/gi';
 import { useAuth } from '../contexts/AuthContext';
@@ -26,20 +26,26 @@ const getFirstName = (fullName) => {
   return fullName.split(' ')[0];
 };
 
-const Navbar = ({ isHome = false }) => {
+const Navbar = () => {
   const { user, role, logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const navigate = useNavigate();
   const avatarRef = useRef(null);
+  const location = useLocation();
+  const isHome = location.pathname === '/';
 
   // Use window.location.pathname for dashboard detection (since useLocation is removed)
   const isDashboard = dashboardRoutes.includes(window.location.pathname);
   const navBg = isHome ? 'bg-white' : 'bg-indigo-600';
   const textColor = isHome ? 'text-indigo-600' : 'text-white';
   const buttonBg = isHome ? 'bg-indigo-600 text-white' : 'bg-white text-indigo-600';
-  const activeLink = isHome ? 'font-semibold underline text-indigo-600' : 'font-semibold underline text-white';
-  const inactiveLink = isHome ? 'text-indigo-600 hover:underline' : 'text-white hover:underline';
+  const activeLink = isHome
+    ? 'bg-indigo-100 text-indigo-700 rounded-full px-4 py-1 font-semibold'
+    : 'bg-white/80 text-indigo-700 rounded-full px-4 py-1 font-semibold';
+  const inactiveLink = isHome
+    ? 'text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700 rounded-full px-4 py-1'
+    : 'text-white hover:bg-white/20 hover:text-indigo-100 rounded-full px-4 py-1';
 
   const handleDashboardRedirect = () => {
     if (user && user.role) {
@@ -69,14 +75,14 @@ const Navbar = ({ isHome = false }) => {
         <img
           src={user.photoUrl}
           alt={user.fullName || 'User'}
-          className="h-9 w-9 rounded-full object-cover border-2 border-indigo-200 shadow cursor-pointer"
+          className="h-10 w-10 rounded-full object-cover border-2 border-indigo-200 shadow cursor-pointer"
         />
       );
     }
     // Fallback: show initial
     const initial = user?.fullName ? user.fullName.charAt(0).toUpperCase() : '?';
     return (
-      <span className="h-9 w-9 flex items-center justify-center rounded-full bg-indigo-500 text-white font-bold text-lg cursor-pointer select-none">
+      <span className="h-10 w-10 flex items-center justify-center rounded-full bg-indigo-500 text-white font-bold text-lg cursor-pointer select-none">
         {initial}
       </span>
     );
@@ -110,21 +116,31 @@ const Navbar = ({ isHome = false }) => {
   };
 
   return (
-    <nav className={`${navBg} shadow-sm sticky top-0 z-50 transition-colors duration-300`} aria-label="Main Navigation">
+    <nav
+      className={`backdrop-blur shadow-md sticky top-0 z-50 transition-colors duration-300 ${isHome ? 'bg-white/70' : 'bg-indigo-600/70'}`}
+      aria-label="Main Navigation"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-12 items-center">
-          <Link to="/" className={`flex items-center gap-2 text-lg font-bold ${textColor} transition-colors duration-300`}>
+        <div className="flex justify-between h-14 items-center">
+          <Link to="/" className={`flex items-center gap-2 text-lg font-bold transition-colors duration-300 ${isHome ? 'text-indigo-700' : 'text-white'}`}>
             <GiGraduateCap className="h-6 w-6" color={isHome ? '#4f46e5' : '#fff'} />
             Alumni Connect
           </Link>
           {/* Desktop Navigation Links */}
-          <div className="hidden sm:flex sm:items-center sm:space-x-8">
+          <div className="hidden sm:flex sm:items-center sm:space-x-2">
             {navLinks.map((link) => (
               <NavLink
                 key={link.title}
                 to={link.path}
                 className={({ isActive }) =>
-                  `${isActive ? activeLink : inactiveLink} inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors duration-300`
+                  `${isActive
+                    ? (isHome
+                        ? 'bg-indigo-100 text-indigo-700 rounded-full px-4 py-1 font-semibold'
+                        : 'bg-white/80 text-indigo-700 rounded-full px-4 py-1 font-semibold')
+                    : (isHome
+                        ? 'text-indigo-700 hover:bg-indigo-50 hover:text-indigo-900 rounded-full px-4 py-1'
+                        : 'text-white hover:bg-white/20 hover:text-indigo-100 rounded-full px-4 py-1')
+                  } inline-flex items-center text-sm font-medium transition-colors duration-300`
                 }
                 end={link.path === '/'}
               >
@@ -139,7 +155,7 @@ const Navbar = ({ isHome = false }) => {
                 {!isDashboard && (
                   <button
                     onClick={handleDashboardRedirect}
-                    className={`px-3 py-1.5 rounded-md text-sm font-medium shadow transition-colors ${buttonBg}`}
+                    className={`rounded-full px-4 py-1.5 text-sm font-semibold shadow transition-colors ${isHome ? 'bg-indigo-600 text-white hover:bg-indigo-700' : 'bg-white text-indigo-600 hover:bg-indigo-50'}`}
                   >
                     Dashboard
                   </button>
@@ -159,7 +175,7 @@ const Navbar = ({ isHome = false }) => {
             ) : (
               <button
                 onClick={() => navigate('/role-selection')}
-                className={`px-3 py-1.5 rounded-md text-sm font-medium shadow transition-colors ${buttonBg}`}
+                className={`rounded-full px-4 py-1.5 text-sm font-semibold shadow transition-colors ${isHome ? 'bg-indigo-600 text-white hover:bg-indigo-700' : 'bg-white text-indigo-600 hover:bg-indigo-50'}`}
               >
                 Get Started
               </button>
@@ -169,7 +185,7 @@ const Navbar = ({ isHome = false }) => {
           <div className="flex items-center sm:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className={`inline-flex items-center justify-center p-1 rounded-md ${textColor} hover:bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-indigo-300`}
+              className={`inline-flex items-center justify-center p-1 rounded-md ${isHome ? 'text-indigo-700 hover:bg-indigo-100/10' : 'text-white hover:bg-indigo-100/10'} focus:outline-none focus:ring-2 focus:ring-indigo-300`}
               aria-label="Open main menu"
             >
               <span className="sr-only">Open main menu</span>
@@ -180,7 +196,7 @@ const Navbar = ({ isHome = false }) => {
       </div>
       {/* Mobile menu */}
       {isMenuOpen && (
-        <div className={`bg-white sm:hidden border-t border-indigo-100 shadow-lg rounded-b-xl`}>
+        <div className="bg-white/90 sm:hidden border-t border-indigo-100 shadow-lg rounded-b-xl backdrop-blur">
           <div className="py-1">
             {navLinks.map((link) => (
               <NavLink

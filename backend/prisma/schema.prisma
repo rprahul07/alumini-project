@@ -24,9 +24,12 @@ model User {
   twitterUrl     String?  @map("twitter_url") @db.VarChar(500)
   admin          Admin?
   alumni         Alumni?
+  events         Event[]
   faculty        Faculty?
   student        Student?
-  events         Event[]
+
+  supportRequestsSent     supportRequest[] @relation("SupportRequester")
+  supportRequestsReceived supportRequest[] @relation("SupportAlumni")
 
   @@index([email])
   @@map("users")
@@ -82,13 +85,13 @@ model Event {
   date            DateTime
   time            String      @db.VarChar(20)
   type            String      @db.VarChar(100)
-  description     String?     @db.Text
+  description     String?
   location        String      @db.VarChar(200)
   organizer       String      @db.VarChar(100)
   imageUrl        String?     @map("image_url") @db.VarChar(500)
   status          EventStatus @default(pending)
-  registeredUsers Int[]       @map("registered_users") // Array of user IDs
-  maxCapacity     Int?        @map("max_capacity") // Optional capacity limit
+  registeredUsers Int[]       @map("registered_users")
+  maxCapacity     Int?        @map("max_capacity")
   createdAt       DateTime    @default(now()) @map("created_at")
   updatedAt       DateTime    @updatedAt @map("updated_at")
   user            User        @relation(fields: [userId], references: [id])
@@ -99,6 +102,24 @@ model Event {
   @@index([status])
   @@map("events")
 }
+model supportRequest {
+  id                  Int      @id @default(autoincrement())
+  support_requester   Int      @map("user_id")
+  descriptionbyUser   String   @default("") @db.VarChar(500)
+  descriptionbyAlumni String? @default("") @db.VarChar(500)
+  alumniId            Int?     @map("alumni_id")
+  status              String   @default("pending") @db.VarChar(20)
+  createdAt           DateTime @default(now()) @map("created_at")
+
+  // ✅ Relations
+  requester User @relation("SupportRequester", fields: [support_requester], references: [id])
+  alumni    User? @relation("SupportAlumni", fields: [alumniId], references: [id])
+
+  @@index([support_requester])
+  @@index([alumniId])
+  @@map("support_requests")
+}
+
 
 model ActivityLog {
   id        Int      @id @default(autoincrement())

@@ -9,6 +9,7 @@ import publicRouter from "./routes/public_routes.js";
 import studentRouter from "./routes/student_routes.js";
 import alumniRouter from "./routes/alumni_routes.js";
 import { AppError } from "./utils/response.utils.js";
+import support_router from "./routes/support_requests/support_request_routes.js";
 
 // Load environment variables
 dotenv.config();
@@ -73,10 +74,11 @@ app.use("/uploads", express.static("uploads"));
 // Routes
 app.use("/api/auth", authRouter);
 app.use("/api/admin", adminRouter);
-app.use("/api/alumni", alumniRouter);
+app.use("/api/alumni", alumniRouter,);
 app.use("/api/student", studentRouter);
 app.use("/api/faculty", facultyRouter);
 app.use("/api/public", publicRouter);
+app.use("/api/support", support_router);
 
 // Error handler for Prisma errors
 app.use((err, req, res, next) => {

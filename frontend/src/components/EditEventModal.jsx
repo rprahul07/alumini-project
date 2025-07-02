@@ -167,8 +167,8 @@ const EditEventModal = ({ isOpen, onClose, event, onEventUpdated }) => {
           </div>
           
           <div className="pt-2 flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-2">
-            <button type="button" onClick={onClose} className="px-4 py-2 rounded bg-gray-200 w-full sm:w-auto">Cancel</button>
-            <button type="submit" disabled={isSubmitting} className="px-4 py-2 rounded bg-blue-600 text-white disabled:bg-blue-300 w-full sm:w-auto">
+            <button type="button" onClick={onClose} className="rounded-full px-4 py-1.5 font-semibold bg-gray-200 w-full sm:w-auto">Cancel</button>
+            <button type="submit" disabled={isSubmitting} className="rounded-full px-4 py-1.5 font-semibold bg-blue-600 text-white disabled:bg-blue-300 w-full sm:w-auto">
               {isSubmitting ? 'Updating...' : 'Update Event'}
             </button>
           </div>
