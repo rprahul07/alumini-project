@@ -213,10 +213,10 @@ const EventCard = ({ event, user, onEventUpdate, showEdit, showDelete, onEdit, o
             // Admin sees "View Registrations" button
             <button
               onClick={handleViewRegistrations}
-              className={`rounded-full px-4 py-1.5 font-semibold bg-indigo-600 text-white text-sm shadow hover:bg-indigo-700 transition-colors`}
+              className={`rounded-full px-4 py-1.5 font-semibold bg-indigo-600 text-white text-sm shadow hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2`}
             >
-              <UsersIcon className="h-4 w-4 mr-2" />
-              View Registrations
+              <UsersIcon className="h-5 w-5" />
+              <span>View Registrations</span>
             </button>
           ) : isOrganizer ? (
             // Organizer sees a disabled button

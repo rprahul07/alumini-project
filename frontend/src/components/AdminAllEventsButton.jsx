@@ -94,9 +94,9 @@ const AdminAllEventsButton = () => {
 
   return (
     <>
-      <button onClick={handleOpenModal} className="rounded-full px-4 py-1.5 font-semibold bg-indigo-600 text-white text-sm shadow hover:bg-indigo-700 transition-colors">
+      <button onClick={handleOpenModal} className="rounded-full px-4 py-1.5 font-semibold bg-indigo-600 text-white text-sm shadow hover:bg-indigo-700 transition-colors flex items-center gap-2">
         <span className="hidden xs:inline">All Events</span>
-        <CalendarIcon className="h-5 w-5 inline-block xs:ml-0 align-text-bottom" />
+        <CalendarIcon className="h-5 w-5" />
       </button>
 
       {isModalOpen && (
