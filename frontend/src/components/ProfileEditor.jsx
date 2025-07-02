@@ -468,8 +468,7 @@ const ProfileEditor = () => {
             <div className="flex justify-end pt-4 border-t border-gray-200 mt-6">
               <button
                 type="submit"
-                disabled={loading}
-              className="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto text-sm"
+                className="rounded-full px-4 py-1.5 font-semibold bg-indigo-600 text-white shadow hover:bg-indigo-700 transition"
               >
                 {loading ? 'Saving...' : 'Save Profile'}
               </button>

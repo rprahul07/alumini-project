@@ -495,26 +495,16 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated, isMobileModal }) =>
             <button
               type="button"
               onClick={handleClose}
-              className="px-4 py-2 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition-colors w-full sm:w-auto text-sm"
+              className="rounded-full px-4 py-1.5 font-semibold bg-gray-200 w-full sm:w-auto"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto text-sm"
+              className="rounded-full px-4 py-1.5 font-semibold bg-blue-600 text-white disabled:bg-blue-300 w-full sm:w-auto"
             >
-              {isSubmitting ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  Creating...
-                </>
-              ) : (
-                <>
-                  <PlusIcon className="h-4 w-4 mr-2" />
-                  Create Event
-                </>
-              )}
+              {isSubmitting ? 'Creating...' : 'Create Event'}
             </button>
           </div>
         </form>

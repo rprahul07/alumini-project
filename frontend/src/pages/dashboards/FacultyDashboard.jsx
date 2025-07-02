@@ -139,14 +139,14 @@ const AlumniRegistrationCard = ({ name, graduationYear, department, email, onApp
       <div className="flex gap-3 mt-4">
         <button
           onClick={onApprove}
-          className="flex items-center px-4 py-2 text-sm font-medium text-green-700 bg-green-100 rounded-full hover:bg-green-200 transition-colors duration-200 shadow-sm"
+          className="rounded-full px-4 py-1.5 text-sm font-semibold text-green-700 bg-green-100 hover:bg-green-200 transition-colors duration-200 shadow-sm flex items-center"
         >
           <CheckCircleIcon className="h-4 w-4 mr-2" />
           Approve
         </button>
         <button
           onClick={onReject}
-          className="flex items-center px-4 py-2 text-sm font-medium text-red-700 bg-red-100 rounded-full hover:bg-red-200 transition-colors duration-200 shadow-sm"
+          className="rounded-full px-4 py-1.5 text-sm font-semibold text-red-700 bg-red-100 hover:bg-red-200 transition-colors duration-200 shadow-sm flex items-center"
         >
           <XCircleIcon className="h-4 w-4 mr-2" />
           Reject
@@ -182,7 +182,7 @@ const CourseProgressCard = ({ courseName, studentsEnrolled, averageGrade, progre
         </div>
         <p className="text-xs text-gray-500 mt-2">{progressPercentage}% Course Completion</p>
       </div>
-      <button className="mt-5 text-sm font-medium text-indigo-600 hover:text-indigo-800 flex items-center group">
+      <button className="rounded-full px-4 py-1.5 text-sm font-semibold text-indigo-600 hover:text-indigo-800 flex items-center group mt-5">
         View Details <ArrowRightIcon className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
       </button>
     </div>

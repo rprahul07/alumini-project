@@ -66,7 +66,7 @@ const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-1 sm:p-2 z-50">
-      <div className="bg-white rounded-lg w-full max-w-md sm:max-w-lg max-h-[80vh] overflow-y-auto scrollbar-none p-2 sm:p-4">
+      <div className="bg-white rounded-2xl w-full max-w-sm sm:max-w-md md:max-w-lg max-h-[80vh] overflow-y-auto scrollbar-hide p-3" style={{ scrollbarWidth: 'none' }}>
         {/* Header */}
         <div className="flex items-center justify-between mb-2">
           <h2 className="text-base sm:text-lg font-bold text-gray-900">Event Details</h2>
@@ -79,36 +79,36 @@ const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
         </div>
 
         {/* Event Image */}
-        <div className="relative h-40 sm:h-64 bg-gray-200">
+        <div className="relative h-28 sm:h-36 bg-gray-200 rounded-2xl mb-2">
           {event.imageUrl ? (
             <img 
               src={event.imageUrl} 
               alt={event.name}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover rounded-2xl"
               loading="lazy"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-100 to-indigo-200">
-              <CalendarIcon className="h-20 w-20 text-indigo-400" />
+            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-100 to-indigo-200 rounded-2xl">
+              <CalendarIcon className="h-12 w-12 text-indigo-400" />
             </div>
           )}
           
           {/* Event Type Badge */}
-          <div className="absolute top-4 left-4">
-            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800">
+          <div className="absolute top-2 left-2">
+            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-indigo-100 text-indigo-800">
               {event.type}
             </span>
           </div>
 
           {/* Capacity Badge */}
           {event.maxCapacity && (
-            <div className="absolute top-4 right-4">
-              <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+            <div className="absolute top-2 right-2">
+              <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold ${
                 isEventFull 
                   ? 'bg-red-100 text-red-800' 
                   : 'bg-green-100 text-green-800'
               }`}>
-                <UserGroupIcon className="h-4 w-4 mr-1" />
+                <UserGroupIcon className="h-3 w-3 mr-1" />
                 {event.registeredUsers ? event.registeredUsers.length : 0}/{event.maxCapacity}
               </span>
             </div>
@@ -116,39 +116,36 @@ const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
         </div>
 
         {/* Event Content */}
-        <div className="p-2 sm:p-4">
+        <div className="p-2 sm:p-3">
           {/* Event Title */}
-          <h3 className="text-lg sm:text-2xl font-bold text-gray-900 mb-2 sm:mb-4">
+          <h3 className="font-bold text-gray-900 mb-2 line-clamp-2 text-xl sm:text-2xl leading-tight">
             {event.name}
           </h3>
 
           {/* Event Details */}
-          <div className="space-y-2 sm:space-y-4 mb-4 sm:mb-6">
-            <div className="flex items-center text-gray-600">
-              <CalendarIcon className="h-5 w-5 mr-3 text-gray-400" />
-              <span className="font-medium">{formatDate(event.date)}</span>
+          <div className="space-y-1 mb-2">
+            <div className="flex items-center text-xs sm:text-sm text-gray-500">
+              <CalendarIcon className="h-4 w-4 mr-2 text-gray-400" />
+              {formatDate(event.date)}
             </div>
-            
-            <div className="flex items-center text-gray-600">
-              <ClockIcon className="h-5 w-5 mr-3 text-gray-400" />
-              <span className="font-medium">{event.time}</span>
+            <div className="flex items-center text-xs sm:text-sm text-gray-500">
+              <ClockIcon className="h-4 w-4 mr-2 text-gray-400" />
+              {event.time}
             </div>
-            
-            <div className="flex items-center text-gray-600">
-              <MapPinIcon className="h-5 w-5 mr-3 text-gray-400" />
-              <span className="font-medium">{event.location}</span>
+            <div className="flex items-center text-xs sm:text-sm text-gray-500">
+              <MapPinIcon className="h-4 w-4 mr-2 text-gray-400" />
+              {event.location}
             </div>
-            
-            <div className="flex items-center text-gray-600">
-              <UserIcon className="h-5 w-5 mr-3 text-gray-400" />
-              <span className="font-medium">Organized by: {event.organizer}</span>
+            <div className="flex items-center text-xs sm:text-sm text-gray-400">
+              <UserIcon className="h-4 w-4 mr-2 text-gray-400" />
+              Organized by: {event.organizer}
             </div>
           </div>
 
           {/* Event Description */}
-          <div className="mb-4 sm:mb-6">
-            <h4 className="text-base sm:text-lg font-semibold text-gray-900 mb-1 sm:mb-2">Description</h4>
-            <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
+          <div className="mb-3">
+            <h4 className="text-base font-semibold text-gray-900 mb-1">Description</h4>
+            <p className="text-gray-600 text-xs sm:text-sm leading-relaxed">
               {event.description}
             </p>
           </div>
@@ -164,7 +161,7 @@ const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
               </p>
               <a
                 href="/role-selection"
-                className="inline-block px-6 py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors"
+                className="inline-block rounded-full px-4 py-1.5 font-semibold bg-indigo-600 text-white hover:bg-indigo-700 transition-colors"
               >
                 Login to Register
               </a>
@@ -175,7 +172,7 @@ const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
           <div className="mt-4 flex flex-col sm:flex-row justify-end gap-2">
             <button
               onClick={onClose}
-              className="px-4 py-2 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition-colors w-full sm:w-auto"
+              className="rounded-full px-4 py-1.5 font-semibold border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors w-full sm:w-auto"
             >
               Close
             </button>

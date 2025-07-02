@@ -77,10 +77,11 @@ const EventRegistrationsModal = ({ event, isOpen, onClose, user }) => {
             </p>
           </div>
           <button
+            type="button"
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="rounded-full px-4 py-1.5 font-semibold bg-gray-200 w-full sm:w-auto"
           >
-            <XMarkIcon className="h-6 w-6" />
+            Close
           </button>
         </div>
 

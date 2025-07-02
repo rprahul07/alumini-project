@@ -108,21 +108,21 @@ const EventCard = ({ event, user, onEventUpdate, showEdit, showDelete, onEdit, o
   return (
     <>
       <div 
-        className={`bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden cursor-pointer transform hover:scale-[1.02] flex flex-col h-full w-full max-w-xs sm:max-w-sm md:max-w-md ${sm ? 'p-1 text-xs' : 'p-4'}`}
+        className={`bg-white rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden cursor-pointer transform hover:scale-[1.02] flex flex-col h-full w-full max-w-sm sm:max-w-md md:max-w-lg ${sm ? 'p-1 text-xs' : 'p-3'}`}
         onClick={handleCardClick}
       >
         {/* Event Image */}
-        <div className={`relative ${sm ? 'h-20' : 'h-48'} bg-gray-200 flex-shrink-0 w-full`}>
+        <div className={`relative ${sm ? 'h-16' : 'h-28'} bg-gray-200 flex-shrink-0 w-full rounded-2xl`}>
           {event.imageUrl ? (
             <img 
               src={event.imageUrl} 
               alt={event.name}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover rounded-2xl"
               loading="lazy"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-100 to-indigo-200">
-              <CalendarIcon className={`${sm ? 'h-8 w-8' : 'h-16 w-16'} text-indigo-400`} />
+            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-100 to-indigo-200 rounded-2xl">
+              <CalendarIcon className={`${sm ? 'h-8 w-8' : 'h-12 w-12'} text-indigo-400`} />
             </div>
           )}
           
@@ -157,39 +157,32 @@ const EventCard = ({ event, user, onEventUpdate, showEdit, showDelete, onEdit, o
         </div>
 
         {/* Event Content */}
-        <div className={`p-4 flex flex-col flex-grow ${sm ? 'p-1' : ''}`}>
+        <div className={`p-3 flex flex-col flex-grow ${sm ? 'p-1' : ''}`}>
           {/* Event Title */}
-          <h3 className={`font-semibold text-gray-900 mb-2 line-clamp-2 ${sm ? 'text-xs' : 'text-lg'} sm:text-base md:text-lg`}>
+          <h3 className={`font-bold text-gray-900 mb-2 line-clamp-2 ${sm ? 'text-sm' : 'text-xl'} sm:text-lg md:text-xl leading-tight`}>
             {event.name}
           </h3>
 
-          {/* Event Description */}
-          {event.description && (
-            <p className="text-gray-600 text-sm mb-3 line-clamp-2">
-              {event.description}
-            </p>
-          )}
-
           {/* Event Details */}
-          <div className="space-y-2 mb-4">
-            <div className="flex items-center text-sm text-gray-600">
+          <div className="space-y-1 mb-2">
+            <div className="flex items-center text-xs sm:text-sm text-gray-500">
               <CalendarIcon className="h-4 w-4 mr-2 text-gray-400" />
               {formatDate(event.date)}
             </div>
             
-            <div className="flex items-center text-sm text-gray-600">
+            <div className="flex items-center text-xs sm:text-sm text-gray-500">
               <ClockIcon className="h-4 w-4 mr-2 text-gray-400" />
               {formatTime(event.time)}
             </div>
             
-            <div className="flex items-center text-sm text-gray-600">
+            <div className="flex items-center text-xs sm:text-sm text-gray-500">
               <MapPinIcon className="h-4 w-4 mr-2 text-gray-400" />
               {event.location}
             </div>
           </div>
 
           {/* Organizer */}
-          <div className="text-sm text-gray-500 mb-4">
+          <div className="text-xs sm:text-sm text-gray-400 mb-2">
             Organized by: {event.organizer}
           </div>
 
@@ -202,7 +195,7 @@ const EventCard = ({ event, user, onEventUpdate, showEdit, showDelete, onEdit, o
               {showEdit && (
                 <button
                   onClick={e => { e.stopPropagation(); onEdit && onEdit(event); }}
-                  className={`rounded bg-blue-600 text-white hover:bg-blue-700 text-xs sm:text-sm px-2 py-1 w-full sm:w-auto`}
+                  className={`rounded-full px-4 py-1.5 font-semibold bg-blue-600 text-white hover:bg-blue-700 text-sm`}
                 >
                   Edit
                 </button>
@@ -210,7 +203,7 @@ const EventCard = ({ event, user, onEventUpdate, showEdit, showDelete, onEdit, o
               {showDelete && (
                 <button
                   onClick={e => { e.stopPropagation(); onDelete && onDelete(event); }}
-                  className={`rounded bg-red-600 text-white hover:bg-red-700 text-xs sm:text-sm px-2 py-1 w-full sm:w-auto`}
+                  className={`rounded-full px-4 py-1.5 font-semibold bg-red-600 text-white hover:bg-red-700 text-sm`}
                 >
                   Delete
                 </button>
@@ -220,7 +213,7 @@ const EventCard = ({ event, user, onEventUpdate, showEdit, showDelete, onEdit, o
             // Admin sees "View Registrations" button
             <button
               onClick={handleViewRegistrations}
-              className="w-full py-2 px-4 bg-indigo-600 text-white rounded-lg font-medium text-sm hover:bg-indigo-700 transition-colors flex items-center justify-center"
+              className={`rounded-full px-4 py-1.5 font-semibold bg-indigo-600 text-white text-sm shadow hover:bg-indigo-700 transition-colors`}
             >
               <UsersIcon className="h-4 w-4 mr-2" />
               View Registrations
@@ -229,7 +222,7 @@ const EventCard = ({ event, user, onEventUpdate, showEdit, showDelete, onEdit, o
             // Organizer sees a disabled button
             <button
               disabled
-              className="w-full py-2 px-4 rounded-lg font-medium text-sm bg-gray-200 text-gray-600 cursor-not-allowed flex items-center justify-center"
+              className={`rounded-full px-4 py-1.5 font-semibold bg-gray-200 text-gray-600 cursor-not-allowed`}
             >
               You are the organizer
             </button>
@@ -240,7 +233,7 @@ const EventCard = ({ event, user, onEventUpdate, showEdit, showDelete, onEdit, o
               onMouseEnter={() => setIsHovering(true)}
               onMouseLeave={() => setIsHovering(false)}
               disabled={buttonDisabled}
-              className={`w-full py-2 px-4 rounded-lg font-medium text-sm transition-colors flex items-center justify-center ${buttonClass}`}
+              className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors flex items-center justify-center ${buttonClass}`}
               title={!isLoggedIn || isFaculty ? "Login to register" : ""}
             >
               {buttonText}

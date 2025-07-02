@@ -162,7 +162,7 @@ const AdminEventProposals = () => {
     <>
       <button 
         onClick={() => setIsModalOpen(true)}
-        className="inline-flex items-center px-4 py-2 bg-yellow-600 text-white rounded-lg font-medium hover:bg-yellow-700 transition-colors"
+        className="rounded-full px-4 py-1.5 font-semibold bg-indigo-600 text-white text-sm shadow hover:bg-indigo-700 transition-colors"
       >
         <ClipboardDocumentListIcon className="h-4 w-4 mr-2" />
         Event Proposals

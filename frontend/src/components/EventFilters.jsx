@@ -69,7 +69,7 @@ const EventFilters = ({
     <div className={`flex gap-4 ${isMobile ? 'flex-col' : 'flex-col sm:flex-row'}`}>
       {/* Department Filter */}
       <div className="flex-1">
-        <label htmlFor="department" className="block text-sm font-medium text-gray-700 mb-1">
+        <label htmlFor="department" className="block text-sm font-bold text-indigo-700 mb-1">
           Department
         </label>
         <div className="relative">
@@ -77,7 +77,7 @@ const EventFilters = ({
             id="department"
             value={selectedDepartment}
             onChange={handleDepartmentChange}
-            className="block w-full pl-3 pr-10 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            className="block w-full pl-3 pr-10 py-2 border-2 border-indigo-200 rounded-full bg-white/60 backdrop-blur shadow focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all"
           >
             {departments.map((dept) => (
               <option key={dept.value} value={dept.value}>
@@ -86,14 +86,14 @@ const EventFilters = ({
             ))}
           </select>
           <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-            <ChevronDownIcon className="h-4 w-4 text-gray-400" />
+            <ChevronDownIcon className="h-4 w-4 text-indigo-400" />
           </div>
         </div>
       </div>
 
       {/* Event Type Filter */}
       <div className="flex-1">
-        <label htmlFor="type" className="block text-sm font-medium text-gray-700 mb-1">
+        <label htmlFor="type" className="block text-sm font-bold text-indigo-700 mb-1">
           Event Type
         </label>
         <div className="relative">
@@ -101,7 +101,7 @@ const EventFilters = ({
             id="type"
             value={selectedType}
             onChange={handleTypeChange}
-            className="block w-full pl-3 pr-10 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            className="block w-full pl-3 pr-10 py-2 border-2 border-indigo-200 rounded-full bg-white/60 backdrop-blur shadow focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all"
           >
             {eventTypes.map((type) => (
               <option key={type.value} value={type.value}>
@@ -110,14 +110,14 @@ const EventFilters = ({
             ))}
           </select>
           <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-            <ChevronDownIcon className="h-4 w-4 text-gray-400" />
+            <ChevronDownIcon className="h-4 w-4 text-indigo-400" />
           </div>
         </div>
       </div>
 
       {/* Sort By */}
       <div className="flex-1">
-        <label htmlFor="sortBy" className="block text-sm font-medium text-gray-700 mb-1">
+        <label htmlFor="sortBy" className="block text-sm font-bold text-indigo-700 mb-1">
           Sort By
         </label>
         <div className="relative">
@@ -125,7 +125,7 @@ const EventFilters = ({
             id="sortBy"
             value={sortBy}
             onChange={handleSortChange}
-            className="block w-full pl-3 pr-10 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            className="block w-full pl-3 pr-10 py-2 border-2 border-indigo-200 rounded-full bg-white/60 backdrop-blur shadow focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all"
           >
             {sortOptions.map((option) => (
               <option key={option.value} value={option.value}>
@@ -134,14 +134,14 @@ const EventFilters = ({
             ))}
           </select>
           <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-            <ChevronDownIcon className="h-4 w-4 text-gray-400" />
+            <ChevronDownIcon className="h-4 w-4 text-indigo-400" />
           </div>
         </div>
       </div>
 
       {/* Sort Order */}
       <div className="flex-1">
-        <label htmlFor="sortOrder" className="block text-sm font-medium text-gray-700 mb-1">
+        <label htmlFor="sortOrder" className="block text-sm font-bold text-indigo-700 mb-1">
           Order
         </label>
         <div className="relative">
@@ -149,13 +149,13 @@ const EventFilters = ({
             id="sortOrder"
             value={sortOrder}
             onChange={handleSortOrderChange}
-            className="block w-full pl-3 pr-10 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            className="block w-full pl-3 pr-10 py-2 border-2 border-indigo-200 rounded-full bg-white/60 backdrop-blur shadow focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all"
           >
             <option value="asc">Ascending</option>
             <option value="desc">Descending</option>
           </select>
           <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-            <ChevronDownIcon className="h-4 w-4 text-gray-400" />
+            <ChevronDownIcon className="h-4 w-4 text-indigo-400" />
           </div>
         </div>
       </div>

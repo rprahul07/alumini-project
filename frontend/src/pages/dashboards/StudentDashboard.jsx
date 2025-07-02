@@ -139,7 +139,7 @@ const MentorCard = ({ name, title, tags }) => (
           </span>
         ))}
       </div>
-      <button className="mt-4 text-sm font-medium text-indigo-600 border border-indigo-300 rounded-full px-4 py-1.5 hover:bg-indigo-50 transition-colors shadow-sm">
+      <button className="rounded-full px-4 py-1.5 text-sm font-semibold text-indigo-600 border border-indigo-300 hover:bg-indigo-50 transition-colors shadow-sm mt-4">
         Request Mentorship
       </button>
     </div>
@@ -190,7 +190,7 @@ const JobBoard = () => {
           <BriefcaseIcon className="h-6 w-6 text-indigo-600" />
           <h2 className="text-xl font-bold text-gray-900">Recent Job & Internship Opportunities</h2>
         </div>
-        <button className="text-sm text-indigo-600 hover:text-indigo-800 flex items-center group">
+        <button className="rounded-full px-4 py-1.5 text-sm font-semibold text-indigo-600 hover:text-indigo-800 flex items-center group">
           View All <ArrowRightIcon className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
         </button>
       </div>
