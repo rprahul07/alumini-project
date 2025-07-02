@@ -12,6 +12,389 @@ import {
 import { createStudent } from "./student_controller.js";
 import { createAlumni } from "./alumni_controller.js";
 import { createFaculty } from "./faculty_controller.js";
+import prisma from "../../lib/prisma.js";
+
+export const searchStudentsController = async (req, res) => {
+  try {
+    const {
+      department,
+      currentSemester,
+      search,
+      limit = 10,
+      offset = 0,
+    } = req.query;
+
+    console.log(
+      "Filtering students by department:",
+      department,
+      "Current semester:",
+      currentSemester,
+      "Search term:",
+      search
+    );
+
+    // Validate limit and offset
+    const limitInt = parseInt(limit) || 10;
+    const offsetInt = parseInt(offset) || 0;
+
+    if (limitInt < 1 || limitInt > 100) {
+      return res.status(400).json({
+        success: false,
+        message: "Limit must be between 1 and 100.",
+        error: "Invalid limit",
+      });
+    }
+
+    if (offsetInt < 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Offset must be a non-negative number.",
+        error: "Invalid offset",
+      });
+    }
+
+    // Build where clause for filtering
+    let whereClause = {};
+    const conditions = [];
+
+    // Filter by department (from User table)
+    if (department && department.trim()) {
+      conditions.push({
+        user: {
+          department: {
+            contains: department.trim(),
+            mode: "insensitive",
+          },
+        },
+      });
+    }
+
+    // Filter by current semester (from Student table)
+    if (currentSemester && currentSemester.trim()) {
+      const semesterInt = parseInt(currentSemester);
+      if (isNaN(semesterInt) || semesterInt < 1 || semesterInt > 12) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid semester. Must be between 1 and 12.",
+          error: "Invalid semester",
+        });
+      }
+
+      conditions.push({
+        currentSemester: semesterInt,
+      });
+    }
+
+    // Filter by name search (from User table)
+    if (search && search.trim()) {
+      conditions.push({
+        user: {
+          fullName: {
+            contains: search.trim(),
+            mode: "insensitive",
+          },
+        },
+      });
+    }
+
+    // Combine conditions
+    if (conditions.length > 0) {
+      whereClause = {
+        AND: conditions,
+      };
+    }
+
+    // Get total count for pagination
+    const totalCount = await prisma.student.count({
+      where: whereClause,
+    });
+
+    // Get student profiles
+    const studentProfiles = await prisma.student.findMany({
+      where: whereClause,
+      select: {
+        rollNumber: true,
+        currentSemester: true,
+        graduationYear: true,
+        user: {
+          select: {
+            fullName: true,
+            photoUrl: true,
+            department: true,
+          },
+        },
+      },
+      orderBy: [
+        {
+          currentSemester: "asc", // Sort by semester first
+        },
+        {
+          user: {
+            fullName: "asc", // Then alphabetically by name
+          },
+        },
+      ],
+      take: limitInt,
+      skip: offsetInt,
+    });
+
+    // Transform the data to flatten the structure
+    const transformedProfiles = studentProfiles.map((student) => ({
+      name: student.user.fullName,
+      photoUrl: student.user.photoUrl,
+      department: student.user.department,
+      rollNumber: student.rollNumber,
+      currentSemester: student.currentSemester,
+      graduationYear: student.graduationYear,
+    }));
+
+    console.log(
+      `Found ${transformedProfiles.length} student profiles out of ${totalCount} total`
+    );
+
+    // Build dynamic success message
+    let message = "Student profiles retrieved successfully";
+    const filters = [];
+
+    if (department) {
+      filters.push(`department: ${department}`);
+    }
+
+    if (currentSemester) {
+      filters.push(`semester: ${currentSemester}`);
+    }
+
+    if (search) {
+      filters.push(`name containing "${search.trim()}"`);
+    }
+
+    if (filters.length > 0) {
+      message += ` for ${filters.join(" and ")}`;
+    }
+
+    // Return success response
+    return res.status(200).json({
+      success: true,
+      message: message,
+      data: {
+        profiles: transformedProfiles,
+        filter: {
+          department: department || null,
+          currentSemester: currentSemester ? parseInt(currentSemester) : null,
+          search: search ? search.trim() : null,
+        },
+        pagination: {
+          total: totalCount,
+          limit: limitInt,
+          offset: offsetInt,
+          hasMore: offsetInt + limitInt < totalCount,
+          currentPage: Math.floor(offsetInt / limitInt) + 1,
+          totalPages: Math.ceil(totalCount / limitInt),
+        },
+      },
+    });
+  } catch (error) {
+    console.error("Error in searchStudentsController:", error);
+
+    // Handle specific Prisma errors
+    if (error.code === "P2001") {
+      return res.status(404).json({
+        success: false,
+        message: "Student records not found",
+        error: "No students found",
+      });
+    }
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
+export const searchAlumniProfilesController = async (req, res) => {
+  try {
+    const {
+      graduationYear,
+      search,
+      sortOrder = "desc",
+      limit = 10,
+      offset = 0,
+    } = req.query;
+
+    console.log(
+      "Filtering alumni profiles by graduation year:",
+      graduationYear,
+      "Search term:",
+      search,
+      "Sort order:",
+      sortOrder
+    );
+
+    // Validate limit and offset
+    const limitInt = parseInt(limit) || 10;
+    const offsetInt = parseInt(offset) || 0;
+
+    if (limitInt < 1 || limitInt > 100) {
+      return res.status(400).json({
+        success: false,
+        message: "Limit must be between 1 and 100.",
+        error: "Invalid limit",
+      });
+    }
+
+    if (offsetInt < 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Offset must be a non-negative number.",
+        error: "Invalid offset",
+      });
+    }
+
+    // Validate sort order
+    if (!["asc", "desc"].includes(sortOrder)) {
+      return res.status(400).json({
+        success: false,
+        message: "Sort order must be 'asc' or 'desc'.",
+        error: "Invalid sort order",
+      });
+    }
+
+    // Build where clause for filters
+    let whereClause = {};
+
+    // Add graduation year filter
+    if (graduationYear && graduationYear.trim()) {
+      const yearInt = parseInt(graduationYear);
+      if (
+        isNaN(yearInt) ||
+        yearInt < 1900 ||
+        yearInt > new Date().getFullYear() + 10
+      ) {
+        return res.status(400).json({
+          success: false,
+          message:
+            "Invalid graduation year provided. Must be between 1900 and current year + 10.",
+          error: "Invalid graduation year",
+        });
+      }
+
+      whereClause.graduationYear = yearInt;
+    }
+
+    // Add name search filter
+    if (search && search.trim()) {
+      whereClause.user = {
+        fullName: {
+          contains: search.trim(),
+          mode: "insensitive", // Case-insensitive search
+        },
+      };
+    }
+
+    // Get total count for pagination
+    const totalCount = await prisma.alumni.count({
+      where: whereClause,
+    });
+
+    // Build order by clause
+    const orderBy = [
+      {
+        graduationYear: sortOrder,
+      },
+      {
+        user: {
+          fullName: "asc", // Secondary sort by name
+        },
+      },
+    ];
+
+    // Get alumni profiles
+    const alumniProfiles = await prisma.alumni.findMany({
+      where: whereClause,
+      select: {
+        graduationYear: true,
+        user: {
+          select: {
+            fullName: true,
+            photoUrl: true,
+          },
+        },
+      },
+      orderBy: orderBy,
+      take: limitInt,
+      skip: offsetInt,
+    });
+
+    // Transform the data to flatten the structure
+    const transformedProfiles = alumniProfiles.map((alumni) => ({
+      name: alumni.user.fullName,
+      photoUrl: alumni.user.photoUrl,
+      graduationYear: alumni.graduationYear,
+    }));
+
+    console.log(
+      `Found ${transformedProfiles.length} alumni profiles out of ${totalCount} total`
+    );
+
+    // Build dynamic success message
+    let message = "Alumni profiles retrieved successfully";
+    const filters = [];
+
+    if (graduationYear) {
+      filters.push(`graduation year ${graduationYear}`);
+    }
+
+    if (search) {
+      filters.push(`name containing "${search.trim()}"`);
+    }
+
+    if (filters.length > 0) {
+      message += ` for ${filters.join(" and ")}`;
+    }
+
+    message += ` (sorted ${sortOrder}ending)`;
+
+    // Return success response
+    return res.status(200).json({
+      success: true,
+      message: message,
+      data: {
+        profiles: transformedProfiles,
+        filter: {
+          graduationYear: graduationYear ? parseInt(graduationYear) : null,
+          search: search ? search.trim() : null,
+          sortOrder: sortOrder,
+        },
+        pagination: {
+          total: totalCount,
+          limit: limitInt,
+          offset: offsetInt,
+          hasMore: offsetInt + limitInt < totalCount,
+          currentPage: Math.floor(offsetInt / limitInt) + 1,
+          totalPages: Math.ceil(totalCount / limitInt),
+        },
+      },
+    });
+  } catch (error) {
+    console.error("Error in searchAlumniProfilesController:", error);
+
+    // Handle specific Prisma errors
+    if (error.code === "P2001") {
+      return res.status(404).json({
+        success: false,
+        message: "Alumni records not found",
+        error: "No alumni found",
+      });
+    }
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
 
 export const signup = async (req, res) => {
   try {

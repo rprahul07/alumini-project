@@ -1,4 +1,215 @@
 import prisma from "../../lib/prisma.js";
+import {
+  getEventRegistrations,
+  removeUserFromEvent,
+  withdrawFromEvent,
+} from "../../services/event_service.js";
+import { getRegisteredEvents } from "../../services/event_service.js";
+
+export const removeUserFromEventController = async (req, res) => {
+  try {
+    // Only organizers (admin, faculty) and the event creator can remove users
+    const allowedRoles = ["admin", "faculty", "alumni"];
+    if (!allowedRoles.includes(req.user.role)) {
+      return res.status(403).json({
+        success: false,
+        message:
+          "Access denied. Only administrators and faculty can remove users from events.",
+        error: "Insufficient permissions",
+      });
+    }
+
+    const organizerUserId = req.user.id;
+    const organizerRole = req.user.role;
+    const { eventId, userIdToRemove } = req.params;
+
+    // Validate required parameters
+    if (!eventId || !userIdToRemove) {
+      return res.status(400).json({
+        success: false,
+        message: "Event ID and User ID are required.",
+        error: "Missing required parameters",
+      });
+    }
+
+    const result = await removeUserFromEvent(
+      organizerUserId,
+      organizerRole,
+      eventId,
+      userIdToRemove
+    );
+
+    if (result.success) {
+      return res.status(200).json(result);
+    } else {
+      let statusCode = 500;
+
+      // Handle specific error cases with appropriate status codes
+      if (
+        result.message.includes("Invalid event ID") ||
+        result.message.includes("Invalid user ID")
+      ) {
+        statusCode = 400; // Bad Request
+      } else if (
+        result.message.includes("not found") ||
+        result.message.includes("don't have permission")
+      ) {
+        statusCode = 404; // Not Found
+      } else if (result.message.includes("not registered")) {
+        statusCode = 409; // Conflict
+      } else if (result.message.includes("past events")) {
+        statusCode = 422; // Unprocessable Entity
+      } else if (result.message.includes("Registration not found")) {
+        statusCode = 404; // Not Found
+      }
+
+      return res.status(statusCode).json(result);
+    }
+  } catch (error) {
+    console.error("Error in removeUserFromEventController:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
+
+export const getEventRegistrationsController = async (req, res) => {
+  try {
+    if (!["faculty", "alumni", "admin"].includes(req.user.role)) {
+      return res.status(403).json({
+        success: false,
+        message:
+          "Access denied. Only faculty, alumni, and admin can view event registrations.",
+        error: "Insufficient permissions",
+      });
+    }
+
+    const organizerUserId = req.user.id;
+    const eventId = req.params.eventId ? parseInt(req.params.eventId) : null;
+
+    if (req.params.eventId && (isNaN(eventId) || eventId <= 0)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid event ID provided.",
+        error: "Invalid parameters",
+      });
+    }
+
+    const result = await getEventRegistrations(organizerUserId, eventId);
+
+    const statusCode = result.success ? 200 : 400;
+
+    return res.status(statusCode).json({
+      success: result.success,
+      message: result.message,
+      ...(result.data && { data: result.data }),
+      ...(result.error && { error: result.error }),
+    });
+  } catch (error) {
+    console.error("Error in getEventRegistrationsController:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error while retrieving event registrations.",
+      error: "Server error",
+    });
+  }
+};
+export const getRegisteredEventsController = async (req, res) => {
+  try {
+    // Only students, faculty, and alumni are allowed
+    const allowedRoles = ["student", "faculty", "alumni"];
+    if (!allowedRoles.includes(req.user.role)) {
+      return res.status(403).json({
+        success: false,
+        message:
+          "Access denied. Only students, faculty, and alumni can view registered events.",
+        error: "Insufficient permissions",
+      });
+    }
+
+    const userId = req.user.id;
+    const userRole = req.user.role;
+
+    const result = await getRegisteredEvents(userId, userRole);
+
+    if (result.success) {
+      return res.status(200).json(result);
+    } else {
+      let statusCode = 500;
+      if (result.message.includes("Invalid user ID")) {
+        statusCode = 400;
+      }
+
+      return res.status(statusCode).json(result);
+    }
+  } catch (error) {
+    console.error("Error in getRegisteredEventsController:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
+
+export const withdrawFromEvents = async (req, res) => {
+  try {
+    // Check if user has valid role (exclude admin from event registration/withdrawal)
+    const allowedRoles = ["student", "faculty", "alumni"];
+    if (!allowedRoles.includes(req.user.role)) {
+      return res.status(403).json({
+        success: false,
+        message:
+          "Access denied. Only students, faculty, and alumni can withdraw from events.",
+        error: "Insufficient permissions",
+      });
+    }
+
+    const userId = req.user.id;
+    const userRole = req.user.role;
+    const eventId = parseInt(req.params.id);
+
+    if (!eventId || isNaN(eventId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid event ID provided.",
+      });
+    }
+
+    const result = await withdrawFromEvent(userId, userRole, eventId);
+
+    if (result.success) {
+      return res.status(200).json(result);
+    } else {
+      let statusCode = 500;
+      if (
+        result.message.includes("not found") ||
+        result.message.includes("Event not found")
+      ) {
+        statusCode = 404;
+      } else if (
+        result.message.includes("Invalid") ||
+        result.message.includes("not registered") ||
+        result.message.includes("past events") ||
+        result.message.includes("rejected events") ||
+        result.message.includes("already withdrawn")
+      ) {
+        statusCode = 400;
+      }
+
+      return res.status(statusCode).json(result);
+    }
+  } catch (error) {
+    console.error("Error in withdrawFromEvents:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
 
 export const getEventById = async (req, res) => {
   try {
