@@ -11,6 +11,7 @@ import AdminAllEventsButton from '../components/AdminAllEventsButton';
 import axios from '../config/axios';
 import { AdjustmentsHorizontalIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import Navbar from '../components/Navbar';
+import FilterModal from '../components/FilterModal';
 
 const EventsPage = () => {
   const { user, loading: authLoading } = useAuth();
@@ -145,7 +146,7 @@ const EventsPage = () => {
               </div>
               <button
                 onClick={() => setIsFilterDrawerOpen(true)}
-                className="flex items-center justify-center px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-100 shadow-sm transition"
+                className="rounded-full px-4 py-1.5 font-semibold flex items-center justify-center border-2 border-indigo-400 bg-white/60 backdrop-blur text-sm text-indigo-700 hover:bg-white/80 shadow-lg transition-all"
                 aria-label="Show Filters"
               >
                 <AdjustmentsHorizontalIcon className="h-5 w-5 mr-1" />
@@ -156,30 +157,24 @@ const EventsPage = () => {
 
           {/* Filter Modal/Drawer */}
           {isFilterDrawerOpen && (
-            <div className="fixed inset-0 bg-black bg-opacity-40 z-[100] flex justify-end sm:justify-center">
-              <div 
-                className="h-full sm:h-auto bg-white w-full sm:w-96 max-w-full shadow-2xl p-4 z-[101] flex flex-col sm:rounded-xl sm:mt-20 mt-12"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-lg font-bold">Filters & Sort</h2>
-                  <button onClick={() => setIsFilterDrawerOpen(false)} className="rounded-full p-2 hover:bg-gray-100">
-                    <XMarkIcon className="h-6 w-6" />
-                  </button>
-                </div>
-                <div className="flex-1 overflow-y-auto">
-                  <EventFilters 
-                    selectedDepartment={selectedDepartment}
-                    selectedType={selectedType}
-                    sortBy={sortBy}
-                    sortOrder={sortOrder}
-                    onFilterChange={handleFilterChange}
-                    onSortChange={handleSortChange}
-                    isMobile={true}
-                  />
-                </div>
-              </div>
-            </div>
+            <FilterModal
+              open={isFilterDrawerOpen}
+              onClose={() => setIsFilterDrawerOpen(false)}
+              selectedDepartment={selectedDepartment}
+              selectedType={selectedType}
+              sortBy={sortBy}
+              sortOrder={sortOrder}
+              onApply={(dep, type, sort, order) => {
+                handleFilterChange(dep, type);
+                handleSortChange(sort, order);
+                setIsFilterDrawerOpen(false);
+              }}
+              onReset={() => {
+                handleFilterChange('', '');
+                handleSortChange('createdAt', 'desc');
+                setIsFilterDrawerOpen(false);
+              }}
+            />
           )}
 
           {/* Events Grid */}
@@ -193,7 +188,7 @@ const EventsPage = () => {
                 <div className="text-red-600 text-lg font-semibold mb-4">{error}</div>
                 <button 
                   onClick={fetchEvents}
-                  className="px-6 py-2 rounded-xl bg-indigo-600 text-white font-semibold shadow hover:bg-indigo-700 transition"
+                  className="rounded-full px-4 py-1.5 font-semibold bg-indigo-600 text-white shadow hover:bg-indigo-700 transition"
                 >
                   Retry
                 </button>

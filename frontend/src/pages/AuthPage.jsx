@@ -395,7 +395,7 @@ const AuthPage = () => {
           )}
           <button
             type="submit"
-            className="h-12 w-full bg-indigo-600 text-white rounded-lg font-semibold text-base shadow hover:bg-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+            className="rounded-full px-4 py-1.5 font-semibold bg-indigo-600 text-white shadow hover:bg-indigo-700 transition"
             disabled={loading}
           >
             {loading ? 'Please wait...' : authType === 'login' ? 'Login' : 'Register'}
