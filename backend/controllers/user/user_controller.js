@@ -225,7 +225,7 @@ export const searchAlumniProfilesController = async (req, res) => {
     console.log(
       "Filtering alumni profiles by graduation year:",
       graduationYear,
-      "Search term:",
+      "Search term (name or company):",
       search,
       "Sort order:",
       sortOrder
@@ -282,14 +282,24 @@ export const searchAlumniProfilesController = async (req, res) => {
       whereClause.graduationYear = yearInt;
     }
 
-    // Add name search filter
+    // Add search filter for both name and company name
     if (search && search.trim()) {
-      whereClause.user = {
-        fullName: {
-          contains: search.trim(),
-          mode: "insensitive", // Case-insensitive search
+      whereClause.OR = [
+        {
+          user: {
+            fullName: {
+              contains: search.trim(),
+              mode: "insensitive", // Case-insensitive search
+            },
+          },
         },
-      };
+        {
+          companyName: {
+            contains: search.trim(),
+            mode: "insensitive", // Case-insensitive search
+          },
+        },
+      ];
     }
 
     // Get total count for pagination
@@ -309,13 +319,14 @@ export const searchAlumniProfilesController = async (req, res) => {
       },
     ];
 
-    // Get alumni profiles
+    // Get alumni profiles with additional fields
     const alumniProfiles = await prisma.alumni.findMany({
       where: whereClause,
       select: {
+        graduationYear: true,
         currentJobTitle: true,
         companyName: true,
-        graduationYear: true,
+        course: true, // Optional: include course as well
         user: {
           select: {
             fullName: true,
@@ -335,6 +346,7 @@ export const searchAlumniProfilesController = async (req, res) => {
       graduationYear: alumni.graduationYear,
       currentJobTitle: alumni.currentJobTitle,
       companyName: alumni.companyName,
+      course: alumni.course, // Optional: include course
     }));
 
     console.log(
@@ -350,7 +362,7 @@ export const searchAlumniProfilesController = async (req, res) => {
     }
 
     if (search) {
-      filters.push(`name containing "${search.trim()}"`);
+      filters.push(`name or company containing "${search.trim()}"`);
     }
 
     if (filters.length > 0) {
