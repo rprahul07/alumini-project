@@ -294,17 +294,26 @@ export const getSelfAppliedSupportRequests = async (req, res) => {
  * Get support requests received by the alumni
  */
 export const getReceivedSupportRequests = async (req, res) => {
-  if (req.user.role !== "alumni") {
+  // 1. Ensure only logged-in alumni can access
+  if (!req.user || req.user.role !== "alumni") {
     return res.status(403).json({
       success: false,
-      message: "Only alumni can view received requests.",
+      message: "Only assigned alumni can access this resource.",
     });
   }
 
   try {
+    // 2. Fetch requests assigned to this alumni only
     const requests = await prisma.supportRequest.findMany({
-      where: { alumniId: req.user.id },
-      orderBy: { createdAt: "desc" },
+      where: {
+        alumniId: req.user.id,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      include: {
+        requester: true, // Include requester user details
+      },
     });
 
     return res.status(200).json({
