@@ -316,6 +316,7 @@ export const searchAlumniProfilesController = async (req, res) => {
         currentJobTitle: true,
         companyName: true,
         graduationYear: true,
+        company_role: true,
         user: {
           select: {
             fullName: true,
@@ -335,6 +336,7 @@ export const searchAlumniProfilesController = async (req, res) => {
       graduationYear: alumni.graduationYear,
       currentJobTitle: alumni.currentJobTitle,
       companyName: alumni.companyName,
+      company_role: alumni.company_role,
     }));
 
     console.log(
