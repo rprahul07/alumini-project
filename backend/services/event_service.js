@@ -387,6 +387,213 @@ export const editEventForUser = async (
     };
   }
 };
+export const removeUserFromEvent = async (
+  organizerUserId,
+  organizerRole,
+  eventId,
+  userIdToRemove
+) => {
+  try {
+    console.log(
+      "Removing user ID:",
+      userIdToRemove,
+      "from event ID:",
+      eventId,
+      "by organizer ID:",
+      organizerUserId
+    );
+
+    // Validate event ID
+    const eventIdInt = parseInt(eventId);
+    if (!eventId || isNaN(eventIdInt)) {
+      throw new Error("Invalid event ID provided.");
+    }
+
+    // Validate user ID to remove
+    const userIdToRemoveInt = parseInt(userIdToRemove);
+    if (!userIdToRemove || isNaN(userIdToRemoveInt)) {
+      throw new Error("Invalid user ID provided.");
+    }
+
+    // Check if the event exists and user has permission (optimized query)
+    const whereClause =
+      organizerRole === "admin"
+        ? { id: eventIdInt } // Admin can access any event
+        : { id: eventIdInt, userId: organizerUserId }; // Others can only access their own events
+
+    const event = await prisma.event.findUnique({
+      where: whereClause,
+      select: {
+        id: true,
+        name: true,
+        userId: true,
+        status: true,
+        date: true,
+        time: true,
+        location: true,
+        maxCapacity: true,
+        user: {
+          select: {
+            id: true,
+            fullName: true,
+            role: true,
+          },
+        },
+        _count: {
+          select: {
+            registrations: true,
+          },
+        },
+      },
+    });
+
+    // Check if event exists and user has permission
+    if (!event) {
+      throw new Error(
+        "Event not found or you don't have permission to remove users from this event."
+      );
+    }
+
+    // Check if the user to be removed is actually registered for the event
+    const existingRegistration = await prisma.eventRegistration.findUnique({
+      where: {
+        registeredUserId_eventId: {
+          registeredUserId: userIdToRemoveInt,
+          eventId: eventIdInt,
+        },
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            fullName: true,
+            email: true,
+            role: true,
+          },
+        },
+      },
+    });
+
+    if (!existingRegistration) {
+      throw new Error("User is not registered for this event.");
+    }
+
+    // Prevent removing users from past events (optional business rule)
+    if (new Date(event.date) < new Date()) {
+      throw new Error("Cannot remove users from past events.");
+    }
+
+    // Remove the registration
+    await prisma.eventRegistration.delete({
+      where: {
+        registeredUserId_eventId: {
+          registeredUserId: userIdToRemoveInt,
+          eventId: eventIdInt,
+        },
+      },
+    });
+
+    // Get updated event data with new registration count
+    const updatedEvent = await prisma.event.findUnique({
+      where: { id: eventIdInt },
+      select: {
+        id: true,
+        name: true,
+        maxCapacity: true,
+        date: true,
+        time: true,
+        location: true,
+        _count: {
+          select: {
+            registrations: true,
+          },
+        },
+      },
+    });
+
+    // Log the activity for the organizer
+    await prisma.activityLog.create({
+      data: {
+        userId: organizerUserId,
+        action: "USER_REMOVED_FROM_EVENT",
+        details: {
+          eventId: updatedEvent.id,
+          eventName: updatedEvent.name,
+          removedUserId: userIdToRemoveInt,
+          removedUserName: existingRegistration.user.fullName,
+          removedUserEmail: existingRegistration.user.email,
+          removedUserRole: existingRegistration.user.role,
+          registrationId: existingRegistration.id,
+          newRegistrationCount: updatedEvent._count.registrations,
+        },
+        userType: organizerRole,
+      },
+    });
+
+    // Also log activity for the user who was removed (for their records)
+    await prisma.activityLog.create({
+      data: {
+        userId: userIdToRemoveInt,
+        action: "REMOVED_FROM_EVENT",
+        details: {
+          eventId: updatedEvent.id,
+          eventName: updatedEvent.name,
+          removedBy: organizerUserId,
+          removedByRole: organizerRole,
+          registrationId: existingRegistration.id,
+        },
+        userType: existingRegistration.user.role,
+      },
+    });
+
+    console.log(
+      `User ${existingRegistration.user.fullName} (ID: ${userIdToRemoveInt}) removed from event: ${updatedEvent.name} by organizer ${organizerUserId}`
+    );
+
+    // Return success response
+    return {
+      success: true,
+      message: "User successfully removed from the event",
+      data: {
+        eventId: updatedEvent.id,
+        eventName: updatedEvent.name,
+        eventDate: updatedEvent.date,
+        eventTime: updatedEvent.time,
+        eventLocation: updatedEvent.location,
+        removedUser: {
+          id: existingRegistration.user.id,
+          fullName: existingRegistration.user.fullName,
+          email: existingRegistration.user.email,
+          role: existingRegistration.user.role,
+        },
+        registrationId: existingRegistration.id,
+        newRegistrationCount: updatedEvent._count.registrations,
+        maxCapacity: updatedEvent.maxCapacity,
+        availableSpots: updatedEvent.maxCapacity
+          ? updatedEvent.maxCapacity - updatedEvent._count.registrations
+          : null,
+      },
+    };
+  } catch (error) {
+    console.error("Error in removeUserFromEvent:", error);
+
+    // Handle specific Prisma errors
+    if (error.code === "P2025") {
+      return {
+        success: false,
+        message: "Registration not found or already removed",
+        error: "Registration not found",
+      };
+    }
+
+    // Return error response
+    return {
+      success: false,
+      message: error.message || "Failed to remove user from event",
+      error: error.code || error.message,
+    };
+  }
+};
 export const deleteEventForUser = async (userId, userRole, eventId) => {
   try {
     console.log(
@@ -507,6 +714,134 @@ export const deleteEventForUser = async (userId, userRole, eventId) => {
     };
   }
 };
+export const getRegisteredEvents = async (userId, userRole) => {
+  try {
+    console.log(
+      "Fetching registered events for user ID:",
+      userId,
+      "with role:",
+      userRole
+    );
+
+    // Validate user ID
+    if (!userId || isNaN(parseInt(userId))) {
+      throw new Error("Invalid user ID provided.");
+    }
+
+    // Fetch only upcoming event registrations for the user with event details
+    const registrations = await prisma.eventRegistration.findMany({
+      where: {
+        registeredUserId: userId,
+        event: {
+          date: {
+            gte: new Date(), // Only get events with date >= today
+          },
+        },
+      },
+      select: {
+        id: true,
+        registeredAt: true,
+        event: {
+          select: {
+            id: true,
+            name: true,
+            date: true,
+            time: true,
+            type: true,
+            description: true,
+            location: true,
+            organizer: true,
+            imageUrl: true,
+            status: true,
+            maxCapacity: true,
+            createdAt: true,
+            updatedAt: true,
+            _count: {
+              select: {
+                registrations: true,
+              },
+            },
+            user: {
+              select: {
+                id: true,
+                fullName: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        event: {
+          date: "asc", // Order by event date (upcoming events first)
+        },
+      },
+    });
+
+    // Transform the data to a more user-friendly format
+    const upcomingEvents = registrations.map((registration) => ({
+      registrationId: registration.id,
+      registeredAt: registration.registeredAt,
+      eventId: registration.event.id,
+      eventName: registration.event.name,
+      eventDate: registration.event.date,
+      eventTime: registration.event.time,
+      eventType: registration.event.type,
+      description: registration.event.description,
+      location: registration.event.location,
+      organizer: registration.event.organizer,
+      imageUrl: registration.event.imageUrl,
+      status: registration.event.status,
+      maxCapacity: registration.event.maxCapacity,
+      currentRegistrations: registration.event._count.registrations,
+      createdAt: registration.event.createdAt,
+      updatedAt: registration.event.updatedAt,
+      eventCreator: {
+        id: registration.event.user.id,
+        name: registration.event.user.fullName,
+      },
+      // Add some useful computed fields
+      availableSpots: registration.event.maxCapacity
+        ? registration.event.maxCapacity -
+          registration.event._count.registrations
+        : null,
+    }));
+
+    // Log the activity
+    await prisma.activityLog.create({
+      data: {
+        userId: userId,
+        action: "REGISTERED_EVENTS_VIEWED",
+        details: {
+          totalUpcomingRegistrations: registrations.length,
+        },
+        userType: userRole,
+      },
+    });
+
+    console.log(
+      `Fetched ${registrations.length} upcoming registered events for user ${userId}`
+    );
+
+    // Return success response data
+    return {
+      success: true,
+      message: "Successfully fetched upcoming registered events",
+      data: {
+        totalRegistrations: registrations.length,
+        events: upcomingEvents,
+      },
+    };
+  } catch (error) {
+    console.error("Error in getRegisteredEvents:", error);
+
+    // Return error response data
+    return {
+      success: false,
+      message: error.message || "Failed to fetch registered events",
+      error: error.message,
+    };
+  }
+};
 export const registerForEvents = async (userId, userRole, eventId) => {
   try {
     console.log(
@@ -524,6 +859,20 @@ export const registerForEvents = async (userId, userRole, eventId) => {
       throw new Error("Invalid event ID provided.");
     }
 
+    // Check if user is already registered
+    const existingRegistration = await prisma.eventRegistration.findUnique({
+      where: {
+        registeredUserId_eventId: {
+          registeredUserId: userId,
+          eventId: eventIdInt,
+        },
+      },
+    });
+
+    if (existingRegistration) {
+      throw new Error("You are already registered for this event.");
+    }
+
     // Fetch the event to check its status and capacity
     const event = await prisma.event.findUnique({
       where: { id: eventIdInt },
@@ -531,11 +880,15 @@ export const registerForEvents = async (userId, userRole, eventId) => {
         id: true,
         name: true,
         status: true,
-        registeredUsers: true,
         maxCapacity: true,
         date: true,
         time: true,
         location: true,
+        _count: {
+          select: {
+            registrations: true,
+          },
+        },
       },
     });
 
@@ -554,35 +907,34 @@ export const registerForEvents = async (userId, userRole, eventId) => {
       throw new Error("Cannot register for past events.");
     }
 
-    // Check if user is already registered
-    if (event.registeredUsers.includes(userId)) {
-      throw new Error("You are already registered for this event.");
-    }
-
     // Check capacity limit
-    if (
-      event.maxCapacity &&
-      event.registeredUsers.length >= event.maxCapacity
-    ) {
+    if (event.maxCapacity && event._count.registrations >= event.maxCapacity) {
       throw new Error("Event is at full capacity.");
     }
 
-    // Register user by pushing userId to registeredUsers array
-    const updatedEvent = await prisma.event.update({
-      where: { id: eventIdInt },
+    // Register user by creating a new event registration
+    const newRegistration = await prisma.eventRegistration.create({
       data: {
-        registeredUsers: {
-          push: userId,
-        },
+        registeredUserId: userId,
+        eventId: eventIdInt,
       },
+    });
+
+    // Get updated event data with registration count
+    const updatedEvent = await prisma.event.findUnique({
+      where: { id: eventIdInt },
       select: {
         id: true,
         name: true,
-        registeredUsers: true,
         maxCapacity: true,
         date: true,
         time: true,
         location: true,
+        _count: {
+          select: {
+            registrations: true,
+          },
+        },
       },
     });
 
@@ -594,6 +946,7 @@ export const registerForEvents = async (userId, userRole, eventId) => {
         details: {
           eventId: updatedEvent.id,
           eventName: updatedEvent.name,
+          registrationId: newRegistration.id,
         },
         userType: userRole,
       },
@@ -606,23 +959,385 @@ export const registerForEvents = async (userId, userRole, eventId) => {
       success: true,
       message: "Successfully registered for the event",
       data: {
+        registrationId: newRegistration.id,
         eventId: updatedEvent.id,
         eventName: updatedEvent.name,
         eventDate: updatedEvent.date,
         eventTime: updatedEvent.time,
         eventLocation: updatedEvent.location,
-        registeredCount: updatedEvent.registeredUsers.length,
+        registeredCount: updatedEvent._count.registrations,
         maxCapacity: updatedEvent.maxCapacity,
+        registeredAt: newRegistration.registeredAt,
       },
     };
   } catch (error) {
     console.error("Error in registerForEvents:", error);
+
+    // Handle unique constraint violation (duplicate registration)
+    if (error.code === "P2002") {
+      return {
+        success: false,
+        message: "You are already registered for this event",
+        error: "Duplicate registration",
+      };
+    }
 
     // Return error response data (not HTTP response)
     return {
       success: false,
       message: error.message || "Failed to register for event",
       error: error.code === "P2025" ? "Event not found" : error.message,
+    };
+  }
+};
+export const getEventRegistrations = async (
+  organizerUserId,
+  eventId = null
+) => {
+  try {
+    console.log(
+      "Fetching registrations for organizer ID:",
+      organizerUserId,
+      eventId ? `for event ID: ${eventId}` : "for all events"
+    );
+
+    const whereClause = {
+      userId: organizerUserId, // Events created by this organizer
+      status: "approved", // Only approved events
+    };
+
+    // If specific eventId is provided, add it to the filter
+    if (eventId) {
+      const eventIdInt = parseInt(eventId);
+      if (isNaN(eventIdInt)) {
+        throw new Error("Invalid event ID provided.");
+      }
+      whereClause.id = eventIdInt;
+    }
+
+    // Fetch events with their registrations and user details
+    const eventsWithRegistrations = await prisma.event.findMany({
+      where: whereClause,
+      select: {
+        id: true,
+        name: true,
+        date: true,
+        time: true,
+        location: true,
+        type: true,
+        maxCapacity: true,
+        description: true,
+        registrations: {
+          select: {
+            id: true,
+            registeredAt: true,
+            user: {
+              select: {
+                id: true,
+                fullName: true,
+                department: true,
+                role: true,
+                photoUrl: true,
+                bio: true,
+                student: {
+                  select: {
+                    rollNumber: true,
+                    currentSemester: true,
+                    graduationYear: true,
+                    batch_startYear: true,
+                    batch_endYear: true,
+                  },
+                },
+                alumni: {
+                  select: {
+                    graduationYear: true,
+                    course: true,
+                    currentJobTitle: true,
+                    companyName: true,
+                    company_role: true,
+                  },
+                },
+                faculty: {
+                  select: {
+                    designation: true,
+                  },
+                },
+              },
+            },
+          },
+          orderBy: {
+            registeredAt: "asc", // Earliest registrations first
+          },
+        },
+        _count: {
+          select: {
+            registrations: true,
+          },
+        },
+      },
+      orderBy: {
+        date: "asc", // Upcoming events first
+      },
+    });
+
+    // Check if any events were found
+    if (!eventsWithRegistrations || eventsWithRegistrations.length === 0) {
+      const message = eventId
+        ? "Event not found or you don't have permission to view its registrations."
+        : "No approved events found for this organizer.";
+
+      return {
+        success: true,
+        message,
+        data: {
+          events: [],
+          totalEvents: 0,
+          totalRegistrations: 0,
+        },
+      };
+    }
+
+    // Transform the data for better readability
+    const formattedEvents = eventsWithRegistrations.map((event) => ({
+      eventId: event.id,
+      eventName: event.name,
+      eventDate: event.date,
+      eventTime: event.time,
+      eventLocation: event.location,
+      eventType: event.type,
+      eventDescription: event.description,
+      maxCapacity: event.maxCapacity,
+      totalRegistrations: event._count.registrations,
+      registeredUsers: event.registrations.map((registration) => ({
+        registrationId: registration.id,
+        registeredAt: registration.registeredAt,
+        userId: registration.user.id,
+        fullName: registration.user.fullName,
+        department: registration.user.department,
+        role: registration.user.role,
+        photoUrl: registration.user.photoUrl,
+        bio: registration.user.bio,
+        // Role-specific details
+        roleDetails:
+          registration.user.role === "student"
+            ? {
+                rollNumber: registration.user.student?.rollNumber,
+                currentSemester: registration.user.student?.currentSemester,
+                graduationYear: registration.user.student?.graduationYear,
+                batchStartYear: registration.user.student?.batch_startYear,
+                batchEndYear: registration.user.student?.batch_endYear,
+              }
+            : registration.user.role === "alumni"
+              ? {
+                  graduationYear: registration.user.alumni?.graduationYear,
+                  course: registration.user.alumni?.course,
+                  currentJobTitle: registration.user.alumni?.currentJobTitle,
+                  companyName: registration.user.alumni?.companyName,
+                  companyRole: registration.user.alumni?.company_role,
+                }
+              : registration.user.role === "faculty"
+                ? {
+                    designation: registration.user.faculty?.designation,
+                  }
+                : null,
+      })),
+    }));
+
+    // Calculate summary statistics
+    const totalRegistrations = formattedEvents.reduce(
+      (sum, event) => sum + event.totalRegistrations,
+      0
+    );
+
+    // Log the activity
+    await prisma.activityLog.create({
+      data: {
+        userId: organizerUserId,
+        action: "VIEW_EVENT_REGISTRATIONS",
+        details: {
+          eventId: eventId || "all_events",
+          totalEventsViewed: formattedEvents.length,
+          totalRegistrationsViewed: totalRegistrations,
+        },
+        userType: "admin", // Assuming organizers have admin-like privileges
+      },
+    });
+
+    console.log(
+      `Retrieved ${formattedEvents.length} events with ${totalRegistrations} total registrations for organizer ${organizerUserId}`
+    );
+
+    return {
+      success: true,
+      message: "Event registrations retrieved successfully",
+      data: {
+        events: formattedEvents,
+        totalEvents: formattedEvents.length,
+        totalRegistrations: totalRegistrations,
+        summary: {
+          eventsSummary: formattedEvents.map((event) => ({
+            eventId: event.eventId,
+            eventName: event.eventName,
+            registrationCount: event.totalRegistrations,
+            maxCapacity: event.maxCapacity,
+            capacityPercentage: event.maxCapacity
+              ? Math.round((event.totalRegistrations / event.maxCapacity) * 100)
+              : null,
+          })),
+        },
+      },
+    };
+  } catch (error) {
+    console.error("Error in getEventRegistrations:", error);
+
+    return {
+      success: false,
+      message: error.message || "Failed to retrieve event registrations",
+      error: error.code || "UNKNOWN_ERROR",
+    };
+  }
+};
+export const withdrawFromEvent = async (userId, userRole, eventId) => {
+  try {
+    console.log(
+      "Withdrawing user ID:",
+      userId,
+      "with role:",
+      userRole,
+      "from event ID:",
+      eventId
+    );
+
+    // Validate event ID - convert to integer
+    const eventIdInt = parseInt(eventId);
+    if (!eventId || isNaN(eventIdInt)) {
+      throw new Error("Invalid event ID provided.");
+    }
+
+    // Check if user is registered for this event
+    const existingRegistration = await prisma.eventRegistration.findUnique({
+      where: {
+        registeredUserId_eventId: {
+          registeredUserId: userId,
+          eventId: eventIdInt,
+        },
+      },
+    });
+
+    if (!existingRegistration) {
+      throw new Error("You are not registered for this event.");
+    }
+
+    // Fetch the event to check its status and get event details
+    const event = await prisma.event.findUnique({
+      where: { id: eventIdInt },
+      select: {
+        id: true,
+        name: true,
+        status: true,
+        date: true,
+        time: true,
+        location: true,
+        _count: {
+          select: {
+            registrations: true,
+          },
+        },
+      },
+    });
+
+    // Check if event exists
+    if (!event) {
+      throw new Error("Event not found.");
+    }
+
+    // Check if event date has passed (optional - you might want to allow withdrawal from past events)
+    if (new Date(event.date) < new Date()) {
+      throw new Error("Cannot withdraw from past events.");
+    }
+
+    // Optional: Check if withdrawal is allowed based on event status
+    // You might want to prevent withdrawal from certain status events
+    if (event.status === "rejected") {
+      throw new Error("Cannot withdraw from rejected events.");
+    }
+
+    // Delete the registration
+    await prisma.eventRegistration.delete({
+      where: {
+        registeredUserId_eventId: {
+          registeredUserId: userId,
+          eventId: eventIdInt,
+        },
+      },
+    });
+
+    // Get updated event data with new registration count
+    const updatedEvent = await prisma.event.findUnique({
+      where: { id: eventIdInt },
+      select: {
+        id: true,
+        name: true,
+        maxCapacity: true,
+        date: true,
+        time: true,
+        location: true,
+        _count: {
+          select: {
+            registrations: true,
+          },
+        },
+      },
+    });
+
+    // Log the activity
+    await prisma.activityLog.create({
+      data: {
+        userId: userId,
+        action: "EVENT_WITHDRAWAL",
+        details: {
+          eventId: updatedEvent.id,
+          eventName: updatedEvent.name,
+          withdrawnAt: new Date(),
+        },
+        userType: userRole,
+      },
+    });
+
+    console.log(`User ${userId} withdrew from event: ${updatedEvent.name}`);
+
+    // Return success response data
+    return {
+      success: true,
+      message: "Successfully withdrew from the event",
+      data: {
+        eventId: updatedEvent.id,
+        eventName: updatedEvent.name,
+        eventDate: updatedEvent.date,
+        eventTime: updatedEvent.time,
+        eventLocation: updatedEvent.location,
+        remainingRegistrations: updatedEvent._count.registrations,
+        maxCapacity: updatedEvent.maxCapacity,
+        withdrawnAt: new Date(),
+      },
+    };
+  } catch (error) {
+    console.error("Error in withdrawFromEvent:", error);
+
+    // Handle specific Prisma errors
+    if (error.code === "P2025") {
+      return {
+        success: false,
+        message: "Registration not found or already withdrawn",
+        error: "Registration not found",
+      };
+    }
+
+    // Return error response data
+    return {
+      success: false,
+      message: error.message || "Failed to withdraw from event",
+      error: error.message,
     };
   }
 };
@@ -677,6 +1392,20 @@ export const getMyEvents = async (userId, userRole, options = {}) => {
             department: true,
           },
         },
+        _count: {
+          select: {
+            registrations: true,
+          },
+        },
+        registrations: {
+          where: {
+            registeredUserId: userId,
+          },
+          select: {
+            id: true,
+          },
+          take: 1,
+        },
       },
     });
 
@@ -697,8 +1426,8 @@ export const getMyEvents = async (userId, userRole, options = {}) => {
       imageUrl: event.imageUrl,
       status: event.status,
       maxCapacity: event.maxCapacity,
-      registeredCount: event.registeredUsers.length,
-      isRegistered: event.registeredUsers.includes(userId),
+      registeredCount: event._count.registrations,
+      isRegistered: event.registrations.length > 0,
       isCreator: true, // Always true since we're fetching user's created events
       createdAt: event.createdAt,
       updatedAt: event.updatedAt,
@@ -712,7 +1441,6 @@ export const getMyEvents = async (userId, userRole, options = {}) => {
       },
     }));
 
-    // Calculate pagination metadata
     const totalPages = Math.ceil(totalEvents / pageSize);
     const hasNextPage = pageNumber < totalPages;
     const hasPreviousPage = pageNumber > 1;

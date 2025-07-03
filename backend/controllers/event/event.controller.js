@@ -1,8 +1,218 @@
 import prisma from "../../lib/prisma.js";
+import {
+  getEventRegistrations,
+  removeUserFromEvent,
+  withdrawFromEvent,
+} from "../../services/event_service.js";
+import { getRegisteredEvents } from "../../services/event_service.js";
+
+export const removeUserFromEventController = async (req, res) => {
+  try {
+    // Only organizers (admin, faculty) and the event creator can remove users
+    const allowedRoles = ["admin", "faculty", "alumni"];
+    if (!allowedRoles.includes(req.user.role)) {
+      return res.status(403).json({
+        success: false,
+        message:
+          "Access denied. Only administrators and faculty can remove users from events.",
+        error: "Insufficient permissions",
+      });
+    }
+
+    const organizerUserId = req.user.id;
+    const organizerRole = req.user.role;
+    const { eventId, userIdToRemove } = req.params;
+
+    // Validate required parameters
+    if (!eventId || !userIdToRemove) {
+      return res.status(400).json({
+        success: false,
+        message: "Event ID and User ID are required.",
+        error: "Missing required parameters",
+      });
+    }
+
+    const result = await removeUserFromEvent(
+      organizerUserId,
+      organizerRole,
+      eventId,
+      userIdToRemove
+    );
+
+    if (result.success) {
+      return res.status(200).json(result);
+    } else {
+      let statusCode = 500;
+
+      // Handle specific error cases with appropriate status codes
+      if (
+        result.message.includes("Invalid event ID") ||
+        result.message.includes("Invalid user ID")
+      ) {
+        statusCode = 400; // Bad Request
+      } else if (
+        result.message.includes("not found") ||
+        result.message.includes("don't have permission")
+      ) {
+        statusCode = 404; // Not Found
+      } else if (result.message.includes("not registered")) {
+        statusCode = 409; // Conflict
+      } else if (result.message.includes("past events")) {
+        statusCode = 422; // Unprocessable Entity
+      } else if (result.message.includes("Registration not found")) {
+        statusCode = 404; // Not Found
+      }
+
+      return res.status(statusCode).json(result);
+    }
+  } catch (error) {
+    console.error("Error in removeUserFromEventController:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
+
+export const getEventRegistrationsController = async (req, res) => {
+  try {
+    if (!["faculty", "alumni", "admin"].includes(req.user.role)) {
+      return res.status(403).json({
+        success: false,
+        message:
+          "Access denied. Only faculty, alumni, and admin can view event registrations.",
+        error: "Insufficient permissions",
+      });
+    }
+
+    const organizerUserId = req.user.id;
+    const eventId = req.params.eventId ? parseInt(req.params.eventId) : null;
+
+    if (req.params.eventId && (isNaN(eventId) || eventId <= 0)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid event ID provided.",
+        error: "Invalid parameters",
+      });
+    }
+
+    const result = await getEventRegistrations(organizerUserId, eventId);
+
+    const statusCode = result.success ? 200 : 400;
+
+    return res.status(statusCode).json({
+      success: result.success,
+      message: result.message,
+      ...(result.data && { data: result.data }),
+      ...(result.error && { error: result.error }),
+    });
+  } catch (error) {
+    console.error("Error in getEventRegistrationsController:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error while retrieving event registrations.",
+      error: "Server error",
+    });
+  }
+};
+export const getRegisteredEventsController = async (req, res) => {
+  try {
+    // Only students, faculty, and alumni are allowed
+    const allowedRoles = ["student", "faculty", "alumni"];
+    if (!allowedRoles.includes(req.user.role)) {
+      return res.status(403).json({
+        success: false,
+        message:
+          "Access denied. Only students, faculty, and alumni can view registered events.",
+        error: "Insufficient permissions",
+      });
+    }
+
+    const userId = req.user.id;
+    const userRole = req.user.role;
+
+    const result = await getRegisteredEvents(userId, userRole);
+
+    if (result.success) {
+      return res.status(200).json(result);
+    } else {
+      let statusCode = 500;
+      if (result.message.includes("Invalid user ID")) {
+        statusCode = 400;
+      }
+
+      return res.status(statusCode).json(result);
+    }
+  } catch (error) {
+    console.error("Error in getRegisteredEventsController:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
+
+export const withdrawFromEvents = async (req, res) => {
+  try {
+    // Check if user has valid role (exclude admin from event registration/withdrawal)
+    const allowedRoles = ["student", "faculty", "alumni"];
+    if (!allowedRoles.includes(req.user.role)) {
+      return res.status(403).json({
+        success: false,
+        message:
+          "Access denied. Only students, faculty, and alumni can withdraw from events.",
+        error: "Insufficient permissions",
+      });
+    }
+
+    const userId = req.user.id;
+    const userRole = req.user.role;
+    const eventId = parseInt(req.params.id);
+
+    if (!eventId || isNaN(eventId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid event ID provided.",
+      });
+    }
+
+    const result = await withdrawFromEvent(userId, userRole, eventId);
+
+    if (result.success) {
+      return res.status(200).json(result);
+    } else {
+      let statusCode = 500;
+      if (
+        result.message.includes("not found") ||
+        result.message.includes("Event not found")
+      ) {
+        statusCode = 404;
+      } else if (
+        result.message.includes("Invalid") ||
+        result.message.includes("not registered") ||
+        result.message.includes("past events") ||
+        result.message.includes("rejected events") ||
+        result.message.includes("already withdrawn")
+      ) {
+        statusCode = 400;
+      }
+
+      return res.status(statusCode).json(result);
+    }
+  } catch (error) {
+    console.error("Error in withdrawFromEvents:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
 
 export const getEventById = async (req, res) => {
   try {
-    // Check if user is authenticated
     const userId = req.user?.id || null;
     const userRole = req.user?.role || null;
     const isAuthenticated = !!userId;
@@ -17,7 +227,6 @@ export const getEventById = async (req, res) => {
       userRole || "public"
     );
 
-    // For authenticated users, restrict access to faculty and alumni only
     if (isAuthenticated && !["faculty", "alumni"].includes(userRole)) {
       return res.status(403).json({
         success: false,
@@ -34,25 +243,62 @@ export const getEventById = async (req, res) => {
       });
     }
 
-    // Fetch the event by ID - only approved events
-    const event = await prisma.event.findUnique({
-      where: {
-        id: eventId,
-        status: "approved", // Only show approved events
-      },
-      include: {
-        user: {
-          select: {
-            id: true,
-            fullName: true,
-            email: true,
-            role: true,
-            photoUrl: true,
-            department: true,
+    // Execute queries in parallel
+    const [event, userRegistration] = await Promise.all([
+      // Get event details
+      prisma.event.findUnique({
+        where: {
+          id: eventId,
+          status: "approved", // Only show approved events
+        },
+        select: {
+          id: true,
+          name: true,
+          date: true,
+          time: true,
+          type: true,
+          description: true,
+          location: true,
+          organizer: true,
+          imageUrl: true,
+          maxCapacity: true,
+          status: true,
+          createdAt: true,
+          updatedAt: true,
+          userId: true,
+          user: {
+            select: {
+              id: true,
+              fullName: true,
+              email: true,
+              role: true,
+              photoUrl: true,
+              department: true,
+            },
+          },
+          _count: {
+            select: {
+              registrations: true,
+            },
           },
         },
-      },
-    });
+      }),
+
+      // Get user's registration for this event (only if authenticated)
+      isAuthenticated
+        ? prisma.eventRegistration.findUnique({
+            where: {
+              registeredUserId_eventId: {
+                registeredUserId: userId,
+                eventId: eventId,
+              },
+            },
+            select: {
+              id: true,
+            },
+          })
+        : Promise.resolve(null),
+    ]);
 
     // Check if event exists
     if (!event) {
@@ -68,13 +314,9 @@ export const getEventById = async (req, res) => {
       }`
     );
 
-    // Check if user is registered for this event (only for authenticated users)
-    const isRegistered = isAuthenticated
-      ? event.registeredUsers.includes(userId)
-      : null;
-    const registeredCount = isAuthenticated
-      ? event.registeredUsers.length
-      : null;
+    // Check registration status
+    const isRegistered = isAuthenticated ? !!userRegistration : null;
+    const registeredCount = isAuthenticated ? event._count.registrations : null;
 
     // Format the response data
     const formattedEvent = {
@@ -146,7 +388,6 @@ export const getEventById = async (req, res) => {
     });
   }
 };
-
 export const getAllEvents = async (req, res) => {
   try {
     // Check if user is authenticated
@@ -169,35 +410,73 @@ export const getAllEvents = async (req, res) => {
     const pageSize = parseInt(limit);
     const skip = (pageNumber - 1) * pageSize;
 
-    // Get total count for pagination - only approved events
-    const totalEvents = await prisma.event.count({
-      where: {
-        status: "approved",
-      },
-    });
+    // Use transaction for consistency and combine queries
+    const [totalEvents, events, userRegistrations] = await Promise.all([
+      // Get total count
+      prisma.event.count({
+        where: {
+          status: "approved",
+        },
+      }),
 
-    // Fetch events with pagination - only approved events
-    const events = await prisma.event.findMany({
-      where: {
-        status: "approved",
-      },
-      orderBy: {
-        date: "asc",
-      },
-      skip,
-      take: pageSize,
-      include: {
-        user: {
-          select: {
-            id: true,
-            fullName: true,
-            email: true,
-            role: true,
-            photoUrl: true,
+      // Get events with minimal data
+      prisma.event.findMany({
+        where: {
+          status: "approved",
+        },
+        orderBy: {
+          date: "asc",
+        },
+        skip,
+        take: pageSize,
+        select: {
+          id: true,
+          name: true,
+          date: true,
+          time: true,
+          type: true,
+          description: true,
+          location: true,
+          organizer: true,
+          imageUrl: true,
+          maxCapacity: true,
+          status: true,
+          createdAt: true,
+          updatedAt: true,
+          user: {
+            select: {
+              id: true,
+              fullName: true,
+              email: true,
+              role: true,
+              photoUrl: true,
+            },
+          },
+          _count: {
+            select: {
+              registrations: true,
+            },
           },
         },
-      },
-    });
+      }),
+
+      // Get user's registrations for these events (only if authenticated)
+      isAuthenticated
+        ? prisma.eventRegistration.findMany({
+            where: {
+              registeredUserId: userId,
+              event: {
+                status: "approved",
+              },
+            },
+            skip,
+            take: pageSize,
+            select: {
+              eventId: true,
+            },
+          })
+        : Promise.resolve([]),
+    ]);
 
     console.log(
       `Found ${events.length} approved events out of ${totalEvents} total for ${
@@ -205,14 +484,18 @@ export const getAllEvents = async (req, res) => {
       }`
     );
 
+    // Create a Set for O(1) lookup of user's registered events
+    const userRegisteredEventIds = new Set(
+      userRegistrations.map((reg) => reg.eventId)
+    );
+
     // Format the response data
     const formattedEvents = events.map((event) => {
-      // Check registration status only for authenticated users
       const isRegistered = isAuthenticated
-        ? event.registeredUsers.includes(userId)
+        ? userRegisteredEventIds.has(event.id)
         : null;
       const registeredCount = isAuthenticated
-        ? event.registeredUsers.length
+        ? event._count.registrations
         : null;
 
       return {
@@ -274,7 +557,6 @@ export const getAllEvents = async (req, res) => {
     });
   }
 };
-
 export const searchEvents = async (req, res) => {
   try {
     // Check if user is authenticated
@@ -283,14 +565,6 @@ export const searchEvents = async (req, res) => {
     const isAuthenticated = !!userId;
 
     console.log("user: " + (userId || "public"));
-
-    // For authenticated users, check permissions (commented out as in original)
-    // if (isAuthenticated && !["faculty", "alumni", "admin", "student"].includes(userRole)) {
-    //   return res.status(403).json({
-    //     success: false,
-    //     message: "Access denied. You do not have permission to view events.",
-    //   });
-    // }
 
     const {
       page = 1,
@@ -347,11 +621,6 @@ export const searchEvents = async (req, res) => {
       viewer: isAuthenticated ? userRole : "public",
     });
 
-    // Get total count for pagination with filters - only approved events
-    const totalEvents = await prisma.event.count({
-      where: whereClause,
-    });
-
     // Build orderBy clause
     const orderBy = {};
     const validSortFields = ["date", "createdAt", "name", "type"];
@@ -366,25 +635,67 @@ export const searchEvents = async (req, res) => {
       orderBy.date = "asc"; // default sorting
     }
 
-    // Fetch events with search, filtering, and pagination - only approved events
-    const events = await prisma.event.findMany({
-      where: whereClause,
-      orderBy,
-      skip,
-      take: pageSize,
-      include: {
-        user: {
-          select: {
-            id: true,
-            fullName: true,
-            email: true,
-            role: true,
-            photoUrl: true,
-            department: true,
+    // Execute queries in parallel
+    const [totalEvents, events, userRegistrations] = await Promise.all([
+      // Get total count for pagination with filters - only approved events
+      prisma.event.count({
+        where: whereClause,
+      }),
+
+      prisma.event.findMany({
+        where: whereClause,
+        orderBy,
+        skip,
+        take: pageSize,
+        select: {
+          id: true,
+          name: true,
+          date: true,
+          time: true,
+          type: true,
+          description: true,
+          location: true,
+          organizer: true,
+          imageUrl: true,
+          maxCapacity: true,
+          status: true,
+          createdAt: true,
+          updatedAt: true,
+          user: {
+            select: {
+              id: true,
+              fullName: true,
+              email: true,
+              role: true,
+              photoUrl: true,
+              department: true,
+            },
+          },
+          _count: {
+            select: {
+              registrations: true,
+            },
           },
         },
-      },
-    });
+      }),
+
+      isAuthenticated
+        ? prisma.eventRegistration.findMany({
+            where: {
+              registeredUserId: userId,
+              event: {
+                status: "approved",
+                ...whereClause,
+              },
+            },
+            skip,
+            take: pageSize,
+            select: {
+              eventId: true,
+            },
+          })
+        : Promise.resolve([]),
+    ]);
 
     console.log(
       `Found ${
@@ -394,14 +705,16 @@ export const searchEvents = async (req, res) => {
       }`
     );
 
-    // Format the response data
+    const userRegisteredEventIds = new Set(
+      userRegistrations.map((reg) => reg.eventId)
+    );
+
     const formattedEvents = events.map((event) => {
-      // Check registration status only for authenticated users
       const isRegistered = isAuthenticated
-        ? event.registeredUsers.includes(userId)
+        ? userRegisteredEventIds.has(event.id)
         : null;
       const registeredCount = isAuthenticated
-        ? event.registeredUsers.length
+        ? event._count.registrations
         : null;
 
       return {

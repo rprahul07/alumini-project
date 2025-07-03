@@ -30,6 +30,9 @@ model User {
 
   supportRequestsSent     supportRequest[] @relation("SupportRequester")
   supportRequestsReceived supportRequest[] @relation("SupportAlumni")
+  
+  // New relation for event registrations
+  eventRegistrations      EventRegistration[]
 
   @@index([email])
   @@map("users")
@@ -79,22 +82,24 @@ model Admin {
 }
 
 model Event {
-  id              Int         @id @default(autoincrement())
-  userId          Int         @map("user_id")
-  name            String      @db.VarChar(200)
-  date            DateTime
-  time            String      @db.VarChar(20)
-  type            String      @db.VarChar(100)
-  description     String?
-  location        String      @db.VarChar(200)
-  organizer       String      @db.VarChar(100)
-  imageUrl        String?     @map("image_url") @db.VarChar(500)
-  status          EventStatus @default(pending)
-  registeredUsers Int[]       @map("registered_users")
-  maxCapacity     Int?        @map("max_capacity")
-  createdAt       DateTime    @default(now()) @map("created_at")
-  updatedAt       DateTime    @updatedAt @map("updated_at")
-  user            User        @relation(fields: [userId], references: [id])
+  id          Int         @id @default(autoincrement())
+  userId      Int         @map("user_id")
+  name        String      @db.VarChar(200)
+  date        DateTime
+  time        String      @db.VarChar(20)
+  type        String      @db.VarChar(100)
+  description String?
+  location    String      @db.VarChar(200)
+  organizer   String      @db.VarChar(100)
+  imageUrl    String?     @map("image_url") @db.VarChar(500)
+  status      EventStatus @default(pending)
+  maxCapacity Int?        @map("max_capacity")
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
+  user        User        @relation(fields: [userId], references: [id])
+
+  // New relation for event registrations
+  registrations EventRegistration[]
 
   @@index([userId])
   @@index([date])
@@ -102,6 +107,24 @@ model Event {
   @@index([status])
   @@map("events")
 }
+
+model EventRegistration {
+  id               Int      @id @default(autoincrement())
+  registeredUserId Int      @map("registered_user_id")
+  eventId          Int      @map("event_id")
+  registeredAt     DateTime @default(now()) @map("registered_at")
+  
+  // Relations
+  user  User  @relation(fields: [registeredUserId], references: [id])
+  event Event @relation(fields: [eventId], references: [id])
+
+  // Ensure a user can only register once per event
+  @@unique([registeredUserId, eventId])
+  @@index([registeredUserId])
+  @@index([eventId])
+  @@map("event_registrations")
+}
+
 model supportRequest {
   id                  Int      @id @default(autoincrement())
   support_requester   Int      @map("user_id")
@@ -119,7 +142,6 @@ model supportRequest {
   @@index([alumniId])
   @@map("support_requests")
 }
-
 
 model ActivityLog {
   id        Int      @id @default(autoincrement())
