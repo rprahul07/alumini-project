@@ -329,6 +329,7 @@ export const searchAlumniProfilesController = async (req, res) => {
         course: true, // Optional: include course as well
         user: {
           select: {
+            id: true,
             fullName: true,
             photoUrl: true,
           },
@@ -341,6 +342,7 @@ export const searchAlumniProfilesController = async (req, res) => {
 
     // Transform the data to flatten the structure
     const transformedProfiles = alumniProfiles.map((alumni) => ({
+      userId: alumni.user.id,
       name: alumni.user.fullName,
       photoUrl: alumni.user.photoUrl,
       graduationYear: alumni.graduationYear,
