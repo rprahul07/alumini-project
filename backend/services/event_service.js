@@ -1392,6 +1392,20 @@ export const getMyEvents = async (userId, userRole, options = {}) => {
             department: true,
           },
         },
+        _count: {
+          select: {
+            registrations: true,
+          },
+        },
+        registrations: {
+          where: {
+            registeredUserId: userId,
+          },
+          select: {
+            id: true,
+          },
+          take: 1,
+        },
       },
     });
 
@@ -1412,8 +1426,8 @@ export const getMyEvents = async (userId, userRole, options = {}) => {
       imageUrl: event.imageUrl,
       status: event.status,
       maxCapacity: event.maxCapacity,
-      registeredCount: event.registeredUsers.length,
-      isRegistered: event.registeredUsers.includes(userId),
+      registeredCount: event._count.registrations,
+      isRegistered: event.registrations.length > 0,
       isCreator: true, // Always true since we're fetching user's created events
       createdAt: event.createdAt,
       updatedAt: event.updatedAt,
@@ -1427,7 +1441,6 @@ export const getMyEvents = async (userId, userRole, options = {}) => {
       },
     }));
 
-    // Calculate pagination metadata
     const totalPages = Math.ceil(totalEvents / pageSize);
     const hasNextPage = pageNumber < totalPages;
     const hasPreviousPage = pageNumber > 1;
