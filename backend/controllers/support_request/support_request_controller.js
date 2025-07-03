@@ -69,13 +69,13 @@ export const createSupportRequest = async (req, res) => {
  * Roles allowed: alumni
  */
 export const acceptSupportRequest = async (req, res) => {
-  const { alumniMsg, alumniImage } = req.body;
+  const { alumniMsg, alumniId } = req.body;
   const requestId = parseInt(req.params.requestId);
 
-  if (req.user.role !== "alumni") {
+  if (req.user.role !== "alumni" && req.user.id !== alumniId) {
     return res.status(403).json({
       success: false,
-      message: "Only alumni can accept support requests.",
+      message: "Only assigned alumni can accept support requests.",
     });
   }
 
@@ -103,10 +103,16 @@ export const acceptSupportRequest = async (req, res) => {
       },
     });
 
+    // Fetch support requester details
+    const userData = await prisma.user.findUnique({
+      where: { id: updatedRequest.support_requester }
+    });
+
     return res.status(200).json({
       success: true,
       message: "Support request accepted successfully.",
       data: updatedRequest,
+      user: userData || null,
     });
   } catch (error) {
     return res.status(500).json({
