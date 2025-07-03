@@ -69,7 +69,7 @@ export const createSupportRequest = async (req, res) => {
  * Roles allowed: alumni
  */
 export const acceptSupportRequest = async (req, res) => {
-  const { alumniMsg } = req.body;
+  const { alumniMsg, tier } = req.body;
   const requestId = parseInt(req.params.requestId);
 
   if (req.user.role !== "alumni") {
@@ -120,6 +120,7 @@ export const acceptSupportRequest = async (req, res) => {
       data: {
         status: "accepted",
         descriptionbyAlumni: alumniMsg,
+        tier: tier || 1, // Default to tier 1 if not provided
       },
     });
 
