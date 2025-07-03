@@ -313,6 +313,8 @@ export const searchAlumniProfilesController = async (req, res) => {
     const alumniProfiles = await prisma.alumni.findMany({
       where: whereClause,
       select: {
+        currentJobTitle: true,
+        companyName: true,
         graduationYear: true,
         user: {
           select: {
@@ -331,6 +333,8 @@ export const searchAlumniProfilesController = async (req, res) => {
       name: alumni.user.fullName,
       photoUrl: alumni.user.photoUrl,
       graduationYear: alumni.graduationYear,
+      currentJobTitle: alumni.currentJobTitle,
+      companyName: alumni.companyName,
     }));
 
     console.log(
