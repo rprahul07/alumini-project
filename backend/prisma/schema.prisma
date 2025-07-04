@@ -8,31 +8,28 @@ datasource db {
 }
 
 model User {
-  id             Int      @id @default(autoincrement())
-  fullName       String   @map("full_name") @db.VarChar(100)
-  email          String   @unique @db.VarChar(100)
-  password       String   @db.VarChar(255)
-  phoneNumber    String?  @map("phone_number") @db.VarChar(20)
-  department     String?  @db.VarChar(100)
-  role           Role
-  createdAt      DateTime @default(now()) @map("created_at")
-  photoUrl       String?  @map("photo_url") @db.VarChar(500)
-  bio            String?
-  linkedinUrl    String?  @map("linkedin_url") @db.VarChar(500)
-  workExperience Json?    @map("work_experience")
-  githubUrl      String?  @map("github_url") @db.VarChar(500)
-  twitterUrl     String?  @map("twitter_url") @db.VarChar(500)
-  admin          Admin?
-  alumni         Alumni?
-  events         Event[]
-  faculty        Faculty?
-  student        Student?
-
-  supportRequestsSent     supportRequest[] @relation("SupportRequester")
-  supportRequestsReceived supportRequest[] @relation("SupportAlumni")
-  
-  // New relation for event registrations
+  id                      Int                 @id @default(autoincrement())
+  fullName                String              @map("full_name") @db.VarChar(100)
+  email                   String              @unique @db.VarChar(100)
+  password                String              @db.VarChar(255)
+  phoneNumber             String?             @map("phone_number") @db.VarChar(20)
+  department              String?             @db.VarChar(100)
+  role                    Role
+  createdAt               DateTime            @default(now()) @map("created_at")
+  photoUrl                String?             @map("photo_url") @db.VarChar(500)
+  bio                     String?
+  linkedinUrl             String?             @map("linkedin_url") @db.VarChar(500)
+  workExperience          Json?               @map("work_experience")
+  githubUrl               String?             @map("github_url") @db.VarChar(500)
+  twitterUrl              String?             @map("twitter_url") @db.VarChar(500)
+  admin                   Admin?
+  alumni                  Alumni?
   eventRegistrations      EventRegistration[]
+  events                  Event[]
+  faculty                 Faculty?
+  student                 Student?
+  supportRequestsReceived supportRequest[]    @relation("SupportAlumni")
+  supportRequestsSent     supportRequest[]    @relation("SupportRequester")
 
   @@index([email])
   @@map("users")
@@ -82,24 +79,22 @@ model Admin {
 }
 
 model Event {
-  id          Int         @id @default(autoincrement())
-  userId      Int         @map("user_id")
-  name        String      @db.VarChar(200)
-  date        DateTime
-  time        String      @db.VarChar(20)
-  type        String      @db.VarChar(100)
-  description String?
-  location    String      @db.VarChar(200)
-  organizer   String      @db.VarChar(100)
-  imageUrl    String?     @map("image_url") @db.VarChar(500)
-  status      EventStatus @default(pending)
-  maxCapacity Int?        @map("max_capacity")
-  createdAt   DateTime    @default(now()) @map("created_at")
-  updatedAt   DateTime    @updatedAt @map("updated_at")
-  user        User        @relation(fields: [userId], references: [id])
-
-  // New relation for event registrations
+  id            Int                 @id @default(autoincrement())
+  userId        Int                 @map("user_id")
+  name          String              @db.VarChar(200)
+  date          DateTime
+  time          String              @db.VarChar(20)
+  type          String              @db.VarChar(100)
+  description   String?
+  location      String              @db.VarChar(200)
+  organizer     String              @db.VarChar(100)
+  imageUrl      String?             @map("image_url") @db.VarChar(500)
+  status        EventStatus         @default(pending)
+  maxCapacity   Int?                @map("max_capacity")
+  createdAt     DateTime            @default(now()) @map("created_at")
+  updatedAt     DateTime            @updatedAt @map("updated_at")
   registrations EventRegistration[]
+  user          User                @relation(fields: [userId], references: [id])
 
   @@index([userId])
   @@index([date])
@@ -113,12 +108,9 @@ model EventRegistration {
   registeredUserId Int      @map("registered_user_id")
   eventId          Int      @map("event_id")
   registeredAt     DateTime @default(now()) @map("registered_at")
-  
-  // Relations
-  user  User  @relation(fields: [registeredUserId], references: [id])
-  event Event @relation(fields: [eventId], references: [id])
+  event            Event    @relation(fields: [eventId], references: [id])
+  user             User     @relation(fields: [registeredUserId], references: [id])
 
-  // Ensure a user can only register once per event
   @@unique([registeredUserId, eventId])
   @@index([registeredUserId])
   @@index([eventId])
@@ -128,15 +120,14 @@ model EventRegistration {
 model supportRequest {
   id                  Int      @id @default(autoincrement())
   support_requester   Int      @map("user_id")
-  descriptionbyUser   String   @default("") @db.VarChar(500)
-  descriptionbyAlumni String? @default("") @db.VarChar(500)
   alumniId            Int?     @map("alumni_id")
   status              String   @default("pending") @db.VarChar(20)
   createdAt           DateTime @default(now()) @map("created_at")
-
-  // ✅ Relations
-  requester User @relation("SupportRequester", fields: [support_requester], references: [id])
-  alumni    User? @relation("SupportAlumni", fields: [alumniId], references: [id])
+  tier                Int      @default(1) @db.Integer
+  descriptionbyUser   String   @default("") @db.VarChar(500)
+  descriptionbyAlumni String?  @default("") @db.VarChar(500)
+  alumni              User?    @relation("SupportAlumni", fields: [alumniId], references: [id])
+  requester           User     @relation("SupportRequester", fields: [support_requester], references: [id])
 
   @@index([support_requester])
   @@index([alumniId])
