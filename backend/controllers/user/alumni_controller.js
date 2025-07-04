@@ -852,7 +852,7 @@ export const getAlumniByTier = async (req, res) => {
         linkedinUrl: null,
         status: null,
       };
-    } else if (supportRequest.status === "approved") {
+    } else if (supportRequest.status === "accepted") {
       switch (supportRequest.tier) {
         case 1:
           contactInfo = {
