@@ -13,22 +13,26 @@ export const createSupportRequest = async (req, res) => {
     });
   }
 
-  const { user_id, alumni_id, descriptionbyUser, status } = req.body;
+  const {  alumni_id, descriptionbyUser, status } = req.body;
 
-  if (!user_id || !alumni_id) {
+  if (!alumni_id) {
     return res.status(400).json({
       success: false,
-      message: "Missing required fields: user_id or alumni_id.",
+      message: "Missing required fields: alumni_id.",
     });
   }
 
   try {
     const supportRequest = await prisma.supportRequest.create({
       data: {
-        support_requester: user_id,
+        support_requester: req.user.id, // Use the logged-in user's ID
         alumniId: alumni_id,
         status: status || "pending",
         descriptionbyUser: descriptionbyUser || "",
+      },
+      include: {
+        
+        alumni: true, // Include alumni details from user table
       },
     });
 
@@ -98,7 +102,7 @@ export const acceptSupportRequest = async (req, res) => {
     const supportRequest = await prisma.supportRequest.findUnique({
       where: { id: requestId },
     });
-
+    console.log(supportRequest)
     if (!supportRequest) {
       return res.status(404).json({
         success: false,
@@ -107,7 +111,7 @@ export const acceptSupportRequest = async (req, res) => {
     }
 
     // 2. Check if the current user is the assigned alumni
-    if (supportRequest.alumni_id !== req.user.id) {
+    if (supportRequest.alumniId !== req.user.id) {
       return res.status(403).json({
         success: false,
         message: "You are not assigned to this support request.",
@@ -205,10 +209,14 @@ export const getSupportRequests = async (req, res) => {
       where: {
         OR: [
           { support_requester: req.user.id },
-          { alumniId: req.user.id },
+          { alumniId: req.user.id }, // alumni can see requests assigned to them
+         
         ],
       },
       orderBy: { createdAt: "desc" },
+      include: {
+        alumni: true, // ✅ include alumni details from user table
+      },
     });
 
     return res.status(200).json({
@@ -224,6 +232,7 @@ export const getSupportRequests = async (req, res) => {
     });
   }
 };
+
 
 /**
  * Admin: Get all support requests
@@ -275,6 +284,9 @@ export const getSelfAppliedSupportRequests = async (req, res) => {
     const requests = await prisma.supportRequest.findMany({
       where: { support_requester: req.user.id },
       orderBy: { createdAt: "desc" },
+      include: {
+        alumni: true, // Include alumni details from user table
+      },
     });
 
     return res.status(200).json({
