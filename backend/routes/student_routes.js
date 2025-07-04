@@ -19,6 +19,7 @@ import {
 import { uploadPhotoMiddleware } from "../middleware/upload.middleware.js";
 import { registerEventsForStudents } from "../controllers/event/student_event.controller.js";
 import { searchAlumniProfilesController } from "../controllers/user/user_controller.js";
+import { getAlumniByTier } from "../controllers/user/alumni_controller.js";
 
 const router = express.Router();
 router.use(protect);
@@ -35,6 +36,7 @@ router.get("/event/:id", getEventById);
 router.post("/event/:id", registerEventsForStudents);
 router.delete("/event/:id", withdrawFromEvents);
 
+router.get("/tier/:alumniId", getAlumniByTier);
 router.get("/:userId", getStudentById);
 router.delete("/:userId", deleteStudentById);
 router.patch("/:userId", updateStudentById);
