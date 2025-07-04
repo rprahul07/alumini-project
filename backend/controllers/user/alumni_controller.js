@@ -172,21 +172,11 @@ export const getAllAlumni = async (req, res) => {
       select: {
         id: true,
         fullName: true,
-        email: true,
-        phoneNumber: true,
-        department: true,
-        role: true,
         photoUrl: true,
-        bio: true,
-        linkedinUrl: true,
-        twitterUrl: true,
-        githubUrl: true,
-        workExperience: true,
         alumni: {
           select: {
             id: true,
             graduationYear: true,
-            course: true,
             currentJobTitle: true,
             companyName: true,
             company_role: true,
