@@ -12,23 +12,31 @@ import {
 import {
   getAllEvents,
   getEventById,
+  getRegisteredEventsController,
   searchEvents,
+  withdrawFromEvents,
 } from "../controllers/event/event.controller.js";
 import { uploadPhotoMiddleware } from "../middleware/upload.middleware.js";
 import { registerEventsForStudents } from "../controllers/event/student_event.controller.js";
+import { searchAlumniProfilesController } from "../controllers/user/user_controller.js";
+import { getAlumniByTier } from "../controllers/user/alumni_controller.js";
 
 const router = express.Router();
 router.use(protect);
 router.get("/getall", getAllStudents);
-
-router.get("/event/all", getAllEvents);
-router.get("/event/search", searchEvents);
-router.get("/event/:id", getEventById);
-router.post("/event/:id", registerEventsForStudents);
-
+router.get("/searchalumni", searchAlumniProfilesController);
 router.patch("/profile/update", uploadPhotoMiddleware, updateMyStudentProfile);
 router.get("/profile/get", getMyStudentProfile);
 router.delete("/profile/delete-photo", deleteProfilePicture);
+
+router.get("/event/all", getAllEvents);
+router.get("/event/search", searchEvents);
+router.get("/event/my", getRegisteredEventsController);
+router.get("/event/:id", getEventById);
+router.post("/event/:id", registerEventsForStudents);
+router.delete("/event/:id", withdrawFromEvents);
+
+router.get("/tier/:alumniId", getAlumniByTier);
 router.get("/:userId", getStudentById);
 router.delete("/:userId", deleteStudentById);
 router.patch("/:userId", updateStudentById);

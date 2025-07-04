@@ -80,12 +80,34 @@ CREATE TABLE "events" (
     "organizer" VARCHAR(100) NOT NULL,
     "image_url" VARCHAR(500),
     "status" "EventStatus" NOT NULL DEFAULT 'pending',
-    "registered_users" INTEGER[],
     "max_capacity" INTEGER,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "events_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "event_registrations" (
+    "id" SERIAL NOT NULL,
+    "registered_user_id" INTEGER NOT NULL,
+    "event_id" INTEGER NOT NULL,
+    "registered_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "event_registrations_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "support_requests" (
+    "id" SERIAL NOT NULL,
+    "user_id" INTEGER NOT NULL,
+    "alumni_id" INTEGER,
+    "status" VARCHAR(20) NOT NULL DEFAULT 'pending',
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "descriptionbyUser" VARCHAR(500) NOT NULL DEFAULT '',
+    "descriptionbyAlumni" VARCHAR(500) DEFAULT '',
+
+    CONSTRAINT "support_requests_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -156,6 +178,21 @@ CREATE INDEX "events_type_idx" ON "events"("type");
 CREATE INDEX "events_status_idx" ON "events"("status");
 
 -- CreateIndex
+CREATE INDEX "event_registrations_registered_user_id_idx" ON "event_registrations"("registered_user_id");
+
+-- CreateIndex
+CREATE INDEX "event_registrations_event_id_idx" ON "event_registrations"("event_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "event_registrations_registered_user_id_event_id_key" ON "event_registrations"("registered_user_id", "event_id");
+
+-- CreateIndex
+CREATE INDEX "support_requests_user_id_idx" ON "support_requests"("user_id");
+
+-- CreateIndex
+CREATE INDEX "support_requests_alumni_id_idx" ON "support_requests"("alumni_id");
+
+-- CreateIndex
 CREATE INDEX "activity_logs_user_id_idx" ON "activity_logs"("user_id");
 
 -- CreateIndex
@@ -178,4 +215,16 @@ ALTER TABLE "admins" ADD CONSTRAINT "admins_user_id_fkey" FOREIGN KEY ("user_id"
 
 -- AddForeignKey
 ALTER TABLE "events" ADD CONSTRAINT "events_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "event_registrations" ADD CONSTRAINT "event_registrations_event_id_fkey" FOREIGN KEY ("event_id") REFERENCES "events"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "event_registrations" ADD CONSTRAINT "event_registrations_registered_user_id_fkey" FOREIGN KEY ("registered_user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "support_requests" ADD CONSTRAINT "support_requests_alumni_id_fkey" FOREIGN KEY ("alumni_id") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "support_requests" ADD CONSTRAINT "support_requests_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 

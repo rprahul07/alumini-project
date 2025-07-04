@@ -172,21 +172,11 @@ export const getAllAlumni = async (req, res) => {
       select: {
         id: true,
         fullName: true,
-        email: true,
-        phoneNumber: true,
-        department: true,
-        role: true,
         photoUrl: true,
-        bio: true,
-        linkedinUrl: true,
-        twitterUrl: true,
-        githubUrl: true,
-        workExperience: true,
         alumni: {
           select: {
             id: true,
             graduationYear: true,
-            course: true,
             currentJobTitle: true,
             companyName: true,
             company_role: true,
@@ -768,6 +758,158 @@ export const deleteProfilePicture = async (req, res) => {
     });
   } catch (error) {
     console.error("Error deleting profile picture:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
+export const getAlumniByTier = async (req, res) => {
+  try {
+    const { alumniId } = req.params;
+    const userId = req.user.id;
+    console.log(req.user.role);
+    if (!alumniId) {
+      return res.status(400).json({
+        success: false,
+        message: "Alumni ID is required",
+      });
+    }
+
+    const alumniIdInt = parseInt(alumniId);
+    if (isNaN(alumniIdInt)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid alumni ID",
+      });
+    }
+
+    const alumni = await prisma.user.findUnique({
+      where: { id: alumniIdInt },
+      select: {
+        id: true,
+        email: true,
+        phoneNumber: true,
+        linkedinUrl: true,
+        role: true,
+        alumni: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
+
+    if (!alumni) {
+      return res.status(404).json({
+        success: false,
+        message: "Alumni not found",
+      });
+    }
+    console.log(alumni.role);
+    if (!alumni.alumni || alumni.role !== "alumni") {
+      return res.status(404).json({
+        success: false,
+        message: "User is not an alumni",
+      });
+    }
+
+    // Check for support request between the user and alumni
+    const supportRequest = await prisma.supportRequest.findFirst({
+      where: {
+        support_requester: userId,
+        alumniId: alumniIdInt,
+      },
+      select: {
+        id: true,
+        status: true,
+        tier: true,
+        createdAt: true,
+      },
+    });
+
+    if (!supportRequest) {
+      return res.status(403).json({
+        success: false,
+        message: "No support request found between you and this alumni",
+      });
+    }
+
+    // Initialize contact info as null
+    let contactInfo = {
+      email: null,
+      phoneNumber: null,
+      linkedinUrl: null,
+      status: null,
+    };
+
+    // Check status and tier to determine what information to return
+    if (supportRequest.status === "pending") {
+      contactInfo = {
+        email: null,
+        phoneNumber: null,
+        linkedinUrl: null,
+        status: null,
+      };
+    } else if (supportRequest.status === "accepted") {
+      switch (supportRequest.tier) {
+        case 1:
+          contactInfo = {
+            email: alumni.email,
+            phoneNumber: null,
+            linkedinUrl: null,
+            status: supportRequest.status,
+          };
+          break;
+        case 2:
+          contactInfo = {
+            email: alumni.email,
+            phoneNumber: null,
+            linkedinUrl: alumni.linkedinUrl,
+            status: supportRequest.status,
+          };
+          break;
+        case 3:
+          contactInfo = {
+            email: alumni.email,
+            phoneNumber: alumni.phoneNumber,
+            linkedinUrl: alumni.linkedinUrl,
+            status: supportRequest.status,
+          };
+          break;
+        default:
+          contactInfo = {
+            email: null,
+            phoneNumber: null,
+            linkedinUrl: null,
+            status: supportRequest.status,
+          };
+      }
+    } else {
+      // If status is rejected or any other status
+      contactInfo = {
+        email: null,
+        phoneNumber: null,
+        linkedinUrl: null,
+        status: supportRequest.status,
+      };
+    }
+
+    const responseData = {
+      email: contactInfo.email,
+      phoneNumber: contactInfo.phoneNumber,
+      linkedinUrl: contactInfo.linkedinUrl,
+      status: contactInfo.status,
+    };
+
+    return res.status(200).json({
+      success: true,
+      data: responseData,
+    });
+  } catch (error) {
+    console.error("Error fetching alumni by ID:", error);
+
     return res.status(500).json({
       success: false,
       message: "Internal server error",
