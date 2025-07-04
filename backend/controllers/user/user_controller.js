@@ -222,6 +222,8 @@ export const searchAlumniProfilesController = async (req, res) => {
       offset = 0,
     } = req.query;
 
+    const userId = req.user.id;
+
     console.log(
       "Filtering alumni profiles by graduation year:",
       graduationYear,
@@ -296,7 +298,7 @@ export const searchAlumniProfilesController = async (req, res) => {
         {
           companyName: {
             contains: search.trim(),
-            mode: "insensitive", // Case-insensitive search
+            mode: "insensitive",
           },
         },
       ];
@@ -319,19 +321,27 @@ export const searchAlumniProfilesController = async (req, res) => {
       },
     ];
 
-    // Get alumni profiles with additional fields
     const alumniProfiles = await prisma.alumni.findMany({
       where: whereClause,
       select: {
         graduationYear: true,
         currentJobTitle: true,
         companyName: true,
-        course: true, // Optional: include course as well
+        course: true,
         user: {
           select: {
             id: true,
             fullName: true,
             photoUrl: true,
+            supportRequestsReceived: {
+              where: {
+                support_requester: userId,
+              },
+              select: {
+                status: true,
+                tier: true,
+              },
+            },
           },
         },
       },
@@ -340,16 +350,22 @@ export const searchAlumniProfilesController = async (req, res) => {
       skip: offsetInt,
     });
 
-    // Transform the data to flatten the structure
-    const transformedProfiles = alumniProfiles.map((alumni) => ({
-      userId: alumni.user.id,
-      name: alumni.user.fullName,
-      photoUrl: alumni.user.photoUrl,
-      graduationYear: alumni.graduationYear,
-      currentJobTitle: alumni.currentJobTitle,
-      companyName: alumni.companyName,
-      course: alumni.course, // Optional: include course
-    }));
+    const transformedProfiles = alumniProfiles.map((alumni) => {
+      // Get support request status (if exists)
+      const supportRequest = alumni.user.supportRequestsReceived[0] || null;
+
+      return {
+        userId: alumni.user.id,
+        name: alumni.user.fullName,
+        photoUrl: alumni.user.photoUrl,
+        graduationYear: alumni.graduationYear,
+        currentJobTitle: alumni.currentJobTitle,
+        companyName: alumni.companyName,
+        course: alumni.course,
+        connectionStatus: supportRequest ? supportRequest.status : null,
+        tier: supportRequest ? supportRequest.tier : null,
+      };
+    });
 
     console.log(
       `Found ${transformedProfiles.length} alumni profiles out of ${totalCount} total`
@@ -373,7 +389,6 @@ export const searchAlumniProfilesController = async (req, res) => {
 
     message += ` (sorted ${sortOrder}ending)`;
 
-    // Return success response
     return res.status(200).json({
       success: true,
       message: message,
@@ -397,7 +412,6 @@ export const searchAlumniProfilesController = async (req, res) => {
   } catch (error) {
     console.error("Error in searchAlumniProfilesController:", error);
 
-    // Handle specific Prisma errors
     if (error.code === "P2001") {
       return res.status(404).json({
         success: false,
