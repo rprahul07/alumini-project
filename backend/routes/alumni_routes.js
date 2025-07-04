@@ -11,6 +11,7 @@ import {
   updateAlumniSelf,
   getAlumniSelf,
   deleteProfilePicture,
+  getAlumniByTier,
 } from "../controllers/user/alumni_controller.js";
 import {
   createEventForAlumni,
@@ -43,7 +44,7 @@ router.get("/profile/get", getAlumniSelf);
 router.patch("/profile/update", uploadPhotoMiddleware, updateAlumniSelf);
 router.delete("/profile/delete-photo", deleteProfilePicture);
 router.get("/searchalumni", searchAlumniProfilesController);
-router.get("/searchstudent", searchStudentsController);
+router.get("/searchstudent", searchStudentsController); //show connection status
 
 router.get("/event/all", getAllEvents);
 router.get("/event/search", searchEvents);
@@ -61,6 +62,7 @@ router.delete(
   removeUserFromEventController
 );
 
+router.get("/tier/:alumniId", getAlumniByTier);
 router.get("/:userId", getAlumniById);
 router.delete("/:userId", deleteAlumniById);
 router.patch("/:userId", updateAlumniById);
