@@ -26,6 +26,7 @@ model User {
   alumni                  Alumni?
   event_registrations     event_registrations[]
   events                  Event[]
+  jobs                    Job[]
   faculty                 Faculty?
   student                 Student?
   supportRequestsReceived supportRequest[]      @relation("SupportAlumni")
@@ -178,4 +179,26 @@ enum EventStatus {
   pending
   approved
   rejected
+}
+
+model Job {
+id Int @id @default(autoincrement())
+userId Int @map("user_id")
+companyName String @db.VarChar(200)
+jobTitle String @db.VarChar(200)
+description String
+status JobStatus @default(pending)
+createdAt DateTime @default(now()) @map("created_at")
+user User @relation(fields: [userId], references: [id])
+
+@@index([userId])
+@@index([status])
+@@map("jobs")
+}
+
+enum JobStatus {
+pending
+approved
+rejected
+closed
 }
