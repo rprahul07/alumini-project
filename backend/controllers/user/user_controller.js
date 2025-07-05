@@ -700,6 +700,11 @@ export const updateUserProfile = async (req, res) => {
     const requests = await prisma.supportRequest.findMany({
       where: {
         support_requester: userId,
+        select:{
+          id: true,
+          status: true,
+          tier: true,
+        }
       },
       include: {
         alumni: {
@@ -778,6 +783,8 @@ export const updateUserProfile = async (req, res) => {
         tier: request.tier,
         descriptionbyUser: request.descriptionbyUser,
         descriptionbyAlumni: request.descriptionbyAlumni,
+        requestId: request.id,
+        
         alumni: detailedInfo,
       };
     });
