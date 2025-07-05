@@ -710,6 +710,7 @@ export const updateUserProfile = async (req, res) => {
             department: true,
             phoneNumber: true,
             linkedinUrl: true,
+            email:true,
             alumni: {
               select: {
                 graduationYear: true,
