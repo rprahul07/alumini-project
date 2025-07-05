@@ -824,6 +824,7 @@ export const getAlumniByTier = async (req, res) => {
       select: {
         id: true,
         status: true,
+        descriptionbyAlumni: true,
         tier: true,
         createdAt: true,
       },
@@ -842,6 +843,7 @@ export const getAlumniByTier = async (req, res) => {
       phoneNumber: null,
       linkedinUrl: null,
       status: null,
+      descriptionbyAlumni: null,
     };
 
     // Check status and tier to determine what information to return
@@ -851,6 +853,7 @@ export const getAlumniByTier = async (req, res) => {
         phoneNumber: null,
         linkedinUrl: null,
         status: null,
+        descriptionbyAlumni: null,
       };
     } else if (supportRequest.status === "accepted") {
       switch (supportRequest.tier) {
@@ -860,6 +863,7 @@ export const getAlumniByTier = async (req, res) => {
             phoneNumber: null,
             linkedinUrl: null,
             status: supportRequest.status,
+            descriptionbyAlumni: supportRequest.descriptionbyAlumni,
           };
           break;
         case 2:
@@ -868,6 +872,7 @@ export const getAlumniByTier = async (req, res) => {
             phoneNumber: null,
             linkedinUrl: alumni.linkedinUrl,
             status: supportRequest.status,
+            descriptionbyAlumni: supportRequest.descriptionbyAlumni,
           };
           break;
         case 3:
@@ -876,6 +881,7 @@ export const getAlumniByTier = async (req, res) => {
             phoneNumber: alumni.phoneNumber,
             linkedinUrl: alumni.linkedinUrl,
             status: supportRequest.status,
+            descriptionbyAlumni: supportRequest.descriptionbyAlumni,
           };
           break;
         default:
@@ -884,6 +890,7 @@ export const getAlumniByTier = async (req, res) => {
             phoneNumber: null,
             linkedinUrl: null,
             status: supportRequest.status,
+            descriptionbyAlumni: null,
           };
       }
     } else {
@@ -893,6 +900,7 @@ export const getAlumniByTier = async (req, res) => {
         phoneNumber: null,
         linkedinUrl: null,
         status: supportRequest.status,
+        descriptionbyAlumni: null,
       };
     }
 
@@ -901,6 +909,7 @@ export const getAlumniByTier = async (req, res) => {
       phoneNumber: contactInfo.phoneNumber,
       linkedinUrl: contactInfo.linkedinUrl,
       status: contactInfo.status,
+      descriptionbyAlumni: contactInfo.descriptionbyAlumni,
     };
 
     return res.status(200).json({
