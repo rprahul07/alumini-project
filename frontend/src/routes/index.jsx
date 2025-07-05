@@ -38,7 +38,7 @@ const AppRoutes = () => {
       <Route path="/events" element={<EventsPage />} />
       <Route path="/unauthorized" element={<UnauthorizedPage />} />
       <Route path="/about" element={<AboutPage />} />
-      <Route path="/alumni" element={<AlumniPage />} />
+      <Route path="/alumni" element={<ProtectedRoute><AlumniPage /></ProtectedRoute>} />
       <Route path="/contact" element={<ContactPage />} />
 
       {/* Student Dashboard */}

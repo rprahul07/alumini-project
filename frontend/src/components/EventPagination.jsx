@@ -1,5 +1,4 @@
 import React from 'react';
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 
 const EventPagination = ({ currentPage, totalPages, onPageChange }) => {
   // Generate page numbers to show
@@ -46,7 +45,7 @@ const EventPagination = ({ currentPage, totalPages, onPageChange }) => {
             : 'text-gray-700 hover:bg-gray-100'
         }`}
       >
-        <ChevronLeftIcon className="h-4 w-4" />
+        ← Previous
       </button>
 
       {/* Page Numbers */}
@@ -74,7 +73,7 @@ const EventPagination = ({ currentPage, totalPages, onPageChange }) => {
             : 'text-gray-700 hover:bg-gray-100'
         }`}
       >
-        <ChevronRightIcon className="h-4 w-4" />
+        Next →
       </button>
 
       {/* Page Info */}

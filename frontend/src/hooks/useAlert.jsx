@@ -47,13 +47,15 @@ const useAlert = (initialState = null) => {
 
   const AlertComponent = useCallback(() => {
     if (!alert) return null;
-
     return (
       <div
-        className={`fixed bottom-4 right-4 p-4 rounded-md shadow-lg text-white ${
-          alert.type === 'success' ? 'bg-green-500' : 'bg-red-500'
-        }`}
+        className={`fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-[200] px-8 py-4 rounded-xl shadow-2xl text-white text-lg font-semibold flex items-center justify-center
+          transition-all duration-500
+          ${alert.type === 'success' ? 'bg-green-500' : 'bg-red-500'}
+          animate-fade-in-up
+        `}
         role="alert"
+        style={{ minWidth: 240, maxWidth: 400, textAlign: 'center' }}
       >
         {alert.message}
       </div>
@@ -69,4 +71,16 @@ const useAlert = (initialState = null) => {
   };
 };
 
-export default useAlert; 
+export default useAlert;
+
+// Add this to your global CSS (e.g., index.css or tailwind.css):
+// .animate-fade-in-up {
+//   @apply opacity-0 translate-y-4;
+//   animation: fadeInUp 0.5s forwards;
+// }
+// @keyframes fadeInUp {
+//   to {
+//     opacity: 1;
+//     transform: translateY(0);
+//   }
+// } 

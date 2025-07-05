@@ -128,25 +128,29 @@ const Navbar = () => {
           </Link>
           {/* Desktop Navigation Links */}
           <div className="hidden sm:flex sm:items-center sm:space-x-2">
-            {navLinks.map((link) => (
-              <NavLink
-                key={link.title}
-                to={link.path}
-                className={({ isActive }) =>
-                  `${isActive
-                    ? (isHome
-                        ? 'bg-indigo-100 text-indigo-700 rounded-full px-4 py-1 font-semibold'
-                        : 'bg-white/80 text-indigo-700 rounded-full px-4 py-1 font-semibold')
-                    : (isHome
-                        ? 'text-indigo-700 hover:bg-indigo-50 hover:text-indigo-900 rounded-full px-4 py-1'
-                        : 'text-white hover:bg-white/20 hover:text-indigo-100 rounded-full px-4 py-1')
-                  } inline-flex items-center text-sm font-medium transition-colors duration-300`
-                }
-                end={link.path === '/'}
-              >
-                {link.title}
-              </NavLink>
-            ))}
+            {navLinks.map((link) => {
+              // Prevent highlighting any nav link if on a dashboard route
+              const isDashboardRoute = dashboardRoutes.includes(location.pathname);
+              return (
+                <NavLink
+                  key={link.title}
+                  to={link.path}
+                  className={({ isActive }) =>
+                    `${isActive && !isDashboardRoute
+                      ? (isHome
+                          ? 'bg-indigo-100 text-indigo-700 rounded-full px-4 py-1 font-semibold'
+                          : 'bg-white/80 text-indigo-700 rounded-full px-4 py-1 font-semibold')
+                      : (isHome
+                          ? 'text-indigo-700 hover:bg-indigo-50 hover:text-indigo-900 rounded-full px-4 py-1'
+                          : 'text-white hover:bg-white/20 hover:text-indigo-100 rounded-full px-4 py-1')
+                    } inline-flex items-center text-sm font-medium transition-colors duration-300`
+                  }
+                  end={link.path === '/'}
+                >
+                  {link.title}
+                </NavLink>
+              );
+            })}
           </div>
           {/* Desktop User Actions */}
           <div className="hidden sm:flex sm:items-center sm:space-x-4 relative">
@@ -198,19 +202,22 @@ const Navbar = () => {
       {isMenuOpen && (
         <div className="bg-white/90 sm:hidden border-t border-indigo-100 shadow-lg rounded-b-xl backdrop-blur">
           <div className="py-1">
-            {navLinks.map((link) => (
-              <NavLink
-                key={link.title}
-                to={link.path}
-                className={({ isActive }) =>
-                  `block px-4 py-1 text-base font-medium rounded-full transition-colors duration-150 mb-1 ${isActive ? 'bg-indigo-100 text-indigo-700 font-semibold shadow-sm' : 'hover:bg-indigo-50 text-gray-700'}`
-                }
-                end={link.path === '/'}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {link.title}
-              </NavLink>
-            ))}
+            {navLinks.map((link) => {
+              const isDashboardRoute = dashboardRoutes.includes(location.pathname);
+              return (
+                <NavLink
+                  key={link.title}
+                  to={link.path}
+                  className={({ isActive }) =>
+                    `block px-4 py-1 text-base font-medium rounded-full transition-colors duration-150 mb-1 ${isActive && !isDashboardRoute ? 'bg-indigo-100 text-indigo-700 font-semibold shadow-sm' : 'hover:bg-indigo-50 text-gray-700'}`
+                  }
+                  end={link.path === '/'}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {link.title}
+                </NavLink>
+              );
+            })}
           </div>
           <div className="border-t border-indigo-100 my-1" />
           <div className="px-4 pb-2 flex flex-col gap-2">
