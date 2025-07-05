@@ -8,6 +8,8 @@ import {
   getAllSupportRequests,
   getSelfAppliedSupportRequests,
   getReceivedSupportRequests,
+  deleteRequestByRequester,
+  deleteRequestByAlumni,
 } from "../../controllers/support_request/support_request_controller.js";
 import { getAlumniByTier } from "../../controllers/user/user_controller.js";
 
@@ -39,5 +41,11 @@ support_router.get("/self/received", getReceivedSupportRequests);
 // ✅ Get alumni by tier (alumni)
 // This route is used to fetch alumni based on their tier for support requests
 support_router.get("/check_tier/alumni", getAlumniByTier);
+
+//delete support request by id by requester
+support_router.delete("/delete/requester/:id", deleteRequestByRequester);
+
+//delete support request by id by alumni
+support_router.delete("/delete/alumni/:id", deleteRequestByAlumni);
 
 export default support_router;

@@ -764,8 +764,12 @@ export const updateUserProfile = async (req, res) => {
       if (request.tier === 3) {
         detailedInfo.phoneNumber = user.phoneNumber;
         detailedInfo.linkedinUrl = user.linkedinUrl;
+        detailedInfo.email = user.email; // Assuming email is available in user object
+      } else if (request.tier === 1) {
+        detailedInfo.email = user.email; // Assuming email is available in user object
       } else if (request.tier === 2) {
         detailedInfo.linkedinUrl = user.linkedinUrl;
+        detailedInfo.email = user.email; // Assuming email is available in user object
       }
 
       return {

@@ -348,3 +348,72 @@ export const getReceivedSupportRequests = async (req, res) => {
     });
   }
 };
+// Delete a support request by requester
+// Roles: student, alumni
+export const deleteRequestByRequester = async (req, res) => {
+  if (!["student", "alumni"].includes(req.user.role)) {
+    return res.status(403).json({
+      success: false,
+      message: "Only students and alumni can delete their requests.",
+    });
+  }
+  const userId = req.user.id;
+  const requestId = parseInt(req.params.id);
+
+  try {
+    // Verify the user is the requester
+    const request = await prisma.supportRequest.findUnique({
+      where: { id: requestId },
+    });
+
+    if (!request) {
+      return res.status(404).json({ success: false, message: "Request not found" });
+    }
+
+    if (request.support_requester !== userId) {
+      return res.status(403).json({ success: false, message: "You can only delete your own request" });
+    }
+
+    await prisma.supportRequest.delete({
+      where: { id: requestId },
+    });
+
+    return res.status(200).json({ success: true, message: "Request deleted successfully by requester" });
+
+  } catch (err) {
+    console.error("Error deleting request by requester:", err);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+// Delete a support request by alumni
+// Roles: alumni
+export const deleteRequestByAlumni = async (req, res) => {
+  const userId = req.user.id;
+  const requestId = parseInt(req.params.id);
+
+  try {
+    // Verify the user is the alumni in the request
+    const request = await prisma.supportRequest.findUnique({
+      where: { id: requestId },
+    });
+
+    if (!request) {
+      return res.status(404).json({ success: false, message: "Request not found" });
+    }
+
+    if (request.alumniId !== userId) {
+      return res.status(403).json({ success: false, message: "You can only delete requests sent to you as alumni" });
+    }
+
+    await prisma.supportRequest.delete({
+      where: { id: requestId },
+    });
+
+    return res.status(200).json({ success: true, message: "Request deleted successfully by alumni" });
+
+  } catch (err) {
+    console.error("Error deleting request by alumni:", err);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
