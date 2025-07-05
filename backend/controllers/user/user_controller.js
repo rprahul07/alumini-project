@@ -693,20 +693,21 @@ export const updateUserProfile = async (req, res) => {
   } catch (error) {
     handleError(error, req, res);
   }
-};export const getAlumniByTier = async (req, res) => {
+};
+export const getAlumniByTier = async (req, res) => {
   const userId = req.user.id;
 
   try {
     const requests = await prisma.supportRequest.findMany({
       where: {
         support_requester: userId,
-        select:{
-          id: true,
-          status: true,
-          tier: true,
-        }
       },
-      include: {
+      select: {
+        id: true,
+        status: true,
+        tier: true,
+        descriptionbyUser: true,
+        descriptionbyAlumni: true,
         alumni: {
           select: {
             id: true,
@@ -715,7 +716,7 @@ export const updateUserProfile = async (req, res) => {
             department: true,
             phoneNumber: true,
             linkedinUrl: true,
-            email:true,
+            email: true,
             alumni: {
               select: {
                 graduationYear: true,
