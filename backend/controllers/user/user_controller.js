@@ -693,15 +693,8 @@ export const updateUserProfile = async (req, res) => {
   } catch (error) {
     handleError(error, req, res);
   }
-};
-export const getAlumniByTier = async (req, res) => {
+};export const getAlumniByTier = async (req, res) => {
   const userId = req.user.id;
-  if (req.user.role !== "alumni" && req.user.role !== "student") {
-    return res.status(403).json({
-      success: false,
-      message: "Access denied. Only alumni and students can access this resource.",
-    });
-  }
 
   try {
     const requests = await prisma.supportRequest.findMany({
@@ -742,7 +735,6 @@ export const getAlumniByTier = async (req, res) => {
       const { alumni } = request;
       const user = alumni || {};
 
-      // Common fields (always shown)
       const baseAlumniInfo = {
         id: user.id,
         fullName: user.fullName,
@@ -758,7 +750,6 @@ export const getAlumniByTier = async (req, res) => {
         };
       }
 
-      // If accepted, show additional details based on tier
       const detailedInfo = {
         ...baseAlumniInfo,
         department: user.department,
@@ -769,6 +760,7 @@ export const getAlumniByTier = async (req, res) => {
         company_role: user.alumni?.company_role,
       };
 
+      // Add tier-specific data
       if (request.tier === 3) {
         detailedInfo.phoneNumber = user.phoneNumber;
         detailedInfo.linkedinUrl = user.linkedinUrl;
@@ -779,6 +771,8 @@ export const getAlumniByTier = async (req, res) => {
       return {
         status: request.status,
         tier: request.tier,
+        descriptionbyUser: request.descriptionbyUser,
+        descriptionbyAlumni: request.descriptionbyAlumni,
         alumni: detailedInfo,
       };
     });
