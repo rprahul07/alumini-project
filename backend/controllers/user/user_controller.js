@@ -694,3 +694,105 @@ export const updateUserProfile = async (req, res) => {
     handleError(error, req, res);
   }
 };
+export const getAlumniByTier = async (req, res) => {
+  const userId = req.user.id;
+  if (req.user.role !== "alumni" && req.user.role !== "student") {
+    return res.status(403).json({
+      success: false,
+      message: "Access denied. Only alumni and students can access this resource.",
+    });
+  }
+
+  try {
+    const requests = await prisma.supportRequest.findMany({
+      where: {
+        support_requester: userId,
+      },
+      include: {
+        alumni: {
+          select: {
+            id: true,
+            fullName: true,
+            photoUrl: true,
+            department: true,
+            phoneNumber: true,
+            linkedinUrl: true,
+            alumni: {
+              select: {
+                graduationYear: true,
+                course: true,
+                currentJobTitle: true,
+                companyName: true,
+                company_role: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!requests || requests.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No support requests found for this user.",
+      });
+    }
+
+    const result = requests.map((request) => {
+      const { alumni } = request;
+      const user = alumni || {};
+
+      // Common fields (always shown)
+      const baseAlumniInfo = {
+        id: user.id,
+        fullName: user.fullName,
+        photoUrl: user.photoUrl,
+      };
+
+      if (request.status !== "accepted") {
+        return {
+          status: request.status,
+          message: "Pending alumni acceptance",
+          tier: request.tier,
+          alumni: baseAlumniInfo,
+        };
+      }
+
+      // If accepted, show additional details based on tier
+      const detailedInfo = {
+        ...baseAlumniInfo,
+        department: user.department,
+        graduationYear: user.alumni?.graduationYear,
+        course: user.alumni?.course,
+        currentJobTitle: user.alumni?.currentJobTitle,
+        companyName: user.alumni?.companyName,
+        company_role: user.alumni?.company_role,
+      };
+
+      if (request.tier === 3) {
+        detailedInfo.phoneNumber = user.phoneNumber;
+        detailedInfo.linkedinUrl = user.linkedinUrl;
+      } else if (request.tier === 2) {
+        detailedInfo.linkedinUrl = user.linkedinUrl;
+      }
+
+      return {
+        status: request.status,
+        tier: request.tier,
+        alumni: detailedInfo,
+      };
+    });
+
+    return res.status(200).json({
+      success: true,
+      requests: result,
+    });
+
+  } catch (error) {
+    console.error("Error fetching alumni data:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};

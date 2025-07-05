@@ -148,6 +148,7 @@ export const registerEventsForAlumni = async (req, res) => {
     });
   }
 };
+
 export const getMyEventsForAlumni = async (req, res) => {
   try {
     if (req.user.role !== "alumni") {

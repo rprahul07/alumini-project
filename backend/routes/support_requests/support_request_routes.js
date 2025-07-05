@@ -9,6 +9,7 @@ import {
   getSelfAppliedSupportRequests,
   getReceivedSupportRequests,
 } from "../../controllers/support_request/support_request_controller.js";
+import { getAlumniByTier } from "../../controllers/user/user_controller.js";
 
 const support_router = express.Router();
 
@@ -35,5 +36,8 @@ support_router.get("/self/applied", getSelfAppliedSupportRequests);
 
 // ✅ Get support requests received by the logged-in alumni
 support_router.get("/self/received", getReceivedSupportRequests);
+// ✅ Get alumni by tier (alumni)
+// This route is used to fetch alumni based on their tier for support requests
+support_router.get("/check_tier/alumni", getAlumniByTier);
 
 export default support_router;

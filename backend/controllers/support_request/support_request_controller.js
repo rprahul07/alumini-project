@@ -285,7 +285,13 @@ export const getSelfAppliedSupportRequests = async (req, res) => {
       where: { support_requester: req.user.id },
       orderBy: { createdAt: "desc" },
       include: {
-        alumni: true, // Include alumni details from user table
+        alumni:{
+          select:{
+            id: true,
+            fullName: true,
+            photoUrl: true,
+          }
+        } // Include alumni details from user table
       },
     });
 
