@@ -327,12 +327,15 @@ export const searchAlumniProfilesController = async (req, res) => {
         graduationYear: true,
         currentJobTitle: true,
         companyName: true,
+        company_role: true,
         course: true,
         user: {
           select: {
             id: true,
             fullName: true,
             photoUrl: true,
+            bio: true,
+            department: true,
             supportRequestsReceived: {
               where: {
                 support_requester: userId,
@@ -358,6 +361,9 @@ export const searchAlumniProfilesController = async (req, res) => {
         userId: alumni.user.id,
         name: alumni.user.fullName,
         photoUrl: alumni.user.photoUrl,
+        bio: alumni.user.bio,
+        department: alumni.user.department,
+        company_role: alumni.company_role,
         graduationYear: alumni.graduationYear,
         currentJobTitle: alumni.currentJobTitle,
         companyName: alumni.companyName,

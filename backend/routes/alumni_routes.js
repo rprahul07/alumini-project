@@ -44,7 +44,7 @@ router.get("/profile/get", getAlumniSelf);
 router.patch("/profile/update", uploadPhotoMiddleware, updateAlumniSelf);
 router.delete("/profile/delete-photo", deleteProfilePicture);
 router.get("/searchalumni", searchAlumniProfilesController);
-router.get("/searchstudent", searchStudentsController); //show connection status
+router.get("/searchstudent", searchStudentsController);
 
 router.get("/event/all", getAllEvents);
 router.get("/event/search", searchEvents);
