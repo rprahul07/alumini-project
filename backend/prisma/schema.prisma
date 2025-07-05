@@ -8,28 +8,29 @@ datasource db {
 }
 
 model User {
-  id                      Int                 @id @default(autoincrement())
-  fullName                String              @map("full_name") @db.VarChar(100)
-  email                   String              @unique @db.VarChar(100)
-  password                String              @db.VarChar(255)
-  phoneNumber             String?             @map("phone_number") @db.VarChar(20)
-  department              String?             @db.VarChar(100)
+  id                      Int                   @id @default(autoincrement())
+  fullName                String                @map("full_name") @db.VarChar(100)
+  email                   String                @unique @db.VarChar(100)
+  password                String                @db.VarChar(255)
+  phoneNumber             String?               @map("phone_number") @db.VarChar(20)
+  department              String?               @db.VarChar(100)
   role                    Role
-  createdAt               DateTime            @default(now()) @map("created_at")
-  photoUrl                String?             @map("photo_url") @db.VarChar(500)
+  createdAt               DateTime              @default(now()) @map("created_at")
+  photoUrl                String?               @map("photo_url") @db.VarChar(500)
   bio                     String?
-  linkedinUrl             String?             @map("linkedin_url") @db.VarChar(500)
-  workExperience          Json?               @map("work_experience")
-  githubUrl               String?             @map("github_url") @db.VarChar(500)
-  twitterUrl              String?             @map("twitter_url") @db.VarChar(500)
+  linkedinUrl             String?               @map("linkedin_url") @db.VarChar(500)
+  workExperience          Json?                 @map("work_experience")
+  githubUrl               String?               @map("github_url") @db.VarChar(500)
+  twitterUrl              String?               @map("twitter_url") @db.VarChar(500)
   admin                   Admin?
   alumni                  Alumni?
-  eventRegistrations      EventRegistration[]
+  event_registrations     event_registrations[]
   events                  Event[]
+  jobs                    Job[]
   faculty                 Faculty?
   student                 Student?
-  supportRequestsReceived supportRequest[]    @relation("SupportAlumni")
-  supportRequestsSent     supportRequest[]    @relation("SupportRequester")
+  supportRequestsReceived supportRequest[]      @relation("SupportAlumni")
+  supportRequestsSent     supportRequest[]      @relation("SupportRequester")
 
   @@index([email])
   @@map("users")
@@ -79,22 +80,22 @@ model Admin {
 }
 
 model Event {
-  id            Int                 @id @default(autoincrement())
-  userId        Int                 @map("user_id")
-  name          String              @db.VarChar(200)
-  date          DateTime
-  time          String              @db.VarChar(20)
-  type          String              @db.VarChar(100)
-  description   String?
-  location      String              @db.VarChar(200)
-  organizer     String              @db.VarChar(100)
-  imageUrl      String?             @map("image_url") @db.VarChar(500)
-  status        EventStatus         @default(pending)
-  maxCapacity   Int?                @map("max_capacity")
-  createdAt     DateTime            @default(now()) @map("created_at")
-  updatedAt     DateTime            @updatedAt @map("updated_at")
-  registrations EventRegistration[]
-  user          User                @relation(fields: [userId], references: [id])
+  id                  Int                   @id @default(autoincrement())
+  userId              Int                   @map("user_id")
+  name                String                @db.VarChar(200)
+  date                DateTime
+  time                String                @db.VarChar(20)
+  type                String                @db.VarChar(100)
+  description         String?
+  location            String                @db.VarChar(200)
+  organizer           String                @db.VarChar(100)
+  imageUrl            String?               @map("image_url") @db.VarChar(500)
+  status              EventStatus           @default(pending)
+  maxCapacity         Int?                  @map("max_capacity")
+  createdAt           DateTime              @default(now()) @map("created_at")
+  updatedAt           DateTime              @updatedAt @map("updated_at")
+  event_registrations event_registrations[]
+  user                User                  @relation(fields: [userId], references: [id])
 
   @@index([userId])
   @@index([date])
@@ -103,29 +104,15 @@ model Event {
   @@map("events")
 }
 
-model EventRegistration {
-  id               Int      @id @default(autoincrement())
-  registeredUserId Int      @map("registered_user_id")
-  eventId          Int      @map("event_id")
-  registeredAt     DateTime @default(now()) @map("registered_at")
-  event            Event    @relation(fields: [eventId], references: [id])
-  user             User     @relation(fields: [registeredUserId], references: [id])
-
-  @@unique([registeredUserId, eventId])
-  @@index([registeredUserId])
-  @@index([eventId])
-  @@map("event_registrations")
-}
-
 model supportRequest {
   id                  Int      @id @default(autoincrement())
   support_requester   Int      @map("user_id")
   alumniId            Int?     @map("alumni_id")
   status              String   @default("pending") @db.VarChar(20)
   createdAt           DateTime @default(now()) @map("created_at")
-  tier                Int      @default(1) @db.Integer
   descriptionbyUser   String   @default("") @db.VarChar(500)
   descriptionbyAlumni String?  @default("") @db.VarChar(500)
+  tier                Int      @default(1)
   alumni              User?    @relation("SupportAlumni", fields: [alumniId], references: [id])
   requester           User     @relation("SupportRequester", fields: [support_requester], references: [id])
 
@@ -168,6 +155,19 @@ model EmailChangeLog {
   @@map("email_change_logs")
 }
 
+model event_registrations {
+  id                 Int      @id @default(autoincrement())
+  registered_user_id Int
+  event_id           Int
+  registered_at      DateTime @default(now())
+  events             Event    @relation(fields: [event_id], references: [id])
+  users              User     @relation(fields: [registered_user_id], references: [id])
+
+  @@unique([registered_user_id, event_id])
+  @@index([event_id])
+  @@index([registered_user_id])
+}
+
 enum Role {
   student
   alumni
@@ -179,4 +179,26 @@ enum EventStatus {
   pending
   approved
   rejected
+}
+
+model Job {
+id Int @id @default(autoincrement())
+userId Int @map("user_id")
+companyName String @db.VarChar(200)
+jobTitle String @db.VarChar(200)
+description String
+status JobStatus @default(pending)
+createdAt DateTime @default(now()) @map("created_at")
+user User @relation(fields: [userId], references: [id])
+
+@@index([userId])
+@@index([status])
+@@map("jobs")
+}
+
+enum JobStatus {
+pending
+approved
+rejected
+closed
 }
