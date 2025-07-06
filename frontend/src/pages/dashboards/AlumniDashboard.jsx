@@ -218,7 +218,6 @@ const TabbedBoard = ({ jobs, showAlert }) => {
     setShowAccept(false);
     setAcceptMsg('');
     setAcceptTier(1);
-    setAlert('');
     setProfileLoading(true);
     try {
       const u = req.requester;
@@ -620,7 +619,7 @@ const TabbedBoard = ({ jobs, showAlert }) => {
                               {req.status === 'pending' && (
                                 <button
                                   className="inline-block px-2 py-1 rounded-full bg-green-100 text-green-700 font-semibold text-xs hover:bg-green-200 transition-colors"
-                                  onClick={e => { e.stopPropagation(); setSelectedRequest(req); setShowAccept(true); setAcceptMsg(''); setAcceptTier(1); setAlert(''); }}
+                                  onClick={e => { e.stopPropagation(); setSelectedRequest(req); setShowAccept(true); setAcceptMsg(''); setAcceptTier(1); }}
                                 >
                                   Accept
                                 </button>
@@ -779,7 +778,7 @@ const TabbedBoard = ({ jobs, showAlert }) => {
                 </table>
               </div>
             )}
-            {showProfileModal && (
+            {showProfileModal && selectedRequest && (
               <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-1 sm:p-2 z-50">
                 <div className="bg-white rounded-2xl w-full max-w-sm sm:max-w-md md:max-w-lg max-h-[80vh] overflow-y-auto scrollbar-hide p-3 relative" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                   <div className="flex items-center justify-between mb-2">
@@ -794,10 +793,10 @@ const TabbedBoard = ({ jobs, showAlert }) => {
                     </button>
                   </div>
                   <div className="relative h-28 sm:h-36 bg-gray-200 rounded-2xl mb-2 flex items-center justify-center overflow-hidden">
-                    {profile?.photoUrl ? (
+                    {selectedRequest.requester?.photoUrl ? (
                       <img
-                        src={profile.photoUrl}
-                        alt={profile.fullName}
+                        src={selectedRequest.requester.photoUrl}
+                        alt={selectedRequest.requester.fullName}
                         className="w-full h-full object-cover rounded-2xl"
                         loading="lazy"
                       />
@@ -809,38 +808,60 @@ const TabbedBoard = ({ jobs, showAlert }) => {
                       </div>
                     )}
                     <div className="absolute top-2 left-2">
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium ${roleColors[profile?.role] || 'bg-gray-100 text-gray-700'}`}>{profile?.role}</span>
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium ${roleColors[selectedRequest.requester?.role] || 'bg-gray-100 text-gray-700'}`}>{selectedRequest.requester?.role}</span>
                     </div>
                   </div>
                   <div className="p-2 sm:p-3 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-                    <h3 className="font-bold text-gray-900 mb-2 text-xl sm:text-2xl leading-tight">{profile?.fullName}</h3>
+                    <h3 className="font-bold text-gray-900 mb-2 text-xl sm:text-2xl leading-tight">{selectedRequest.requester?.fullName}</h3>
                     <div className="space-y-2 mb-3">
-                      {profile?.department && (
+                      {selectedRequest.requester?.department && (
                         <div className="flex items-center gap-2 text-sm text-gray-700">
                           <AcademicCapIcon className="h-4 w-4 text-indigo-400" />
-                          <span>{profile.department}</span>
+                          <span>{selectedRequest.requester.department}</span>
                         </div>
                       )}
-                      {profile?.student && profile.student.currentSemester && (
-                        <div className="flex items-center gap-2 text-sm text-gray-700">
-                          <ClockIcon className="h-4 w-4 text-indigo-400" />
-                          <span>Semester {profile.student.currentSemester}</span>
-                        </div>
-                      )}
-                      {profile?.alumni && profile.alumni.currentJobTitle && (
-                        <div className="flex items-center gap-2 text-sm text-gray-700">
-                          <BriefcaseIcon className="h-4 w-4 text-indigo-400" />
-                          <span>{profile.alumni.currentJobTitle} at {profile.alumni.companyName}</span>
-                        </div>
-                      )}
-                      {profile?.email && (
+                      {selectedRequest.requester?.email && (
                         <div className="flex items-center gap-2 text-sm text-gray-700">
                           <UserIcon className="h-4 w-4 text-indigo-400" />
-                          <span>{profile.email}</span>
+                          <span>{selectedRequest.requester.email}</span>
+                        </div>
+                      )}
+                      {selectedRequest.requester?.phoneNumber && (
+                        <div className="flex items-center gap-2 text-sm text-gray-700">
+                          <PhoneIcon className="h-4 w-4 text-indigo-400" />
+                          <span>{selectedRequest.requester.phoneNumber}</span>
+                        </div>
+                      )}
+                      {selectedRequest.requester?.linkedinUrl && (
+                        <div className="flex items-center gap-2 text-sm text-gray-700">
+                          <GlobeAltIcon className="h-4 w-4 text-indigo-400" />
+                          <a href={selectedRequest.requester.linkedinUrl} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline">LinkedIn</a>
+                        </div>
+                      )}
+                      {selectedRequest.requester?.githubUrl && (
+                        <div className="flex items-center gap-2 text-sm text-gray-700">
+                          <svg className="h-4 w-4 text-indigo-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.484 2 12.021c0 4.428 2.865 8.184 6.839 9.504.5.092.682-.217.682-.482 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.342-3.369-1.342-.454-1.154-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.004.07 1.532 1.032 1.532 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.339-2.221-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.254-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.295 2.748-1.025 2.748-1.025.546 1.378.202 2.396.1 2.65.64.7 1.028 1.595 1.028 2.688 0 3.847-2.337 4.695-4.566 4.944.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.744 0 .267.18.577.688.48C19.138 20.2 22 16.447 22 12.021 22 6.484 17.523 2 12 2z"/></svg>
+                          <a href={selectedRequest.requester.githubUrl} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline">GitHub</a>
+                        </div>
+                      )}
+                      {selectedRequest.requester?.twitterUrl && (
+                        <div className="flex items-center gap-2 text-sm text-gray-700">
+                          <svg className="h-4 w-4 text-indigo-400" fill="currentColor" viewBox="0 0 24 24"><path d="M23 3a10.9 10.9 0 01-3.14 1.53A4.48 4.48 0 0022.4.36a9.09 9.09 0 01-2.88 1.1A4.52 4.52 0 0016.11 0c-2.5 0-4.52 2.02-4.52 4.51 0 .35.04.7.11 1.03C7.69 5.4 4.07 3.7 1.64 1.15c-.38.65-.6 1.4-.6 2.2 0 1.52.77 2.86 1.95 3.65A4.48 4.48 0 01.96 6v.06c0 2.13 1.52 3.91 3.55 4.31-.37.1-.76.16-1.16.16-.28 0-.55-.03-.81-.08.56 1.74 2.18 3.01 4.1 3.05A9.05 9.05 0 010 19.54a12.8 12.8 0 006.95 2.04c8.36 0 12.94-6.93 12.94-12.94 0-.2 0-.39-.01-.58A9.22 9.22 0 0023 3z"/></svg>
+                          <a href={selectedRequest.requester.twitterUrl} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline">Twitter</a>
+                        </div>
+                      )}
+                      {selectedRequest.requester?.workExperience && Array.isArray(selectedRequest.requester.workExperience) && selectedRequest.requester.workExperience.length > 0 && (
+                        <div className="mb-2">
+                          <h4 className="text-xs font-semibold text-gray-900 mb-1">Work Experience</h4>
+                          <ul className="list-disc list-inside text-xs text-gray-700">
+                            {selectedRequest.requester.workExperience.map((exp, idx) => (
+                              <li key={idx}>{typeof exp === 'string' ? exp : JSON.stringify(exp)}</li>
+                            ))}
+                          </ul>
                         </div>
                       )}
                     </div>
-                    {selectedRequest?.descriptionbyUser && (
+                    {selectedRequest.descriptionbyUser && (
                       <div className="mb-3">
                         <div className="text-xs text-gray-500 font-semibold mb-1">Request Message</div>
                         <div className="bg-gray-50 border-l-4 border-indigo-400 rounded-md p-3 text-gray-700 text-xs sm:text-sm leading-relaxed whitespace-pre-line">
@@ -848,17 +869,17 @@ const TabbedBoard = ({ jobs, showAlert }) => {
                         </div>
                       </div>
                     )}
-                    {profile?.bio && (
+                    {selectedRequest.requester?.bio && (
                       <div className="mb-3">
                         <h4 className="text-base font-semibold text-gray-900 mb-1">Bio</h4>
-                        <div className="bg-gray-50 rounded-lg p-3 text-gray-700 text-sm leading-relaxed whitespace-pre-line">
-                          {profile.bio}
+                        <div className="bg-gray-50 rounded-lg p-3 text-gray-700 text-sm leading-relaxed whitespace-pre-line break-words">
+                          {selectedRequest.requester.bio}
                         </div>
                       </div>
                     )}
-                    {selectedRequest?.status === 'accepted' && selectedRequest?.tier && (
+                    {selectedRequest.status === 'accepted' && selectedRequest.tier && (
                       <div className="mb-4">
-                        <span className={`inline-block px-2 py-1 rounded-full font-semibold ${statusColors[selectedRequest?.status]}`}>{selectedRequest?.status}</span>
+                        <span className={`inline-block px-2 py-1 rounded-full font-semibold ${statusColors[selectedRequest.status]}`}>{selectedRequest.status}</span>
                         <span className="ml-2 text-xs text-indigo-600 font-semibold">({tierLabels[selectedRequest.tier]})</span>
                       </div>
                     )}
@@ -940,7 +961,7 @@ const TabbedBoard = ({ jobs, showAlert }) => {
                     {sentProfile?.bio && (
                       <div className="mb-3">
                         <h4 className="text-base font-semibold text-gray-900 mb-1">Bio</h4>
-                        <div className="bg-gray-50 rounded-lg p-3 text-gray-700 text-sm leading-relaxed whitespace-pre-line">
+                        <div className="bg-gray-50 rounded-lg p-3 text-gray-700 text-sm leading-relaxed whitespace-pre-line break-words">
                           {sentProfile.bio}
                         </div>
                       </div>

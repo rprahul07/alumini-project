@@ -144,20 +144,22 @@ const AlumniPage = () => {
     <>
       <Navbar />
       <div className="min-h-screen bg-gray-50 flex flex-col">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex-1 flex flex-col">
-          {/* Search, Filter, Sort */}
-          <div className="mb-6 flex flex-col sm:flex-row gap-2 items-stretch sm:items-center">
-            <div className="relative w-full sm:flex-1">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 w-full">
+          {/* Search, Filter, Sort - Always full width, above the grid */}
+          <div className="mb-6 flex flex-row gap-2 items-center w-full">
+            <div className="flex-1">
+              <div className="relative w-full">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={e => setSearchTerm(e.target.value)}
+                  placeholder="Search alumni by name or company..."
+                  className="block w-full pl-10 pr-3 py-2 border-2 border-white/40 rounded-full leading-5 bg-white/40 backdrop-blur-md placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 shadow-lg transition-all"
+                />
               </div>
-              <input
-                type="text"
-                value={searchTerm}
-                onChange={e => setSearchTerm(e.target.value)}
-                placeholder="Search alumni by name or company..."
-                className="block w-full pl-10 pr-3 py-2 border-2 border-white/40 rounded-full leading-5 bg-white/40 backdrop-blur-md placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 shadow-lg transition-all"
-              />
             </div>
             <select
               value={selectedGraduationYear}
@@ -198,71 +200,76 @@ const AlumniPage = () => {
                 <div className="text-center text-gray-500 py-20 text-lg font-medium">
                   No alumni found. Try adjusting your filters or search.
                 </div>
-    </div>
+              </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {alumni.map((a) => {
-                  // Disable for self
-                  if (user && a.userId === user.id) {
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                  {alumni.map((a) => {
+                    // Disable for self
+                    if (user && a.userId === user.id) {
+                      return (
+                        <AlumniCard
+                          key={a.userId}
+                          alumni={a}
+                          onRequestMentorship={handleRequestMentorship}
+                          onCardClick={handleAlumniCardClick}
+                          buttonDisabled={true}
+                          buttonLabel="You can't send yourself"
+                        />
+                      );
+                    }
+                    // Find existing request
+                    const req = supportRequests.find(r => r.alumniId === a.userId && r.support_requester === user.id);
+                    let buttonDisabled = false;
+                    let buttonLabel = 'Request Mentorship';
+                    if (req) {
+                      if (req.status === 'pending') {
+                        buttonDisabled = true;
+                        buttonLabel = 'Pending';
+                      } else if (req.status === 'accepted') {
+                        buttonDisabled = false;
+                        buttonLabel = 'Connected';
+                      } else if (req.status === 'rejected') {
+                        buttonDisabled = false;
+                        buttonLabel = 'Request Mentorship';
+                      }
+                    }
                     return (
                       <AlumniCard
                         key={a.userId}
                         alumni={a}
                         onRequestMentorship={handleRequestMentorship}
                         onCardClick={handleAlumniCardClick}
-                        buttonDisabled={true}
-                        buttonLabel="You can't send yourself"
+                        buttonDisabled={buttonDisabled}
+                        buttonLabel={buttonLabel}
                       />
                     );
-                  }
-                  // Find existing request
-                  const req = supportRequests.find(r => r.alumniId === a.userId && r.support_requester === user.id);
-                  let buttonDisabled = false;
-                  let buttonLabel = 'Request Mentorship';
-                  if (req) {
-                    if (req.status === 'pending') {
-                      buttonDisabled = true;
-                      buttonLabel = 'Pending';
-                    } else if (req.status === 'accepted') {
-                      buttonDisabled = false;
-                      buttonLabel = 'Connected';
-                    } else if (req.status === 'rejected') {
-                      buttonDisabled = false;
-                      buttonLabel = 'Request Mentorship';
-                    }
-                  }
-                  return (
-                    <AlumniCard
-                      key={a.userId}
-                      alumni={a}
-                      onRequestMentorship={handleRequestMentorship}
-                      onCardClick={handleAlumniCardClick}
-                      buttonDisabled={buttonDisabled}
-                      buttonLabel={buttonLabel}
-                    />
-                  );
-                })}
-              </div>
+                  })}
+                </div>
+                {/* Pagination Controls - Always at bottom, full width */}
+                <div className="mt-10 flex justify-center w-full">
+                  {/* Use EventPagination for consistent UI */}
+                  {/* <EventPagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} /> */}
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                      className="px-4 py-1.5 rounded-full font-semibold bg-white border border-indigo-300 text-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Previous
+                    </button>
+                    <span className="px-4 py-1.5 text-indigo-700 font-medium">Page {currentPage} of {totalPages}</span>
+                    <button
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                      className="px-4 py-1.5 rounded-full font-semibold bg-white border border-indigo-300 text-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Next
+                    </button>
+                  </div>
+                </div>
+              </>
             )}
-          </div>
-
-          {/* Pagination Controls - Always at bottom */}
-          <div className="flex justify-center mt-10 gap-2">
-            <button
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-              className="px-4 py-1.5 rounded-full font-semibold bg-white border border-indigo-300 text-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Previous
-            </button>
-            <span className="px-4 py-1.5 text-indigo-700 font-medium">Page {currentPage} of {totalPages}</span>
-            <button
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              className="px-4 py-1.5 rounded-full font-semibold bg-white border border-indigo-300 text-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Next
-            </button>
           </div>
 
           {/* Mentorship Request Modal */}
