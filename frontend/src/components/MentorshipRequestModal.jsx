@@ -74,9 +74,25 @@ const MentorshipRequestModal = ({ open, onClose, alumni, onSend, onResult, accep
           {isAccept ? 'Accept Mentorship Request' : 'Request Mentorship'}
         </h2>
         <div className="text-center mb-4">
-          <div className="font-semibold text-lg text-gray-800">{alumni.fullName || alumni.name}</div>
-          <div className="text-sm text-gray-500">{alumni.alumni?.graduationYear || alumni.graduationYear || '—'} | {alumni.alumni?.course || alumni.course || '—'}</div>
-          <div className="text-sm text-gray-600 mt-1">{alumni.alumni?.currentJobTitle || alumni.currentJobTitle || '—'} at {alumni.alumni?.companyName || alumni.companyName || '—'}</div>
+          <div className="font-semibold text-lg text-gray-800">{alumni.fullName || alumni.name || ''}</div>
+          <div className="text-sm text-gray-500">
+            {((alumni.alumni?.graduationYear || alumni.graduationYear) || (alumni.alumni?.course || alumni.course)) && (
+              <>
+                {(alumni.alumni?.graduationYear || alumni.graduationYear || '')}
+                {(alumni.alumni?.graduationYear || alumni.graduationYear) && (alumni.alumni?.course || alumni.course) ? ' | ' : ''}
+                {(alumni.alumni?.course || alumni.course || '')}
+              </>
+            )}
+          </div>
+          <div className="text-sm text-gray-600 mt-1">
+            {((alumni.alumni?.currentJobTitle || alumni.currentJobTitle) || (alumni.alumni?.companyName || alumni.companyName)) && (
+              <>
+                {(alumni.alumni?.currentJobTitle || alumni.currentJobTitle || '')}
+                {(alumni.alumni?.currentJobTitle || alumni.currentJobTitle) && (alumni.alumni?.companyName || alumni.companyName) ? ' at ' : ''}
+                {(alumni.alumni?.companyName || alumni.companyName || '')}
+              </>
+            )}
+          </div>
         </div>
         {isAccept && (
           <div className="mb-4">
