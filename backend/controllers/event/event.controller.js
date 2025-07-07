@@ -153,7 +153,6 @@ export const getRegisteredEventsController = async (req, res) => {
     });
   }
 };
-
 export const withdrawFromEvents = async (req, res) => {
   try {
     // Check if user has valid role (exclude admin from event registration/withdrawal)
@@ -210,7 +209,6 @@ export const withdrawFromEvents = async (req, res) => {
     });
   }
 };
-
 export const getEventById = async (req, res) => {
   try {
     const userId = req.user?.id || null;
