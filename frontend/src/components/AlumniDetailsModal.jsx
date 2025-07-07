@@ -8,7 +8,7 @@ const AlumniDetailsModal = ({ open, onClose, alumni, onRequestMentorship, onRefr
   const [contactInfo, setContactInfo] = useState(null);
   const [contactLoading, setContactLoading] = useState(false);
   const [contactError, setContactError] = useState(false);
-  const { showAlert, AlertComponent } = useAlert();
+  const { showAlert } = useAlert();
   const { user } = useAuth();
 
   // Fetch contact info and alumni response if mentorship request is accepted
@@ -315,8 +315,6 @@ const AlumniDetailsModal = ({ open, onClose, alumni, onRequestMentorship, onRefr
           </div>
         </div>
       </div>
-
-      <AlertComponent />
     </>
   );
 };

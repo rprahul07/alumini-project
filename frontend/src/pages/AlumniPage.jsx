@@ -10,6 +10,8 @@ import AlumniDetailsModal from '../components/AlumniDetailsModal';
 import axios from '../config/axios';
 import useAlert from '../hooks/useAlert';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const AlumniPage = () => {
   const { user, loading: authLoading } = useAuth();
@@ -26,7 +28,7 @@ const AlumniPage = () => {
   const [selectedAlumniForDetails, setSelectedAlumniForDetails] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedGraduationYear, setSelectedGraduationYear] = useState('');
-  const { showAlert, AlertComponent } = useAlert();
+  const { showAlert } = useAlert();
   const [supportRequests, setSupportRequests] = useState([]);
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: currentYear - 1999 + 1 }, (_, i) => currentYear - i);
@@ -291,9 +293,7 @@ const AlumniPage = () => {
           />
 
           {/* Centered Alert */}
-          <div className="fixed inset-0 flex items-center justify-center pointer-events-none z-[100]">
-            <AlertComponent />
-          </div>
+          <ToastContainer position="top-right" autoClose={4000} hideProgressBar={false} newestOnTop closeOnClick pauseOnFocusLoss draggable pauseOnHover />
         </div>
       </div>
     </>

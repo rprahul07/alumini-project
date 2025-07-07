@@ -25,6 +25,8 @@ import useAlert from '../../hooks/useAlert';
 import axios from '../../config/axios';
 import MentorshipRequestModal from '../../components/MentorshipRequestModal';
 import ReactDOM from 'react-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const TIERS = [
   {
@@ -1485,7 +1487,7 @@ const AlumniDashboard = () => {
         </div>
       </div>
       </div>
-      <AlertComponent />
+      <ToastContainer />
     </>
   );
 };
