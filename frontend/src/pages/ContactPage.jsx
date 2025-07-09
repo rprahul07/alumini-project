@@ -1,9 +1,21 @@
-import React from 'react';
-export default function ContactPage() {
+import ContactHeading from "../components/ContactHeading";
+import ContactInput from "../components/ContactInput";
+import ContactTypes from "../components/ContactTypes";
+
+function ContactPage() {
   return (
-    <div className="max-w-2xl mx-auto py-16 text-center">
-      <h1 className="text-3xl font-bold mb-4">Contact</h1>
-      <p className="text-lg text-gray-600">This is a placeholder Contact page.</p>
+    <div className="max-w-screen-xl mx-auto px-8 py-10 font-sans">
+      <ContactHeading />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-10">
+        <div className="bg-gray-100 p-6 rounded-xl shadow">
+          <ContactInput />
+        </div>
+        <div className="bg-gray-100 p-6 rounded-xl shadow">
+          <ContactTypes />
+        </div>
+      </div>
     </div>
   );
-} 
+}
+
+export default ContactPage;
