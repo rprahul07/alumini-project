@@ -156,10 +156,10 @@ const AlumniPage = () => {
       <Navbar />
       <div className="min-h-screen bg-gray-50 flex flex-col">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 w-full">
-          {/* Search, Filter, Sort - Always full width, above the grid */}
-          <div className="mb-6 flex flex-row gap-2 items-center w-full">
-            <div className="flex-1">
-              <div className="relative w-full">
+          {/* Search, Filter - Always full width, above the grid */}
+          <div className="mb-6 w-full flex flex-col gap-2 sm:flex-row sm:gap-2 items-center">
+            <div className="flex w-full gap-2">
+              <div className="relative flex-1">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
                 </div>
@@ -168,26 +168,20 @@ const AlumniPage = () => {
                   value={searchTerm}
                   onChange={e => setSearchTerm(e.target.value)}
                   placeholder="Search alumni by name or company..."
-                  className="block w-full pl-10 pr-3 py-2 border-2 border-white/40 rounded-full leading-5 bg-white/40 backdrop-blur-md placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 shadow-lg transition-all"
+                  className="block w-full pl-10 pr-3 py-2 border-2 border-white/40 rounded-full leading-5 bg-white/40 backdrop-blur-md placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 shadow-lg transition-all text-base sm:text-sm"
                 />
               </div>
+              <select
+                value={selectedGraduationYear}
+                onChange={e => setSelectedGraduationYear(e.target.value)}
+                className="flex-shrink-0 rounded-full px-4 py-2 font-semibold border-2 border-indigo-400 bg-white/60 backdrop-blur text-base sm:text-sm text-indigo-700 hover:bg-white/80 shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 min-w-[120px]"
+              >
+                <option value="">All Years</option>
+                {years.map(year => (
+                  <option key={year} value={year}>{year}</option>
+                ))}
+              </select>
             </div>
-            <select
-              value={selectedGraduationYear}
-              onChange={e => setSelectedGraduationYear(e.target.value)}
-              className="w-full sm:w-auto rounded-full px-4 py-2 font-semibold border-2 border-indigo-400 bg-white/60 backdrop-blur text-sm text-indigo-700 hover:bg-white/80 shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400"
-            >
-              <option value="">All Years</option>
-              {years.map(year => (
-                <option key={year} value={year}>{year}</option>
-              ))}
-            </select>
-            <button
-              onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-              className="w-full sm:w-auto rounded-full px-4 py-2 font-semibold border-2 border-indigo-400 bg-white/60 text-sm text-indigo-700 hover:bg-white/80 shadow-lg transition-all"
-            >
-              Sort: {sortOrder === 'asc' ? 'A-Z' : 'Z-A'}
-            </button>
           </div>
 
           {/* Alumni Grid - Flex-1 to take remaining space */}
@@ -214,7 +208,7 @@ const AlumniPage = () => {
               </div>
             ) : (
               <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 justify-center">
                   {alumni.map((a) => {
                     // Disable for self
                     if (user && a.userId === user.id) {

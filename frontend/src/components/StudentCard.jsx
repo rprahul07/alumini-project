@@ -20,7 +20,7 @@ const StudentCard = ({ student }) => {
     <>
       <div
         onClick={handleCardClick}
-        className="bg-white shadow-md rounded-2xl w-full max-w-xs flex flex-col h-full cursor-pointer"
+        className="bg-white shadow-md rounded-2xl w-full max-w-sm flex flex-col h-full cursor-pointer"
       >
         {/* Image at the top */}
         <div className="relative h-28 bg-gray-200 flex-shrink-0 w-full rounded-t-2xl">

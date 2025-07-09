@@ -98,7 +98,7 @@ const AlumniCard = ({
 
   return (
     <div
-      className="bg-white shadow-md rounded-2xl w-full max-w-xs flex flex-col h-full cursor-pointer"
+      className="bg-white shadow-md rounded-2xl w-full max-w-sm flex flex-col h-full cursor-pointer"
       onClick={handleCardClick}
     >
       {/* Image at the top */}
