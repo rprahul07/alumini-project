@@ -118,7 +118,7 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`backdrop-blur shadow-md sticky top-0 z-50 transition-colors duration-300 ${isHome ? 'bg-white/70' : 'bg-indigo-600/70'}`}
+      className={`backdrop-blur shadow-md sticky top-0 z-50 transition-colors duration-300 ${isHome ? 'bg-white/40 border border-white/30' : 'bg-indigo-600/70'}`}
       aria-label="Main Navigation"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
