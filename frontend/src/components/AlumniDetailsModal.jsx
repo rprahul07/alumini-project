@@ -8,7 +8,7 @@ const AlumniDetailsModal = ({ open, onClose, alumni, onRequestMentorship, onRefr
   const [contactInfo, setContactInfo] = useState(null);
   const [contactLoading, setContactLoading] = useState(false);
   const [contactError, setContactError] = useState(false);
-  const { showAlert, AlertComponent } = useAlert();
+  const { showAlert } = useAlert();
   const { user } = useAuth();
 
   // Fetch contact info and alumni response if mentorship request is accepted
@@ -44,6 +44,20 @@ const AlumniDetailsModal = ({ open, onClose, alumni, onRequestMentorship, onRefr
   };
 
   const getContactSection = () => {
+    // Prevent self-request: if viewing own profile, show message instead of button
+    if (user && alumni?.userId === user.id) {
+      return (
+        <div className="mb-3">
+          <h4 className="text-base font-semibold text-gray-900 mb-1">Contact Information</h4>
+          <div className="text-center pt-2">
+            <p className="text-xs sm:text-sm text-gray-500 mb-3">
+              You can't send a request to yourself.
+            </p>
+          </div>
+        </div>
+      );
+    }
+
     if (alumni?.connectionStatus === 'accepted') {
       if (contactLoading) {
         return (
@@ -301,8 +315,6 @@ const AlumniDetailsModal = ({ open, onClose, alumni, onRequestMentorship, onRefr
           </div>
         </div>
       </div>
-
-      <AlertComponent />
     </>
   );
 };

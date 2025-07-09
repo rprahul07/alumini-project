@@ -153,7 +153,6 @@ export const getRegisteredEventsController = async (req, res) => {
     });
   }
 };
-
 export const withdrawFromEvents = async (req, res) => {
   try {
     // Check if user has valid role (exclude admin from event registration/withdrawal)
@@ -210,7 +209,6 @@ export const withdrawFromEvents = async (req, res) => {
     });
   }
 };
-
 export const getEventById = async (req, res) => {
   try {
     const userId = req.user?.id || null;
@@ -278,7 +276,7 @@ export const getEventById = async (req, res) => {
           },
           _count: {
             select: {
-              registrations: true,
+              event_registrations: true,
             },
           },
         },
@@ -286,11 +284,11 @@ export const getEventById = async (req, res) => {
 
       // Get user's registration for this event (only if authenticated)
       isAuthenticated
-        ? prisma.eventRegistration.findUnique({
+        ? prisma.event_registrations.findUnique({
             where: {
-              registeredUserId_eventId: {
-                registeredUserId: userId,
-                eventId: eventId,
+              registered_user_id_event_id: {
+                registered_user_id: userId,
+                event_id: eventId,
               },
             },
             select: {
@@ -316,7 +314,9 @@ export const getEventById = async (req, res) => {
 
     // Check registration status
     const isRegistered = isAuthenticated ? !!userRegistration : null;
-    const registeredCount = isAuthenticated ? event._count.registrations : null;
+    const registeredCount = isAuthenticated
+      ? event._count.event_registrations
+      : null;
 
     // Format the response data
     const formattedEvent = {
@@ -345,7 +345,6 @@ export const getEventById = async (req, res) => {
       },
     };
 
-    // Add metadata for permissions (only for authenticated users)
     const responseData = {
       event: formattedEvent,
       metadata: isAuthenticated
@@ -454,25 +453,24 @@ export const getAllEvents = async (req, res) => {
           },
           _count: {
             select: {
-              registrations: true,
+              event_registrations: true,
             },
           },
         },
       }),
 
-      // Get user's registrations for these events (only if authenticated)
       isAuthenticated
-        ? prisma.eventRegistration.findMany({
+        ? prisma.event_registrations.findMany({
             where: {
-              registeredUserId: userId,
-              event: {
+              registered_user_id: userId,
+              events: {
                 status: "approved",
               },
             },
             skip,
             take: pageSize,
             select: {
-              eventId: true,
+              event_id: true,
             },
           })
         : Promise.resolve([]),
@@ -484,9 +482,8 @@ export const getAllEvents = async (req, res) => {
       }`
     );
 
-    // Create a Set for O(1) lookup of user's registered events
     const userRegisteredEventIds = new Set(
-      userRegistrations.map((reg) => reg.eventId)
+      userRegistrations.map((reg) => reg.event_id)
     );
 
     // Format the response data
@@ -495,7 +492,7 @@ export const getAllEvents = async (req, res) => {
         ? userRegisteredEventIds.has(event.id)
         : null;
       const registeredCount = isAuthenticated
-        ? event._count.registrations
+        ? event._count.event_registrations
         : null;
 
       return {
@@ -673,17 +670,17 @@ export const searchEvents = async (req, res) => {
           },
           _count: {
             select: {
-              registrations: true,
+              event_registrations: true,
             },
           },
         },
       }),
 
       isAuthenticated
-        ? prisma.eventRegistration.findMany({
+        ? prisma.event_registrations.findMany({
             where: {
-              registeredUserId: userId,
-              event: {
+              registered_user_id: userId,
+              events: {
                 status: "approved",
                 ...whereClause,
               },
@@ -691,7 +688,7 @@ export const searchEvents = async (req, res) => {
             skip,
             take: pageSize,
             select: {
-              eventId: true,
+              event_id: true,
             },
           })
         : Promise.resolve([]),
@@ -706,7 +703,7 @@ export const searchEvents = async (req, res) => {
     );
 
     const userRegisteredEventIds = new Set(
-      userRegistrations.map((reg) => reg.eventId)
+      userRegistrations.map((reg) => reg.event_id)
     );
 
     const formattedEvents = events.map((event) => {
@@ -714,7 +711,7 @@ export const searchEvents = async (req, res) => {
         ? userRegisteredEventIds.has(event.id)
         : null;
       const registeredCount = isAuthenticated
-        ? event._count.registrations
+        ? event._count.event_registrations
         : null;
 
       return {
@@ -744,7 +741,6 @@ export const searchEvents = async (req, res) => {
       };
     });
 
-    // Calculate pagination metadata
     const totalPages = Math.ceil(totalEvents / pageSize);
     const hasNextPage = pageNumber < totalPages;
     const hasPreviousPage = pageNumber > 1;

@@ -853,18 +853,17 @@ export const registerForEvents = async (userId, userRole, eventId) => {
       eventId
     );
 
-    // Validate event ID - convert to integer
     const eventIdInt = parseInt(eventId);
     if (!eventId || isNaN(eventIdInt)) {
       throw new Error("Invalid event ID provided.");
     }
 
     // Check if user is already registered
-    const existingRegistration = await prisma.eventRegistration.findUnique({
+    const existingRegistration = await prisma.event_registrations.findUnique({
       where: {
-        registeredUserId_eventId: {
-          registeredUserId: userId,
-          eventId: eventIdInt,
+        registered_user_id_event_id: {
+          registered_user_id: userId,
+          event_id: eventIdInt,
         },
       },
     });
@@ -886,7 +885,7 @@ export const registerForEvents = async (userId, userRole, eventId) => {
         location: true,
         _count: {
           select: {
-            registrations: true,
+            event_registrations: true,
           },
         },
       },
@@ -908,19 +907,21 @@ export const registerForEvents = async (userId, userRole, eventId) => {
     }
 
     // Check capacity limit
-    if (event.maxCapacity && event._count.registrations >= event.maxCapacity) {
+    if (
+      event.maxCapacity &&
+      event._count.event_registrations >= event.maxCapacity
+    ) {
       throw new Error("Event is at full capacity.");
     }
 
     // Register user by creating a new event registration
-    const newRegistration = await prisma.eventRegistration.create({
+    const newRegistration = await prisma.event_registrations.create({
       data: {
-        registeredUserId: userId,
-        eventId: eventIdInt,
+        registered_user_id: userId,
+        event_id: eventIdInt,
       },
     });
 
-    // Get updated event data with registration count
     const updatedEvent = await prisma.event.findUnique({
       where: { id: eventIdInt },
       select: {
@@ -932,7 +933,7 @@ export const registerForEvents = async (userId, userRole, eventId) => {
         location: true,
         _count: {
           select: {
-            registrations: true,
+            event_registrations: true,
           },
         },
       },
@@ -965,9 +966,9 @@ export const registerForEvents = async (userId, userRole, eventId) => {
         eventDate: updatedEvent.date,
         eventTime: updatedEvent.time,
         eventLocation: updatedEvent.location,
-        registeredCount: updatedEvent._count.registrations,
+        registeredCount: updatedEvent._count.event_registrations,
         maxCapacity: updatedEvent.maxCapacity,
-        registeredAt: newRegistration.registeredAt,
+        registeredAt: newRegistration.registered_at,
       },
     };
   } catch (error) {
@@ -1002,11 +1003,10 @@ export const getEventRegistrations = async (
     );
 
     const whereClause = {
-      userId: organizerUserId, // Events created by this organizer
-      status: "approved", // Only approved events
+      userId: organizerUserId,
+      status: "approved",
     };
 
-    // If specific eventId is provided, add it to the filter
     if (eventId) {
       const eventIdInt = parseInt(eventId);
       if (isNaN(eventIdInt)) {
@@ -1015,7 +1015,6 @@ export const getEventRegistrations = async (
       whereClause.id = eventIdInt;
     }
 
-    // Fetch events with their registrations and user details
     const eventsWithRegistrations = await prisma.event.findMany({
       where: whereClause,
       select: {
@@ -1066,7 +1065,7 @@ export const getEventRegistrations = async (
             },
           },
           orderBy: {
-            registeredAt: "asc", // Earliest registrations first
+            registeredAt: "asc",
           },
         },
         _count: {
@@ -1076,11 +1075,10 @@ export const getEventRegistrations = async (
         },
       },
       orderBy: {
-        date: "asc", // Upcoming events first
+        date: "asc",
       },
     });
 
-    // Check if any events were found
     if (!eventsWithRegistrations || eventsWithRegistrations.length === 0) {
       const message = eventId
         ? "Event not found or you don't have permission to view its registrations."
@@ -1097,7 +1095,6 @@ export const getEventRegistrations = async (
       };
     }
 
-    // Transform the data for better readability
     const formattedEvents = eventsWithRegistrations.map((event) => ({
       eventId: event.id,
       eventName: event.name,
@@ -1117,7 +1114,6 @@ export const getEventRegistrations = async (
         role: registration.user.role,
         photoUrl: registration.user.photoUrl,
         bio: registration.user.bio,
-        // Role-specific details
         roleDetails:
           registration.user.role === "student"
             ? {

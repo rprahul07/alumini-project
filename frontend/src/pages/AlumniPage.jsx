@@ -10,9 +10,14 @@ import AlumniDetailsModal from '../components/AlumniDetailsModal';
 import axios from '../config/axios';
 import useAlert from '../hooks/useAlert';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import EventPagination from '../components/EventPagination';
+import { useNavigate } from 'react-router-dom';
 
 const AlumniPage = () => {
   const { user, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
   const [alumni, setAlumni] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -26,11 +31,17 @@ const AlumniPage = () => {
   const [selectedAlumniForDetails, setSelectedAlumniForDetails] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedGraduationYear, setSelectedGraduationYear] = useState('');
-  const { showAlert, AlertComponent } = useAlert();
+  const { showAlert } = useAlert();
   const [supportRequests, setSupportRequests] = useState([]);
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: currentYear - 1999 + 1 }, (_, i) => currentYear - i);
   let debounceTimeout = null;
+
+  // Redirect if not logged in
+  if (!user && !authLoading) {
+    navigate('/role-selection');
+    return null;
+  }
 
   // Fetch alumni from API
   const fetchAlumni = async () => {
@@ -145,10 +156,10 @@ const AlumniPage = () => {
       <Navbar />
       <div className="min-h-screen bg-gray-50 flex flex-col">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 w-full">
-          {/* Search, Filter, Sort - Always full width, above the grid */}
-          <div className="mb-6 flex flex-row gap-2 items-center w-full">
-            <div className="flex-1">
-              <div className="relative w-full">
+          {/* Search, Filter - Always full width, above the grid */}
+          <div className="mb-6 w-full flex flex-col gap-2 sm:flex-row sm:gap-2 items-center">
+            <div className="flex w-full gap-2">
+              <div className="relative flex-1">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
                 </div>
@@ -157,26 +168,20 @@ const AlumniPage = () => {
                   value={searchTerm}
                   onChange={e => setSearchTerm(e.target.value)}
                   placeholder="Search alumni by name or company..."
-                  className="block w-full pl-10 pr-3 py-2 border-2 border-white/40 rounded-full leading-5 bg-white/40 backdrop-blur-md placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 shadow-lg transition-all"
+                  className="block w-full pl-10 pr-3 py-2 border-2 border-white/40 rounded-full leading-5 bg-white/40 backdrop-blur-md placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 shadow-lg transition-all text-base sm:text-sm"
                 />
               </div>
+              <select
+                value={selectedGraduationYear}
+                onChange={e => setSelectedGraduationYear(e.target.value)}
+                className="flex-shrink-0 rounded-full px-4 py-2 font-semibold border-2 border-indigo-400 bg-white/60 backdrop-blur text-base sm:text-sm text-indigo-700 hover:bg-white/80 shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 min-w-[120px]"
+              >
+                <option value="">All Years</option>
+                {years.map(year => (
+                  <option key={year} value={year}>{year}</option>
+                ))}
+              </select>
             </div>
-            <select
-              value={selectedGraduationYear}
-              onChange={e => setSelectedGraduationYear(e.target.value)}
-              className="w-full sm:w-auto rounded-full px-4 py-2 font-semibold border-2 border-indigo-400 bg-white/60 backdrop-blur text-sm text-indigo-700 hover:bg-white/80 shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400"
-            >
-              <option value="">All Years</option>
-              {years.map(year => (
-                <option key={year} value={year}>{year}</option>
-              ))}
-            </select>
-            <button
-              onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-              className="w-full sm:w-auto rounded-full px-4 py-2 font-semibold border-2 border-indigo-400 bg-white/60 text-sm text-indigo-700 hover:bg-white/80 shadow-lg transition-all"
-            >
-              Sort: {sortOrder === 'asc' ? 'A-Z' : 'Z-A'}
-            </button>
           </div>
 
           {/* Alumni Grid - Flex-1 to take remaining space */}
@@ -203,7 +208,7 @@ const AlumniPage = () => {
               </div>
             ) : (
               <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 justify-center">
                   {alumni.map((a) => {
                     // Disable for self
                     if (user && a.userId === user.id) {
@@ -247,26 +252,12 @@ const AlumniPage = () => {
                   })}
                 </div>
                 {/* Pagination Controls - Always at bottom, full width */}
-                <div className="mt-10 flex justify-center w-full">
-                  {/* Use EventPagination for consistent UI */}
-                  {/* <EventPagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} /> */}
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => handlePageChange(currentPage - 1)}
-                      disabled={currentPage === 1}
-                      className="px-4 py-1.5 rounded-full font-semibold bg-white border border-indigo-300 text-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      Previous
-                    </button>
-                    <span className="px-4 py-1.5 text-indigo-700 font-medium">Page {currentPage} of {totalPages}</span>
-                    <button
-                      onClick={() => handlePageChange(currentPage + 1)}
-                      disabled={currentPage === totalPages}
-                      className="px-4 py-1.5 rounded-full font-semibold bg-white border border-indigo-300 text-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      Next
-                    </button>
-                  </div>
+                <div className="mt-10">
+                  <EventPagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                  />
                 </div>
               </>
             )}
@@ -291,9 +282,7 @@ const AlumniPage = () => {
           />
 
           {/* Centered Alert */}
-          <div className="fixed inset-0 flex items-center justify-center pointer-events-none z-[100]">
-            <AlertComponent />
-          </div>
+          <ToastContainer position="top-right" autoClose={4000} hideProgressBar={false} newestOnTop closeOnClick pauseOnFocusLoss draggable pauseOnHover />
         </div>
       </div>
     </>

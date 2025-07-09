@@ -1,85 +1,74 @@
 import React from 'react';
 
 const EventPagination = ({ currentPage, totalPages, onPageChange }) => {
-  // Generate page numbers to show
+  // Helper to generate page numbers for display
   const getPageNumbers = () => {
     const pages = [];
-    const maxVisiblePages = 5;
-    
-    if (totalPages <= maxVisiblePages) {
-      // Show all pages if total is small
-      for (let i = 1; i <= totalPages; i++) {
-        pages.push(i);
-      }
-    } else {
-      // Show pages around current page
-      let start = Math.max(1, currentPage - 2);
-      let end = Math.min(totalPages, currentPage + 2);
-      
-      // Adjust if we're near the beginning or end
-      if (currentPage <= 3) {
-        end = Math.min(totalPages, 5);
-      } else if (currentPage >= totalPages - 2) {
-        start = Math.max(1, totalPages - 4);
-      }
-      
-      for (let i = start; i <= end; i++) {
+    // Show up to 2 before and after current
+    for (let i = currentPage - 2; i <= currentPage + 2; i++) {
+      if (i > 0 && i <= totalPages) {
         pages.push(i);
       }
     }
-    
     return pages;
   };
 
   const pageNumbers = getPageNumbers();
 
   return (
-    <div className="flex items-center justify-center space-x-2">
-      {/* Previous Button */}
+    <div className="flex items-center justify-center gap-2 mt-8">
       <button
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-          currentPage === 1
-            ? 'text-gray-400 cursor-not-allowed'
-            : 'text-gray-700 hover:bg-gray-100'
-        }`}
+        className="rounded-full px-3 py-1.5 text-sm font-medium bg-gray-100 text-gray-500 hover:bg-gray-200 disabled:opacity-50"
       >
-        ← Previous
+        Prev
       </button>
-
-      {/* Page Numbers */}
-      {pageNumbers.map((page) => (
+      {/* First page and ellipsis */}
+      {currentPage > 3 && (
+        <>
+          <button
+            onClick={() => onPageChange(1)}
+            className="rounded-full px-3 py-1.5 text-sm font-medium bg-white text-indigo-600 hover:bg-indigo-50"
+          >
+            1
+          </button>
+          {currentPage > 4 && <span className="px-2 text-gray-400">...</span>}
+        </>
+      )}
+      {/* Page numbers */}
+      {pageNumbers.map(page => (
         <button
           key={page}
           onClick={() => onPageChange(page)}
-          className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+          className={`rounded-full px-3 py-1.5 text-sm font-medium ${
             page === currentPage
               ? 'bg-indigo-600 text-white'
-              : 'text-gray-700 hover:bg-gray-100'
+              : 'bg-white text-indigo-600 hover:bg-indigo-50'
           }`}
         >
           {page}
         </button>
       ))}
-
-      {/* Next Button */}
+      {/* Last page and ellipsis */}
+      {currentPage < totalPages - 2 && (
+        <>
+          {currentPage < totalPages - 3 && <span className="px-2 text-gray-400">...</span>}
+          <button
+            onClick={() => onPageChange(totalPages)}
+            className="rounded-full px-3 py-1.5 text-sm font-medium bg-white text-indigo-600 hover:bg-indigo-50"
+          >
+            {totalPages}
+          </button>
+        </>
+      )}
       <button
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-          currentPage === totalPages
-            ? 'text-gray-400 cursor-not-allowed'
-            : 'text-gray-700 hover:bg-gray-100'
-        }`}
+        className="rounded-full px-3 py-1.5 text-sm font-medium bg-gray-100 text-gray-500 hover:bg-gray-200 disabled:opacity-50"
       >
-        Next →
+        Next
       </button>
-
-      {/* Page Info */}
-      <span className="ml-4 text-sm text-gray-500">
-        Page {currentPage} of {totalPages}
-      </span>
     </div>
   );
 };
