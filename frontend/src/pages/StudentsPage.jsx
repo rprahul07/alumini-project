@@ -16,8 +16,13 @@ const StudentsPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
-  // const [selectedDepartment, setSelectedDepartment] = useState(''); // For future filter
+  const [selectedDepartment, setSelectedDepartment] = useState(''); // For future filter
   // const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
+  const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
+  const [selectedSemester, setSelectedSemester] = useState('');
+  // Add temp state for modal
+  const [tempDepartment, setTempDepartment] = useState('');
+  const [tempSemester, setTempSemester] = useState('');
 
   // Redirect if not logged in
   if (!user && !authLoading) {
@@ -25,17 +30,39 @@ const StudentsPage = () => {
     return null;
   }
 
+  const departmentOptions = [
+    { value: '', label: 'All Departments' },
+    { value: 'CSE', label: 'Computer Science Engineering' },
+    { value: 'MECH', label: 'Mechanical Engineering' },
+    { value: 'Civil', label: 'Civil Engineering' },
+    { value: 'EEE', label: 'Electrical & Electronics Engineering' },
+    { value: 'IT', label: 'Information Technology' },
+    { value: 'EC', label: 'Electronics & Communication' },
+    { value: 'MCA', label: 'Master of Computer Applications' }
+  ];
+  const semesterOptions = [
+    { value: '', label: 'All Semesters' },
+    ...Array.from({ length: 8 }, (_, i) => ({ value: (i + 1).toString(), label: `Semester ${i + 1}` }))
+  ];
+
   // Fetch students from API
   const fetchStudents = async () => {
     try {
       setLoading(true);
       setError(null);
-      // TODO: Add search and pagination params when backend supports them
-      const response = await axios.get('/api/student/getall');
+      const limit = 12;
+      const offset = (currentPage - 1) * limit;
+      const params = new URLSearchParams({
+        search: searchTerm,
+        department: selectedDepartment,
+        currentSemester: selectedSemester,
+        limit,
+        offset,
+      });
+      const response = await axios.get(`/api/student/searchstudent?${params}`);
       if (response.data.success) {
-        setStudents(response.data.students || response.data.data?.students || []);
-        // TODO: Set totalPages from response if backend supports pagination
-        setTotalPages(1);
+        setStudents(response.data.data.profiles || []);
+        setTotalPages(response.data.data.pagination.totalPages || 1);
       } else {
         setError(response.data.message || 'Failed to fetch students');
       }
@@ -50,7 +77,7 @@ const StudentsPage = () => {
     if (!authLoading) {
       fetchStudents();
     }
-  }, [authLoading, currentPage]);
+  }, [authLoading, currentPage, searchTerm, selectedDepartment, selectedSemester]);
 
   // Debounced search (UI only, not functional until backend supports it)
   useEffect(() => {
@@ -59,6 +86,18 @@ const StudentsPage = () => {
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
+  };
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1);
+  };
+
+  // When opening modal, sync temp state
+  const openFilterModal = () => {
+    setTempDepartment(selectedDepartment);
+    setTempSemester(selectedSemester);
+    setIsFilterDrawerOpen(true);
   };
 
   return (
@@ -76,23 +115,90 @@ const StudentsPage = () => {
                 <input
                   type="text"
                   value={searchTerm}
-                  onChange={e => setSearchTerm(e.target.value)}
-                  placeholder="Search students (coming soon)"
+                  onChange={handleSearch}
+                  placeholder="Search students by name"
                   className="block w-full pl-10 pr-3 py-2 border-2 border-white/40 rounded-full leading-5 bg-white/40 backdrop-blur-md placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 shadow-lg transition-all text-sm sm:text-base"
-                  disabled
                 />
               </div>
             </div>
             <button
-              // onClick={() => setIsFilterDrawerOpen(true)}
+              onClick={openFilterModal}
               className="rounded-full px-4 py-2 font-semibold border-2 border-indigo-400 bg-white/60 backdrop-blur text-base sm:text-sm text-indigo-700 hover:bg-white/80 shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 flex items-center justify-center"
               aria-label="Show Filters"
-              disabled
             >
               <AdjustmentsHorizontalIcon className="h-5 w-5 mr-1" />
               <span className="hidden sm:inline">Filters</span>
             </button>
           </div>
+          {/* Filter Modal */}
+          {isFilterDrawerOpen && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+              <div className="bg-white/90 border border-indigo-100 rounded-2xl shadow-lg backdrop-blur w-full max-w-xs sm:max-w-md p-4 relative">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-xl font-bold text-black mb-4 text-center">Filter Students</h2>
+                  <button onClick={() => setIsFilterDrawerOpen(false)} className="rounded-full p-2 bg-white/70 border border-indigo-100 shadow hover:bg-white/90 transition-all">
+                    <svg className="h-6 w-6 text-indigo-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                  </button>
+                </div>
+                <div className="flex flex-col gap-3 mb-4">
+                  {/* Department Dropdown */}
+                  <div>
+                    <label htmlFor="modal-department" className="block text-sm font-bold text-black mb-1">Department</label>
+                    <div className="relative">
+                      <select
+                        id="modal-department"
+                        value={tempDepartment}
+                        onChange={e => setTempDepartment(e.target.value)}
+                        className="block w-full pl-3 pr-8 py-2 border-2 border-indigo-200 rounded-full bg-white/60 backdrop-blur shadow text-black focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all appearance-auto"
+                      >
+                        {departmentOptions.map((d) => (
+                          <option key={d.value} value={d.value}>{d.label}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                  {/* Semester Dropdown */}
+                  <div>
+                    <label htmlFor="modal-semester" className="block text-sm font-bold text-black mb-1">Semester</label>
+                    <div className="relative">
+                      <select
+                        id="modal-semester"
+                        value={tempSemester}
+                        onChange={e => setTempSemester(e.target.value)}
+                        className="block w-full pl-3 pr-8 py-2 border-2 border-indigo-200 rounded-full bg-white/60 backdrop-blur shadow text-black focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all appearance-auto"
+                      >
+                        {semesterOptions.map((s) => (
+                          <option key={s.value} value={s.value}>{s.label}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex gap-2 mt-2">
+                  <button
+                    onClick={() => {
+                      setTempDepartment('');
+                      setTempSemester('');
+                    }}
+                    className="flex-1 rounded-full px-4 py-1.5 font-semibold bg-gray-100 text-black hover:bg-gray-200 transition"
+                  >
+                    Reset
+                  </button>
+                  <button
+                    onClick={() => {
+                      setSelectedDepartment(tempDepartment);
+                      setSelectedSemester(tempSemester);
+                      setCurrentPage(1);
+                      setIsFilterDrawerOpen(false);
+                    }}
+                    className="flex-1 rounded-full px-4 py-1.5 font-semibold bg-indigo-600 text-white hover:bg-indigo-700 shadow transition"
+                  >
+                    Apply Filters
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
           <div className="mt-8">
             {authLoading || loading ? (
               <div className="flex justify-center items-center py-20">

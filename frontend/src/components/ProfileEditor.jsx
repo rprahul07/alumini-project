@@ -98,7 +98,8 @@ const ProfileEditor = () => {
       }
     };
     fetchProfile();
-  }, [navigate, showAlert, user]);
+    // eslint-disable-next-line
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
@@ -250,230 +251,255 @@ const ProfileEditor = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-2">
-      <div className="max-w-md mx-auto bg-white p-3 rounded-xl shadow-md">
-        <h2 className="text-xl font-bold text-gray-900 mb-4">Edit Profile</h2>
-        <form onSubmit={handleSubmit} className="space-y-2">
-            <div className="flex flex-col items-center mb-8">
-              <div className="relative group">
-                <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-white shadow-lg bg-gray-100 flex items-center justify-center text-gray-400">
-                  {formData.profilePhoto ? (
-                    <img
-                      src={
-                        formData.profilePhoto instanceof File
-                          ? URL.createObjectURL(formData.profilePhoto)
-                          : formData.profilePhoto
-                      }
-                      alt="Profile"
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <UserIcon className="w-24 h-24 text-gray-300" />
-                  )}
-                </div>
-                <div className="absolute bottom-0 right-0 flex gap-2">
-                  <label
-                    htmlFor="profilePhotoInput"
-                    className="bg-indigo-600 text-white p-3 rounded-full shadow-lg cursor-pointer hover:bg-indigo-700 transition-colors transform hover:scale-105"
-                    title="Upload profile photo"
-                  >
-                    <CameraIcon className="w-6 h-6" />
-                    <input
-                      type="file"
-                      id="profilePhotoInput"
-                      accept="image/*"
-                      onChange={handleChange}
-                      className="hidden"
-                      name="profilePhoto"
-                    />
-                  </label>
-                  {formData.profilePhoto && typeof formData.profilePhoto === 'string' && (
-                    <button
-                      type="button"
-                      onClick={handleDeletePhoto}
-                      disabled={loading}
-                    className="bg-gray-100 text-gray-700 p-3 rounded-full shadow-lg cursor-pointer hover:bg-gray-200"
-                      title="Delete profile photo"
-                    >
-                      <TrashIcon className="w-6 h-6" />
-                    </button>
-                  )}
-                  {formData.profilePhoto instanceof File && (
-                    <button
-                      type="button"
-                      onClick={() => setFormData((prev) => ({ ...prev, profilePhoto: null }))}
-                    className="bg-gray-100 text-gray-700 p-3 rounded-full shadow-lg cursor-pointer hover:bg-gray-200"
-                      title="Clear selected photo"
-                    >
-                      <XMarkIcon className="w-6 h-6" />
-                    </button>
-                  )}
-                </div>
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 py-10 px-2 flex items-center justify-center">
+      <div className="w-full max-w-2xl bg-white p-6 sm:p-10 rounded-2xl shadow-2xl border border-indigo-100">
+        <div className="flex items-center gap-2 mb-6">
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            className="rounded-full p-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 transition shadow"
+            title="Back to Profile"
+          >
+            <ArrowLeftIcon className="w-5 h-5" />
+          </button>
+          <h2 className="text-2xl font-bold text-indigo-800 tracking-tight">Edit Profile</h2>
+        </div>
+        <form onSubmit={handleSubmit} className="space-y-8">
+          {/* Profile Photo */}
+          <div className="flex flex-col items-center mb-8">
+            <div className="relative group">
+              <div className="w-36 h-36 rounded-full overflow-hidden border-4 border-indigo-100 shadow-lg bg-gray-100 flex items-center justify-center text-gray-400 group-hover:ring-4 group-hover:ring-indigo-200 transition">
+                {formData.profilePhoto ? (
+                  <img
+                    src={formData.profilePhoto instanceof File ? URL.createObjectURL(formData.profilePhoto) : formData.profilePhoto}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <UserIcon className="w-20 h-20 text-gray-300" />
+                )}
               </div>
-              <p className="mt-4 text-sm text-gray-500">
-                {formData.profilePhoto
-                  ? (formData.profilePhoto instanceof File ? 'New photo selected. Click save to upload.' : 'Click the camera icon to update or trash icon to remove your photo')
-                  : 'Click the camera icon to add a profile photo'}
-              </p>
-            </div>
-            <div className="mb-8 p-6 bg-gray-50 rounded-xl shadow-inner">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 border-b pb-2 border-gray-200">Basic Information</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-                  <div className="relative">
-                    <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-indigo-500" />
-                    <input
-                      type="text"
-                      id="fullName"
-                      name="fullName"
-                      value={formData.fullName}
-                      onChange={handleChange}
-                      className="pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg w-full focus:ring-indigo-500 focus:border-indigo-500"
-                      required
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                  <div className="relative">
-                    <EnvelopeIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-indigo-500" />
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                    className="pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg w-full focus:ring-indigo-500 focus:border-indigo-500"
-                      required
-                      readOnly
-                      placeholder="Your email address"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-                  <div className="relative">
-                    <PhoneIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-indigo-500" />
-                    <input
-                      type="tel"
-                      id="phoneNumber"
-                      name="phoneNumber"
-                      value={formData.phoneNumber}
-                      onChange={handleChange}
-                      className="pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg w-full focus:ring-indigo-500 focus:border-indigo-500"
-                      placeholder="e.g., +91 9876543210"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label htmlFor="department" className="block text-sm font-medium text-gray-700 mb-1">Department</label>
-                  <div className="relative">
-                    <PencilIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-indigo-500" />
-                    <input
-                      type="text"
-                      id="department"
-                      name="department"
-                      value={formData.department}
-                      onChange={handleChange}
-                      className="pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg w-full focus:ring-indigo-500 focus:border-indigo-500"
-                      placeholder="e.g., Computer Science"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="mt-6">
-                <label htmlFor="bio" className="block text-sm font-medium text-gray-700 mb-1">Bio</label>
-                <div className="relative">
-                  <PencilIcon className="absolute top-3 left-3 h-5 w-5 text-indigo-500" />
-                  <textarea
-                    id="bio"
-                    name="bio"
-                    rows={4}
-                    value={formData.bio || ''}
+              <div className="absolute bottom-0 right-0 flex gap-2">
+                <label
+                  htmlFor="profilePhotoInput"
+                  className="bg-indigo-600 text-white p-2 rounded-full shadow-lg cursor-pointer hover:bg-indigo-700 transition-colors transform hover:scale-105 border-2 border-white"
+                  title="Upload profile photo"
+                >
+                  <CameraIcon className="w-5 h-5" />
+                  <input
+                    type="file"
+                    id="profilePhotoInput"
+                    accept="image/*"
                     onChange={handleChange}
-                    className="pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg w-full focus:ring-indigo-500 focus:border-indigo-500"
-                    placeholder="Tell us about yourself and your interests..."
+                    className="hidden"
+                    name="profilePhoto"
+                  />
+                </label>
+                {formData.profilePhoto && typeof formData.profilePhoto === 'string' && (
+                  <button
+                    type="button"
+                    onClick={handleDeletePhoto}
+                    disabled={loading}
+                    className="bg-gray-100 text-gray-700 p-2 rounded-full shadow-lg cursor-pointer hover:bg-gray-200 border-2 border-white"
+                    title="Delete profile photo"
+                  >
+                    <TrashIcon className="w-5 h-5" />
+                  </button>
+                )}
+                {formData.profilePhoto instanceof File && (
+                  <button
+                    type="button"
+                    onClick={() => setFormData((prev) => ({ ...prev, profilePhoto: null }))}
+                    className="bg-gray-100 text-gray-700 p-2 rounded-full shadow-lg cursor-pointer hover:bg-gray-200 border-2 border-white"
+                    title="Clear selected photo"
+                  >
+                    <XMarkIcon className="w-5 h-5" />
+                  </button>
+                )}
+              </div>
+            </div>
+            <p className="mt-3 text-xs text-gray-500 text-center">
+              {formData.profilePhoto
+                ? (formData.profilePhoto instanceof File ? 'New photo selected. Click save to upload.' : 'Click the camera icon to update or trash icon to remove your photo')
+                : 'Click the camera icon to add a profile photo'}
+            </p>
+          </div>
+          {/* Basic Information */}
+          <div className="mb-8 p-6 bg-indigo-50 rounded-xl shadow-inner border-l-4 border-indigo-200">
+            <h3 className="text-lg font-semibold text-indigo-700 mb-4">Basic Information</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                <div className="relative">
+                  <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-indigo-500" />
+                  <input
+                    type="text"
+                    id="fullName"
+                    name="fullName"
+                    value={formData.fullName}
+                    onChange={handleChange}
+                    className="pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg w-full focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 shadow-sm"
+                    required
+                  />
+                </div>
+              </div>
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                <div className="relative">
+                  <EnvelopeIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-indigo-500" />
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    className="pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg w-full focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 shadow-sm bg-gray-100 cursor-not-allowed"
+                    required
+                    readOnly
+                    placeholder="Your email address"
+                  />
+                </div>
+              </div>
+              <div>
+                <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                <div className="relative">
+                  <PhoneIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-indigo-500" />
+                  <input
+                    type="tel"
+                    id="phoneNumber"
+                    name="phoneNumber"
+                    value={formData.phoneNumber}
+                    onChange={handleChange}
+                    className="pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg w-full focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 shadow-sm"
+                    placeholder="e.g., +91 9876543210"
+                  />
+                </div>
+              </div>
+              <div>
+                <label htmlFor="department" className="block text-sm font-medium text-gray-700 mb-1">College Department</label>
+                <div className="relative">
+                  <PencilIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-indigo-500" />
+                  <input
+                    type="text"
+                    id="department"
+                    name="department"
+                    value={formData.department}
+                    onChange={handleChange}
+                    className="pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg w-full focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 shadow-sm"
+                    placeholder="e.g., Computer Science"
                   />
                 </div>
               </div>
             </div>
-            {formData.userRole && (
-              <div className="mb-8 p-6 bg-gray-50 rounded-xl shadow-inner">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4 border-b pb-2 border-gray-200">
-                  {formData.userRole === 'student' ? 'Academic Information' :
-                    formData.userRole === 'alumni' ? 'Professional Information' :
-                      formData.userRole === 'faculty' ? 'Faculty Information' : 'Additional Information'}
-                </h3>
-                <div className="bg-white rounded-lg p-6 border border-gray-100">
-                  <RoleSpecificProfileForm
-                    role={formData.userRole}
-                    formData={formData}
-                    handleChange={handleChange}
-                    setFormData={setFormData}
+            <div className="mt-6">
+              <label htmlFor="bio" className="block text-sm font-medium text-gray-700 mb-1">Bio</label>
+              <div className="relative">
+                <PencilIcon className="absolute top-3 left-3 h-5 w-5 text-indigo-500" />
+                <textarea
+                  id="bio"
+                  name="bio"
+                  rows={4}
+                  maxLength={400}
+                  value={formData.bio || ''}
+                  onChange={handleChange}
+                  className="pl-10 pr-12 py-3 border border-gray-200 rounded-xl w-full focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 shadow-sm bg-indigo-50/50 resize-none transition placeholder-gray-400 hover:border-indigo-300 scrollbar-hide"
+                  placeholder="Tell us about yourself and your interests... (max 400 characters)"
+                  style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                />
+                {/* Hide scrollbar for Webkit browsers */}
+                <style>{`.scrollbar-hide::-webkit-scrollbar { display: none; }`}</style>
+                <span className="absolute bottom-2 right-4 text-xs text-gray-400 select-none">
+                  {formData.bio?.length || 0}/400
+                </span>
+              </div>
+            </div>
+          </div>
+          {/* Role-specific Section */}
+          {formData.userRole && (
+            <div className="mb-8 p-6 bg-indigo-50 rounded-xl shadow-inner border-l-4 border-indigo-200">
+              <h3 className="text-lg font-semibold text-indigo-700 mb-4">
+                {formData.userRole === 'student' ? 'Academic Information' :
+                  formData.userRole === 'alumni' ? 'Professional Information' :
+                    formData.userRole === 'faculty' ? 'Faculty Information' : 'Additional Information'}
+              </h3>
+              <div className="bg-white rounded-lg p-6 border border-gray-100">
+                <RoleSpecificProfileForm
+                  role={formData.userRole}
+                  formData={formData}
+                  handleChange={handleChange}
+                  setFormData={setFormData}
+                />
+              </div>
+            </div>
+          )}
+          {/* Social Media Section */}
+          <div className="mb-8 p-6 bg-indigo-50 rounded-xl shadow-inner border-l-4 border-indigo-200">
+            <h3 className="text-lg font-semibold text-indigo-700 mb-4">Social Media Links</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div>
+                <label htmlFor="linkedinUrl" className="block text-sm font-medium text-gray-700 mb-1">LinkedIn</label>
+                <div className="relative">
+                  <PencilIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-indigo-500" />
+                  <input
+                    type="url"
+                    id="linkedinUrl"
+                    name="linkedinUrl"
+                    value={formData.linkedinUrl || ''}
+                    onChange={handleChange}
+                    className="pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg w-full focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 shadow-sm"
+                    placeholder="e.g., https://linkedin.com/in/yourprofile"
                   />
                 </div>
               </div>
-            )}
-            <div className="mb-8 p-6 bg-gray-50 rounded-xl shadow-inner">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 border-b pb-2 border-gray-200">Social Media Links</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div>
-                  <label htmlFor="linkedinUrl" className="block text-sm font-medium text-gray-700 mb-1">LinkedIn</label>
-                  <div className="relative">
-                    <PencilIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-indigo-500" />
-                    <input
-                      type="url"
-                      id="linkedinUrl"
-                      name="linkedinUrl"
-                      value={formData.linkedinUrl || ''}
-                      onChange={handleChange}
-                      className="pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg w-full focus:ring-indigo-500 focus:border-indigo-500"
-                      placeholder="e.g., https://linkedin.com/in/yourprofile"
-                    />
-                  </div>
+              <div>
+                <label htmlFor="twitterUrl" className="block text-sm font-medium text-gray-700 mb-1">Twitter</label>
+                <div className="relative">
+                  <PencilIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-indigo-500" />
+                  <input
+                    type="url"
+                    id="twitterUrl"
+                    name="twitterUrl"
+                    value={formData.twitterUrl || ''}
+                    onChange={handleChange}
+                    className="pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg w-full focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 shadow-sm"
+                    placeholder="e.g., https://twitter.com/yourhandle"
+                  />
                 </div>
-                <div>
-                  <label htmlFor="twitterUrl" className="block text-sm font-medium text-gray-700 mb-1">Twitter</label>
-                  <div className="relative">
-                    <PencilIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-indigo-500" />
-                    <input
-                      type="url"
-                      id="twitterUrl"
-                      name="twitterUrl"
-                      value={formData.twitterUrl || ''}
-                      onChange={handleChange}
-                      className="pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg w-full focus:ring-indigo-500 focus:border-indigo-500"
-                      placeholder="e.g., https://twitter.com/yourhandle"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label htmlFor="githubUrl" className="block text-sm font-medium text-gray-700 mb-1">GitHub</label>
-                  <div className="relative">
-                    <PencilIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-indigo-500" />
-                    <input
-                      type="url"
-                      id="githubUrl"
-                      name="githubUrl"
-                      value={formData.githubUrl || ''}
-                      onChange={handleChange}
-                      className="pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg w-full focus:ring-indigo-500 focus:border-indigo-500"
-                      placeholder="e.g., https://github.com/yourusername"
-                    />
-                  </div>
+              </div>
+              <div>
+                <label htmlFor="githubUrl" className="block text-sm font-medium text-gray-700 mb-1">GitHub</label>
+                <div className="relative">
+                  <PencilIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-indigo-500" />
+                  <input
+                    type="url"
+                    id="githubUrl"
+                    name="githubUrl"
+                    value={formData.githubUrl || ''}
+                    onChange={handleChange}
+                    className="pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg w-full focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 shadow-sm"
+                    placeholder="e.g., https://github.com/yourusername"
+                  />
                 </div>
               </div>
             </div>
-            <div className="flex justify-end pt-4 border-t border-gray-200 mt-6">
-              <button
-                type="submit"
-                className="rounded-full px-4 py-1.5 font-semibold bg-indigo-600 text-white shadow hover:bg-indigo-700 transition"
-              >
-                {loading ? 'Saving...' : 'Save Profile'}
-              </button>
-            </div>
-          </form>
+          </div>
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row justify-end gap-3 pt-4 border-t border-gray-200 mt-6">
+            <button
+              type="button"
+              onClick={() => navigate('/profile')}
+              className="rounded-full px-4 py-1.5 font-semibold bg-white text-indigo-600 border border-indigo-200 shadow hover:bg-indigo-50 transition"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="rounded-full px-4 py-1.5 font-semibold bg-indigo-600 text-white shadow hover:bg-indigo-700 transition"
+            >
+              {loading ? 'Saving...' : 'Save Profile'}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );
