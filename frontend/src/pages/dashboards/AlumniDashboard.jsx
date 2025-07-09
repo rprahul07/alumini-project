@@ -1007,18 +1007,15 @@ const TabbedBoard = ({ jobs, showAlert }) => {
 
                   {/* Content */}
                   <div className="p-3 sm:p-4 space-y-3 sm:space-y-4">
-                    {/* Student Info with Message */}
-                    <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-3 border border-indigo-100">
-                      <div className="space-y-2">
-                        <h4 className="font-semibold text-gray-900 text-sm sm:text-base">{selectedRequest?.requester?.fullName}</h4>
-                        <p className="text-xs sm:text-sm text-gray-600">{selectedRequest?.requester?.role}</p>
-                        {selectedRequest?.descriptionbyUser && (
-                          <div className="bg-white rounded-lg p-2 text-gray-700 text-xs leading-relaxed">
-                            {selectedRequest.descriptionbyUser}
-                          </div>
-                        )}
+                    {/* Message from Student as Label and Box (matching sent request modal) */}
+                    {selectedRequest?.descriptionbyUser && (
+                      <div className="mb-2">
+                        <h4 className="text-base font-semibold text-gray-900 mb-1">Message from Student</h4>
+                        <div className="bg-indigo-50 border-l-4 border-indigo-400 rounded-md p-3 text-gray-700 text-xs sm:text-sm leading-relaxed whitespace-pre-line">
+                          {selectedRequest.descriptionbyUser}
+                        </div>
                       </div>
-                    </div>
+                    )}
 
                     {/* Tier Selection */}
                     <div>
@@ -1044,11 +1041,11 @@ const TabbedBoard = ({ jobs, showAlert }) => {
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center space-x-2">
                                 <span className="font-semibold text-gray-900 text-xs">{tier.name}</span>
-                                                        {acceptTier === tier.value && (
-                          <span className="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-medium bg-green-100 text-green-800">
-                            Selected
-                          </span>
-                        )}
+                                {acceptTier === tier.value && (
+                                  <span className="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-medium bg-green-100 text-green-800">
+                                    Selected
+                                  </span>
+                                )}
                               </div>
                               <p className="text-[10px] text-gray-600 mt-0.5">{tier.description}</p>
                             </div>
@@ -1070,27 +1067,15 @@ const TabbedBoard = ({ jobs, showAlert }) => {
                           className="w-full border border-gray-200 rounded-lg p-2 focus:outline-none focus:ring-1 focus:ring-green-400 focus:border-green-400 resize-none text-xs transition-colors"
                           disabled={actionLoading}
                         />
-                        <div className="absolute bottom-1 right-1">
-                          <span className={`text-[10px] px-2 py-1 rounded-full ${
-                            acceptMsg.length > 180 
-                              ? 'bg-red-100 text-red-600' 
-                              : acceptMsg.length > 150 
-                              ? 'bg-yellow-100 text-yellow-600' 
-                              : 'bg-gray-100 text-gray-500'
-                          }`}>
-                            {acceptMsg.length}/200
-                          </span>
+                        {/* Simple gray character count, no colored badge */}
+                        <div className="absolute bottom-1 right-2">
+                          <span className="text-[10px] text-gray-500">{acceptMsg.length}/200</span>
                         </div>
                       </div>
                     </div>
 
-                    {/* Alert Message */}
-                    {alert && (
-                      <div className="bg-red-50 border border-red-200 rounded-lg p-2 text-center">
-                        <p className="text-red-600 text-xs">{alert}</p>
-                      </div>
-                    )}
-      </div>
+                   
+                  </div>
 
                   {/* Action Buttons - Sticky Bottom */}
                   <div className="sticky bottom-0 bg-white border-t border-gray-100 px-4 sm:px-6 py-4 rounded-b-2xl">
