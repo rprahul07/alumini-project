@@ -119,22 +119,24 @@ const EventsPage = () => {
       <Navbar />
       <div className="min-h-screen bg-gray-50">
         {/* Action Buttons Row (compact, no big header) */}
-        <div className="bg-white shadow-sm border-b sticky top-0 z-10">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex flex-row gap-2 items-center">
-            {user && (user.role === 'alumni' || user.role === 'faculty' || user.role === 'admin') && (
-              <CreateEventButton onEventCreated={fetchEvents} />
-            )}
-            {user && (user.role === 'alumni' || user.role === 'faculty') && (
-              <MyEventsButton />
-            )}
-            {user && user.role === 'admin' && (
-              <>
-                <AdminEventProposals />
-                <AdminAllEventsButton />
-              </>
-            )}
+        {user && user.role !== 'student' && (
+          <div className="bg-white shadow-sm border-b sticky top-0 z-10">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex flex-row gap-2 items-center">
+              {user && (user.role === 'alumni' || user.role === 'faculty' || user.role === 'admin') && (
+                <CreateEventButton onEventCreated={fetchEvents} />
+              )}
+              {user && (user.role === 'alumni' || user.role === 'faculty') && (
+                <MyEventsButton />
+              )}
+              {user && user.role === 'admin' && (
+                <>
+                  <AdminEventProposals />
+                  <AdminAllEventsButton />
+                </>
+              )}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Main Content */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
