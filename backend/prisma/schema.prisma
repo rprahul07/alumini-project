@@ -18,6 +18,9 @@ model User {
   createdAt               DateTime              @default(now()) @map("created_at")
   photoUrl                String?               @map("photo_url") @db.VarChar(500)
   bio                     String?
+  highestQualification    String?
+  currentJobTitle         String?
+  totalExperience         Int?
   linkedinUrl             String?               @map("linkedin_url") @db.VarChar(500)
   workExperience          Json?                 @map("work_experience")
   githubUrl               String?               @map("github_url") @db.VarChar(500)
@@ -31,6 +34,7 @@ model User {
   student                 Student?
   supportRequestsReceived supportRequest[]      @relation("SupportAlumni")
   supportRequestsSent     supportRequest[]      @relation("SupportRequester")
+  jobRegistrations        JobRegistration[]
 
   @@index([email])
   @@map("users")
@@ -182,18 +186,48 @@ enum EventStatus {
 }
 
 model Job {
-id Int @id @default(autoincrement())
-userId Int @map("user_id")
-companyName String @db.VarChar(200)
-jobTitle String @db.VarChar(200)
-description String
-status JobStatus @default(pending)
-createdAt DateTime @default(now()) @map("created_at")
-user User @relation(fields: [userId], references: [id])
+  id                 Int           @id @default(autoincrement())
+  userId             Int           @map("user_id")
+  companyName        String        @db.VarChar(200)
+  jobTitle           String        @db.VarChar(200)
+  description        String
+  deadline           DateTime?     @map("deadline")
+  registrationType   RegistrationType @map("registration_type") @default(internal)
+  registrationLink   String?       @map("registration_link") @db.VarChar(500)
+  getEmailNotification Boolean?      @map("get_email_notification")
+  status             JobStatus     @default(pending)
+  createdAt          DateTime      @default(now()) @map("created_at")
+  user               User          @relation(fields: [userId], references: [id])
+  jobRegistrations   JobRegistration[]
 
-@@index([userId])
-@@index([status])
-@@map("jobs")
+  @@map("jobs")
+}
+
+model ResumableUpload {
+  fileId       String   @id @unique
+  fileName     String
+  totalChunks  Int
+  uploadedBlocks String[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("resumable_uploads")
+}
+
+enum RegistrationType {
+  internal
+  external
+}
+
+model JobRegistration {
+  id                   String   @id @default(uuid())
+  createdAt            DateTime @default(now())
+  jobId                Int
+  userId               Int
+  job                  Job      @relation(fields: [jobId], references: [id])
+  user                 User     @relation(fields: [userId], references: [id])
+
+  @@unique([jobId, userId])
 }
 
 enum JobStatus {
