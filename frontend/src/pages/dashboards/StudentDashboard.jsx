@@ -93,6 +93,16 @@ const StudentDashboard = () => {
       <Navbar />
       <div className="min-h-screen font-roboto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+           <div className="mt-5 bg-gradient-to-r from-blue-100 via-white to-indigo-50 rounded-xl p-5 flex items-center min-h-[96px]">
+                <div>
+                <h1 className="text-2xl font-semibold text-gray-800 tracking-tight pt-0">
+                  Welcome back, <span className="text-blue-500 font-bold">{user?.fullName || 'Student'}</span>!
+                </h1>
+                <p className="text-lx text-gray-500">
+                  Your personalized dashboard to explore opportunities and connect with the community.
+                </p>
+              </div>
+                  </div>
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-3 items-start">
             {/* Left Column - Profile and Navigation */}
             <aside className="lg:col-span-1 flex flex-col gap-2 items-stretch justify-start min-h-0" aria-label="Sidebar and profile section">
@@ -105,20 +115,11 @@ const StudentDashboard = () => {
             </aside>
             {/* Welcome Card - aligned horizontally with ProfileCard */}
             <div className="lg:col-span-3">
-              <div className="mb-3 mt-5 bg-white rounded-xl p-5 flex items-center min-h-[96px]">
-                <div>
-                <h1 className="text-2xl font-semibold text-gray-800 tracking-tight pt-0">
-                  Welcome back, <span className="text-indigo-500 font-bold">{user?.fullName || 'Student'}</span>!
-                </h1>
-                <p className="text-lx text-gray-500">
-                  Your personalized dashboard to explore opportunities and connect with the community.
-                </p>
-              </div>
-                  </div>
+             
               {/* Statistics Cards Section - Redesigned to match project UI */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-4 mt-2">
                 {/* Alumni Count */}
-                <div className="flex items-center bg-white shadow-md rounded-xl p-4 border-t-8 border-indigo-500 transition-transform transform hover:scale-105">
+                <div className="flex items-center bg-white shadow-md rounded-xl p-4 border-t-8 border-indigo-500 transition-transform transform hover:scale-105 ">
                   <div className="flex-shrink-0 mr-4">
                     <div className="bg-indigo-100 p-3 rounded-full">
                       <UserGroupIcon className="text-indigo-600 text-2xl" />

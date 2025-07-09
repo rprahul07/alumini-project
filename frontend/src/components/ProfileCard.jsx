@@ -108,17 +108,17 @@ const ProfileCard = ({ compact = false }) => {
         <div className={`flex space-x-2 ${compact ? 'mb-2' : 'mb-3'}`}>
           {user.linkedinUrl && (
             <a href={user.linkedinUrl} target="_blank" rel="noopener noreferrer" title="LinkedIn">
-              <FiLinkedin className="h-4 w-4 text-indigo-600 hover:text-indigo-800" />
+              <FiLinkedin className="h-5 w-5 text-indigo-600 hover:text-indigo-800" />
             </a>
           )}
           {user.twitterUrl && (
             <a href={user.twitterUrl} target="_blank" rel="noopener noreferrer" title="Twitter">
-              <FiTwitter className="h-4 w-4 text-blue-500 hover:text-blue-700" />
+              <FiTwitter className="h-5 w-5 text-blue-500 hover:text-blue-700" />
             </a>
           )}
           {user.githubUrl && (
             <a href={user.githubUrl} target="_blank" rel="noopener noreferrer" title="GitHub">
-              <FiGithub className="h-4 w-4 text-gray-800 hover:text-gray-900" />
+              <FiGithub className="h-5 w-5 text-gray-800 hover:text-gray-900" />
             </a>
           )}
         </div>

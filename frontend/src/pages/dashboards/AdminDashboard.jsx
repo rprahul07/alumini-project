@@ -129,9 +129,9 @@ const Sidebar = ({ onNavigate, onEventSectionChange, activeView, eventSection })
         ></div>
       )}
       <aside
-        className={`fixed inset-y-0 left-0 w-64 bg-white shadow-xl transform ${
+        className={`fixed inset-y-6 left-0 w-64 bg-white  shadow-xl transform ${
           isOpen ? "translate-x-0" : "-translate-x-full"
-        } lg:relative lg:translate-x-0 transition-transform duration-300 ease-in-out z-40 lg:z-auto rounded-r-2xl lg:rounded-none p-4`}
+        } lg:relative lg:translate-x-0 transition-transform duration-300 ease-in-out z-40 lg:z-auto rounded-r-2xl lg:rounded-2xl p-4`}
       >
         <div className="flex justify-end lg:hidden">
           <button
@@ -1015,7 +1015,7 @@ const AdminDashboard = () => {
       case "dashboard":
         return (
           <>
-            <div className="mb-4 mt-0">
+            <div className="mb-4 mt-3 bg-gradient-to-r from-indigo-100 via-white to-indigo-50 rounded-xl p-5 flex flex-col min-h-[96px]">
               <h1 className="text-lg font-semibold text-gray-700 leading-tight">
                 Welcome back, <span className="text-indigo-500 font-bold">{user?.fullName || 'Admin'}</span>!
               </h1>
