@@ -8,9 +8,10 @@ import { useAuth } from '../contexts/AuthContext';
 const navLinks = [
   { title: 'Home', path: '/' },
   { title: 'Events', path: '/events' },
+  { title: 'Jobs', path: '/jobs', auth: true },
   { title: 'About Us', path: '/about' },
   { title: 'Alumni', path: '/alumni', auth: true },
-  { title: 'Students', path: '/students', auth: true },
+  { title: 'Students', path: '/students', auth: true, hideForStudent: true },
   { title: 'Contact', path: '/contact' },
 ];
 
@@ -118,7 +119,7 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`backdrop-blur shadow-md sticky top-0 z-50 transition-colors duration-300 ${isHome ? 'bg-white/70' : 'bg-indigo-600/70'}`}
+      className={`backdrop-blur shadow-md sticky top-0 z-50 transition-colors duration-300 ${isHome ? 'bg-white/40 border border-white/30' : 'bg-indigo-600/70'}`}
       aria-label="Main Navigation"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -129,7 +130,7 @@ const Navbar = () => {
           </Link>
           {/* Desktop Navigation Links */}
           <div className="hidden sm:flex sm:items-center sm:space-x-2">
-            {navLinks.filter(link => !link.auth || user).map((link) => {
+            {navLinks.filter(link => (!link.auth || user) && !(link.hideForStudent && user?.role === 'student')).map((link) => {
               // Prevent highlighting any nav link if on a dashboard route
               const isDashboardRoute = dashboardRoutes.includes(location.pathname);
               return (
