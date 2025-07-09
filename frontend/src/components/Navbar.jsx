@@ -9,7 +9,8 @@ const navLinks = [
   { title: 'Home', path: '/' },
   { title: 'Events', path: '/events' },
   { title: 'About Us', path: '/about' },
-  { title: 'Alumni', path: '/alumni' },
+  { title: 'Alumni', path: '/alumni', auth: true },
+  { title: 'Students', path: '/students', auth: true },
   { title: 'Contact', path: '/contact' },
 ];
 
@@ -128,7 +129,7 @@ const Navbar = () => {
           </Link>
           {/* Desktop Navigation Links */}
           <div className="hidden sm:flex sm:items-center sm:space-x-2">
-            {navLinks.map((link) => {
+            {navLinks.filter(link => !link.auth || user).map((link) => {
               // Prevent highlighting any nav link if on a dashboard route
               const isDashboardRoute = dashboardRoutes.includes(location.pathname);
               return (
@@ -202,7 +203,7 @@ const Navbar = () => {
       {isMenuOpen && (
         <div className="bg-white/90 sm:hidden border-t border-indigo-100 shadow-lg rounded-b-xl backdrop-blur">
           <div className="py-1">
-            {navLinks.map((link) => {
+            {navLinks.filter(link => !link.auth || user).map((link) => {
               const isDashboardRoute = dashboardRoutes.includes(location.pathname);
               return (
                 <NavLink

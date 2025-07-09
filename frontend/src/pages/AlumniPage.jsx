@@ -12,9 +12,12 @@ import useAlert from '../hooks/useAlert';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import EventPagination from '../components/EventPagination';
+import { useNavigate } from 'react-router-dom';
 
 const AlumniPage = () => {
   const { user, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
   const [alumni, setAlumni] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -33,6 +36,12 @@ const AlumniPage = () => {
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: currentYear - 1999 + 1 }, (_, i) => currentYear - i);
   let debounceTimeout = null;
+
+  // Redirect if not logged in
+  if (!user && !authLoading) {
+    navigate('/role-selection');
+    return null;
+  }
 
   // Fetch alumni from API
   const fetchAlumni = async () => {
@@ -249,26 +258,12 @@ const AlumniPage = () => {
                   })}
                 </div>
                 {/* Pagination Controls - Always at bottom, full width */}
-                <div className="mt-10 flex justify-center w-full">
-                  {/* Use EventPagination for consistent UI */}
-                  {/* <EventPagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} /> */}
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => handlePageChange(currentPage - 1)}
-                      disabled={currentPage === 1}
-                      className="px-4 py-1.5 rounded-full font-semibold bg-white border border-indigo-300 text-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      Previous
-                    </button>
-                    <span className="px-4 py-1.5 text-indigo-700 font-medium">Page {currentPage} of {totalPages}</span>
-                    <button
-                      onClick={() => handlePageChange(currentPage + 1)}
-                      disabled={currentPage === totalPages}
-                      className="px-4 py-1.5 rounded-full font-semibold bg-white border border-indigo-300 text-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      Next
-                    </button>
-                  </div>
+                <div className="mt-10">
+                  <EventPagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                  />
                 </div>
               </>
             )}
