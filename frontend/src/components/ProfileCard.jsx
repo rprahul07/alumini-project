@@ -3,7 +3,7 @@ import { FiEdit2, FiLinkedin, FiTwitter, FiGithub } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
-const ProfileCard = () => {
+const ProfileCard = ({ compact = false }) => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
 
@@ -56,13 +56,13 @@ const ProfileCard = () => {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-2xl shadow-lg p-8 max-w-sm mx-auto my-10 animate-pulse">
-        <div className="flex flex-col items-center space-y-4">
-          <div className="w-24 h-24 bg-gray-200 rounded-full" />
-          <div className="h-6 bg-gray-200 rounded w-32" />
-          <div className="h-4 bg-gray-200 rounded w-20" />
-          <div className="h-4 bg-gray-200 rounded w-24" />
-          <div className="h-10 bg-gray-200 rounded w-32 mt-4" />
+      <div className={`bg-white rounded-2xl shadow-lg ${compact ? 'p-4 max-w-xs my-2' : 'p-8 max-w-sm my-10'} mx-auto animate-pulse`}>
+        <div className="flex flex-col items-center space-y-2">
+          <div className={compact ? 'w-14 h-14 bg-gray-200 rounded-full' : 'w-24 h-24 bg-gray-200 rounded-full'} />
+          <div className={compact ? 'h-5 bg-gray-200 rounded w-20' : 'h-6 bg-gray-200 rounded w-32'} />
+          <div className={compact ? 'h-3 bg-gray-200 rounded w-16' : 'h-4 bg-gray-200 rounded w-20'} />
+          <div className={compact ? 'h-3 bg-gray-200 rounded w-18' : 'h-4 bg-gray-200 rounded w-24'} />
+          <div className={compact ? 'h-8 bg-gray-200 rounded w-20 mt-2' : 'h-10 bg-gray-200 rounded w-32 mt-4'} />
         </div>
       </div>
     );
@@ -70,7 +70,7 @@ const ProfileCard = () => {
 
   if (!user) {
     return (
-      <div className="bg-white rounded-2xl shadow-lg p-8 text-center max-w-sm mx-auto my-10">
+      <div className={`bg-white rounded-2xl shadow-lg ${compact ? 'p-4 max-w-xs my-2' : 'p-8 max-w-sm my-10'} text-center mx-auto`}>
         <p className="text-gray-600">Could not load profile. Please log in again.</p>
       </div>
     );
@@ -79,14 +79,14 @@ const ProfileCard = () => {
   const twoFields = getTwoFields();
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-6 max-w-xs mx-auto my-6 flex flex-col items-center border border-gray-100">
+    <div className={`bg-white rounded-2xl shadow-lg ${compact ? 'p-4 max-w-xs my-2' : 'p-6 max-w-xs my-6'} flex flex-col items-center border border-gray-100`}>
       <img
         src={user.photoUrl || 'https://via.placeholder.com/150/EEEEEE/888888?text=No+Photo'}
         alt={user.fullName || 'User'}
-        className="w-20 h-20 rounded-full object-cover border-2 border-indigo-200 shadow mb-3"
+        className={compact ? 'w-14 h-14 rounded-full object-cover border-2 border-indigo-200 shadow mb-2' : 'w-20 h-20 rounded-full object-cover border-2 border-indigo-200 shadow mb-3'}
       />
-      <h2 className="text-xl font-bold text-gray-900 text-center mb-1">{user.fullName || 'User'}</h2>
-      <span className={`inline-block px-3 py-1 rounded-full text-sm font-semibold mb-3 ${
+      <h2 className={compact ? 'text-lg font-bold text-gray-900 text-center mb-1' : 'text-xl font-bold text-gray-900 text-center mb-1'}>{user.fullName || 'User'}</h2>
+      <span className={`inline-block px-3 py-1 rounded-full ${compact ? 'text-xs mb-2' : 'text-sm font-semibold mb-3'} ${
         user.role?.toLowerCase() === 'alumni'
           ? 'bg-green-100 text-green-700'
           : user.role?.toLowerCase() === 'student'
@@ -97,15 +97,15 @@ const ProfileCard = () => {
       }`}>
         {getRoleDisplay(user.role)}
       </span>
-      <div className="w-full flex flex-col items-center gap-2 mb-3">
+      <div className={`w-full flex flex-col items-center gap-1 ${compact ? 'mb-2' : 'mb-3'}`}>
         {twoFields.map((field, idx) => (
-          <div key={idx} className="text-sm text-gray-700 text-center">
+          <div key={idx} className={compact ? 'text-xs text-gray-700 text-center' : 'text-sm text-gray-700 text-center'}>
             <span className="font-medium">{field.label}:</span> {field.value || 'N/A'}
           </div>
         ))}
       </div>
       {(user.linkedinUrl || user.twitterUrl || user.githubUrl) && (
-        <div className="flex space-x-3 mb-3">
+        <div className={`flex space-x-2 ${compact ? 'mb-2' : 'mb-3'}`}>
           {user.linkedinUrl && (
             <a href={user.linkedinUrl} target="_blank" rel="noopener noreferrer" title="LinkedIn">
               <FiLinkedin className="h-5 w-5 text-indigo-600 hover:text-indigo-800" />
@@ -125,7 +125,7 @@ const ProfileCard = () => {
       )}
       <button
         onClick={() => navigate('/profile/edit')}
-        className="mt-2 w-full flex items-center justify-center space-x-2 text-sm rounded-full px-4 py-1.5 font-semibold bg-indigo-500 text-white hover:bg-indigo-600 shadow transition"
+        className={`mt-2 w-full flex items-center justify-center space-x-2 text-xs rounded-full px-3 py-1 font-semibold bg-indigo-500 text-white hover:bg-indigo-600 shadow transition ${compact ? '' : 'text-sm px-4 py-1.5'}`}
       >
         <FiEdit2 className="h-4 w-4" />
         <span>Edit Profile</span>

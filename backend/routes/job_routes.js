@@ -7,7 +7,9 @@ import {
   getJobById,
   updateJob,
   deleteJob,
-  updateJobStatus
+  updateJobStatus,
+  registerJob,
+  getJobRegistrationPrefillData
 } from "../controllers/job/job.controller.js";
 
 const router = express.Router();
@@ -16,5 +18,7 @@ router.use(protect)
 router.route("/").post(createJob).get(getAllJobs);
 router.route("/:id").get(getJobById).patch(updateJob).delete(deleteJob);
 router.route("/:id/status").patch(isAdmin, updateJobStatus);
+router.route("/:id/register").post(registerJob);
+router.route("/register/prefill").get(getJobRegistrationPrefillData);
 
 export default router;

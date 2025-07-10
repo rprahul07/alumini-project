@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 
-const EventSearch = ({ onSearch }) => {
+const AlumniSearch = ({ onSearch }) => {
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Debounce search to avoid too many API calls
   useEffect(() => {
     const timer = setTimeout(() => {
       onSearch(searchTerm);
-    }, 500); // Wait 500ms after user stops typing
-
+    }, 500);
     return () => clearTimeout(timer);
   }, [searchTerm, onSearch]);
 
@@ -22,11 +20,13 @@ const EventSearch = ({ onSearch }) => {
         type="text"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        placeholder="Search events by name, description, location, or organizer..."
+        placeholder="Search alumni by name or company..."
         className="block w-full pl-10 pr-3 py-2 border-2 border-white/40 rounded-full leading-5 bg-white/40 backdrop-blur-md placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 shadow-lg transition-all text-sm sm:text-base"
       />
     </div>
   );
 };
 
-export default EventSearch; 
+export default AlumniSearch; 
+ 
+ 

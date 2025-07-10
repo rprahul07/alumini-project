@@ -8,8 +8,10 @@ import { useAuth } from '../contexts/AuthContext';
 const navLinks = [
   { title: 'Home', path: '/' },
   { title: 'Events', path: '/events' },
+  { title: 'Jobs', path: '/jobs', auth: true },
   { title: 'About Us', path: '/about' },
-  { title: 'Alumni', path: '/alumni' },
+  { title: 'Alumni', path: '/alumni', auth: true },
+  { title: 'Students', path: '/students', auth: true, hideForStudent: true },
   { title: 'Contact', path: '/contact' },
 ];
 
@@ -90,7 +92,7 @@ const Navbar = () => {
 
   // Dropdown for logout and greeting
   const renderDropdown = () => (
-    <div className="absolute right-0 mt-2 w-44 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50 transition duration-200 py-2">
+    <div className="absolute left-0 top-full mt-2 w-44 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50 transition duration-200 py-2">
       {/* Greeting at the top of dropdown */}
       <div className="px-4 py-2 border-b border-gray-100 text-xs text-gray-500 font-medium text-left select-none">
         Hi, {getFirstName(user.fullName)}
@@ -117,7 +119,7 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`backdrop-blur shadow-md sticky top-0 z-50 transition-colors duration-300 ${isHome ? 'bg-white/70' : 'bg-indigo-600/70'}`}
+      className={`backdrop-blur shadow-md sticky top-0 z-50 transition-colors duration-300 ${isHome ? 'bg-white/40 border border-white/30' : 'bg-indigo-600/70'}`}
       aria-label="Main Navigation"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -128,25 +130,29 @@ const Navbar = () => {
           </Link>
           {/* Desktop Navigation Links */}
           <div className="hidden sm:flex sm:items-center sm:space-x-2">
-            {navLinks.map((link) => (
-              <NavLink
-                key={link.title}
-                to={link.path}
-                className={({ isActive }) =>
-                  `${isActive
-                    ? (isHome
-                        ? 'bg-indigo-100 text-indigo-700 rounded-full px-4 py-1 font-semibold'
-                        : 'bg-white/80 text-indigo-700 rounded-full px-4 py-1 font-semibold')
-                    : (isHome
-                        ? 'text-indigo-700 hover:bg-indigo-50 hover:text-indigo-900 rounded-full px-4 py-1'
-                        : 'text-white hover:bg-white/20 hover:text-indigo-100 rounded-full px-4 py-1')
-                  } inline-flex items-center text-sm font-medium transition-colors duration-300`
-                }
-                end={link.path === '/'}
-              >
-                {link.title}
-              </NavLink>
-            ))}
+            {navLinks.filter(link => (!link.auth || user) && !(link.hideForStudent && user?.role === 'student')).map((link) => {
+              // Prevent highlighting any nav link if on a dashboard route
+              const isDashboardRoute = dashboardRoutes.includes(location.pathname);
+              return (
+                <NavLink
+                  key={link.title}
+                  to={link.path}
+                  className={({ isActive }) =>
+                    `${isActive && !isDashboardRoute
+                      ? (isHome
+                          ? 'bg-indigo-100 text-indigo-700 rounded-full px-4 py-1 font-semibold'
+                          : 'bg-white/80 text-indigo-700 rounded-full px-4 py-1 font-semibold')
+                      : (isHome
+                          ? 'text-indigo-700 hover:bg-indigo-50 hover:text-indigo-900 rounded-full px-4 py-1'
+                          : 'text-white hover:bg-white/20 hover:text-indigo-100 rounded-full px-4 py-1')
+                    } inline-flex items-center text-sm font-medium transition-colors duration-300`
+                  }
+                  end={link.path === '/'}
+                >
+                  {link.title}
+                </NavLink>
+              );
+            })}
           </div>
           {/* Desktop User Actions */}
           <div className="hidden sm:flex sm:items-center sm:space-x-4 relative">
@@ -198,19 +204,22 @@ const Navbar = () => {
       {isMenuOpen && (
         <div className="bg-white/90 sm:hidden border-t border-indigo-100 shadow-lg rounded-b-xl backdrop-blur">
           <div className="py-1">
-            {navLinks.map((link) => (
-              <NavLink
-                key={link.title}
-                to={link.path}
-                className={({ isActive }) =>
-                  `block px-4 py-1 text-base font-medium rounded-full transition-colors duration-150 mb-1 ${isActive ? 'bg-indigo-100 text-indigo-700 font-semibold shadow-sm' : 'hover:bg-indigo-50 text-gray-700'}`
-                }
-                end={link.path === '/'}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {link.title}
-              </NavLink>
-            ))}
+            {navLinks.filter(link => !link.auth || user).map((link) => {
+              const isDashboardRoute = dashboardRoutes.includes(location.pathname);
+              return (
+                <NavLink
+                  key={link.title}
+                  to={link.path}
+                  className={({ isActive }) =>
+                    `block px-4 py-1 text-base font-medium rounded-full transition-colors duration-150 mb-1 ${isActive && !isDashboardRoute ? 'bg-indigo-100 text-indigo-700 font-semibold shadow-sm' : 'hover:bg-indigo-50 text-gray-700'}`
+                  }
+                  end={link.path === '/'}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {link.title}
+                </NavLink>
+              );
+            })}
           </div>
           <div className="border-t border-indigo-100 my-1" />
           <div className="px-4 pb-2 flex flex-col gap-2">

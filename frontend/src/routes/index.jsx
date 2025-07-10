@@ -15,6 +15,8 @@ import NotFoundPage from '../pages/NotFoundPage';
 import AboutPage from '../pages/AboutPage';
 import AlumniPage from '../pages/AlumniPage';
 import ContactPage from '../pages/ContactPage';
+import StudentsPage from '../pages/StudentsPage';
+import JobsPage from '../pages/JobsPage';
 
 // Protected route for a specific role
 function ProtectedRoute({ children, allowedRoles }) {
@@ -38,8 +40,24 @@ const AppRoutes = () => {
       <Route path="/events" element={<EventsPage />} />
       <Route path="/unauthorized" element={<UnauthorizedPage />} />
       <Route path="/about" element={<AboutPage />} />
-      <Route path="/alumni" element={<AlumniPage />} />
+      <Route path="/alumni" element={<ProtectedRoute><AlumniPage /></ProtectedRoute>} />
       <Route path="/contact" element={<ContactPage />} />
+      <Route
+        path="/students"
+        element={
+          <ProtectedRoute allowedRoles={['faculty', 'alumni', 'admin']}>
+            <StudentsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/jobs"
+        element={
+          <ProtectedRoute>
+            <JobsPage />
+          </ProtectedRoute>
+        }
+      />
 
       {/* Student Dashboard */}
       <Route

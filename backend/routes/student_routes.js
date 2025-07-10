@@ -18,13 +18,14 @@ import {
 } from "../controllers/event/event.controller.js";
 import { uploadPhotoMiddleware } from "../middleware/upload.middleware.js";
 import { registerEventsForStudents } from "../controllers/event/student_event.controller.js";
-import { searchAlumniProfilesController } from "../controllers/user/user_controller.js";
+import { searchAlumniProfilesController, searchStudentsController } from "../controllers/user/user_controller.js";
 import { getAlumniByTier } from "../controllers/user/alumni_controller.js";
 
 const router = express.Router();
 router.use(protect);
 router.get("/getall", getAllStudents);
 router.get("/searchalumni", searchAlumniProfilesController);
+router.get("/searchstudent", searchStudentsController);
 router.patch("/profile/update", uploadPhotoMiddleware, updateMyStudentProfile);
 router.get("/profile/get", getMyStudentProfile);
 router.delete("/profile/delete-photo", deleteProfilePicture);

@@ -17,106 +17,6 @@ import {
   ArrowRightIcon, // For "View All" buttons
 } from '@heroicons/react/24/outline';
 
-// --- StatCard Component (Enhanced for Faculty needs) ---
-const StatCard = ({ title, value, Icon, color, progress, progressText }) => {
-  const getColorClasses = (color) => {
-    switch (color) {
-      case 'blue':
-        return 'bg-blue-100 text-blue-800';
-      case 'green':
-        return 'bg-green-100 text-green-800';
-      case 'purple':
-        return 'bg-purple-100 text-purple-800';
-      case 'red': // New color for attention
-        return 'bg-red-100 text-red-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  const getProgressBarColor = (color) => {
-    switch (color) {
-      case 'blue':
-        return 'bg-blue-500';
-      case 'green':
-        return 'bg-green-500';
-      case 'purple':
-        return 'bg-purple-500';
-      case 'red':
-        return 'bg-red-500';
-      default:
-        return 'bg-gray-500';
-    }
-  };
-
-  return (
-    <div className="bg-white rounded-xl shadow-md p-6 transform transition duration-300 hover:scale-[1.02] hover:shadow-lg">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-sm font-medium text-gray-500">{title}</p>
-          <p className="text-3xl font-bold text-gray-900 mt-2">{value}</p>
-        </div>
-        {Icon && (
-          <div className={`p-3 rounded-full ${getColorClasses(color)}`}>
-            <Icon className="h-7 w-7" />
-          </div>
-        )}
-      </div>
-      {progress !== undefined && (
-        <div className="mt-5">
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <div
-              className={`h-2 rounded-full ${getProgressBarColor(color)}`}
-              style={{ width: `${progress}%` }}
-              aria-valuenow={progress}
-              aria-valuemin="0"
-              aria-valuemax="100"
-            />
-          </div>
-          <p className="text-xs text-gray-500 mt-2">{progressText}</p>
-        </div>
-      )}
-    </div>
-  );
-};
-
-// --- EventCard Component (Re-used with adjusted styling for consistency) ---
-const EventCard = ({ date, title, time, location, tags }) => {
-  const [month, day] = date.split(' ');
-
-  return (
-    <div className="flex items-start space-x-5 p-4 hover:bg-gray-50 rounded-lg transition-colors duration-200">
-      <div className="flex-shrink-0 w-20 h-20 bg-indigo-50 rounded-xl flex flex-col items-center justify-center border border-indigo-100">
-        <div className="text-sm font-semibold text-indigo-700 uppercase leading-none">{month}</div>
-        <div className="text-3xl font-bold text-indigo-900 leading-none mt-1">{day}</div>
-      </div>
-
-      <div className="flex-1">
-        <h3 className="text-lg font-semibold text-gray-900 mb-1">{title}</h3>
-        <div className="space-y-1 text-gray-600">
-          <div className="flex items-center text-sm">
-            <ClockIcon className="h-4 w-4 mr-2 text-gray-500" />
-            <span>{time}</span>
-          </div>
-          <div className="flex items-center text-sm">
-            <MapPinIcon className="h-4 w-4 mr-2 text-gray-500" />
-            <span>{location}</span>
-          </div>
-        </div>
-        <div className="flex flex-wrap gap-2 mt-3">
-          {tags.map((tag, index) => (
-            <span
-              key={index}
-              className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800"
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-};
 
 // --- AlumniRegistrationCard Component (Enhanced for clarity and interaction) ---
 const AlumniRegistrationCard = ({ name, graduationYear, department, email, onApprove, onReject }) => (
@@ -155,39 +55,6 @@ const AlumniRegistrationCard = ({ name, graduationYear, department, email, onApp
     </div>
   </div>
 );
-
-// --- CourseProgressCard Component (New for Faculty) ---
-const CourseProgressCard = ({ courseName, studentsEnrolled, averageGrade, progressPercentage }) => {
-  const getProgressColor = (progress) => {
-    if (progress < 40) return 'bg-red-500';
-    if (progress < 70) return 'bg-yellow-500';
-    return 'bg-green-500';
-  };
-
-  return (
-    <div className="bg-white rounded-xl shadow-md p-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-2">{courseName}</h3>
-      <p className="text-sm text-gray-600">Enrolled: <span className="font-medium">{studentsEnrolled} students</span></p>
-      <p className="text-sm text-gray-600 mt-1">Avg. Grade: <span className="font-medium">{averageGrade}</span></p>
-      <div className="mt-4">
-        <p className="text-xs font-medium text-gray-500 mb-1">Overall Progress:</p>
-        <div className="w-full bg-gray-200 rounded-full h-2">
-          <div
-            className={`h-2 rounded-full ${getProgressColor(progressPercentage)}`}
-            style={{ width: `${progressPercentage}%` }}
-            aria-valuenow={progressPercentage}
-            aria-valuemin="0"
-            aria-valuemax="100"
-          />
-        </div>
-        <p className="text-xs text-gray-500 mt-2">{progressPercentage}% Course Completion</p>
-      </div>
-      <button className="rounded-full px-4 py-1.5 text-sm font-semibold text-indigo-600 hover:text-indigo-800 flex items-center group mt-5">
-        View Details <ArrowRightIcon className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
-      </button>
-    </div>
-  );
-};
 
 // --- FacultyDashboard Main Component ---
 const FacultyDashboard = () => {
@@ -232,27 +99,6 @@ const FacultyDashboard = () => {
     }
   ];
 
-  const courseData = [
-    {
-      courseName: 'Data Structures & Algorithms',
-      studentsEnrolled: 95,
-      averageGrade: 'B+',
-      progressPercentage: 85
-    },
-    {
-      courseName: 'Machine Learning Fundamentals',
-      studentsEnrolled: 62,
-      averageGrade: 'A-',
-      progressPercentage: 70
-    },
-    {
-      courseName: 'Compiler Design',
-      studentsEnrolled: 40,
-      averageGrade: 'C',
-      progressPercentage: 55
-    }
-  ];
-
   // Placeholder functions for approve/reject actions
   const handleApproveRegistration = (name) => {
     console.log(`Approved alumni registration for ${name}`);
@@ -269,83 +115,99 @@ const FacultyDashboard = () => {
       <Navbar />
       <div className="min-h-screen font-roboto bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-3">
-            {/* Left Column - Profile and Navigation */}
-            <aside className="lg:col-span-1 space-y-4" aria-label="Sidebar and profile section">
-              <ProfileCard />
-              <Sidebar />
-            </aside>
-            {/* Right Column - Main Content */}
-            <main className="lg:col-span-3 space-y-5">
-              {/* Welcome Section */}
-              <div className="mb-3 mt-5 bg-white rounded-xl p-5">
-                <h1 className="text-2xl font-semibold text-gray-800 tracking-tight pt-0">
-                  Welcome back, <span className="text-purple-500 font-bold">{user?.fullName || 'Professor'}</span>!
-                </h1>
-                <p className="text-base text-gray-500">
-                  Your comprehensive dashboard for academic oversight and community engagement.
-                </p>
+          <div className="mt-5 bg-gradient-to-r from-purple-100 via-white to-indigo-50 rounded-xl p-5 flex items-center min-h-[96px]">
+                <div>
+                  <h1 className="text-2xl font-semibold text-gray-800 tracking-tight pt-0">
+                    Welcome back, <span className="text-purple-500 font-bold">{user?.fullName || 'Faculty'}</span>!
+                  </h1>
+                  <p className="text-lx text-gray-500">
+                    Your personalized dashboard to explore opportunities and connect with the community.
+                  </p>
+                </div>
               </div>
-              {/* Main Content Rows */}
-              <section className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Upcoming Events Section */}
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-3 items-start">
+            {/* Left Column - Profile and Navigation */}
+            <aside className="lg:col-span-1 flex flex-col gap-2 items-stretch justify-start min-h-0" aria-label="Sidebar and profile section">
+              <div className="flex-shrink-0">
+                <ProfileCard compact />
+              </div>
+              <div className="flex-shrink-0">
+                <Sidebar compact />
+              </div>
+            </aside>
+            {/* Welcome Card - aligned horizontally with ProfileCard */}
+            <div className="lg:col-span-3">
+              
+              {/* Statistics Cards Section - Redesigned to match project UI */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8 mt-2">
+                {/* Alumni */}
+                <div className="flex items-center bg-white shadow-md rounded-xl p-4 border-t-8 border-indigo-500 transition-transform transform hover:scale-105">
+                  <div className="flex-shrink-0 mr-4">
+                    <div className="bg-indigo-100 p-3 rounded-full">
+                      <UserGroupIcon className="text-indigo-600 text-2xl" />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-gray-800">1,200</div>
+                    <div className="text-gray-500 text-sm">Alumni</div>
+                  </div>
+                </div>
+                {/* Students */}
+                <div className="flex items-center bg-white shadow-md rounded-xl p-4 border-t-8 border-purple-500 transition-transform transform hover:scale-105">
+                  <div className="flex-shrink-0 mr-4">
+                    <div className="bg-purple-100 p-3 rounded-full">
+                      <AcademicCapIcon className="text-purple-600 text-2xl" />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-gray-800">900</div>
+                    <div className="text-gray-500 text-sm">Students</div>
+                  </div>
+                </div>
+                {/* Jobs/Internships */}
+                <div className="flex items-center bg-white shadow-md rounded-xl p-4 border-t-8 border-green-500 transition-transform transform hover:scale-105">
+                  <div className="flex-shrink-0 mr-4">
+                    <div className="bg-green-100 p-3 rounded-full">
+                      <BriefcaseIcon className="text-green-600 text-2xl" />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-gray-800">145</div>
+                    <div className="text-gray-500 text-sm">Jobs/Internships</div>
+                  </div>
+                </div>
+                {/* Events */}
+                <div className="flex items-center bg-white shadow-md rounded-xl p-4 border-t-8 border-yellow-500 transition-transform transform hover:scale-105">
+                  <div className="flex-shrink-0 mr-4">
+                    <div className="bg-yellow-100 p-3 rounded-full">
+                      <CalendarIcon className="text-yellow-600 text-2xl" />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-gray-800">56</div>
+                    <div className="text-gray-500 text-sm">Events</div>
+                  </div>
+                </div>
+              </div>
+              <main className="space-y-5">
+                {/* Main Content Rows */}
+                {/* Your Courses Overview Section */}
                 <section className="bg-white rounded-xl shadow-md p-6">
                   <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-xl font-bold text-gray-900">Upcoming Events</h2>
+                    <h2 className="text-xl font-bold text-gray-900">My activity</h2>
                     <button className="text-sm text-purple-600 hover:text-purple-800 flex items-center group font-semibold rounded-full px-4 py-2 bg-purple-50 border border-purple-200 transition">
                       View All <ArrowRightIcon className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
                     </button>
                   </div>
-                  <div className="divide-y divide-gray-100 -mx-4 -mt-4">
-                    {upcomingEvents.map((event, index) => (
-                      <EventCard key={index} {...event} />
-                    ))}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* CourseProgressCard component removed */}
                   </div>
                   <p className="text-sm text-gray-500 text-center mt-6 font-semibold">
-                    ** Coming Soon ** More events will be added
+                    ** Coming Soon ** Detailed course analytics
                   </p>
                 </section>
-                {/* Pending Alumni Registrations Section */}
-                <section className="bg-white rounded-xl shadow-md p-6">
-                  <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-xl font-bold text-gray-900">Pending Alumni Registrations ({pendingRegistrations.length})</h2>
-                    <button className="text-sm text-purple-600 hover:text-purple-800 flex items-center group font-semibold rounded-full px-4 py-2 bg-purple-50 border border-purple-200 transition">
-                      View All <ArrowRightIcon className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
-                    </button>
-                  </div>
-                  <div className="divide-y divide-gray-100 -mx-4 -mt-4">
-                    {pendingRegistrations.map((registration, index) => (
-                      <AlumniRegistrationCard
-                        key={index}
-                        {...registration}
-                        onApprove={() => handleApproveRegistration(registration.name)}
-                        onReject={() => handleRejectRegistration(registration.name)}
-                      />
-                    ))}
-                  </div>
-                  <p className="text-sm text-gray-500 text-center mt-6 font-semibold">
-                    ** Coming Soon ** More registrations will be added
-                  </p>
-                </section>
-              </section>
-              {/* Your Courses Overview Section */}
-              <section className="bg-white rounded-xl shadow-md p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-bold text-gray-900">Your Courses Overview</h2>
-                  <button className="text-sm text-purple-600 hover:text-purple-800 flex items-center group font-semibold rounded-full px-4 py-2 bg-purple-50 border border-purple-200 transition">
-                    View All <ArrowRightIcon className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
-                  </button>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {courseData.map((course, index) => (
-                    <CourseProgressCard key={index} {...course} />
-                  ))}
-                </div>
-                <p className="text-sm text-gray-500 text-center mt-6 font-semibold">
-                  ** Coming Soon ** Detailed course analytics
-                </p>
-              </section>
-            </main>
+              </main>
+            </div>
           </div>
         </div>
       </div>
