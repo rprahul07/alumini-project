@@ -498,3 +498,74 @@ export {
   registerJob,
   getJobRegistrationPrefillData,
 };
+
+export const pendingJobsForAdmin = async (req, res) => {
+  if (req.user.role !== "admin") {
+    return res.status(403).json({
+      success: false,
+      message: "Access denied. Only admin can view pending jobs.",
+      error: "Insufficient permissions",
+    });
+  }
+
+  try {
+    const jobs = await prisma.job.findMany({
+      where: {
+        status: "pending",
+      },
+      include: {
+        jobRegistrations: {
+          select: {
+            id: true,
+            createdAt: true,
+            user: {
+              select: {
+                id: true,
+                fullName: true,
+                email: true,
+                role: true,
+                photoUrl: true,
+                department: true,
+                alumni: {
+                  select: {
+                    currentJobTitle: true,
+                    company_role: true,
+                    companyName: true,
+                    graduationYear: true,
+                  },
+                },
+              },
+            },
+            job: {
+              select: {
+                id: true,
+                companyName: true,
+                jobTitle: true,
+                description: true,
+                registrationType: true,
+                registrationLink: true,
+                getEmailNotification: true,
+                deadline: true,
+                status: true,
+                createdAt: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      count: jobs.length,
+      data: jobs,
+    });
+  } catch (error) {
+    console.error("Error fetching pending jobs:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error while fetching pending jobs.",
+      error: error.message,
+    });
+  }
+};
