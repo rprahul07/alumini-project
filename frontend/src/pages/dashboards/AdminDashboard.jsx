@@ -20,6 +20,9 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import Navbar from "../../components/Navbar";
 import AlumniEventSubmissions from "../../components/AlumniEventSubmissions";
+import JobCard from '../../components/opportunities/JobCard';
+import JobDetailsModal from '../../components/opportunities/JobDetailsModal';
+import axios from '../../config/axios';
 
 // --- ProtectedRoute Component ---
 const ProtectedRoute = ({ children }) => {
@@ -88,6 +91,7 @@ const Sidebar = ({ onNavigate, onEventSectionChange, activeView, eventSection })
   // Main menu items
   const mainMenuItems = [
     { title: "Dashboard", icon: FiHome, view: "dashboard" },
+    { title: "Job Approvals", icon: FiBriefcase, view: "job-approvals" },
   ];
 
   // User Management submenu items
@@ -840,6 +844,49 @@ const AdminDashboard = () => {
     },
   ]);
 
+  const [jobs, setJobs] = useState([]);
+  const [jobsLoading, setJobsLoading] = useState(false);
+  const [jobsError, setJobsError] = useState(null);
+  const [selectedJob, setSelectedJob] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+
+  const fetchPendingJobs = async () => {
+    setJobsLoading(true);
+    setJobsError(null);
+    try {
+      const res = await axios.get('/api/job/', { params: { status: 'pending' } });
+      setJobs(res.data.data.jobs);
+    } catch (err) {
+      setJobsError('Failed to load pending jobs.');
+    } finally {
+      setJobsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeView === 'job-approvals') {
+      fetchPendingJobs();
+    }
+    // eslint-disable-next-line
+  }, [activeView]);
+
+  const handleApproveJob = async (id) => {
+    try {
+      await axios.patch(`/api/job/${id}/status`, { status: 'approved' });
+      setJobs(jobs.filter(job => job.id !== id));
+    } catch {
+      alert('Failed to approve job.');
+    }
+  };
+  const handleRejectJob = async (id) => {
+    try {
+      await axios.patch(`/api/job/${id}/status`, { status: 'rejected' });
+      setJobs(jobs.filter(job => job.id !== id));
+    } catch {
+      alert('Failed to reject job.');
+    }
+  };
+
   useEffect(() => {
     const fetchAdminData = async () => {
       setLoading(true);
@@ -1102,6 +1149,53 @@ const AdminDashboard = () => {
               onCreate={handleCreateAnnouncement}
             />
           </>
+        );
+      case "job-approvals":
+        return (
+          <div>
+            <h2 className="text-xl font-bold mb-4 text-gray-800">Job Approvals</h2>
+            {jobsLoading ? (
+              <div className="text-center text-gray-400 py-10">Loading jobs...</div>
+            ) : jobsError ? (
+              <div className="text-center text-red-500 py-10">{jobsError}</div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                {jobs.length === 0 ? (
+                  <div className="col-span-full text-center text-gray-400">No pending jobs for approval.</div>
+                ) : (
+                  jobs.map(job => (
+                    <div key={job.id} className="relative">
+                      <JobCard
+                        job={job}
+                        onClick={() => { setSelectedJob(job); setShowModal(true); }}
+                        onApply={() => { setSelectedJob(job); setShowModal(true); }}
+                      />
+                      <div className="absolute bottom-2 left-2 flex gap-2">
+                        <button
+                          className="px-3 py-1 text-xs bg-green-600 text-white rounded hover:bg-green-700"
+                          onClick={e => { e.stopPropagation(); handleApproveJob(job.id); }}
+                        >
+                          Approve
+                        </button>
+                        <button
+                          className="px-3 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700"
+                          onClick={e => { e.stopPropagation(); handleRejectJob(job.id); }}
+                        >
+                          Reject
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
+            <JobDetailsModal
+              job={selectedJob}
+              open={showModal}
+              onClose={() => setShowModal(false)}
+              onApply={() => {}}
+            />
+          </div>
         );
       case "students":
         return (
