@@ -750,6 +750,7 @@ export const getAlumniByTier = async (req, res) => {
 
       if (request.status !== "accepted") {
         return {
+          requestId: request.id, // Always include the unique request ID
           status: request.status,
           message: "Pending alumni acceptance",
           tier: request.tier,

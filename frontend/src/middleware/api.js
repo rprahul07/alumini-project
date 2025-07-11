@@ -120,6 +120,10 @@ const profileAPI = {
     if (!role) {
       throw new Error("Role is required to fetch a profile.");
     }
+    if (role.toLowerCase() === "admin") {
+      // No profile fetch needed for admin
+      return { success: true, data: {} };
+    }
     try {
       const response = await axios.get(`/api/${role}/profile/get`);
       return handleApiResponse(response);
