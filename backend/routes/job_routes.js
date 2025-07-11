@@ -14,7 +14,7 @@ import {
   getAllJobsForAlumni,
   getAllJobsForAdmin,
   getJobRegistrations,
-  MyAppliedJobs
+  SelfAppliedJobs
 } from "../controllers/job/job.controller.js";
 
 const router = express.Router();
@@ -29,6 +29,6 @@ router.route("/admin/pending").get(pendingJobsForAdmin);
 router.route("/alumni/created").get(getAllJobsForAlumni);
 router.route("/admin/all").get(isAdmin, getAllJobsForAdmin);
 router.route("/get/registrations").post(getJobRegistrations);
-router.route("/selfapplied").get(MyAppliedJobs)
+router.route("/selfapplied/get").get(SelfAppliedJobs)
 
 export default router;
