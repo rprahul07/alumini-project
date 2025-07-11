@@ -195,6 +195,7 @@ model Job {
   registrationType   RegistrationType @map("registration_type") @default(internal)
   registrationLink   String?       @map("registration_link") @db.VarChar(500)
   getEmailNotification Boolean?      @map("get_email_notification")
+  type               JobType       @default(job)
   status             JobStatus     @default(pending)
   createdAt          DateTime      @default(now()) @map("created_at")
   user               User          @relation(fields: [userId], references: [id])
@@ -231,8 +232,13 @@ model JobRegistration {
 }
 
 enum JobStatus {
-pending
-approved
-rejected
-closed
+  pending
+  approved
+  rejected
+  closed
+}
+
+enum JobType {
+  job
+  internship
 }
