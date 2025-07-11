@@ -23,6 +23,181 @@ import AlumniEventSubmissions from "../../components/AlumniEventSubmissions";
 import JobCard from '../../components/opportunities/JobCard';
 import JobDetailsModal from '../../components/opportunities/JobDetailsModal';
 import axios from '../../config/axios';
+import MyActivityCard from '../../components/MyActivityCard';
+
+const AdminOpportunities = () => {
+  const [pendingJobs, setPendingJobs] = useState([]);
+  const [approvedJobs, setApprovedJobs] = useState([]);
+  const [rejectedJobs, setRejectedJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedJob, setSelectedJob] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [actionLoading, setActionLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState('pending'); // 'pending', 'approved', 'rejected'
+
+  useEffect(() => {
+    if (activeTab === 'pending') {
+      fetchPendingJobs();
+    } else if (activeTab === 'approved') {
+      fetchApprovedJobs();
+    } else if (activeTab === 'rejected') {
+      fetchRejectedJobs();
+    }
+    // eslint-disable-next-line
+  }, [activeTab]);
+
+  const fetchPendingJobs = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.get('/api/job/admin/pending');
+      setPendingJobs(res.data.data || []);
+    } catch (err) {
+      toast.error('Failed to fetch pending jobs.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchApprovedJobs = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.get('/api/job/', { params: { status: 'approved', limit: 100 } });
+      setApprovedJobs(res.data.data.jobs || []);
+    } catch (err) {
+      toast.error('Failed to fetch approved jobs.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchRejectedJobs = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.get('/api/job/', { params: { status: 'rejected', limit: 100 } });
+      setRejectedJobs(res.data.data.jobs || []);
+    } catch (err) {
+      toast.error('Failed to fetch rejected jobs.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleView = (job) => {
+    setSelectedJob(job);
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setSelectedJob(null);
+  };
+
+  const handleAction = async (newStatus) => {
+    if (!selectedJob) return;
+    setActionLoading(true);
+    try {
+      await axios.patch(`/api/job/${selectedJob.id}/status`, { status: newStatus });
+      setPendingJobs(jobs => jobs.filter(j => j.id !== selectedJob.id));
+      toast.success(`Job ${newStatus === 'approved' ? 'approved' : 'rejected'} successfully.`);
+      handleCloseModal();
+    } catch (err) {
+      toast.error('Action failed.');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  // Table data and columns based on tab
+  let jobsToShow = [];
+  if (activeTab === 'pending') jobsToShow = pendingJobs;
+  else if (activeTab === 'approved') jobsToShow = approvedJobs;
+  else if (activeTab === 'rejected') jobsToShow = rejectedJobs;
+
+  return (
+    <div className="flex flex-col">
+      <div className="mb-4 flex gap-2">
+        <button
+          className={`px-4 py-2 rounded-full font-semibold text-sm border ${activeTab === 'pending' ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-indigo-600 border-indigo-600'}`}
+          onClick={() => setActiveTab('pending')}
+          disabled={activeTab === 'pending'}
+        >
+          Pending
+        </button>
+        <button
+          className={`px-4 py-2 rounded-full font-semibold text-sm border ${activeTab === 'approved' ? 'bg-green-600 text-white border-green-600' : 'bg-white text-green-600 border-green-600'}`}
+          onClick={() => setActiveTab('approved')}
+          disabled={activeTab === 'approved'}
+        >
+          Approved
+        </button>
+        <button
+          className={`px-4 py-2 rounded-full font-semibold text-sm border ${activeTab === 'rejected' ? 'bg-red-600 text-white border-red-600' : 'bg-white text-red-600 border-red-600'}`}
+          onClick={() => setActiveTab('rejected')}
+          disabled={activeTab === 'rejected'}
+        >
+          Rejected
+        </button>
+      </div>
+      {loading ? (
+        <div className="text-center text-gray-400 py-8">Loading...</div>
+      ) : jobsToShow.length === 0 ? (
+        <div className="text-center text-gray-400 py-8">No {activeTab} job requests.</div>
+      ) : (
+        <table className="min-w-full divide-y divide-gray-200 bg-white rounded-xl shadow">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Job Title</th>
+              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Company</th>
+              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Created By</th>
+              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {jobsToShow.map(job => (
+              <tr key={job.id}>
+                <td className="px-4 py-2 font-semibold text-gray-800">{job.jobTitle}</td>
+                <td className="px-4 py-2">{job.companyName}</td>
+                <td className="px-4 py-2">{job.user?.fullName || 'Unknown'}</td>
+                <td className="px-4 py-2">{new Date(job.createdAt).toLocaleDateString()}</td>
+                <td className="px-4 py-2">
+                  <button onClick={() => handleView(job)} className="px-3 py-1 rounded bg-indigo-600 text-white text-xs font-semibold hover:bg-indigo-700">View</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+      {/* Modal for job details and actions */}
+      {modalOpen && selectedJob && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-lg max-w-lg w-full p-6 relative">
+            <button onClick={handleCloseModal} className="absolute top-2 right-2 text-gray-400 hover:text-gray-600">&times;</button>
+            <h3 className="text-xl font-bold mb-2">{selectedJob.jobTitle}</h3>
+            <div className="mb-2 text-gray-700"><b>Company:</b> {selectedJob.companyName}</div>
+            <div className="mb-2 text-gray-700"><b>Description:</b> {selectedJob.description}</div>
+            <div className="mb-2 text-gray-700"><b>Deadline:</b> {selectedJob.deadline ? new Date(selectedJob.deadline).toLocaleDateString() : 'N/A'}</div>
+            <div className="mb-2 text-gray-700"><b>Registration Type:</b> {selectedJob.registrationType}</div>
+            <div className="mb-2 text-gray-700"><b>Created By:</b> {selectedJob.user?.fullName || 'Unknown'} ({selectedJob.user?.email || 'N/A'})</div>
+            <div className="mb-2 text-gray-700"><b>Created At:</b> {new Date(selectedJob.createdAt).toLocaleString()}</div>
+            {activeTab === 'pending' && (
+              <div className="flex gap-3 mt-6">
+                <button onClick={() => handleAction('approved')} disabled={actionLoading} className="px-4 py-2 rounded bg-green-600 text-white font-semibold hover:bg-green-700 disabled:opacity-50">Accept</button>
+                <button onClick={() => handleAction('rejected')} disabled={actionLoading} className="px-4 py-2 rounded bg-red-600 text-white font-semibold hover:bg-red-700 disabled:opacity-50">Reject</button>
+                <button onClick={handleCloseModal} className="px-4 py-2 rounded bg-gray-200 text-gray-700 font-semibold hover:bg-gray-300">Close</button>
+              </div>
+            )}
+            {(activeTab === 'approved' || activeTab === 'rejected') && (
+              <div className="flex gap-3 mt-6">
+                <button onClick={handleCloseModal} className="px-4 py-2 rounded bg-gray-200 text-gray-700 font-semibold hover:bg-gray-300">Close</button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 // --- ProtectedRoute Component ---
 const ProtectedRoute = ({ children }) => {
@@ -753,7 +928,7 @@ const AdminDashboard = () => {
   const [eventSection, setEventSection] = useState("alumni");
   const [dashboardStats, setDashboardStats] = useState(null);
   const [adminProfile, setAdminProfile] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [dashboardLoading, setDashboardLoading] = useState(true); // Only for initial dashboard fetch
   const [error, setError] = useState(null);
 
   // Data states
@@ -889,7 +1064,7 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     const fetchAdminData = async () => {
-      setLoading(true);
+      setDashboardLoading(true);
       setError(null);
       try {
         const [statsRes, profileRes] = await Promise.all([
@@ -901,7 +1076,7 @@ const AdminDashboard = () => {
       } catch (err) {
         setError(err.message || "Failed to fetch admin data");
       } finally {
-        setLoading(false);
+        setDashboardLoading(false);
       }
     };
     fetchAdminData();
@@ -1050,9 +1225,9 @@ const AdminDashboard = () => {
   };
 
   const renderContent = () => {
-    if (loading) {
+    if (dashboardLoading) {
       return (
-        <div className="text-center py-10 text-gray-500">Loading data...</div>
+        <div className="text-center py-10 text-gray-500">Loading dashboard...</div>
       );
     }
     if (error) {
@@ -1070,7 +1245,6 @@ const AdminDashboard = () => {
                 Your admin dashboard for managing users, events, and more.
               </p>
             </div>
-
             {/* --- Statistics Cards (Redesigned) --- */}
             {dashboardStats && (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
@@ -1138,15 +1312,16 @@ const AdminDashboard = () => {
             )}
             {/* --- End Statistics Cards (Redesigned) --- */}
 
-            <UserVerificationTable
-              users={usersToVerify}
-              onVerify={handleVerifyUser}
-              onReject={handleRejectUser}
-            />
-
-            <AnnouncementsSection
-              announcements={announcements}
-              onCreate={handleCreateAnnouncement}
+            {/* Admin My Activity Card */}
+            <MyActivityCard
+              features={[
+                {
+                  key: 'opportunities',
+                  label: 'Opportunities',
+                  component: <AdminOpportunities />
+                }
+              ]}
+              defaultTab="opportunities"
             />
           </>
         );
@@ -1264,23 +1439,23 @@ const AdminDashboard = () => {
   return (
     <>
       <Navbar />
-    <div className="min-h-screen font-roboto bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-3">
-          <aside className="lg:col-span-1 space-y-4" aria-label="Sidebar and profile section">
-            <Sidebar
-              onNavigate={setActiveView}
-              onEventSectionChange={setEventSection}
-              activeView={activeView}
-              eventSection={eventSection}
-            />
-          </aside>
+      <div className="min-h-screen font-roboto bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-3">
+            <aside className="lg:col-span-1 space-y-4" aria-label="Sidebar and profile section">
+              <Sidebar
+                onNavigate={setActiveView}
+                onEventSectionChange={setEventSection}
+                activeView={activeView}
+                eventSection={eventSection}
+              />
+            </aside>
             <main className="lg:col-span-3 space-y-5 py-8">
-            {renderContent()}
-          </main>
+              {renderContent()}
+            </main>
+          </div>
         </div>
       </div>
-    </div>
     </>
   );
 };  
