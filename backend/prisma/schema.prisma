@@ -220,7 +220,7 @@ enum RegistrationType {
 }
 
 model JobRegistration {
-  id                   String   @id @default(uuid())
+  id                   Int           @id @default(autoincrement())
   createdAt            DateTime @default(now())
   jobId                Int
   userId               Int

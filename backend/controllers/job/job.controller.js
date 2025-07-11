@@ -539,6 +539,7 @@ export const pendingJobsForAdmin = async (req, res) => {
             job: {
               select: {
                 id: true,
+                userId: true,
                 companyName: true,
                 jobTitle: true,
                 description: true,
@@ -565,6 +566,195 @@ export const pendingJobsForAdmin = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Server error while fetching pending jobs.",
+      error: error.message,
+    });
+  }
+};
+
+export const getAllJobsForAlumni = async (req, res) => {
+  if (req.user.role !== "alumni") {
+    return res.status(403).json({
+      success: false,
+      message: "Access denied. Only alumni can view their jobs.",
+      error: "Insufficient permissions",
+    });
+  }
+
+  try {
+    const jobs = await prisma.job.findMany({
+      where: {
+        userId: req.user.id,
+        status: {
+          in: ["approved", "pending"],
+        },
+      },
+      select: {
+        id: true,
+        userId: true,
+        companyName: true,
+        jobTitle: true,
+        description: true,
+        registrationType: true,
+        registrationLink: true,
+        getEmailNotification: true,
+        deadline: true,
+        status: true,
+        createdAt: true,
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      count: jobs.length,
+      data: jobs,
+    });
+  } catch (error) {
+    console.error("Error fetching jobs for alumni:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error while fetching jobs for alumni.",
+      error: error.message,
+    });
+  }
+};
+
+export const getAllJobsForAdmin = async (req, res) => {
+  if (req.user.role !== "admin") {
+    return res.status(403).json({
+      success: false,
+      message: "Access denied. Only admin can view all jobs.",
+      error: "Insufficient permissions",
+    });
+  }
+
+  try {
+    const jobs = await prisma.job.findMany({
+      where: {
+        status: {
+          in: ["approved", "pending", "rejected"],
+        },
+      },
+      select: {
+        id: true,
+        userId: true,
+        companyName: true,
+        jobTitle: true,
+        description: true,
+        registrationType: true,
+        registrationLink: true,
+        getEmailNotification: true,
+        deadline: true,
+        status: true,
+        createdAt: true,
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      count: jobs.length,
+      data: jobs,
+    });
+  } catch (error) {
+    console.error("Error fetching jobs for admin:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error while fetching jobs for admin.",
+      error: error.message,
+    });
+  }
+};
+
+
+
+//for admin and alumni
+//get all registered students
+//pending work todo for user verification
+export const getJobRegistrations = async (req, res) => {
+  if (!["admin", "alumni"].includes(req.user.role)) {
+    return res.status(403).json({
+      success: false,
+      message: "Access denied. Only admin and alumni can view job registrations.",
+    });
+  }
+
+  const { jobId } = req.body; // Or req.query.jobId if you're using GET
+
+  if (!jobId) {
+    return res.status(400).json({
+      success: false,
+      message: "Job ID is required.",
+    });
+  }
+
+  try {
+    const registrations = await prisma.jobRegistration.findMany({
+      where: { jobId: Number(jobId) },
+      select: {
+        id: true,
+        jobId: true,
+        userId: true,
+        createdAt: true,
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      count: registrations.length,
+      data: registrations,
+    });
+  } catch (error) {
+    console.error("Error fetching job registrations:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error while fetching job registrations.",
+      error: error.message,
+    });
+  }
+};
+export const MyAppliedJobs = async (req, res) => {
+  if (req.user.role !== "alumni" && req.user.role !== "student") {
+    return res.status(403).json({
+      success: false,
+      message: "Access denied. Only alumni and students can view their applied jobs.",
+      error: "Insufficient permissions",
+    });
+  }
+
+  try {
+    const appliedJobs = await prisma.jobRegistration.findMany({
+      where: {
+        userId: req.user.id,
+      },
+      select: {
+        id: true,
+        createdAt: true,
+        job: {
+          select: {
+            id: true,
+            companyName: true,
+            jobTitle: true,
+            description: true,
+            registrationType: true,
+            registrationLink: true,
+            getEmailNotification: true,
+            deadline: true,
+            status: true,
+            createdAt: true,
+          },
+        },
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      count: appliedJobs.length,
+      data: appliedJobs,
+    });
+  } catch (error) {
+    console.error("Error fetching applied jobs:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error while fetching applied jobs.",
       error: error.message,
     });
   }
