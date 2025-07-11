@@ -120,10 +120,14 @@ const getAllJobs = async (req, res) => {
 // @route   GET /api/job/:id
 // @access  Public
 const getJobById = async (req, res) => {
+  const jobId = parseInt(req.params.id);
+  if (!jobId) {
+    return res.status(400).json({ success: false, message: "Job ID is required" });
+  }
   try {
     const job = await prisma.job.findUnique({
       where: {
-        id: parseInt(req.params.id),
+        id: jobId,
       },
     });
 
@@ -711,7 +715,7 @@ export const getJobRegistrations = async (req, res) => {
     });
   }
 };
-export const MyAppliedJobs = async (req, res) => {
+export const SelfAppliedJobs = async (req, res) => {
   if (req.user.role !== "alumni" && req.user.role !== "student") {
     return res.status(403).json({
       success: false,
@@ -721,34 +725,44 @@ export const MyAppliedJobs = async (req, res) => {
   }
 
   try {
-    const appliedJobs = await prisma.jobRegistration.findMany({
-      where: {
-        userId: req.user.id,
-      },
-      select: {
-        id: true,
-        createdAt: true,
-        job: {
-          select: {
-            id: true,
-            companyName: true,
-            jobTitle: true,
-            description: true,
-            registrationType: true,
-            registrationLink: true,
-            getEmailNotification: true,
-            deadline: true,
-            status: true,
-            createdAt: true,
+    let jobs = [];
+    if (req.user.role === "alumni") {
+      // Alumni: jobs created by the user
+      jobs = await prisma.job.findMany({
+        where: {
+          userId: req.user.id,
+        },
+        select: {
+          id: true,
+          userId: true,
+          companyName: true,
+          jobTitle: true,
+          description: true,
+          registrationType: true,
+          registrationLink: true,
+          getEmailNotification: true,
+          deadline: true,
+          status: true,
+          createdAt: true,
+          user: {
+            select: {
+              id: true,
+              fullName: true,
+              email: true,
+              role: true,
+              photoUrl: true,
+              department: true,
+            },
           },
         },
-      },
-    });
-
+      });
+    } 
+      
+      
     return res.status(200).json({
       success: true,
-      count: appliedJobs.length,
-      data: appliedJobs,
+      count: jobs.length,
+      data: jobs,
     });
   } catch (error) {
     console.error("Error fetching applied jobs:", error);
