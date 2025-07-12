@@ -28,6 +28,7 @@ import {
   removeUserFromEventController,
   searchEvents,
   withdrawFromEvents,
+  
 } from "../controllers/event/event.controller.js";
 import { uploadPhotoMiddleware } from "../middleware/upload.middleware.js";
 import { resumableUploadMiddleware } from "../middleware/resumableUpload.middleware.js";
@@ -69,5 +70,6 @@ router.get("/tier/:alumniId", getAlumniByTier);
 router.get("/:userId", getAlumniById);
 router.delete("/:userId", deleteAlumniById);
 router.patch("/:userId", updateAlumniById);
+router.get("/events/registered", getRegisteredEventsController);
 
 export default router;

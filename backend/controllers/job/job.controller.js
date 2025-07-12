@@ -273,8 +273,11 @@ const deleteJob = async (req, res) => {
   }
 };
 
+// @desc    Register for a job
+// @route   POST /api/job/:id/register
+// @access  Private (Authenticated User)
 const registerJob = async (req, res) => {
-  console.log("Registring...");
+  console.log("Registering...")
   const jobId = parseInt(req.params.id);
   const userId = req.user.id;
   try {
@@ -314,58 +317,15 @@ const registerJob = async (req, res) => {
       });
 
       if (existingRegistration) {
-        return res.status(409).json({
-          success: false,
-          message: "You have already registered for this job.",
-        });
+        return res.status(409).json({ success: false, message: "You have already registered for this job." });
       }
 
-      const {
-        name,
-        email,
-        phoneNumber,
-        highestQualification,
-        passoutYear,
-        degreeSpecialization,
-        currentJobTitle,
-        totalExperience,
-        linkedInProfile,
-      } = req.body;
-
-      // Fetch user data from the database to ensure we have the latest and complete profile
-      const user = await prisma.user.findUnique({
-        where: { id: userId },
-        select: {
-          fullName: true,
-          email: true,
-          phoneNumber: true,
-          linkedinUrl: true,
-        },
-      });
-
-      if (!user) {
-        return res.status(404).json({
-          success: false,
-          message: "User not found.",
-        });
-      }
-
-      const registrationData = {
-        jobId: jobId,
-        userId: userId,
-        name: name,
-        email: email,
-        phoneNumber: phoneNumber,
-        highestQualification: highestQualification,
-        passoutYear: passoutYear,
-        degreeSpecialization: degreeSpecialization,
-        currentJobTitle: currentJobTitle,
-        totalExperience: totalExperience,
-        linkedInProfile: linkedInProfile,
-      };
-
+      // Create simple registration record
       const jobRegistration = await prisma.jobRegistration.create({
-        data: registrationData,
+        data: {
+          jobId: jobId,
+          userId: userId,
+        },
       });
 
       if (job.getEmailNotification) {
@@ -382,31 +342,22 @@ const registerJob = async (req, res) => {
         });
 
         // Send email to job poster
-        // This part requires an email sending utility (e.g., sendEmail.js)
-        // For now, we'll just log it.
-        console.log(
-          `Sending email to ${job.user.email} (${job.user.fullName}) about new applicant:`
-        );
+        console.log(`Sending email to ${job.user.email} (${job.user.fullName}) about new applicant:`);
         console.log(`Applicant Name: ${applicant.fullName}`);
         console.log(`Applicant Email: ${applicant.email}`);
-        console.log(`Applicant Phone: ${applicant.phoneNumber || "N/A"}`);
-        console.log(`Applicant LinkedIn: ${applicant.linkedinUrl || "N/A"}`);
+        console.log(`Applicant Phone: ${applicant.phoneNumber || 'N/A'}`);
+        console.log(`Applicant LinkedIn: ${applicant.linkedinUrl || 'N/A'}`);
 
-        const emailSubject = `New Applicant for your Job: ${job.title}`;
+        const emailSubject = `New Applicant for your Job: ${job.jobTitle}`;
         const emailBody = `
           <p>Dear ${job.user.fullName},</p>
-          <p>A new applicant has registered for your job posting: <b>${job.title}</b>.</p>
+          <p>A new applicant has registered for your job posting: <b>${job.jobTitle}</b>.</p>
           <p>Here are the applicant's details:</p>
           <ul>
-            <li><b>Name:</b> ${name}</li>
-            <li><b>Email:</b> ${email}</li>
-            <li><b>Phone Number:</b> ${phoneNumber || "N/A"}</li>
-            <li><b>Highest Qualification:</b> ${highestQualification || "N/A"}</li>
-            <li><b>Passout Year:</b> ${passoutYear || "N/A"}</li>
-            <li><b>Degree/Specialization:</b> ${degreeSpecialization || "N/A"}</li>
-            <li><b>Current Job Title:</b> ${currentJobTitle || "N/A"}</li>
-            <li><b>Total Experience:</b> ${totalExperience !== undefined && totalExperience !== null ? totalExperience + " years" : "N/A"}</li>
-            <li><b>LinkedIn Profile:</b> ${linkedInProfile ? `<a href="${linkedInProfile}">${linkedInProfile}</a>` : "N/A"}</li>
+            <li><b>Name:</b> ${applicant.fullName}</li>
+            <li><b>Email:</b> ${applicant.email}</li>
+            <li><b>Phone Number:</b> ${applicant.phoneNumber || 'N/A'}</li>
+            <li><b>LinkedIn Profile:</b> ${applicant.linkedinUrl ? `<a href="${applicant.linkedinUrl}">${applicant.linkedinUrl}</a>` : 'N/A'}</li>
           </ul>
           <p>Thank you,</p>
           <p>The Alumni Network Team</p>
