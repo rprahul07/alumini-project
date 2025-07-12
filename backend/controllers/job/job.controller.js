@@ -23,6 +23,7 @@ const createJob = async (req, res) => {
       jobType,
     } = req.body;
 
+    // Validate required fields
     if (!companyName || !jobTitle || !description || !registrationType) {
       return res.status(400).json({
         success: false,
@@ -31,6 +32,15 @@ const createJob = async (req, res) => {
       });
     }
 
+    // Validate jobType if provided
+    if (jobType && !["job", "internship"].includes(jobType)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid job type. Must be either 'job' or 'internship'.",
+      });
+    }
+
+    // Validate external registration requirements
     if (registrationType === "external" && !registrationLink) {
       return res.status(400).json({
         success: false,
@@ -38,6 +48,7 @@ const createJob = async (req, res) => {
       });
     }
 
+    // Validate internal registration requirements
     if (
       registrationType === "internal" &&
       typeof getEmailNotification === "undefined"
@@ -49,6 +60,7 @@ const createJob = async (req, res) => {
       });
     }
 
+    // Create the job
     const job = await prisma.job.create({
       data: {
         userId: req.user.id,
@@ -62,13 +74,13 @@ const createJob = async (req, res) => {
         getEmailNotification:
           registrationType === "internal" ? getEmailNotification : null,
         status: "pending",
-        type: jobType || "job",
+        type: jobType || "job", // Default to "job" if not provided
       },
     });
 
     return res.status(201).json({
       success: true,
-      message: "Job created successfully. Awaiting admin approval.",
+      message: `${jobType === "internship" ? "Internship" : "Job"} created successfully. Awaiting admin approval.`,
       data: job,
     });
   } catch (error) {

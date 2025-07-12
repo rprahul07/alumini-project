@@ -23,9 +23,27 @@ export const resumableUploadMiddleware = async (req, res, next) => {
   let { fileId } = req.body;
   const chunk = req.files?.chunk?.[0];
 
-  if (!filename || chunkIndex === undefined || !totalChunks || !fileId || !chunk) {
-     return res.status(400).json({ message: "Missing required fields for chunked upload." });
-   }
+  if (!chunk) {
+      return res.status(400).json({ message: "No file chunk provided." });
+  }
+
+  if (!fileId) {
+      fileId = uuidv4(); // Generate a unique fileId
+  }
+
+  if (chunkIndex === undefined || totalChunks === undefined) {
+      chunkIndex = 0;
+      totalChunks = 1;
+      console.log("Inferred single-chunk upload for file:", filename);
+  } else {
+      // Ensure they are numbers if provided
+      chunkIndex = parseInt(chunkIndex);
+      totalChunks = parseInt(totalChunks);
+  }
+
+  if (!filename || chunkIndex === undefined || isNaN(chunkIndex) || !totalChunks || isNaN(totalChunks) || !fileId) {
+      return res.status(400).json({ message: "Missing or invalid required fields for upload." });
+  }
 
    // Ensure fileId is a string, as Prisma expects a string for the ID
    if (typeof fileId !== 'string') {
@@ -82,8 +100,8 @@ export const resumableUploadMiddleware = async (req, res, next) => {
         where: { fileId: fileId },
       });
 
-      const photoUrl = `${BLOB_URL}/${CONTAINER_NAME}/${fileId}-${filename}`;
-      return res.status(200).json({ message: "File uploaded successfully", photoUrl });
+      const fileUrl = `${BLOB_URL}/${CONTAINER_NAME}/${fileId}-${filename}`;
+      return res.status(200).json({ message: "File uploaded successfully", fileUrl });
 
     }
 
