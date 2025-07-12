@@ -180,16 +180,22 @@ const getJobById = async (req, res) => {
     return res.status(400).json({ success: false, message: "Job ID is required" });
   }
   try {
+    let userSelect = { fullName: true };
+    if (req.user.role === 'admin') {
+      userSelect = { ...userSelect, email: true, phoneNumber: true, alumni: { select: { companyName: true, currentJobTitle: true } } };
+    } else if (req.user.role === 'alumni' || req.user.role === 'student') {
+      userSelect = {
+        ...userSelect,
+        alumni: { select: { companyName: true, currentJobTitle: true } }
+      };
+    }
     const job = await prisma.job.findUnique({
-      where: {
-        id: jobId,
-      },
+      where: { id: jobId },
+      include: { user: { select: userSelect } }
     });
-
     if (!job) {
       return res.status(404).json({ success: false, message: "Job not found" });
     }
-
     return res.status(200).json({
       success: true,
       message: "Job retrieved successfully",
@@ -562,6 +568,21 @@ export const pendingJobsForAdmin = async (req, res) => {
         status: "pending",
       },
       include: {
+        user: {
+          select: {
+            id: true,
+            fullName: true,
+            email: true,
+            role: true,
+            photoUrl: true,
+            alumni: {
+              select: {
+                companyName: true,
+                currentJobTitle: true,
+              }
+            }
+          }
+        },
         jobRegistrations: {
           select: {
             id: true,
@@ -815,5 +836,110 @@ export const SelfAppliedJobs = async (req, res) => {
       message: "Server error while fetching applied jobs.",
       error: error.message,
     });
+  }
+};
+
+// @desc    Get all jobs the current user has applied for
+// @route   GET /api/job/applied
+// @access  Private (Authenticated User)
+export const getJobsUserAppliedFor = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    // Find all job registrations for this user
+    const registrations = await prisma.jobRegistration.findMany({
+      where: { userId },
+      select: { jobId: true },
+    });
+    const jobIds = registrations.map(r => r.jobId);
+    if (jobIds.length === 0) {
+      return res.status(200).json({ success: true, count: 0, data: [] });
+    }
+    // Fetch job details for these jobIds
+    const jobs = await prisma.job.findMany({
+      where: { id: { in: jobIds } },
+      orderBy: { createdAt: 'desc' },
+    });
+    return res.status(200).json({ success: true, count: jobs.length, data: jobs });
+  } catch (error) {
+    console.error('Error fetching jobs user applied for:', error);
+    return res.status(500).json({ success: false, message: 'Server error while fetching applied jobs.', error: error.message });
+  }
+};
+
+// @desc    Get all applicants for a job (full profile info)
+// @route   GET /api/job/:jobId/applications
+// @access  Private (admin, alumni)
+export const getJobApplications = async (req, res) => {
+  if (!['admin', 'alumni'].includes(req.user.role)) {
+    return res.status(403).json({
+      success: false,
+      message: 'Access denied. Only admin and alumni can view job applications.',
+    });
+  }
+  const jobId = parseInt(req.params.jobId);
+  if (!jobId) {
+    return res.status(400).json({ success: false, message: 'Job ID is required.' });
+  }
+  try {
+    // Find all registrations for this job
+    const registrations = await prisma.jobRegistration.findMany({
+      where: { jobId },
+      select: { userId: true, createdAt: true },
+    });
+    const userIds = registrations.map(r => r.userId);
+    if (userIds.length === 0) {
+      return res.status(200).json({ success: true, data: [] });
+    }
+    // Fetch user profiles (alumni or student)
+    const users = await prisma.user.findMany({
+      where: { id: { in: userIds } },
+      select: {
+        id: true,
+        fullName: true,
+        email: true,
+        phoneNumber: true,
+        linkedinUrl: true,
+        highestQualification: true,
+        photoUrl: true,
+        role: true,
+        alumni: {
+          select: {
+            currentJobTitle: true,
+            graduationYear: true,
+            companyName: true,
+            company_role: true,
+            course: true,
+            id: true,
+            userId: true,
+          },
+        },
+        student: {
+          select: {
+            graduationYear: true,
+          },
+        },
+      },
+    });
+    // Format for frontend modal
+    const applicants = users.map(u => ({
+      id: u.id,
+      name: u.fullName,
+      email: u.email,
+      phone: u.phoneNumber,
+      highestQualification: u.highestQualification,
+      passoutYear: u.alumni?.graduationYear || u.student?.graduationYear || null,
+      currentJobTitle: u.alumni?.currentJobTitle || '',
+      companyName: u.alumni?.companyName || '',
+      companyRole: u.alumni?.company_role || '',
+      course: u.alumni?.course || '',
+      linkedInProfile: u.linkedinUrl,
+      cvUrl: u.resumeUrl || '', // Use resumeUrl from User model
+      photoUrl: u.photoUrl,
+      role: u.role,
+    }));
+    return res.status(200).json({ success: true, data: applicants });
+  } catch (error) {
+    console.error('Error fetching job applications:', error);
+    return res.status(500).json({ success: false, message: 'Server error while fetching job applications.', error: error.message });
   }
 };

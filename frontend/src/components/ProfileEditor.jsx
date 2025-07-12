@@ -13,6 +13,8 @@ import {
   ArrowLeftIcon,
   TrashIcon,
   XMarkIcon,
+  PaperClipIcon,
+  XMarkIcon as TagRemoveIcon,
 } from '@heroicons/react/24/outline';
 
 const ProfileEditor = () => {
@@ -40,6 +42,10 @@ const ProfileEditor = () => {
     course: '',
     designation: '',
   });
+  const [skills, setSkills] = useState([]);
+  const [newSkill, setNewSkill] = useState('');
+  const [resumeUrl, setResumeUrl] = useState(user?.resumeUrl || '');
+  const [cvUploading, setCvUploading] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -86,6 +92,8 @@ const ProfileEditor = () => {
             newFormData.designation = profileData.faculty.designation || '';
           }
           setFormData(newFormData);
+          if (profileData.skills) setSkills(profileData.skills);
+          if (profileData.resumeUrl) setResumeUrl(profileData.resumeUrl);
         } else {
           setError(response.data.message || 'Failed to load profile data');
           showAlert(response.data.message || 'Failed to load profile data', 'error');
@@ -113,6 +121,46 @@ const ProfileEditor = () => {
       }));
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
+    }
+  };
+
+  const handleSkillAdd = (e) => {
+    e.preventDefault();
+    const skill = newSkill.trim();
+    if (skill && !skills.includes(skill)) {
+      setSkills([...skills, skill]);
+      setNewSkill('');
+    }
+  };
+  const handleSkillRemove = (skill) => {
+    setSkills(skills.filter(s => s !== skill));
+  };
+  const handleCvChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setCvUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('chunk', file); // file field
+      formData.append('filename', file.name); // required by backend
+      formData.append('chunkIndex', '0'); // single file
+      formData.append('totalChunks', '1'); // single file
+      // Use correct endpoint based on role
+      const uploadEndpoint = `/api/${user.role}/upload/resume`;
+      const res = await axios.post(uploadEndpoint, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        withCredentials: true,
+      });
+      if (res.data.success && res.data.url) {
+        setResumeUrl(res.data.url);
+        showAlert('CV uploaded successfully!', 'success');
+      } else {
+        showAlert(res.data.message || 'Failed to upload CV', 'error');
+      }
+    } catch (err) {
+      showAlert('Failed to upload CV', 'error');
+    } finally {
+      setCvUploading(false);
     }
   };
 
@@ -149,6 +197,8 @@ const ProfileEditor = () => {
       } else if (user.role === 'faculty') {
         formDataToSend.append('designation', formData.designation || '');
       }
+      skills.forEach(skill => formDataToSend.append('skills', skill));
+      if (resumeUrl) formDataToSend.append('resumeUrl', resumeUrl);
       if (formData.profilePhoto instanceof File) {
         formDataToSend.append('photo', formData.profilePhoto);
       }
@@ -479,6 +529,70 @@ const ProfileEditor = () => {
                     className="pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg w-full focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 shadow-sm"
                     placeholder="e.g., https://github.com/yourusername"
                   />
+                </div>
+              </div>
+            </div>
+          </div>
+          {/* Resume/CV and Skills Section */}
+          <div className="mb-8 p-6 bg-indigo-50 rounded-xl shadow-inner border-l-4 border-indigo-200">
+            <h3 className="text-lg font-semibold text-indigo-700 mb-4">Resume/CV and Skills</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="mt-4">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Resume/CV</label>
+                {resumeUrl ? (
+                  <div className="flex items-center gap-2 mb-2">
+                    <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="text-green-600 hover:text-green-800 underline font-medium">View Current CV</a>
+                  </div>
+                ) : (
+                  <div className="text-gray-400 text-sm mb-2">No CV uploaded.</div>
+                )}
+                <input type="file" accept=".pdf,.doc,.docx" onChange={handleCvChange} disabled={cvUploading} className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100" />
+                {cvUploading && <div className="text-xs text-gray-500 mt-1">Uploading...</div>}
+              </div>
+              <div className="mt-4">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Skills</label>
+                <div className="flex gap-2 mb-2">
+                  <input
+                    type="text"
+                    value={newSkill}
+                    onChange={e => setNewSkill(e.target.value)}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        const skill = newSkill.trim();
+                        if (skill && !skills.includes(skill)) {
+                          setSkills([...skills, skill]);
+                          setNewSkill('');
+                        }
+                      }
+                    }}
+                    className="border rounded px-2 py-1 text-sm flex-1"
+                    placeholder="Type a skill and click Add"
+                  />
+                  <button
+                    type="button"
+                    className="px-3 py-1 bg-indigo-600 text-white rounded text-xs font-semibold hover:bg-indigo-700 disabled:bg-gray-300 disabled:text-gray-500"
+                    onClick={() => {
+                      const skill = newSkill.trim();
+                      if (skill && !skills.includes(skill)) {
+                        setSkills([...skills, skill]);
+                        setNewSkill('');
+                      }
+                    }}
+                    disabled={!newSkill.trim() || skills.includes(newSkill.trim())}
+                  >
+                    Add
+                  </button>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {skills.map(skill => (
+                    <span key={skill} className="inline-flex items-center bg-indigo-100 text-indigo-700 rounded-full px-3 py-1 text-xs font-semibold">
+                      {skill}
+                      <button type="button" className="ml-1" onClick={() => handleSkillRemove(skill)}>
+                        <TagRemoveIcon className="h-3 w-3 text-indigo-400 hover:text-red-500" />
+                      </button>
+                    </span>
+                  ))}
                 </div>
               </div>
             </div>

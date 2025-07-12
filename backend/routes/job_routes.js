@@ -14,12 +14,15 @@ import {
   getAllJobsForAlumni,
   getAllJobsForAdmin,
   getJobRegistrations,
-  SelfAppliedJobs
+  SelfAppliedJobs,
+  getJobsUserAppliedFor,
+  getJobApplications,
 } from "../controllers/job/job.controller.js";
 
 const router = express.Router();
-router.use(protect)
+router.use(protect);
 
+router.route('/applied').get(getJobsUserAppliedFor); // Best practice: before any :id routes
 router.route("/").post(createJob).get(getAllJobs);
 router.route("/:id").get(getJobById).patch(updateJob).delete(deleteJob);
 router.route("/:id/status").patch(isAdmin, updateJobStatus);
@@ -29,6 +32,7 @@ router.route("/admin/pending").get(pendingJobsForAdmin);
 router.route("/alumni/created").get(getAllJobsForAlumni);
 router.route("/admin/all").get(isAdmin, getAllJobsForAdmin);
 router.route("/get/registrations").post(getJobRegistrations);
-router.route("/selfapplied/get").get(SelfAppliedJobs)
+router.route('/:jobId/applications').get(getJobApplications);
+// router.route("/selfapplied/get").get(SelfAppliedJobs); // Deprecated, replaced by /applied
 
 export default router;

@@ -15,7 +15,7 @@ const AppliedJobs = () => {
       try {
         setLoading(true);
         setError(null);
-        const res = await axios.get('/api/job/selfapplied/get');
+        const res = await axios.get('/api/job/applied');
         setAppliedJobs(res.data.data || []);
       } catch (err) {
         setError('Failed to load applied jobs.');
@@ -41,32 +41,23 @@ const AppliedJobs = () => {
       ) : appliedJobs.length === 0 ? (
         <div className="text-center text-gray-400">You have not applied to any jobs yet.</div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-white border rounded-lg">
-            <thead>
-              <tr>
-                <th className="py-2 px-4 border-b text-left text-xs font-semibold text-gray-600">Job Title</th>
-                <th className="py-2 px-4 border-b text-left text-xs font-semibold text-gray-600">Company</th>
-                <th className="py-2 px-4 border-b"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {appliedJobs.map((job) => (
-                <tr key={job.id} className="hover:bg-gray-50">
-                  <td className="py-2 px-4 border-b">{job.jobTitle || '-'}</td>
-                  <td className="py-2 px-4 border-b">{job.companyName || '-'}</td>
-                  <td className="py-2 px-4 border-b">
-                    <button
-                      className="px-3 py-1 rounded bg-indigo-600 text-white text-xs font-semibold hover:bg-indigo-700"
-                      onClick={() => handleView(job)}
-                    >
-                      View
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="flex flex-col gap-3">
+          {appliedJobs.map((job) => (
+            <div key={job.id} className="bg-white rounded-xl shadow p-4 flex flex-col sm:flex-row sm:items-center justify-between">
+              <div className="flex-1 min-w-0">
+                <div className="font-medium text-gray-900 truncate text-base">{job.jobTitle || '-'}</div>
+                <div className="text-sm text-gray-700 truncate">{job.companyName || '-'}</div>
+              </div>
+              <div className="mt-3 sm:mt-0 flex gap-2 justify-end">
+                <button
+                  className="px-3 py-1 rounded-full bg-indigo-600 text-white text-xs font-semibold hover:bg-indigo-700 transition-colors"
+                  onClick={() => handleView(job)}
+                >
+                  View
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       )}
       <JobDetailsModal

@@ -292,14 +292,16 @@ const AlumniDashboard = () => {
               </div>
 
                 {/* Tabbed Board Section */}
-                <MyActivityCard
-                  features={[
-                    { key: 'mentorship', label: 'Mentorship', component: <MentorshipRequests showAlert={showAlert} jobs={jobs} /> },
-                    { key: 'opportunities', label: 'Opportunities', component: <Opportunities /> },
-                    { key: 'events', label: 'Events', component: <Events /> },
-                  ]}
-                  defaultTab="mentorship"
-                />
+                <div className="max-h-[480px] overflow-y-auto scrollbar-hide">
+                  <MyActivityCard
+                    features={[
+                      { key: 'mentorship', label: 'Mentorship', component: <MentorshipRequests showAlert={showAlert} jobs={jobs} /> },
+                      { key: 'opportunities', label: 'Opportunities', component: <Opportunities /> },
+                      { key: 'events', label: 'Events', component: <Events /> },
+                    ]}
+                    defaultTab="mentorship"
+                  />
+                </div>
             </main>
           </div>
         </div>

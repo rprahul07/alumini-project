@@ -5,7 +5,9 @@ import JobSearch from '../components/opportunities/JobSearch';
 import JobFilters from '../components/opportunities/JobFilters';
 import JobPagination from '../components/opportunities/JobPagination';
 import JobDetailsModal from '../components/opportunities/JobDetailsModal';
+import ApplyJobModal from '../components/opportunities/ApplyJobModal';
 import axios from '../config/axios';
+import { useAuth } from '../contexts/AuthContext';
 
 const JobsPage = () => {
   // State for jobs and UI
@@ -20,8 +22,12 @@ const JobsPage = () => {
   const [sortBy, setSortBy] = useState('createdAt');
   const [sortOrder, setSortOrder] = useState('desc');
   const [selectedJobId, setSelectedJobId] = useState(null);
+  const [selectedJob, setSelectedJob] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [showApplyModal, setShowApplyModal] = useState(false);
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
+  const { user } = useAuth();
+  const [appliedJobIds, setAppliedJobIds] = useState(new Set());
 
   // Fetch jobs from API
   const fetchJobs = async () => {
@@ -32,10 +38,7 @@ const JobsPage = () => {
         page: currentPage,
         limit: 12,
         search: searchTerm,
-        type: selectedType,
-        company: selectedCompany,
-        sortBy,
-        sortOrder
+        jobType: selectedType, // use jobType as expected by backend
       };
       // Remove empty params
       Object.keys(params).forEach(key => {
@@ -57,14 +60,24 @@ const JobsPage = () => {
     // eslint-disable-next-line
   }, [currentPage, searchTerm, selectedType, selectedCompany, sortBy, sortOrder]);
 
+  // Fetch applied jobs for logged-in user
+  useEffect(() => {
+    if (user && (user.role === 'student' || user.role === 'alumni')) {
+      axios.get('/api/job/applied').then(res => {
+        setAppliedJobIds(new Set((res.data.data || []).map(job => job.id)));
+      }).catch(() => setAppliedJobIds(new Set()));
+    } else {
+      setAppliedJobIds(new Set());
+    }
+  }, [user]);
+
   // Handlers
   const handleSearch = (term) => {
     setSearchTerm(term);
     setCurrentPage(1);
   };
-  const handleFilterChange = (type, company) => {
+  const handleFilterChange = (type) => {
     setSelectedType(type);
-    setSelectedCompany(company);
     setCurrentPage(1);
   };
   const handleSortChange = (sortByValue, sortOrderValue) => {
@@ -76,71 +89,47 @@ const JobsPage = () => {
     setCurrentPage(page);
   };
   const handleJobClick = (job) => {
-    setSelectedJobId(job.id);
+    setSelectedJob(job);
     setShowModal(true);
+  };
+  const handleApply = (job) => {
+    setSelectedJob(job);
+    setShowApplyModal(true);
+  };
+
+  // Refresh jobs and appliedJobIds after application
+  const refreshJobsAndApplied = async () => {
+    await fetchJobs();
+    if (user && (user.role === 'student' || user.role === 'alumni')) {
+      axios.get('/api/job/applied').then(res => {
+        setAppliedJobIds(new Set((res.data.data || []).map(job => job.id)));
+      }).catch(() => setAppliedJobIds(new Set()));
+    }
   };
 
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div className="min-h-screen bg-gray-50 flex flex-col">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 w-full flex-1 flex flex-col">
           {/* Search and Filters */}
-          <div className="mb-6 flex flex-col gap-3">
-            <div className="flex flex-row gap-2 items-center">
-              <div className="flex-1">
+          <div className="mb-6 w-full flex flex-col gap-2 sm:flex-row sm:gap-2 items-center">
+            <div className="flex w-full gap-2">
+              <div className="relative flex-1">
                 <JobSearch onSearch={handleSearch} />
               </div>
-              <button
-                onClick={() => setIsFilterDrawerOpen(true)}
-                className="rounded-full px-4 py-1.5 font-semibold flex items-center justify-center border-2 border-indigo-400 bg-white/60 backdrop-blur text-sm text-indigo-700 hover:bg-white/80 shadow-lg transition-all"
-                aria-label="Show Filters"
-              >
-                <span className="material-icons mr-1">tune</span>
-                <span className="hidden sm:inline">Filters</span>
-              </button>
+              <JobFilters selectedType={selectedType} onFilterChange={handleFilterChange} isMobile={false} />
             </div>
           </div>
 
-          {/* Filter Drawer/Modal */}
-          {isFilterDrawerOpen && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-              <div className="bg-white rounded-xl shadow-lg w-full max-w-2xl p-6 relative">
-                <button
-                  className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
-                  onClick={() => setIsFilterDrawerOpen(false)}
-                >
-                  &times;
-                </button>
-                <JobFilters
-                  selectedType={selectedType}
-                  selectedCompany={selectedCompany}
-                  sortBy={sortBy}
-                  sortOrder={sortOrder}
-                  onFilterChange={handleFilterChange}
-                  onSortChange={handleSortChange}
-                  isMobile={true}
-                />
-                <div className="flex justify-end mt-4">
-                  <button
-                    className="px-4 py-2 bg-indigo-600 text-white rounded-full font-semibold hover:bg-indigo-700 transition"
-                    onClick={() => setIsFilterDrawerOpen(false)}
-                  >
-                    Apply Filters
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Jobs Grid */}
-          <div className="mt-8">
+          {/* Jobs Grid - Flex-1 to take remaining space */}
+          <div className="flex-1 flex flex-col">
             {loading ? (
-              <div className="flex justify-center items-center py-20">
+              <div className="flex-1 flex justify-center items-center py-20">
                 <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-indigo-600"></div>
               </div>
             ) : error ? (
-              <div className="flex flex-col items-center py-20">
+              <div className="flex-1 flex flex-col justify-center items-center py-20">
                 <div className="text-red-600 text-lg font-semibold mb-4">{error}</div>
                 <button
                   onClick={fetchJobs}
@@ -149,10 +138,16 @@ const JobsPage = () => {
                   Retry
                 </button>
               </div>
+            ) : jobs.length === 0 ? (
+              <div className="flex-1 flex justify-center items-center">
+                <div className="text-center text-gray-500 py-20 text-lg font-medium">
+                  No jobs found. Try adjusting your filters or search.
+                </div>
+              </div>
             ) : (
               <>
-                <JobGrid jobs={jobs} onJobClick={handleJobClick} />
-                <div className="mt-10">
+                <JobGrid jobs={jobs} user={user} appliedJobIds={appliedJobIds} onJobClick={handleJobClick} onApply={handleApply} />
+                <div className="mt-10 flex-1 flex flex-col justify-end">
                   <JobPagination
                     currentPage={currentPage}
                     totalPages={totalPages}
@@ -165,10 +160,19 @@ const JobsPage = () => {
         </div>
       </div>
       <JobDetailsModal
-        jobId={selectedJobId}
+        job={selectedJob}
         open={showModal}
         onClose={() => setShowModal(false)}
-        onApply={() => alert('Apply logic/modal goes here')}
+        onApply={() => { setShowModal(false); setShowApplyModal(true); }}
+      />
+      <ApplyJobModal
+        open={showApplyModal}
+        onClose={() => setShowApplyModal(false)}
+        job={selectedJob}
+        onSuccess={() => {
+          setShowApplyModal(false);
+          refreshJobsAndApplied();
+        }}
       />
     </>
   );

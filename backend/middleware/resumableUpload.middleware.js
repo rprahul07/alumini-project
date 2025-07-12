@@ -19,7 +19,7 @@ async function ensureContainer() {
 }
 
 export const resumableUploadMiddleware = async (req, res, next) => {
-  const { filename, chunkIndex, totalChunks } = req.body;
+  let { filename, chunkIndex, totalChunks } = req.body;
   let { fileId } = req.body;
   const chunk = req.files?.chunk?.[0];
 

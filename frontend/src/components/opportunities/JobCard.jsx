@@ -1,7 +1,7 @@
 import React from 'react';
 import { CalendarIcon, BuildingOffice2Icon } from '@heroicons/react/24/outline';
 
-const JobCard = ({ job, user, onClick, onApply }) => {
+const JobCard = ({ job, user, isApplied, onClick, onApply }) => {
   // Format date
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
@@ -16,9 +16,16 @@ const JobCard = ({ job, user, onClick, onApply }) => {
 
   return (
     <div
-      className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden cursor-pointer transform hover:scale-[1.02] flex flex-col h-full w-full max-w-sm sm:max-w-md md:max-w-lg p-3"
+      className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden cursor-pointer transform hover:scale-[1.02] flex flex-col h-full w-full max-w-sm sm:max-w-md md:max-w-lg p-3 relative"
       onClick={onClick}
     >
+      {/* Job Type Badge */}
+      <span
+        className={`absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-semibold shadow-sm
+          ${job.type === 'internship' ? 'bg-green-100 text-green-700' : 'bg-indigo-100 text-indigo-700'}`}
+      >
+        {job.type === 'internship' ? 'Internship' : 'Job'}
+      </span>
       {/* Job Content */}
       <div className="p-3 flex flex-col flex-grow">
         {/* Job Title */}
@@ -40,10 +47,15 @@ const JobCard = ({ job, user, onClick, onApply }) => {
         <div className="flex-grow"></div>
         {/* Apply Button */}
         <button
-          className="mt-2 px-4 py-1.5 bg-indigo-600 text-white rounded-full font-semibold shadow hover:bg-indigo-700 transition"
-          onClick={e => { e.stopPropagation(); onApply && onApply(job); }}
+          className={
+            isApplied
+              ? 'mt-2 px-4 py-1.5 bg-gray-300 text-gray-600 rounded-full font-semibold cursor-not-allowed'
+              : 'mt-2 px-4 py-1.5 bg-indigo-600 text-white rounded-full font-semibold shadow hover:bg-indigo-700 transition'
+          }
+          onClick={e => { if (!isApplied) { e.stopPropagation(); onApply && onApply(job); } }}
+          disabled={isApplied}
         >
-          Apply
+          {isApplied ? 'Applied' : 'Apply'}
         </button>
       </div>
     </div>

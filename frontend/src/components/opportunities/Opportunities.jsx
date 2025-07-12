@@ -42,14 +42,6 @@ const Opportunities = () => {
         >
           Applied
         </button>
-        {canSeeReceived && (
-          <button
-            className={`px-3 py-1 rounded-full text-sm font-semibold border transition-colors ${activeTab === 'received' ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-indigo-600 border-indigo-200 hover:bg-indigo-50'}`}
-            onClick={() => setActiveTab('received')}
-          >
-            Received
-          </button>
-        )}
       </div>
       {/* Tab Content */}
       <div className="flex-1 overflow-y-auto">
@@ -67,7 +59,6 @@ const Opportunities = () => {
         )}
         {activeTab === 'myjobs' && canCreate && <MyCreatedJobs />}
         {activeTab === 'applied' && <AppliedJobs />}
-        {activeTab === 'received' && canSeeReceived && <ReceivedApplications />}
       </div>
     </div>
   );

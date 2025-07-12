@@ -13,12 +13,8 @@ const JobFilters = ({
   // Example job types and companies (customize as needed)
   const jobTypes = [
     { value: '', label: 'All Types' },
-    { value: 'Full-time', label: 'Full-time' },
-    { value: 'Part-time', label: 'Part-time' },
-    { value: 'Internship', label: 'Internship' },
-    { value: 'Contract', label: 'Contract' },
-    { value: 'Remote', label: 'Remote' },
-    { value: 'Other', label: 'Other' }
+    { value: 'job', label: 'Job' },
+    { value: 'internship', label: 'Internship' },
   ];
 
   const companies = [
@@ -55,93 +51,21 @@ const JobFilters = ({
   };
 
   return (
-    <div className={`flex gap-4 ${isMobile ? 'flex-col' : 'flex-col sm:flex-row'}`}>
+    <div className={`flex gap-4 ${isMobile ? 'flex-col' : 'flex-row'}`}>
       {/* Job Type Filter */}
-      <div className="flex-1">
-        <label htmlFor="type" className="block text-sm font-bold text-indigo-700 mb-1">
-          Job Type
-        </label>
+      <div className="flex-shrink-0">
         <div className="relative">
           <select
             id="type"
             value={selectedType}
             onChange={handleTypeChange}
-            className="block w-full pl-3 pr-10 py-2 border-2 border-indigo-200 rounded-full bg-white/60 backdrop-blur shadow focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all"
+            className="rounded-full px-4 py-2 font-semibold border-2 border-indigo-400 bg-white/60 backdrop-blur text-base sm:text-sm text-indigo-700 hover:bg-white/80 shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 min-w-[120px]"
           >
             {jobTypes.map((type) => (
               <option key={type.value} value={type.value}>
                 {type.label}
               </option>
             ))}
-          </select>
-          <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-            <ChevronDownIcon className="h-4 w-4 text-indigo-400" />
-          </div>
-        </div>
-      </div>
-
-      {/* Company Filter */}
-      <div className="flex-1">
-        <label htmlFor="company" className="block text-sm font-bold text-indigo-700 mb-1">
-          Company
-        </label>
-        <div className="relative">
-          <select
-            id="company"
-            value={selectedCompany}
-            onChange={handleCompanyChange}
-            className="block w-full pl-3 pr-10 py-2 border-2 border-indigo-200 rounded-full bg-white/60 backdrop-blur shadow focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all"
-          >
-            {companies.map((company) => (
-              <option key={company.value} value={company.value}>
-                {company.label}
-              </option>
-            ))}
-          </select>
-          <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-            <ChevronDownIcon className="h-4 w-4 text-indigo-400" />
-          </div>
-        </div>
-      </div>
-
-      {/* Sort By */}
-      <div className="flex-1">
-        <label htmlFor="sortBy" className="block text-sm font-bold text-indigo-700 mb-1">
-          Sort By
-        </label>
-        <div className="relative">
-          <select
-            id="sortBy"
-            value={sortBy}
-            onChange={handleSortChange}
-            className="block w-full pl-3 pr-10 py-2 border-2 border-indigo-200 rounded-full bg-white/60 backdrop-blur shadow focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all"
-          >
-            {sortOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-          <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-            <ChevronDownIcon className="h-4 w-4 text-indigo-400" />
-          </div>
-        </div>
-      </div>
-
-      {/* Sort Order */}
-      <div className="flex-1">
-        <label htmlFor="sortOrder" className="block text-sm font-bold text-indigo-700 mb-1">
-          Order
-        </label>
-        <div className="relative">
-          <select
-            id="sortOrder"
-            value={sortOrder}
-            onChange={handleSortOrderChange}
-            className="block w-full pl-3 pr-10 py-2 border-2 border-indigo-200 rounded-full bg-white/60 backdrop-blur shadow focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all"
-          >
-            <option value="asc">Ascending</option>
-            <option value="desc">Descending</option>
           </select>
           <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
             <ChevronDownIcon className="h-4 w-4 text-indigo-400" />

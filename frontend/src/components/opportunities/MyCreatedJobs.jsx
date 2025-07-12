@@ -1,54 +1,66 @@
 import React, { useEffect, useState } from 'react';
 import axios from '../../config/axios';
-import CreateJobModal from './CreateJobModal';
+import JobDetailsModal from './JobDetailsModal';
+import ApplicantProfileModal from './ApplicantProfileModal';
 
 const MyCreatedJobs = () => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [editJob, setEditJob] = useState(null);
-  const [deletingId, setDeletingId] = useState(null);
+  const [selectedJob, setSelectedJob] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [showApplicationsModal, setShowApplicationsModal] = useState(false);
+  const [applications, setApplications] = useState([]);
+  const [applicationsLoading, setApplicationsLoading] = useState(false);
+  const [applicationsError, setApplicationsError] = useState(null);
+  const [selectedApplicant, setSelectedApplicant] = useState(null);
+  const [showProfileModal, setShowProfileModal] = useState(false);
 
-  useEffect(() => {
-    const fetchJobs = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const res = await axios.get('/api/job/alumni/created');
-        setJobs(res.data.data || []);
-      } catch (err) {
-        setError('Failed to load your jobs.');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchJobs();
-  }, []);
-
-  const handleEdit = (job) => {
-    setEditJob(job);
-    setShowEditModal(true);
-  };
-
-  const handleDelete = async (jobId) => {
-    if (!window.confirm('Are you sure you want to delete this job?')) return;
-    setDeletingId(jobId);
+  // Fetch jobs created by the alumni
+  const fetchJobs = async () => {
     try {
-      await axios.delete(`/api/job/${jobId}`);
-      setJobs(jobs.filter(j => j.id !== jobId));
+      setLoading(true);
+      setError(null);
+      const res = await axios.get('/api/job/alumni/created');
+      setJobs(res.data.data || []);
     } catch (err) {
-      alert('Failed to delete job.');
+      setError('Failed to load your jobs.');
     } finally {
-      setDeletingId(null);
+      setLoading(false);
     }
   };
 
-  const handleEditSuccess = () => {
-    setShowEditModal(false);
-    setEditJob(null);
-    // Refresh jobs list
-    axios.get('/api/job/alumni/created').then(res => setJobs(res.data.data || []));
+  // Fetch applications for a job
+  const handleViewApplications = async (jobId) => {
+    setApplicationsLoading(true);
+    setApplicationsError(null);
+    setShowApplicationsModal(true);
+    setApplications([]);
+    try {
+      // Use new RESTful GET endpoint
+      const res = await axios.get(`/api/job/${jobId}/applications`);
+      setApplications(res.data.data || []);
+    } catch (err) {
+      setApplicationsError('Failed to load applications.');
+    } finally {
+      setApplicationsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchJobs();
+  }, []);
+
+  // Refresh jobs after edit or delete
+  const handleJobEdit = () => {
+    fetchJobs();
+    setShowModal(false);
+    setSelectedJob(null);
+  };
+  const handleJobDelete = () => {
+    fetchJobs();
+    setShowModal(false);
+    setSelectedJob(null);
   };
 
   return (
@@ -61,50 +73,86 @@ const MyCreatedJobs = () => {
       ) : jobs.length === 0 ? (
         <div className="text-center text-gray-400">You have not created any jobs yet.</div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-white border rounded-lg">
-            <thead>
-              <tr>
-                <th className="py-2 px-4 border-b text-left text-xs font-semibold text-gray-600">Job Title</th>
-                <th className="py-2 px-4 border-b text-left text-xs font-semibold text-gray-600">Company</th>
-                <th className="py-2 px-4 border-b text-left text-xs font-semibold text-gray-600">Status</th>
-                <th className="py-2 px-4 border-b"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {jobs.map((job) => (
-                <tr key={job.id} className="hover:bg-gray-50">
-                  <td className="py-2 px-4 border-b">{job.jobTitle || '-'}</td>
-                  <td className="py-2 px-4 border-b">{job.companyName || '-'}</td>
-                  <td className="py-2 px-4 border-b capitalize">{job.status || '-'}</td>
-                  <td className="py-2 px-4 border-b flex gap-2">
-                    <button
-                      className="px-3 py-1 rounded bg-indigo-100 text-indigo-700 text-xs font-semibold hover:bg-indigo-200"
-                      onClick={() => handleEdit(job)}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="px-3 py-1 rounded bg-red-100 text-red-700 text-xs font-semibold hover:bg-red-200"
-                      onClick={() => handleDelete(job.id)}
-                      disabled={deletingId === job.id}
-                    >
-                      {deletingId === job.id ? 'Deleting...' : 'Delete'}
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="flex flex-col gap-3">
+          {jobs.map((job) => (
+            <div key={job.id} className="bg-white rounded-xl shadow p-4 flex flex-col sm:flex-row sm:items-center justify-between">
+              <div className="flex-1 min-w-0">
+                <div className="font-medium text-gray-900 truncate text-base">{job.jobTitle || '-'}</div>
+                <div className="text-sm text-gray-700 truncate">{job.companyName || '-'}</div>
+                <div className="text-xs text-gray-500">Status: {job.status}</div>
+              </div>
+              <div className="mt-3 sm:mt-0 flex gap-2 justify-end">
+                <button
+                  className="px-3 py-1 rounded-full bg-indigo-600 text-white text-xs font-semibold hover:bg-indigo-700 transition-colors"
+                  onClick={() => { setSelectedJob(job); setShowModal(true); }}
+                >
+                  View
+                </button>
+                <button
+                  className="px-3 py-1 rounded-full bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 transition-colors"
+                  onClick={() => handleViewApplications(job.id)}
+                >
+                  Applications
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       )}
-      {showEditModal && editJob && (
-        <CreateJobModal
-          onClose={() => { setShowEditModal(false); setEditJob(null); }}
-          onSuccess={handleEditSuccess}
-          editJob={editJob}
-        />
+      <JobDetailsModal
+        job={selectedJob}
+        open={showModal}
+        onClose={() => { setShowModal(false); setSelectedJob(null); }}
+        onJobEdit={handleJobEdit}
+        onJobDelete={handleJobDelete}
+      />
+      {/* Applications Modal */}
+      {showApplicationsModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-1 sm:p-2 z-50">
+          <div className="bg-white rounded-2xl w-full max-w-md max-h-[80vh] overflow-y-auto scrollbar-hide p-4 relative">
+            <button
+              className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
+              onClick={() => setShowApplicationsModal(false)}
+              aria-label="Close"
+            >
+              <span className="text-2xl">&times;</span>
+            </button>
+            <h2 className="text-lg font-bold mb-4 text-gray-800">Applications</h2>
+            {applicationsLoading ? (
+              <div className="text-center text-gray-400">Loading...</div>
+            ) : applicationsError ? (
+              <div className="text-center text-red-500">{applicationsError}</div>
+            ) : applications.length === 0 ? (
+              <div className="text-center text-gray-400">No applications for this job yet.</div>
+            ) : (
+              <div className="flex flex-col gap-3">
+                {applications.map((applicant, idx) => (
+                  <div key={applicant.id || idx} className="bg-gray-50 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between">
+                    <div className="flex-1 min-w-0">
+                      <div className="font-medium text-gray-900 truncate text-base">{applicant.name || '-'}</div>
+                      <div className="text-xs text-gray-500 truncate">{applicant.email || '-'}</div>
+                    </div>
+                    <div className="mt-2 sm:mt-0 flex gap-2 justify-end">
+                      <button
+                        className="px-3 py-1 rounded-full bg-green-600 text-white text-xs font-semibold hover:bg-green-700 transition-colors"
+                        onClick={() => { setSelectedApplicant(applicant); setShowProfileModal(true); }}
+                      >
+                        View Profile
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
       )}
+      {/* Applicant Profile Modal */}
+      <ApplicantProfileModal
+        open={showProfileModal}
+        onClose={() => setShowProfileModal(false)}
+        applicant={selectedApplicant}
+      />
     </div>
   );
 };

@@ -24,6 +24,7 @@ import JobCard from '../../components/opportunities/JobCard';
 import JobDetailsModal from '../../components/opportunities/JobDetailsModal';
 import axios from '../../config/axios';
 import MyActivityCard from '../../components/MyActivityCard';
+import { XMarkIcon } from '@heroicons/react/24/outline';
 
 const AdminOpportunities = () => {
   const [pendingJobs, setPendingJobs] = useState([]);
@@ -32,6 +33,7 @@ const AdminOpportunities = () => {
   const [loading, setLoading] = useState(true);
   const [selectedJob, setSelectedJob] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [modalLoading, setModalLoading] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('pending'); // 'pending', 'approved', 'rejected'
 
@@ -82,9 +84,18 @@ const AdminOpportunities = () => {
     }
   };
 
-  const handleView = (job) => {
-    setSelectedJob(job);
+  // Fetch full job details when viewing
+  const handleView = async (job) => {
+    setModalLoading(true);
     setModalOpen(true);
+    try {
+      const res = await axios.get(`/api/job/${job.id}`);
+      setSelectedJob(res.data.data);
+    } catch {
+      setSelectedJob(null);
+    } finally {
+      setModalLoading(false);
+    }
   };
 
   const handleCloseModal = () => {
@@ -130,67 +141,158 @@ const AdminOpportunities = () => {
         >
           Approved
         </button>
-        <button
-          className={`px-4 py-2 rounded-full font-semibold text-sm border ${activeTab === 'rejected' ? 'bg-red-600 text-white border-red-600' : 'bg-white text-red-600 border-red-600'}`}
-          onClick={() => setActiveTab('rejected')}
-          disabled={activeTab === 'rejected'}
-        >
-          Rejected
-        </button>
+        {/* Rejected button removed for simplicity */}
       </div>
       {loading ? (
         <div className="text-center text-gray-400 py-8">Loading...</div>
       ) : jobsToShow.length === 0 ? (
         <div className="text-center text-gray-400 py-8">No {activeTab} job requests.</div>
       ) : (
-        <table className="min-w-full divide-y divide-gray-200 bg-white rounded-xl shadow">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Job Title</th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Company</th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Created By</th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {jobsToShow.map(job => (
-              <tr key={job.id}>
-                <td className="px-4 py-2 font-semibold text-gray-800">{job.jobTitle}</td>
-                <td className="px-4 py-2">{job.companyName}</td>
-                <td className="px-4 py-2">{job.user?.fullName || 'Unknown'}</td>
-                <td className="px-4 py-2">{new Date(job.createdAt).toLocaleDateString()}</td>
-                <td className="px-4 py-2">
-                  <button onClick={() => handleView(job)} className="px-3 py-1 rounded bg-indigo-600 text-white text-xs font-semibold hover:bg-indigo-700">View</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <div className="flex flex-col gap-3 max-h-[340px] overflow-y-auto scrollbar-hide rounded-xl">
+          {jobsToShow.map(job => (
+            <div key={job.id} className="bg-white rounded-xl shadow p-4 flex flex-col sm:flex-row sm:items-center justify-between">
+              <div className="flex-1 min-w-0">
+                <div className="font-medium text-gray-900 truncate text-base">{job.jobTitle}</div>
+                <div className="text-sm text-gray-700 truncate">{job.companyName}</div>
+                <div className="text-xs text-gray-500">Creator: {job.user?.fullName || 'Unknown'}</div>
+                <div className="text-xs text-gray-500">Date: {new Date(job.createdAt).toLocaleDateString()}</div>
+              </div>
+              <div className="mt-3 sm:mt-0 flex gap-2 justify-end">
+                <button
+                  className="px-3 py-1 rounded-full bg-indigo-600 text-white text-xs font-semibold hover:bg-indigo-700 transition-colors"
+                  onClick={() => handleView(job)}
+                >
+                  View
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
       )}
       {/* Modal for job details and actions */}
-      {modalOpen && selectedJob && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl shadow-lg max-w-lg w-full p-6 relative">
-            <button onClick={handleCloseModal} className="absolute top-2 right-2 text-gray-400 hover:text-gray-600">&times;</button>
-            <h3 className="text-xl font-bold mb-2">{selectedJob.jobTitle}</h3>
-            <div className="mb-2 text-gray-700"><b>Company:</b> {selectedJob.companyName}</div>
-            <div className="mb-2 text-gray-700"><b>Description:</b> {selectedJob.description}</div>
-            <div className="mb-2 text-gray-700"><b>Deadline:</b> {selectedJob.deadline ? new Date(selectedJob.deadline).toLocaleDateString() : 'N/A'}</div>
-            <div className="mb-2 text-gray-700"><b>Registration Type:</b> {selectedJob.registrationType}</div>
-            <div className="mb-2 text-gray-700"><b>Created By:</b> {selectedJob.user?.fullName || 'Unknown'} ({selectedJob.user?.email || 'N/A'})</div>
-            <div className="mb-2 text-gray-700"><b>Created At:</b> {new Date(selectedJob.createdAt).toLocaleString()}</div>
-            {activeTab === 'pending' && (
-              <div className="flex gap-3 mt-6">
-                <button onClick={() => handleAction('approved')} disabled={actionLoading} className="px-4 py-2 rounded bg-green-600 text-white font-semibold hover:bg-green-700 disabled:opacity-50">Accept</button>
-                <button onClick={() => handleAction('rejected')} disabled={actionLoading} className="px-4 py-2 rounded bg-red-600 text-white font-semibold hover:bg-red-700 disabled:opacity-50">Reject</button>
-                <button onClick={handleCloseModal} className="px-4 py-2 rounded bg-gray-200 text-gray-700 font-semibold hover:bg-gray-300">Close</button>
+      {modalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-1 sm:p-2 z-50">
+          <div className="bg-white rounded-2xl w-full max-w-sm sm:max-w-md md:max-w-lg max-h-[80vh] overflow-y-auto scrollbar-hide p-3 relative flex flex-col" style={{ scrollbarWidth: 'none' }}>
+            {/* Header */}
+            <div className="flex items-center justify-between mb-2">
+              <h2 className="text-base sm:text-lg font-bold text-gray-900">Job Details</h2>
+              <button onClick={handleCloseModal} className="text-gray-400 hover:text-gray-600 transition-colors">
+                <XMarkIcon className="h-6 w-6" />
+              </button>
+            </div>
+            {/* Company Logo/Icon + Job Type Badge */}
+            <div className="relative mb-2">
+              <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium ${selectedJob?.type === 'internship' ? 'bg-green-100 text-green-800' : 'bg-indigo-100 text-indigo-800'}`}>{selectedJob?.type === 'internship' ? 'Internship' : 'Job'}</span>
+            </div>
+            {/* Main Content */}
+            {modalLoading ? (
+              <div className="flex flex-col items-center justify-center py-16">
+                <div className="animate-spin rounded-full h-14 w-14 border-b-2 border-indigo-600 mb-6"></div>
+                <div className="text-gray-500 text-lg">Loading job details...</div>
               </div>
-            )}
-            {(activeTab === 'approved' || activeTab === 'rejected') && (
-              <div className="flex gap-3 mt-6">
-                <button onClick={handleCloseModal} className="px-4 py-2 rounded bg-gray-200 text-gray-700 font-semibold hover:bg-gray-300">Close</button>
-              </div>
+            ) : selectedJob ? (
+              <>
+                {/* Job Title */}
+                <h3 className="font-bold text-gray-900 mb-2 line-clamp-2 text-xl sm:text-2xl leading-tight">{selectedJob.jobTitle}</h3>
+                {/* Meta Section - now includes Job Title */}
+                <div className="mb-3 space-y-1">
+                  <div className="flex items-center text-xs sm:text-sm text-gray-500">
+                    <svg className="h-4 w-4 mr-2 text-indigo-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 01-8 0" /><path strokeLinecap="round" strokeLinejoin="round" d="M12 3v4" /></svg>
+                    <span className="font-semibold mr-1">Job Title:</span>
+                    <span>{selectedJob.jobTitle}</span>
+                  </div>
+                  {/* Company Name */}
+                  <div className="flex items-center text-sm text-gray-500 mb-1">
+                    <svg className="h-4 w-4 mr-2 text-indigo-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17 8h2a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V10a2 2 0 012-2h2m4-4h4a2 2 0 012 2v4H7V6a2 2 0 012-2z" /></svg>
+                    <span>Company:</span>
+                    <span className="ml-1">{selectedJob.companyName}</span>
+                  </div>
+                  {selectedJob.deadline && (
+                    <div className="flex items-center text-xs sm:text-sm text-gray-500">
+                      <svg className="h-4 w-4 mr-2 text-red-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                      <span className="font-semibold mr-1">Deadline:</span>
+                      <span>{selectedJob.deadline ? new Date(selectedJob.deadline).toLocaleDateString() : 'N/A'}</span>
+                    </div>
+                  )}
+                  <div className="flex items-center text-xs sm:text-sm text-gray-500">
+                    <svg className="h-4 w-4 mr-2 text-indigo-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17 8h2a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V10a2 2 0 012-2h2m4-4h4a2 2 0 012 2v4H7V6a2 2 0 012-2z" /></svg>
+                    <span className="font-semibold mr-1">Type:</span>
+                    <span>{selectedJob.registrationType}</span>
+                  </div>
+                  {selectedJob.salary && (
+                    <div className="flex items-center text-xs sm:text-sm text-gray-500">
+                      <svg className="h-4 w-4 mr-2 text-green-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 0V4m0 16v-4" /></svg>
+                      <span className="font-semibold mr-1">Salary:</span>
+                      <span>{selectedJob.salary}</span>
+                    </div>
+                  )}
+                  {selectedJob.location && (
+                    <div className="flex items-center text-xs sm:text-sm text-gray-500">
+                      <svg className="h-4 w-4 mr-2 text-blue-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 11c1.657 0 3-1.343 3-3S13.657 5 12 5 9 6.343 9 8s1.343 3 3 3zm0 0c-4.418 0-8 2.239-8 5v2a2 2 0 002 2h12a2 2 0 002-2v-2c0-2.761-3.582-5-8-5z" /></svg>
+                      <span className="font-semibold mr-1">Location:</span>
+                      <span>{selectedJob.location}</span>
+                    </div>
+                  )}
+                </div>
+                {/* Description & Details */}
+                {selectedJob.description && (
+                  <div className="mb-3 w-full">
+                    <h4 className="text-base font-semibold text-gray-900 mb-1">Description</h4>
+                    <div className="bg-gray-50 rounded-lg p-3 text-gray-700 text-xs sm:text-sm leading-relaxed whitespace-pre-line break-words">
+                      {selectedJob.description}
+                    </div>
+                  </div>
+                )}
+                {selectedJob.requirements && (
+                  <div className="mb-3 w-full">
+                    <h4 className="text-base font-semibold text-gray-900 mb-1">Requirements</h4>
+                    <div className="bg-gray-50 rounded-lg p-3 text-gray-700 text-xs sm:text-sm leading-relaxed whitespace-pre-line break-words">
+                      {selectedJob.requirements}
+                    </div>
+                  </div>
+                )}
+                {selectedJob.responsibilities && (
+                  <div className="mb-3 w-full">
+                    <h4 className="text-base font-semibold text-gray-900 mb-1">Responsibilities</h4>
+                    <div className="bg-gray-50 rounded-lg p-3 text-gray-700 text-xs sm:text-sm leading-relaxed whitespace-pre-line break-words">
+                      {selectedJob.responsibilities}
+                    </div>
+                  </div>
+                )}
+                {selectedJob.qualifications && (
+                  <div className="mb-3 w-full">
+                    <h4 className="text-base font-semibold text-gray-900 mb-1">Qualifications</h4>
+                    <div className="bg-gray-50 rounded-lg p-3 text-gray-700 text-xs sm:text-sm leading-relaxed whitespace-pre-line break-words">
+                      {selectedJob.qualifications}
+                    </div>
+                  </div>
+                )}
+                {/* Creator Info */}
+                <div className="mt-4 p-4 bg-gray-50 border rounded-xl">
+                  <h3 className="font-semibold text-gray-800 mb-2">Creator Info</h3>
+                  <div className="flex items-center gap-3">
+                    {selectedJob.user?.photoUrl && <img src={selectedJob.user.photoUrl} alt={selectedJob.user.fullName} className="w-10 h-10 rounded-full object-cover border" />}
+                    <div>
+                      <div className="font-medium text-gray-900">{selectedJob.user?.fullName}</div>
+                      <div className="text-xs text-gray-500">{selectedJob.user?.alumni?.companyName} • {selectedJob.user?.alumni?.currentJobTitle}</div>
+                      {selectedJob.user?.email && <div className="text-xs text-gray-500">{selectedJob.user.email}</div>}
+                      {selectedJob.user?.phoneNumber && <div className="text-xs text-gray-500">{selectedJob.user.phoneNumber}</div>}
+                    </div>
+                  </div>
+                </div>
+                {/* Action Buttons */}
+                <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-end">
+                  {activeTab === 'pending' && (
+                    <>
+                      <button onClick={() => handleAction('approved')} disabled={actionLoading} className="w-full sm:w-auto px-5 py-2 rounded-full bg-green-600 text-white font-semibold hover:bg-green-700 disabled:opacity-50 transition text-base">Accept</button>
+                      <button onClick={() => handleAction('rejected')} disabled={actionLoading} className="w-full sm:w-auto px-5 py-2 rounded-full bg-red-600 text-white font-semibold hover:bg-red-700 disabled:opacity-50 transition text-base">Reject</button>
+                    </>
+                  )}
+                  <button onClick={handleCloseModal} className="w-full sm:w-auto px-5 py-2 rounded-full bg-gray-200 text-gray-700 font-semibold hover:bg-gray-300 transition text-base">Close</button>
+                </div>
+              </>
+            ) : (
+              <div className="text-center text-gray-500 py-10">Job details not found.</div>
             )}
           </div>
         </div>
@@ -577,7 +679,7 @@ const UserVerificationTable = ({ users, onVerify, onReject }) => {
           <button
             key={status}
             onClick={() => setFilterStatus(status)}
-            className={`px-4 py-2 rounded-xl font-medium transition-colors ${
+            className={`px-4 py-2 rounded-lg font-semibold shadow-sm transition-all ${
               filterStatus === status
                 ? "bg-indigo-600 text-white hover:bg-indigo-700"
                 : "bg-gray-100 text-gray-700 hover:bg-gray-200"
