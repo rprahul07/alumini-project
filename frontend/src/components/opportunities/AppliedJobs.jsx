@@ -1,94 +1,78 @@
-import React, { useState } from 'react';
-import JobCard from './JobCard';
+import React, { useEffect, useState } from 'react';
 import JobDetailsModal from './JobDetailsModal';
-
-// Mock applied jobs data
-const mockAppliedJobs = [
-  {
-    id: 1,
-    jobTitle: 'Frontend Developer',
-    companyName: 'Tech Solutions',
-    description: 'Work on modern web apps using React.',
-    deadline: '2024-08-01',
-    registrationType: 'internal',
-    status: 'pending',
-  },
-  {
-    id: 2,
-    jobTitle: 'Backend Engineer',
-    companyName: 'Cloudify',
-    description: 'Build scalable APIs and microservices.',
-    deadline: '2024-08-10',
-    registrationType: 'external',
-    registrationLink: 'https://company.com/apply',
-    status: 'accepted',
-  },
-  {
-    id: 3,
-    jobTitle: 'UI Designer',
-    companyName: 'Designify',
-    description: 'Design beautiful user interfaces.',
-    deadline: '2024-08-15',
-    registrationType: 'internal',
-    status: 'rejected',
-  },
-];
+import axios from '../../config/axios';
 
 const AppliedJobs = () => {
-  const [subTab, setSubTab] = useState('pending');
+  const [appliedJobs, setAppliedJobs] = useState([]);
   const [selectedJob, setSelectedJob] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const filteredJobs = mockAppliedJobs.filter(job => job.status === subTab);
+  useEffect(() => {
+    // Fetch applied jobs from backend
+    const fetchAppliedJobs = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const res = await axios.get('/api/job/selfapplied/get');
+        setAppliedJobs(res.data.data || []);
+      } catch (err) {
+        setError('Failed to load applied jobs.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAppliedJobs();
+  }, []);
 
-  const handleCardClick = (job) => {
+  const handleView = (job) => {
     setSelectedJob(job);
     setShowModal(true);
   };
 
   return (
     <div className="flex flex-col h-full">
-      {/* Sub-tabs */}
-      <div className="flex flex-row gap-2 mb-4">
-        <button
-          className={`px-3 py-1 rounded-full text-xs font-semibold border transition-colors ${subTab === 'pending' ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-indigo-600 border-indigo-200 hover:bg-indigo-50'}`}
-          onClick={() => setSubTab('pending')}
-        >
-          Pending
-        </button>
-        <button
-          className={`px-3 py-1 rounded-full text-xs font-semibold border transition-colors ${subTab === 'accepted' ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-indigo-600 border-indigo-200 hover:bg-indigo-50'}`}
-          onClick={() => setSubTab('accepted')}
-        >
-          Accepted
-        </button>
-        <button
-          className={`px-3 py-1 rounded-full text-xs font-semibold border transition-colors ${subTab === 'rejected' ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-indigo-600 border-indigo-200 hover:bg-indigo-50'}`}
-          onClick={() => setSubTab('rejected')}
-        >
-          Rejected
-        </button>
-      </div>
-      {/* Sub-tab Content */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 flex-1">
-        {filteredJobs.length === 0 ? (
-          <div className="col-span-full text-center text-gray-400">No jobs in this category.</div>
-        ) : (
-          filteredJobs.map(job => (
-            <JobCard
-              key={job.id}
-              job={job}
-              onClick={() => handleCardClick(job)}
-              onApply={() => handleCardClick(job)}
-            />
-          ))
-        )}
-      </div>
+      <h3 className="text-lg font-semibold mb-4 text-gray-800">Applied Jobs</h3>
+      {loading ? (
+        <div className="text-center text-gray-400">Loading...</div>
+      ) : error ? (
+        <div className="text-center text-red-500">{error}</div>
+      ) : appliedJobs.length === 0 ? (
+        <div className="text-center text-gray-400">You have not applied to any jobs yet.</div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="min-w-full bg-white border rounded-lg">
+            <thead>
+              <tr>
+                <th className="py-2 px-4 border-b text-left text-xs font-semibold text-gray-600">Job Title</th>
+                <th className="py-2 px-4 border-b text-left text-xs font-semibold text-gray-600">Company</th>
+                <th className="py-2 px-4 border-b"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {appliedJobs.map((job) => (
+                <tr key={job.id} className="hover:bg-gray-50">
+                  <td className="py-2 px-4 border-b">{job.jobTitle || '-'}</td>
+                  <td className="py-2 px-4 border-b">{job.companyName || '-'}</td>
+                  <td className="py-2 px-4 border-b">
+                    <button
+                      className="px-3 py-1 rounded bg-indigo-600 text-white text-xs font-semibold hover:bg-indigo-700"
+                      onClick={() => handleView(job)}
+                    >
+                      View
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
       <JobDetailsModal
         job={selectedJob}
         open={showModal}
         onClose={() => setShowModal(false)}
-        onApply={() => alert('Apply logic/modal goes here')}
       />
     </div>
   );
