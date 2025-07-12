@@ -510,6 +510,8 @@ export const updateAlumniSelf = async (req, res) => {
       phoneNumber,
       department,
       bio,
+      skills,
+      resumeUrl,
       linkedinUrl,
       twitterUrl,
       githubUrl,
@@ -561,6 +563,9 @@ export const updateAlumniSelf = async (req, res) => {
     if (twitterUrl !== undefined) userUpdateData.twitterUrl = twitterUrl;
     if (githubUrl !== undefined) userUpdateData.githubUrl = githubUrl;
     if (newPhotoUrl) userUpdateData.photoUrl = newPhotoUrl;
+    if (resumeUrl !== undefined) userUpdateData.resumeUrl = resumeUrl;
+    if (skills !== undefined) userUpdateData.skills = skills;
+
     if (workExperience !== undefined) {
       if (!Array.isArray(workExperience)) {
         return res.status(400).json({

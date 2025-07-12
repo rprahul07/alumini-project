@@ -511,6 +511,7 @@ export const updateStudentById = async (req, res) => {
 };
 
 export const updateMyStudentProfile = async (req, res) => {
+  
   try {
     const userId = req.user.id;
 
@@ -520,6 +521,8 @@ export const updateMyStudentProfile = async (req, res) => {
       phoneNumber,
       department,
       bio,
+      skills,
+      resumeUrl,
       linkedinUrl,
       twitterUrl,
       githubUrl,
@@ -527,6 +530,7 @@ export const updateMyStudentProfile = async (req, res) => {
       rollNumber,
       graduationYear,
     } = req.body;
+
 
     // Check if user exists and is a student
     const user = await prisma.user.findUnique({
@@ -571,7 +575,10 @@ export const updateMyStudentProfile = async (req, res) => {
     if (newPhotoUrl) userUpdateData.photoUrl = newPhotoUrl;
     if (twitterUrl !== undefined) userUpdateData.twitterUrl = twitterUrl;
     if (githubUrl !== undefined) userUpdateData.githubUrl = githubUrl;
-
+    if (resumeUrl !== undefined) userUpdateData.resumeUrl = resumeUrl;
+    if (skills !== undefined) userUpdateData.skills = skills;
+    console.log(skills);
+    console.log(userUpdateData.skills);
     // Prepare update data for Student table
     const studentUpdateData = {};
     if (currentSemester !== undefined) {
