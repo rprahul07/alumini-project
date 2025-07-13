@@ -95,7 +95,7 @@ const createJob = async (req, res) => {
 
 const getAllJobs = async (req, res) => {
   try {
-    const { page = 1, limit = 10, search = "", jobType } = req.query;
+    const { page = 1, limit = 10, search = "", jobType, sortBy = "createdAt", sortOrder = "desc" } = req.query;
 
     const pageNumber = parseInt(page);
     const pageSize = parseInt(limit);
@@ -116,6 +116,24 @@ const getAllJobs = async (req, res) => {
                 mode: "insensitive",
               },
             },
+            {
+              user: {
+                fullName: {
+                  contains: search,
+                  mode: "insensitive",
+                },
+              },
+            },
+            {
+              user: {
+                alumni: {
+                  currentJobTitle: {
+                    contains: search,
+                    mode: "insensitive",
+                  },
+                },
+              },
+            },
           ],
         }
       : {};
@@ -131,11 +149,18 @@ const getAllJobs = async (req, res) => {
       ...jobTypeFilter,
     };
 
+    // Validate and set sort parameters
+    const validSortFields = ["createdAt", "jobTitle", "companyName", "deadline"];
+    const validSortOrders = ["asc", "desc"];
+    
+    const finalSortBy = validSortFields.includes(sortBy) ? sortBy : "createdAt";
+    const finalSortOrder = validSortOrders.includes(sortOrder) ? sortOrder : "desc";
+
     const [totalJobs, jobs] = await Promise.all([
       prisma.job.count({ where: whereClause }),
       prisma.job.findMany({
         where: whereClause,
-        orderBy: { createdAt: "desc" },
+        orderBy: { [finalSortBy]: finalSortOrder },
         skip,
         take: pageSize,
         include: {
@@ -143,10 +168,14 @@ const getAllJobs = async (req, res) => {
             select: {
               id: true,
               fullName: true,
-              email: true,
               role: true,
-              photoUrl: true,
               department: true,
+              alumni: {
+                select: {
+                  companyName: true,
+                  currentJobTitle: true,
+                },
+              },
             },
           },
         },
@@ -890,7 +919,7 @@ export const getJobApplications = async (req, res) => {
     if (userIds.length === 0) {
       return res.status(200).json({ success: true, data: [] });
     }
-    // Fetch user profiles (alumni or student)
+    // Fetch user profiles (alumni or student) with all details
     const users = await prisma.user.findMany({
       where: { id: { in: userIds } },
       select: {
@@ -899,9 +928,17 @@ export const getJobApplications = async (req, res) => {
         email: true,
         phoneNumber: true,
         linkedinUrl: true,
+        githubUrl: true,
+        twitterUrl: true,
         highestQualification: true,
         photoUrl: true,
         role: true,
+        department: true,
+        bio: true,
+        skills: true,
+        resumeUrl: true,
+        totalExperience: true,
+        currentJobTitle: true,
         alumni: {
           select: {
             currentJobTitle: true,
@@ -915,7 +952,11 @@ export const getJobApplications = async (req, res) => {
         },
         student: {
           select: {
+            currentSemester: true,
             graduationYear: true,
+            rollNumber: true,
+            batch_startYear: true,
+            batch_endYear: true,
           },
         },
       },
@@ -926,16 +967,27 @@ export const getJobApplications = async (req, res) => {
       name: u.fullName,
       email: u.email,
       phone: u.phoneNumber,
+      department: u.department,
+      bio: u.bio,
+      skills: u.skills || [],
       highestQualification: u.highestQualification,
       passoutYear: u.alumni?.graduationYear || u.student?.graduationYear || null,
-      currentJobTitle: u.alumni?.currentJobTitle || '',
+      currentJobTitle: u.alumni?.currentJobTitle || u.currentJobTitle || '',
       companyName: u.alumni?.companyName || '',
       companyRole: u.alumni?.company_role || '',
       course: u.alumni?.course || '',
       linkedInProfile: u.linkedinUrl,
-      cvUrl: u.resumeUrl || '', // Use resumeUrl from User model
+      githubProfile: u.githubUrl,
+      twitterProfile: u.twitterUrl,
+      cvUrl: u.resumeUrl || '',
       photoUrl: u.photoUrl,
       role: u.role,
+      totalExperience: u.totalExperience,
+      // Student specific fields
+      currentSemester: u.student?.currentSemester,
+      rollNumber: u.student?.rollNumber,
+      batchStartYear: u.student?.batch_startYear,
+      batchEndYear: u.student?.batch_endYear,
     }));
     return res.status(200).json({ success: true, data: applicants });
   } catch (error) {

@@ -296,7 +296,7 @@ const AlumniDashboard = () => {
                   <MyActivityCard
                     features={[
                       { key: 'mentorship', label: 'Mentorship', component: <MentorshipRequests showAlert={showAlert} jobs={jobs} /> },
-                      { key: 'opportunities', label: 'Opportunities', component: <Opportunities /> },
+                      { key: 'opportunities', label: 'Opportunities', component: <Opportunities showAlert={showAlert} /> },
                       { key: 'events', label: 'Events', component: <Events /> },
                     ]}
                     defaultTab="mentorship"

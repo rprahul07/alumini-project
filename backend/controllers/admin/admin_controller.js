@@ -49,7 +49,7 @@ export const getAdminProfile = async (req, res) => {
       success: true,
       data: {
         id: user.id,
-        name: user.fullName,
+        fullName: user.fullName,
         email: user.email,
         role: user.role,
         phoneNumber: user.phoneNumber,
@@ -59,6 +59,7 @@ export const getAdminProfile = async (req, res) => {
         linkedinUrl: user.linkedinUrl,
         twitterUrl: user.twitterUrl,
         githubUrl: user.githubUrl,
+
         createdAt: user.createdAt,
       }
     });

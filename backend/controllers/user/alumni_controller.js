@@ -503,6 +503,11 @@ export const updateAlumniById = async (req, res) => {
 export const updateAlumniSelf = async (req, res) => {
   try {
     const userId = req.user.id;
+    console.log('🔧 Alumni Profile Update - User ID:', userId);
+    console.log('📝 Request Body:', req.body);
+    console.log('📝 Skills from request:', req.body.skills);
+    console.log('📝 Skills type:', typeof req.body.skills);
+    console.log('📝 Skills is array:', Array.isArray(req.body.skills));
 
     const {
       fullName,
@@ -515,6 +520,8 @@ export const updateAlumniSelf = async (req, res) => {
       linkedinUrl,
       twitterUrl,
       githubUrl,
+      highestQualification,
+      totalExperience,
       graduationYear,
       course,
       currentJobTitle,
@@ -522,6 +529,35 @@ export const updateAlumniSelf = async (req, res) => {
       company_role,
       workExperience,
     } = req.body;
+
+    // Handle skills from FormData (multiple fields with same name)
+    let skillsArray = skills;
+    if (skills && !Array.isArray(skills)) {
+      // If skills is not an array, it might be a single value from FormData
+      skillsArray = [skills];
+    }
+    
+    // Validate skills array
+    if (skillsArray && !Array.isArray(skillsArray)) {
+      console.log('❌ Invalid skills format:', skillsArray);
+      return res.status(400).json({
+        success: false,
+        message: "Skills must be an array",
+      });
+    }
+    
+    console.log('✅ Skills validation passed:', skillsArray);
+
+    // Validate resumeUrl if provided
+    if (resumeUrl && typeof resumeUrl !== 'string') {
+      console.log('❌ Invalid resumeUrl format:', resumeUrl);
+      return res.status(400).json({
+        success: false,
+        message: "Resume URL must be a string",
+      });
+    }
+
+    console.log('✅ Validation passed - Skills:', skills, 'ResumeUrl:', resumeUrl);
 
     const user = await prisma.user.findUnique({
       where: { id: userId },
@@ -564,7 +600,11 @@ export const updateAlumniSelf = async (req, res) => {
     if (githubUrl !== undefined) userUpdateData.githubUrl = githubUrl;
     if (newPhotoUrl) userUpdateData.photoUrl = newPhotoUrl;
     if (resumeUrl !== undefined) userUpdateData.resumeUrl = resumeUrl;
-    if (skills !== undefined) userUpdateData.skills = skills;
+    if (skillsArray !== undefined) userUpdateData.skills = skillsArray;
+    if (highestQualification !== undefined) userUpdateData.highestQualification = highestQualification;
+    if (totalExperience !== undefined) userUpdateData.totalExperience = parseInt(totalExperience) || 0;
+    console.log('📋 Skills to update:', skillsArray);
+    console.log('📋 User update data:', userUpdateData);
 
     if (workExperience !== undefined) {
       if (!Array.isArray(workExperience)) {
@@ -624,6 +664,10 @@ export const updateAlumniSelf = async (req, res) => {
           twitterUrl: true,
           githubUrl: true,
           workExperience: true,
+          skills: true,
+          resumeUrl: true,
+          highestQualification: true,
+          totalExperience: true,
           alumni: {
             select: {
               id: true,
@@ -638,6 +682,7 @@ export const updateAlumniSelf = async (req, res) => {
       });
     });
 
+    console.log('✅ Updated alumni data:', updatedUser);
     res.status(200).json({
       success: true,
       message: "Profile updated successfully",
@@ -688,6 +733,8 @@ export const getAlumniSelf = async (req, res) => {
         twitterUrl: true,
         githubUrl: true,
         workExperience: true,
+        skills: true,
+        resumeUrl: true,
         role: true,
         alumni: {
           select: {

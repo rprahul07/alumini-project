@@ -19,11 +19,16 @@ async function ensureContainer() {
 }
 
 export const resumableUploadMiddleware = async (req, res, next) => {
+  console.log('📤 Resume upload request received');
+  console.log('📋 Request body:', req.body);
+  console.log('📁 Files:', req.files);
+  
   let { filename, chunkIndex, totalChunks } = req.body;
   let { fileId } = req.body;
   const chunk = req.files?.chunk?.[0];
 
   if (!chunk) {
+      console.log('❌ No file chunk provided');
       return res.status(400).json({ message: "No file chunk provided." });
   }
 
@@ -101,7 +106,12 @@ export const resumableUploadMiddleware = async (req, res, next) => {
       });
 
       const fileUrl = `${BLOB_URL}/${CONTAINER_NAME}/${fileId}-${filename}`;
-      return res.status(200).json({ message: "File uploaded successfully", fileUrl });
+      console.log('✅ File uploaded successfully:', fileUrl);
+      return res.status(200).json({ 
+        success: true,
+        message: "File uploaded successfully", 
+        url: fileUrl 
+      });
 
     }
 

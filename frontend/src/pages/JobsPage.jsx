@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
+import { ToastContainer } from 'react-toastify';
 import Navbar from '../components/Navbar';
 import JobGrid from '../components/opportunities/JobGrid';
 import JobSearch from '../components/opportunities/JobSearch';
-import JobFilters from '../components/opportunities/JobFilters';
+import FilterButton from '../components/opportunities/FilterButton';
+import ActiveFilters from '../components/opportunities/ActiveFilters';
 import JobPagination from '../components/opportunities/JobPagination';
 import JobDetailsModal from '../components/opportunities/JobDetailsModal';
-import ApplyJobModal from '../components/opportunities/ApplyJobModal';
+import SimpleApplyModal from '../components/opportunities/SimpleApplyModal';
 import axios from '../config/axios';
 import { useAuth } from '../contexts/AuthContext';
+import useAlert from '../hooks/useAlert';
 
 const JobsPage = () => {
   // State for jobs and UI
@@ -27,6 +30,7 @@ const JobsPage = () => {
   const [showApplyModal, setShowApplyModal] = useState(false);
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const { user } = useAuth();
+  const { showAlert } = useAlert();
   const [appliedJobIds, setAppliedJobIds] = useState(new Set());
 
   // Fetch jobs from API
@@ -38,7 +42,9 @@ const JobsPage = () => {
         page: currentPage,
         limit: 12,
         search: searchTerm,
-        jobType: selectedType, // use jobType as expected by backend
+        jobType: selectedType,
+        sortBy: sortBy,
+        sortOrder: sortOrder,
       };
       // Remove empty params
       Object.keys(params).forEach(key => {
@@ -85,6 +91,17 @@ const JobsPage = () => {
     setSortOrder(sortOrderValue);
     setCurrentPage(1);
   };
+  
+  const handleClearType = () => {
+    setSelectedType('');
+    setCurrentPage(1);
+  };
+  
+  const handleClearSort = () => {
+    setSortBy('createdAt');
+    setSortOrder('desc');
+    setCurrentPage(1);
+  };
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
@@ -110,26 +127,37 @@ const JobsPage = () => {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-gray-50 flex flex-col">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 w-full flex-1 flex flex-col">
+      <div className="min-h-screen bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           {/* Search and Filters */}
-          <div className="mb-6 w-full flex flex-col gap-2 sm:flex-row sm:gap-2 items-center">
-            <div className="flex w-full gap-2">
-              <div className="relative flex-1">
-                <JobSearch onSearch={handleSearch} />
-              </div>
-              <JobFilters selectedType={selectedType} onFilterChange={handleFilterChange} isMobile={false} />
-            </div>
+          <div className="mb-6 flex flex-row gap-2 items-center w-full">
+            <JobSearch onSearch={handleSearch} isLoading={loading} />
+            <FilterButton 
+              selectedType={selectedType}
+              sortBy={sortBy}
+              sortOrder={sortOrder}
+              onFilterChange={handleFilterChange}
+              onSortChange={handleSortChange}
+            />
           </div>
 
-          {/* Jobs Grid - Flex-1 to take remaining space */}
-          <div className="flex-1 flex flex-col">
+          {/* Active Filters */}
+          <ActiveFilters
+            selectedType={selectedType}
+            sortBy={sortBy}
+            sortOrder={sortOrder}
+            onClearType={handleClearType}
+            onClearSort={handleClearSort}
+          />
+
+          {/* Jobs Grid */}
+          <div className="mt-8">
             {loading ? (
-              <div className="flex-1 flex justify-center items-center py-20">
+              <div className="flex justify-center items-center py-20">
                 <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-indigo-600"></div>
               </div>
             ) : error ? (
-              <div className="flex-1 flex flex-col justify-center items-center py-20">
+              <div className="flex flex-col items-center py-20">
                 <div className="text-red-600 text-lg font-semibold mb-4">{error}</div>
                 <button
                   onClick={fetchJobs}
@@ -139,15 +167,13 @@ const JobsPage = () => {
                 </button>
               </div>
             ) : jobs.length === 0 ? (
-              <div className="flex-1 flex justify-center items-center">
-                <div className="text-center text-gray-500 py-20 text-lg font-medium">
-                  No jobs found. Try adjusting your filters or search.
-                </div>
+              <div className="text-center text-gray-500 py-20 text-lg font-medium">
+                No jobs found. Try adjusting your filters or search.
               </div>
             ) : (
               <>
                 <JobGrid jobs={jobs} user={user} appliedJobIds={appliedJobIds} onJobClick={handleJobClick} onApply={handleApply} />
-                <div className="mt-10 flex-1 flex flex-col justify-end">
+                <div className="mt-10">
                   <JobPagination
                     currentPage={currentPage}
                     totalPages={totalPages}
@@ -165,14 +191,27 @@ const JobsPage = () => {
         onClose={() => setShowModal(false)}
         onApply={() => { setShowModal(false); setShowApplyModal(true); }}
       />
-      <ApplyJobModal
+      <SimpleApplyModal
         open={showApplyModal}
         onClose={() => setShowApplyModal(false)}
         job={selectedJob}
+        showAlert={showAlert}
         onSuccess={() => {
           setShowApplyModal(false);
           refreshJobsAndApplied();
         }}
+      />
+      
+      {/* Toast Container for Alerts */}
+      <ToastContainer 
+        position="top-right" 
+        autoClose={4000} 
+        hideProgressBar={false} 
+        newestOnTop 
+        closeOnClick 
+        pauseOnFocusLoss 
+        draggable 
+        pauseOnHover 
       />
     </>
   );

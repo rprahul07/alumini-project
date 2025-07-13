@@ -1,26 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
-const AlumniSearch = ({ onSearch, isLoading = false }) => {
-  const [searchTerm, setSearchTerm] = useState('');
+const StudentSearch = ({ searchTerm, onSearchChange, isLoading = false }) => {
+  const [localSearchTerm, setLocalSearchTerm] = useState(searchTerm);
+
+  useEffect(() => {
+    setLocalSearchTerm(searchTerm);
+  }, [searchTerm]);
 
   // Debounce search to avoid too many API calls
   useEffect(() => {
     const timer = setTimeout(() => {
-      onSearch(searchTerm);
+      onSearchChange(localSearchTerm);
     }, 500); // Wait 500ms after user stops typing
 
     return () => clearTimeout(timer);
-  }, [searchTerm, onSearch]);
+  }, [localSearchTerm, onSearchChange]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSearch(searchTerm);
+    onSearchChange(localSearchTerm);
   };
 
   const handleClear = () => {
-    setSearchTerm('');
-    onSearch('');
+    setLocalSearchTerm('');
+    onSearchChange('');
   };
 
   return (
@@ -29,13 +33,13 @@ const AlumniSearch = ({ onSearch, isLoading = false }) => {
         <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
         <input
           type="text"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="Search alumni by name, company, or role..."
+          value={localSearchTerm}
+          onChange={(e) => setLocalSearchTerm(e.target.value)}
+          placeholder="Search students by name or skills..."
           className="w-full pl-10 pr-10 py-2 border-2 border-indigo-400 bg-white/60 backdrop-blur text-sm text-gray-700 placeholder-gray-500 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all"
           disabled={isLoading}
         />
-        {searchTerm && (
+        {localSearchTerm && (
           <button
             type="button"
             onClick={handleClear}
@@ -49,6 +53,4 @@ const AlumniSearch = ({ onSearch, isLoading = false }) => {
   );
 };
 
-export default AlumniSearch; 
- 
- 
+export default StudentSearch; 

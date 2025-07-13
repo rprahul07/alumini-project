@@ -3,8 +3,10 @@ import { useAuth } from '../contexts/AuthContext';
 import StudentGrid from '../components/StudentGrid';
 import EventPagination from '../components/EventPagination';
 import Navbar from '../components/Navbar';
+import StudentSearch from '../components/StudentSearch';
+import StudentFilterButton from '../components/StudentFilterButton';
+import StudentActiveFilters from '../components/StudentActiveFilters';
 import axios from '../config/axios';
-import { MagnifyingGlassIcon, AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
 import { useNavigate } from 'react-router-dom';
 
 const StudentsPage = () => {
@@ -16,13 +18,8 @@ const StudentsPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedDepartment, setSelectedDepartment] = useState(''); // For future filter
-  // const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
-  const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
+  const [selectedDepartment, setSelectedDepartment] = useState('');
   const [selectedSemester, setSelectedSemester] = useState('');
-  // Add temp state for modal
-  const [tempDepartment, setTempDepartment] = useState('');
-  const [tempSemester, setTempSemester] = useState('');
 
   // Redirect if not logged in
   if (!user && !authLoading) {
@@ -30,20 +27,7 @@ const StudentsPage = () => {
     return null;
   }
 
-  const departmentOptions = [
-    { value: '', label: 'All Departments' },
-    { value: 'CSE', label: 'Computer Science Engineering' },
-    { value: 'MECH', label: 'Mechanical Engineering' },
-    { value: 'Civil', label: 'Civil Engineering' },
-    { value: 'EEE', label: 'Electrical & Electronics Engineering' },
-    { value: 'IT', label: 'Information Technology' },
-    { value: 'EC', label: 'Electronics & Communication' },
-    { value: 'MCA', label: 'Master of Computer Applications' }
-  ];
-  const semesterOptions = [
-    { value: '', label: 'All Semesters' },
-    ...Array.from({ length: 8 }, (_, i) => ({ value: (i + 1).toString(), label: `Semester ${i + 1}` }))
-  ];
+
 
   // Fetch students from API
   const fetchStudents = async () => {
@@ -79,25 +63,36 @@ const StudentsPage = () => {
     }
   }, [authLoading, currentPage, searchTerm, selectedDepartment, selectedSemester]);
 
-  // Debounced search (UI only, not functional until backend supports it)
-  useEffect(() => {
-    // No-op for now
-  }, [searchTerm]);
-
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
 
-  const handleSearch = (e) => {
-    setSearchTerm(e.target.value);
+  const handleSearchChange = (term) => {
+    setSearchTerm(term);
     setCurrentPage(1);
   };
 
-  // When opening modal, sync temp state
-  const openFilterModal = () => {
-    setTempDepartment(selectedDepartment);
-    setTempSemester(selectedSemester);
-    setIsFilterDrawerOpen(true);
+  const handleFilterChange = (filterType, value) => {
+    if (filterType === 'department') {
+      setSelectedDepartment(value);
+    } else if (filterType === 'semester') {
+      setSelectedSemester(value);
+    }
+    setCurrentPage(1);
+  };
+
+  const handleClearSearch = () => {
+    setSearchTerm('');
+    setCurrentPage(1);
+  };
+
+  const handleClearFilter = (filterType) => {
+    if (filterType === 'department') {
+      setSelectedDepartment('');
+    } else if (filterType === 'semester') {
+      setSelectedSemester('');
+    }
+    setCurrentPage(1);
   };
 
   return (
@@ -105,100 +100,28 @@ const StudentsPage = () => {
       <Navbar />
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          {/* Search and Filters - match EventsPage */}
+          {/* Search and Filters */}
           <div className="mb-6 flex flex-row gap-2 items-center w-full">
-            <div className="flex-1">
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  type="text"
-                  value={searchTerm}
-                  onChange={handleSearch}
-                  placeholder="Search students by name"
-                  className="block w-full pl-10 pr-3 py-2 border-2 border-white/40 rounded-full leading-5 bg-white/40 backdrop-blur-md placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 shadow-lg transition-all text-sm sm:text-base"
-                />
-              </div>
-            </div>
-            <button
-              onClick={openFilterModal}
-              className="rounded-full px-4 py-2 font-semibold border-2 border-indigo-400 bg-white/60 backdrop-blur text-base sm:text-sm text-indigo-700 hover:bg-white/80 shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 flex items-center justify-center"
-              aria-label="Show Filters"
-            >
-              <AdjustmentsHorizontalIcon className="h-5 w-5 mr-1" />
-              <span className="hidden sm:inline">Filters</span>
-            </button>
+            <StudentSearch
+              searchTerm={searchTerm}
+              onSearchChange={handleSearchChange}
+              isLoading={loading}
+            />
+            <StudentFilterButton
+              selectedDepartment={selectedDepartment}
+              selectedSemester={selectedSemester}
+              onFilterChange={handleFilterChange}
+            />
           </div>
-          {/* Filter Modal */}
-          {isFilterDrawerOpen && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-              <div className="bg-white/90 border border-indigo-100 rounded-2xl shadow-lg backdrop-blur w-full max-w-xs sm:max-w-md p-4 relative">
-                <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-xl font-bold text-black mb-4 text-center">Filter Students</h2>
-                  <button onClick={() => setIsFilterDrawerOpen(false)} className="rounded-full p-2 bg-white/70 border border-indigo-100 shadow hover:bg-white/90 transition-all">
-                    <svg className="h-6 w-6 text-indigo-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
-                  </button>
-                </div>
-                <div className="flex flex-col gap-3 mb-4">
-                  {/* Department Dropdown */}
-                  <div>
-                    <label htmlFor="modal-department" className="block text-sm font-bold text-black mb-1">Department</label>
-                    <div className="relative">
-                      <select
-                        id="modal-department"
-                        value={tempDepartment}
-                        onChange={e => setTempDepartment(e.target.value)}
-                        className="block w-full pl-3 pr-8 py-2 border-2 border-indigo-200 rounded-full bg-white/60 backdrop-blur shadow text-black focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all appearance-auto"
-                      >
-                        {departmentOptions.map((d) => (
-                          <option key={d.value} value={d.value}>{d.label}</option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-                  {/* Semester Dropdown */}
-                  <div>
-                    <label htmlFor="modal-semester" className="block text-sm font-bold text-black mb-1">Semester</label>
-                    <div className="relative">
-                      <select
-                        id="modal-semester"
-                        value={tempSemester}
-                        onChange={e => setTempSemester(e.target.value)}
-                        className="block w-full pl-3 pr-8 py-2 border-2 border-indigo-200 rounded-full bg-white/60 backdrop-blur shadow text-black focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all appearance-auto"
-                      >
-                        {semesterOptions.map((s) => (
-                          <option key={s.value} value={s.value}>{s.label}</option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex gap-2 mt-2">
-                  <button
-                    onClick={() => {
-                      setTempDepartment('');
-                      setTempSemester('');
-                    }}
-                    className="flex-1 rounded-full px-4 py-1.5 font-semibold bg-gray-100 text-black hover:bg-gray-200 transition"
-                  >
-                    Reset
-                  </button>
-                  <button
-                    onClick={() => {
-                      setSelectedDepartment(tempDepartment);
-                      setSelectedSemester(tempSemester);
-                      setCurrentPage(1);
-                      setIsFilterDrawerOpen(false);
-                    }}
-                    className="flex-1 rounded-full px-4 py-1.5 font-semibold bg-indigo-600 text-white hover:bg-indigo-700 shadow transition"
-                  >
-                    Apply Filters
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
+
+          {/* Active Filters */}
+          <StudentActiveFilters
+            searchTerm={searchTerm}
+            selectedDepartment={selectedDepartment}
+            selectedSemester={selectedSemester}
+            onClearSearch={handleClearSearch}
+            onClearFilter={handleClearFilter}
+          />
           <div className="mt-8">
             {authLoading || loading ? (
               <div className="flex justify-center items-center py-20">

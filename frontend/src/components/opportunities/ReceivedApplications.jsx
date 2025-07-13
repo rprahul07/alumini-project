@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import JobCard from './JobCard';
 import JobDetailsModal from './JobDetailsModal';
-import ApplicantProfileModal from './ApplicantProfileModal';
+import ApplicantDetailsModal from './ApplicantDetailsModal';
 
 // Mock received applications data
 const initialApplications = [
@@ -157,7 +157,7 @@ const ReceivedApplications = () => {
         onClose={() => setShowModal(false)}
         onApply={() => alert('View applicant profile logic/modal goes here')}
       />
-      <ApplicantProfileModal
+      <ApplicantDetailsModal
         open={showProfileModal}
         onClose={() => setShowProfileModal(false)}
         applicant={selectedApplicant}

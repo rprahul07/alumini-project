@@ -2,16 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import EventGrid from '../components/EventGrid';
 import EventSearch from '../components/EventSearch';
-import EventFilters from '../components/EventFilters';
+import EventFilterButton from '../components/EventFilterButton';
+import EventActiveFilters from '../components/EventActiveFilters';
 import EventPagination from '../components/EventPagination';
 import CreateEventButton from '../components/CreateEventButton';
 import MyEventsButton from '../components/MyEventsButton';
 import AdminEventProposals from '../components/AdminEventProposals';
 import AdminAllEventsButton from '../components/AdminAllEventsButton';
 import axios from '../config/axios';
-import { AdjustmentsHorizontalIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import Navbar from '../components/Navbar';
-import FilterModal from '../components/FilterModal';
 
 const EventsPage = () => {
   const { user, loading: authLoading } = useAuth();
@@ -21,11 +20,9 @@ const EventsPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedDepartment, setSelectedDepartment] = useState('');
-  const [selectedType, setSelectedType] = useState('');
+  const [selectedEventType, setSelectedEventType] = useState('');
   const [sortBy, setSortBy] = useState('createdAt');
   const [sortOrder, setSortOrder] = useState('desc');
-  const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
 
   // Fetch events from API
   const fetchEvents = async () => {
@@ -38,8 +35,7 @@ const EventsPage = () => {
         page: currentPage,
         limit: 12, // Show 12 events per page
         search: searchTerm,
-        department: selectedDepartment,
-        type: selectedType,
+        type: selectedEventType,
         sortBy: sortBy,
         sortOrder: sortOrder
       });
@@ -47,11 +43,11 @@ const EventsPage = () => {
       let endpoint;
       const role = user?.role?.toLowerCase();
       if (user && role) {
-        endpoint = (searchTerm || selectedDepartment || selectedType || sortBy !== 'createdAt' || sortOrder !== 'desc')
+        endpoint = (searchTerm || selectedEventType || sortBy !== 'createdAt' || sortOrder !== 'desc')
           ? `/api/${role}/event/search?${params}`
           : `/api/${role}/event/all?${params}`;
       } else {
-        endpoint = (searchTerm || selectedDepartment || selectedType || sortBy !== 'createdAt' || sortOrder !== 'desc')
+        endpoint = (searchTerm || selectedEventType || sortBy !== 'createdAt' || sortOrder !== 'desc')
           ? `/api/public/event/search?${params}`
           : `/api/public/event/all?${params}`;
       }
@@ -87,18 +83,19 @@ const EventsPage = () => {
     if (!authLoading) {
       fetchEvents();
     }
-  }, [authLoading, currentPage, searchTerm, selectedDepartment, selectedType, sortBy, sortOrder]);
+  }, [authLoading, currentPage, searchTerm, selectedEventType, sortBy, sortOrder]);
 
   // Handle search
-  const handleSearch = (term) => {
+  const handleSearchChange = (term) => {
     setSearchTerm(term);
     setCurrentPage(1); // Reset to first page when searching
   };
 
   // Handle filter changes
-  const handleFilterChange = (department, type) => {
-    setSelectedDepartment(department);
-    setSelectedType(type);
+  const handleFilterChange = (filterType, value) => {
+    if (filterType === 'eventType') {
+      setSelectedEventType(value);
+    }
     setCurrentPage(1); // Reset to first page when filtering
   };
 
@@ -112,6 +109,20 @@ const EventsPage = () => {
   // Handle page change
   const handlePageChange = (page) => {
     setCurrentPage(page);
+  };
+
+  // Handle clear search
+  const handleClearSearch = () => {
+    setSearchTerm('');
+    setCurrentPage(1);
+  };
+
+  // Handle clear filter
+  const handleClearFilter = (filterType) => {
+    if (filterType === 'eventType') {
+      setSelectedEventType('');
+    }
+    setCurrentPage(1);
   };
 
   return (
@@ -141,43 +152,28 @@ const EventsPage = () => {
         {/* Main Content */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           {/* Search and Filters */}
-          <div className="mb-6 flex flex-col gap-3">
-            <div className="flex flex-row gap-2 items-center">
-              <div className="flex-1">
-                <EventSearch onSearch={handleSearch} />
-              </div>
-              <button
-                onClick={() => setIsFilterDrawerOpen(true)}
-                className="rounded-full px-4 py-1.5 font-semibold flex items-center justify-center border-2 border-indigo-400 bg-white/60 backdrop-blur text-sm text-indigo-700 hover:bg-white/80 shadow-lg transition-all"
-                aria-label="Show Filters"
-              >
-                <AdjustmentsHorizontalIcon className="h-5 w-5 mr-1" />
-                <span className="hidden sm:inline">Filters</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Filter Modal/Drawer */}
-          {isFilterDrawerOpen && (
-            <FilterModal
-              open={isFilterDrawerOpen}
-              onClose={() => setIsFilterDrawerOpen(false)}
-              selectedDepartment={selectedDepartment}
-              selectedType={selectedType}
+          <div className="mb-6 flex flex-row gap-2 items-center w-full">
+            <EventSearch
+              searchTerm={searchTerm}
+              onSearchChange={handleSearchChange}
+              isLoading={loading}
+            />
+            <EventFilterButton
+              selectedEventType={selectedEventType}
               sortBy={sortBy}
               sortOrder={sortOrder}
-              onApply={(dep, type, sort, order) => {
-                handleFilterChange(dep, type);
-                handleSortChange(sort, order);
-                setIsFilterDrawerOpen(false);
-              }}
-              onReset={() => {
-                handleFilterChange('', '');
-                handleSortChange('createdAt', 'desc');
-                setIsFilterDrawerOpen(false);
-              }}
+              onFilterChange={handleFilterChange}
+              onSortChange={handleSortChange}
             />
-          )}
+          </div>
+
+          {/* Active Filters */}
+          <EventActiveFilters
+            searchTerm={searchTerm}
+            selectedEventType={selectedEventType}
+            onClearSearch={handleClearSearch}
+            onClearFilter={handleClearFilter}
+          />
 
           {/* Events Grid */}
           <div className="mt-8">
@@ -201,7 +197,7 @@ const EventsPage = () => {
               </div>
             ) : (
               <>
-                <EventGrid events={events} user={user} onEventUpdate={fetchEvents} />
+                <EventGrid events={events} />
                 <div className="mt-10">
                   <EventPagination 
                     currentPage={currentPage}
