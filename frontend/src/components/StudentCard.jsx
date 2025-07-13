@@ -12,7 +12,7 @@ const StudentCard = ({ student }) => {
   const photoUrl = student.photoUrl || (student.user && student.user.photoUrl) || '';
   
   // Get the correct student ID - now the backend provides userId
-  const studentId = student.userId || student.id || student.user?.id;
+  const studentId = student.id || student.user?.id;
 
   const handleCardClick = (e) => {
     if (e.target.closest('button')) return;

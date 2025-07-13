@@ -153,8 +153,7 @@ export const searchStudentsController = async (req, res) => {
 
     // Transform the data to flatten the structure
     const transformedProfiles = studentProfiles.map((student) => ({
-      id: student.user.id, // Add the user ID as 'id' for frontend compatibility
-      userId: student.user.id, // Keep userId for backward compatibility
+      id: student.user.id, // Use only 'id' for user ID
       name: student.user.fullName,
       photoUrl: student.user.photoUrl,
       department: student.user.department,

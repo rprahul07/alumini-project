@@ -503,11 +503,6 @@ export const updateAlumniById = async (req, res) => {
 export const updateAlumniSelf = async (req, res) => {
   try {
     const userId = req.user.id;
-    console.log('🔧 Alumni Profile Update - User ID:', userId);
-    console.log('📝 Request Body:', req.body);
-    console.log('📝 Skills from request:', req.body.skills);
-    console.log('📝 Skills type:', typeof req.body.skills);
-    console.log('📝 Skills is array:', Array.isArray(req.body.skills));
 
     const {
       fullName,
@@ -539,25 +534,21 @@ export const updateAlumniSelf = async (req, res) => {
     
     // Validate skills array
     if (skillsArray && !Array.isArray(skillsArray)) {
-      console.log('❌ Invalid skills format:', skillsArray);
       return res.status(400).json({
         success: false,
         message: "Skills must be an array",
       });
     }
     
-    console.log('✅ Skills validation passed:', skillsArray);
 
     // Validate resumeUrl if provided
     if (resumeUrl && typeof resumeUrl !== 'string') {
-      console.log('❌ Invalid resumeUrl format:', resumeUrl);
       return res.status(400).json({
         success: false,
         message: "Resume URL must be a string",
       });
     }
 
-    console.log('✅ Validation passed - Skills:', skills, 'ResumeUrl:', resumeUrl);
 
     const user = await prisma.user.findUnique({
       where: { id: userId },
@@ -603,8 +594,6 @@ export const updateAlumniSelf = async (req, res) => {
     if (skillsArray !== undefined) userUpdateData.skills = skillsArray;
     if (highestQualification !== undefined) userUpdateData.highestQualification = highestQualification;
     if (totalExperience !== undefined) userUpdateData.totalExperience = parseInt(totalExperience) || 0;
-    console.log('📋 Skills to update:', skillsArray);
-    console.log('📋 User update data:', userUpdateData);
 
     if (workExperience !== undefined) {
       if (!Array.isArray(workExperience)) {
@@ -682,7 +671,6 @@ export const updateAlumniSelf = async (req, res) => {
       });
     });
 
-    console.log('✅ Updated alumni data:', updatedUser);
     res.status(200).json({
       success: true,
       message: "Profile updated successfully",
@@ -821,7 +809,7 @@ export const getAlumniByTier = async (req, res) => {
   try {
     const { alumniId } = req.params;
     const userId = req.user.id;
-    console.log(req.user.role);
+
     if (!alumniId) {
       return res.status(400).json({
         success: false,
@@ -859,7 +847,6 @@ export const getAlumniByTier = async (req, res) => {
         message: "Alumni not found",
       });
     }
-    console.log(alumni.role);
     if (!alumni.alumni || alumni.role !== "alumni") {
       return res.status(404).json({
         success: false,

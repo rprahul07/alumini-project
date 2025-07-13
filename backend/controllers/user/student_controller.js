@@ -69,18 +69,14 @@ export const registerStudent = async (req, res) => {
       throw new AppError("Passwords don't match", 400);
     }
 
-    console.log("Validating password...");
     validatePassword(password);
 
-    console.log("Validating user data...");
     validateUserData(req.body, role);
 
-    console.log("Checking if email exists...");
     if (await checkEmailExists(req.body.email)) {
       throw new AppError("Email already exists", 409);
     }
 
-    console.log("Creating user...");
     const newStudent = await createStudent(req.body);
     generateTokenAndSetCookie(newStudent.id, ROLES.STUDENT, res);
 
@@ -519,12 +515,7 @@ export const updateMyStudentProfile = async (req, res) => {
   
   try {
     const userId = req.user.id;
-    console.log('🔧 Student Profile Update - User ID:', userId);
-    console.log('📝 Request Body:', req.body);
-    console.log('📝 Skills from request:', req.body.skills);
-    console.log('📝 Skills type:', typeof req.body.skills);
-    console.log('📝 Skills is array:', Array.isArray(req.body.skills));
-
+    
     const {
       fullName,
       email,
@@ -554,26 +545,22 @@ export const updateMyStudentProfile = async (req, res) => {
     
     // Validate skills array
     if (skillsArray && !Array.isArray(skillsArray)) {
-      console.log('❌ Invalid skills format:', skillsArray);
       return res.status(400).json({
         success: false,
         message: "Skills must be an array",
       });
     }
     
-    console.log('✅ Skills validation passed:', skillsArray);
-
+    
     // Validate resumeUrl if provided
     if (resumeUrl && typeof resumeUrl !== 'string') {
-      console.log('❌ Invalid resumeUrl format:', resumeUrl);
       return res.status(400).json({
         success: false,
         message: "Resume URL must be a string",
       });
     }
 
-    console.log('✅ Validation passed - Skills:', skills, 'ResumeUrl:', resumeUrl);
-
+    
 
     // Check if user exists and is a student
     const user = await prisma.user.findUnique({
@@ -622,8 +609,7 @@ export const updateMyStudentProfile = async (req, res) => {
     if (skillsArray !== undefined) userUpdateData.skills = skillsArray;
     if (highestQualification !== undefined) userUpdateData.highestQualification = highestQualification;
     if (totalExperience !== undefined) userUpdateData.totalExperience = parseInt(totalExperience) || 0;
-    console.log('📋 Skills to update:', skillsArray);
-    console.log('📋 User update data:', userUpdateData);
+    
     // Prepare update data for Student table
     const studentUpdateData = {};
     if (currentSemester !== undefined) {
@@ -719,7 +705,6 @@ export const updateMyStudentProfile = async (req, res) => {
       });
     });
 
-    console.log('✅ Updated student data:', updatedData);
     return res.status(200).json({
       success: true,
       message: "Student profile updated successfully",
@@ -776,7 +761,7 @@ export const updateMyStudentProfile = async (req, res) => {
 export const getMyStudentProfile = async (req, res) => {
   try {
     const userId = req.user.id;
-    console.log("Getting profile for user ID:", userId);
+    
 
     const user = await prisma.user.findUnique({
       where: { id: userId },
@@ -785,7 +770,7 @@ export const getMyStudentProfile = async (req, res) => {
       },
     });
 
-    console.log("Found user:", user);
+    
 
     if (!user) {
       return res.status(404).json({
@@ -818,7 +803,7 @@ export const getMyStudentProfile = async (req, res) => {
         : null,
     };
 
-    console.log("Sending profile data:", profileData);
+    
 
     res.status(200).json({
       success: true,
