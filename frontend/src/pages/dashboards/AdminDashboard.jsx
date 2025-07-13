@@ -368,7 +368,6 @@ const Sidebar = ({ onNavigate, onEventSectionChange, activeView, eventSection })
   // Main menu items
   const mainMenuItems = [
     { title: "Dashboard", icon: FiHome, view: "dashboard" },
-    { title: "Job Approvals", icon: FiBriefcase, view: "job-approvals" },
   ];
 
   // User Management submenu items
@@ -1426,53 +1425,6 @@ const AdminDashboard = () => {
               defaultTab="opportunities"
             />
           </>
-        );
-      case "job-approvals":
-        return (
-          <div>
-            <h2 className="text-xl font-bold mb-4 text-gray-800">Job Approvals</h2>
-            {jobsLoading ? (
-              <div className="text-center text-gray-400 py-10">Loading jobs...</div>
-            ) : jobsError ? (
-              <div className="text-center text-red-500 py-10">{jobsError}</div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                {jobs.length === 0 ? (
-                  <div className="col-span-full text-center text-gray-400">No pending jobs for approval.</div>
-                ) : (
-                  jobs.map(job => (
-                    <div key={job.id} className="relative">
-                      <JobCard
-                        job={job}
-                        onClick={() => { setSelectedJob(job); setShowModal(true); }}
-                        onApply={() => { setSelectedJob(job); setShowModal(true); }}
-                      />
-                      <div className="absolute bottom-2 left-2 flex gap-2">
-                        <button
-                          className="px-3 py-1 text-xs bg-green-600 text-white rounded hover:bg-green-700"
-                          onClick={e => { e.stopPropagation(); handleApproveJob(job.id); }}
-                        >
-                          Approve
-                        </button>
-                        <button
-                          className="px-3 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700"
-                          onClick={e => { e.stopPropagation(); handleRejectJob(job.id); }}
-                        >
-                          Reject
-                        </button>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            )}
-            <JobDetailsModal
-              job={selectedJob}
-              open={showModal}
-              onClose={() => setShowModal(false)}
-              onApply={() => {}}
-            />
-          </div>
         );
       case "students":
         return (
