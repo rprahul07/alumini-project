@@ -1390,12 +1390,12 @@ export const getMyEvents = async (userId, userRole, options = {}) => {
         },
         _count: {
           select: {
-            registrations: true,
+            event_registrations: true,
           },
         },
-        registrations: {
+        event_registrations: {
           where: {
-            registeredUserId: userId,
+            registered_user_id: userId,
           },
           select: {
             id: true,
@@ -1422,8 +1422,8 @@ export const getMyEvents = async (userId, userRole, options = {}) => {
       imageUrl: event.imageUrl,
       status: event.status,
       maxCapacity: event.maxCapacity,
-      registeredCount: event._count.registrations,
-      isRegistered: event.registrations.length > 0,
+      registeredCount: event._count.event_registrations,
+      isRegistered: event.event_registrations.length > 0,
       isCreator: true, // Always true since we're fetching user's created events
       createdAt: event.createdAt,
       updatedAt: event.updatedAt,
