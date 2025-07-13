@@ -32,8 +32,14 @@ const JobCard = ({ job, user, isApplied, onClick, onApply }) => {
   const getButtonState = () => {
     // Check if current user is the creator of this job
     const isCreator = user && job.userId === user.id;
-    
-    if (isCreator) {
+    const isAdmin = user && user.role === 'admin';
+    if (isAdmin) {
+      return {
+        text: "Apply (Admins cannot apply)",
+        className: "mt-2 px-4 py-1.5 bg-gray-300 text-gray-600 rounded-full font-semibold cursor-not-allowed",
+        disabled: true
+      };
+    } else if (isCreator) {
       return {
         text: "You are the creator",
         className: "mt-2 px-4 py-1.5 bg-gray-300 text-gray-600 rounded-full font-semibold cursor-not-allowed",
