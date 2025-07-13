@@ -195,6 +195,7 @@ model Job {
   companyName        String        @db.VarChar(200)
   jobTitle           String        @db.VarChar(200)
   description        String
+  location           String?       @db.VarChar(200)
   deadline           DateTime?     @map("deadline")
   registrationType   RegistrationType @map("registration_type") @default(internal)
   registrationLink   String?       @map("registration_link") @db.VarChar(500)
