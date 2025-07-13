@@ -197,7 +197,7 @@ const EventsPage = () => {
               </div>
             ) : (
               <>
-                <EventGrid events={events} />
+                <EventGrid events={events} user={user} onEventUpdate={fetchEvents} />
                 <div className="mt-10">
                   <EventPagination 
                     currentPage={currentPage}

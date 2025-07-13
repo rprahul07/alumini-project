@@ -11,7 +11,7 @@ import {
   CalendarIcon
 } from '@heroicons/react/24/outline';
 
-const MyCreatedJobs = () => {
+const MyCreatedJobs = ({ showAlert }) => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -135,6 +135,7 @@ const MyCreatedJobs = () => {
         onClose={() => { setShowModal(false); setSelectedJob(null); }}
         onJobEdit={handleJobEdit}
         onJobDelete={handleJobDelete}
+        showAlert={showAlert}
       />
       {/* Applications Modal */}
       {showApplicationsModal && (

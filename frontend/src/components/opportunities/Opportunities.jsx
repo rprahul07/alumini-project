@@ -60,7 +60,7 @@ const Opportunities = ({ showAlert }) => {
       </div>
       {/* Tab Content */}
       <div className="flex-1 overflow-y-auto">
-        {activeTab === 'myjobs' && canCreate && <MyCreatedJobs />}
+        {activeTab === 'myjobs' && canCreate && <MyCreatedJobs showAlert={showAlert} />}
         {activeTab === 'applied' && <AppliedJobs />}
       </div>
 

@@ -91,6 +91,13 @@ const JobCard = ({ job, user, isApplied, onClick, onApply }) => {
             <BuildingOffice2Icon className="h-4 w-4 mr-2 text-gray-400" />
             {job.companyName}
           </div>
+          {/* Location/Remote */}
+          {job.location && (
+            <div className="flex items-center text-xs sm:text-sm text-gray-500">
+              <span className="font-medium text-gray-600 mr-1">Location:</span>
+              <span>{job.location === 'Remote' ? 'Remote' : job.location}</span>
+            </div>
+          )}
         </div>
         
         {/* Creator Information */}

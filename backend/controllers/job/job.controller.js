@@ -21,6 +21,7 @@ const createJob = async (req, res) => {
       registrationLink,
       getEmailNotification,
       jobType,
+      location,
     } = req.body;
 
     // Validate required fields
@@ -29,6 +30,14 @@ const createJob = async (req, res) => {
         success: false,
         message:
           "Missing required fields. Please provide companyName, jobTitle, description, and registrationType.",
+      });
+    }
+
+    // Validate location
+    if (!location || typeof location !== "string" || location.trim() === "") {
+      return res.status(400).json({
+        success: false,
+        message: "Location is required. If the job is remote, send 'Remote' as the location.",
       });
     }
 
@@ -75,6 +84,7 @@ const createJob = async (req, res) => {
           registrationType === "internal" ? getEmailNotification : null,
         status: "pending",
         type: jobType || "job", // Default to "job" if not provided
+        location: location.trim(), // Save location (either 'Remote' or address)
       },
     });
 
@@ -241,7 +251,12 @@ const getJobById = async (req, res) => {
 };
 
 const updateJob = async (req, res) => {
-  const { companyName, jobTitle, description } = req.body;
+  const {
+    companyName,
+    jobTitle,
+    description,
+    location,
+  } = req.body;
   const jobId = parseInt(req.params.id);
 
   try {
@@ -265,6 +280,12 @@ const updateJob = async (req, res) => {
       });
     }
 
+    // Validate location if provided
+    let updatedLocation = job.location;
+    if (typeof location === "string" && location.trim() !== "") {
+      updatedLocation = location.trim();
+    }
+
     const updatedJob = await prisma.job.update({
       where: {
         id: jobId,
@@ -273,6 +294,7 @@ const updateJob = async (req, res) => {
         companyName: companyName || job.companyName,
         jobTitle: jobTitle || job.jobTitle,
         description: description || job.description,
+        location: updatedLocation,
       },
     });
 
@@ -698,6 +720,7 @@ export const getAllJobsForAlumni = async (req, res) => {
         deadline: true,
         status: true,
         createdAt: true,
+        location: true,
       },
     });
 

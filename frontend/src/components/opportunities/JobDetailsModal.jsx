@@ -14,7 +14,7 @@ import CreateJobModal from './CreateJobModal';
 import axios from '../../config/axios';
 import { useAuth } from '../../contexts/AuthContext';
 
-const JobDetailsModal = ({ job, open, onClose, onJobEdit, onJobDelete }) => {
+const JobDetailsModal = ({ job, open, onClose, onJobEdit, onJobDelete, showAlert }) => {
   const { user } = useAuth();
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -89,7 +89,13 @@ const JobDetailsModal = ({ job, open, onClose, onJobEdit, onJobDelete }) => {
                   <span>Deadline: {formatDate(job.deadline)}</span>
                 </div>
               )}
-              
+              {/* Location/Remote */}
+              {job.location && (
+                <div className="flex items-center text-sm text-gray-600">
+                  <span className="font-medium mr-1">Location:</span>
+                  <span>{job.location === 'Remote' ? 'Remote' : job.location}</span>
+                </div>
+              )}
               <div className="flex items-center text-sm text-gray-600">
                 <ClockIcon className="h-4 w-4 mr-2 text-gray-500" />
                 <span>{formatPostedDate(job.createdAt)}</span>
@@ -207,7 +213,7 @@ const JobDetailsModal = ({ job, open, onClose, onJobEdit, onJobDelete }) => {
             setShowEditModal(false);
             onJobEdit && onJobEdit();
           }}
-          showAlert={() => {}} // Pass empty function since we don't have showAlert here
+          showAlert={showAlert}
           editMode={true}
           jobToEdit={job}
         />

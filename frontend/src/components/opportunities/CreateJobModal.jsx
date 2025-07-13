@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from '../../config/axios';
 import { 
   XMarkIcon, 
@@ -12,15 +12,54 @@ import {
 } from '@heroicons/react/24/outline';
 
 const CreateJobModal = ({ onClose, onSuccess, showAlert, editMode = false, jobToEdit = null }) => {
-  const [companyName, setCompanyName] = useState(editMode && jobToEdit ? jobToEdit.companyName : '');
-  const [jobTitle, setJobTitle] = useState(editMode && jobToEdit ? jobToEdit.jobTitle : '');
-  const [description, setDescription] = useState(editMode && jobToEdit ? jobToEdit.description : '');
-  const [deadline, setDeadline] = useState(editMode && jobToEdit && jobToEdit.deadline ? jobToEdit.deadline.slice(0, 10) : '');
-  const [registrationType, setRegistrationType] = useState(editMode && jobToEdit ? jobToEdit.registrationType : 'internal');
-  const [registrationLink, setRegistrationLink] = useState(editMode && jobToEdit ? jobToEdit.registrationLink || '' : '');
-  const [getEmailNotification, setGetEmailNotification] = useState(editMode && jobToEdit ? jobToEdit.getEmailNotification : true);
+  const [companyName, setCompanyName] = useState('');
+  const [jobTitle, setJobTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [deadline, setDeadline] = useState('');
+  const [registrationType, setRegistrationType] = useState('internal');
+  const [registrationLink, setRegistrationLink] = useState('');
+  const [getEmailNotification, setGetEmailNotification] = useState(true);
+  const [jobType, setJobType] = useState('job');
+  const [isRemote, setIsRemote] = useState(false);
+  const [location, setLocation] = useState('');
   const [loading, setLoading] = useState(false);
-  const [jobType, setJobType] = useState(editMode && jobToEdit ? jobToEdit.type : 'job');
+
+  // Unified prefill for all fields in edit mode
+  useEffect(() => {
+    if (editMode && jobToEdit) {
+      console.log('jobToEdit:', jobToEdit, 'location:', jobToEdit.location);
+      if (jobToEdit.location === 'Remote') {
+        setIsRemote(true);
+        setLocation('');
+      } else {
+        setIsRemote(false);
+        setLocation(jobToEdit.location || '');
+      }
+      setCompanyName(jobToEdit.companyName || '');
+      setJobTitle(jobToEdit.jobTitle || '');
+      setDescription(jobToEdit.description || '');
+      setDeadline(jobToEdit.deadline ? jobToEdit.deadline.slice(0, 10) : '');
+      setRegistrationType(jobToEdit.registrationType || 'internal');
+      setRegistrationLink(jobToEdit.registrationLink || '');
+      setGetEmailNotification(
+        typeof jobToEdit.getEmailNotification === 'boolean'
+          ? jobToEdit.getEmailNotification
+          : true
+      );
+      setJobType(jobToEdit.type || 'job');
+    } else {
+      setIsRemote(false);
+      setLocation('');
+      setCompanyName('');
+      setJobTitle('');
+      setDescription('');
+      setDeadline('');
+      setRegistrationType('internal');
+      setRegistrationLink('');
+      setGetEmailNotification(true);
+      setJobType('job');
+    }
+  }, [editMode, jobToEdit]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,6 +74,7 @@ const CreateJobModal = ({ onClose, onSuccess, showAlert, editMode = false, jobTo
         registrationLink: registrationType === 'external' ? registrationLink : undefined,
         getEmailNotification: registrationType === 'internal' ? getEmailNotification : undefined,
         jobType,
+        location: isRemote ? 'Remote' : location,
       };
       
       if (editMode && jobToEdit) {
@@ -87,6 +127,35 @@ const CreateJobModal = ({ onClose, onSuccess, showAlert, editMode = false, jobTo
               </div>
               <h3 className="font-semibold text-gray-900">Basic Information</h3>
             </div>
+            {/* Location/Remote Section */}
+            <div className="flex items-center gap-4 mb-2">
+              <input
+                type="checkbox"
+                id="remote-checkbox"
+                checked={isRemote}
+                onChange={e => {
+                  setIsRemote(e.target.checked);
+                  if (e.target.checked) setLocation('');
+                }}
+                className="form-checkbox h-4 w-4 text-indigo-600"
+              />
+              <label htmlFor="remote-checkbox" className="text-sm text-gray-700 select-none cursor-pointer">
+                This is a remote opportunity
+              </label>
+            </div>
+            {!isRemote && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
+                <input
+                  type="text"
+                  className="block w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition-colors"
+                  value={location || ''}
+                  onChange={e => setLocation(e.target.value)}
+                  placeholder="Enter location (e.g., City, Office Address)"
+                  required={!isRemote}
+                />
+              </div>
+            )}
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
@@ -171,7 +240,6 @@ const CreateJobModal = ({ onClose, onSuccess, showAlert, editMode = false, jobTo
               </div>
               <h3 className="font-semibold text-gray-900">Application Settings</h3>
             </div>
-            
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Deadline</label>
@@ -200,7 +268,6 @@ const CreateJobModal = ({ onClose, onSuccess, showAlert, editMode = false, jobTo
                 </div>
               </div>
             </div>
-
             {/* Registration Link (if external) */}
             {registrationType === 'external' && (
               <div>
@@ -226,7 +293,6 @@ const CreateJobModal = ({ onClose, onSuccess, showAlert, editMode = false, jobTo
                 </div>
                 <h3 className="font-semibold text-gray-900">Email Notifications</h3>
               </div>
-              
               <div className="flex items-center gap-3 p-4 bg-purple-50 border border-purple-200 rounded-xl">
                 <label htmlFor="emailNotification" className="text-sm text-gray-700 cursor-pointer select-none font-medium flex-1">
                   Notify me by email when someone applies
@@ -246,8 +312,6 @@ const CreateJobModal = ({ onClose, onSuccess, showAlert, editMode = false, jobTo
               </div>
             </div>
           )}
-
-
 
           {/* Action Buttons */}
           <div className="flex justify-between gap-3 pt-4 border-t border-gray-100">
@@ -280,4 +344,4 @@ const CreateJobModal = ({ onClose, onSuccess, showAlert, editMode = false, jobTo
   );
 };
 
-export default CreateJobModal; 
+export default CreateJobModal;
