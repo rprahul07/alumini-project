@@ -16,6 +16,10 @@ import {
   AcademicCapIcon, // For student-related stats
   ArrowRightIcon, // For "View All" buttons
 } from '@heroicons/react/24/outline';
+import MyActivityCard from '../../components/MyActivityCard';
+import MentorshipRequests from '../../components/mentorship/MentorshipRequests';
+import Opportunities from '../../components/opportunities/Opportunities';
+import Events from '../../components/events/Events';
 
 
 // --- AlumniRegistrationCard Component (Enhanced for clarity and interaction) ---
@@ -164,7 +168,7 @@ const FacultyDashboard = () => {
                     <div className="text-gray-500 text-sm">Students</div>
                   </div>
                 </div>
-                {/* Jobs/Internships */}
+                {/* Opportunities */}
                 <div className="flex items-center bg-white shadow-md rounded-xl p-4 border-t-8 border-green-500 transition-transform transform hover:scale-105">
                   <div className="flex-shrink-0 mr-4">
                     <div className="bg-green-100 p-3 rounded-full">
@@ -173,7 +177,7 @@ const FacultyDashboard = () => {
                   </div>
                   <div>
                     <div className="text-2xl font-bold text-gray-800">145</div>
-                    <div className="text-gray-500 text-sm">Jobs/Internships</div>
+                    <div className="text-gray-500 text-sm">Opportunities</div>
                   </div>
                 </div>
                 {/* Events */}
@@ -191,21 +195,14 @@ const FacultyDashboard = () => {
               </div>
               <main className="space-y-5">
                 {/* Main Content Rows */}
-                {/* Your Courses Overview Section */}
-                <section className="bg-white rounded-xl shadow-md p-6">
-                  <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-xl font-bold text-gray-900">My activity</h2>
-                    <button className="text-sm text-purple-600 hover:text-purple-800 flex items-center group font-semibold rounded-full px-4 py-2 bg-purple-50 border border-purple-200 transition">
-                      View All <ArrowRightIcon className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
-                    </button>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* CourseProgressCard component removed */}
-                  </div>
-                  <p className="text-sm text-gray-500 text-center mt-6 font-semibold">
-                    ** Coming Soon ** Detailed course analytics
-                  </p>
-                </section>
+                <MyActivityCard
+                  features={[
+                    { key: 'mentorship', label: 'Mentorship', component: <MentorshipRequests /> },
+                    { key: 'opportunities', label: 'Opportunities', component: <Opportunities /> },
+                    { key: 'events', label: 'Events', component: <Events /> },
+                  ]}
+                  defaultTab="mentorship"
+                />
               </main>
             </div>
           </div>

@@ -69,18 +69,14 @@ export const registerStudent = async (req, res) => {
       throw new AppError("Passwords don't match", 400);
     }
 
-    console.log("Validating password...");
     validatePassword(password);
 
-    console.log("Validating user data...");
     validateUserData(req.body, role);
 
-    console.log("Checking if email exists...");
     if (await checkEmailExists(req.body.email)) {
       throw new AppError("Email already exists", 409);
     }
 
-    console.log("Creating user...");
     const newStudent = await createStudent(req.body);
     generateTokenAndSetCookie(newStudent.id, ROLES.STUDENT, res);
 
@@ -121,24 +117,29 @@ export const getStudentById = async (req, res) => {
       });
     }
 
+    // Updated select block to include only the required fields
     const user = await prisma.user.findUnique({
       where: { id: userIdInt },
       select: {
         id: true,
         email: true,
         fullName: true,
-        phoneNumber: true,
         department: true,
         role: true,
         photoUrl: true,
         bio: true,
         linkedinUrl: true,
+        twitterUrl: true,
+        githubUrl: true,
+        skills: true,
+        resumeUrl: true,
         student: {
           select: {
             id: true,
             currentSemester: true,
             rollNumber: true,
             graduationYear: true,
+            batch_startYear: true,
           },
         },
       },
@@ -511,22 +512,55 @@ export const updateStudentById = async (req, res) => {
 };
 
 export const updateMyStudentProfile = async (req, res) => {
+  
   try {
     const userId = req.user.id;
-
+    
     const {
       fullName,
       email,
       phoneNumber,
       department,
       bio,
+      skills,
+      resumeUrl,
       linkedinUrl,
       twitterUrl,
       githubUrl,
+      highestQualification,
+      totalExperience,
       currentSemester,
       rollNumber,
       graduationYear,
+      batch_startYear,
+      batch_endYear,
     } = req.body;
+
+    // Handle skills from FormData (multiple fields with same name)
+    let skillsArray = skills;
+    if (skills && !Array.isArray(skills)) {
+      // If skills is not an array, it might be a single value from FormData
+      skillsArray = [skills];
+    }
+    
+    // Validate skills array
+    if (skillsArray && !Array.isArray(skillsArray)) {
+      return res.status(400).json({
+        success: false,
+        message: "Skills must be an array",
+      });
+    }
+    
+    
+    // Validate resumeUrl if provided
+    if (resumeUrl && typeof resumeUrl !== 'string') {
+      return res.status(400).json({
+        success: false,
+        message: "Resume URL must be a string",
+      });
+    }
+
+    
 
     // Check if user exists and is a student
     const user = await prisma.user.findUnique({
@@ -571,7 +605,11 @@ export const updateMyStudentProfile = async (req, res) => {
     if (newPhotoUrl) userUpdateData.photoUrl = newPhotoUrl;
     if (twitterUrl !== undefined) userUpdateData.twitterUrl = twitterUrl;
     if (githubUrl !== undefined) userUpdateData.githubUrl = githubUrl;
-
+    if (resumeUrl !== undefined) userUpdateData.resumeUrl = resumeUrl;
+    if (skillsArray !== undefined) userUpdateData.skills = skillsArray;
+    if (highestQualification !== undefined) userUpdateData.highestQualification = highestQualification;
+    if (totalExperience !== undefined) userUpdateData.totalExperience = parseInt(totalExperience) || 0;
+    
     // Prepare update data for Student table
     const studentUpdateData = {};
     if (currentSemester !== undefined) {
@@ -594,6 +632,26 @@ export const updateMyStudentProfile = async (req, res) => {
         });
       }
       studentUpdateData.graduationYear = yearInt;
+    }
+    if (batch_startYear !== undefined) {
+      const startYearInt = parseInt(batch_startYear);
+      if (isNaN(startYearInt)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid batch start year format",
+        });
+      }
+      studentUpdateData.batch_startYear = startYearInt;
+    }
+    if (batch_endYear !== undefined) {
+      const endYearInt = parseInt(batch_endYear);
+      if (isNaN(endYearInt)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid batch end year format",
+        });
+      }
+      studentUpdateData.batch_endYear = endYearInt;
     }
 
     // Update both User and Student records using transaction
@@ -629,12 +687,18 @@ export const updateMyStudentProfile = async (req, res) => {
           linkedinUrl: true,
           twitterUrl: true,
           githubUrl: true,
+          skills: true,
+          resumeUrl: true,
+          highestQualification: true,
+          totalExperience: true,
           student: {
             select: {
               id: true,
               currentSemester: true,
               rollNumber: true,
               graduationYear: true,
+              batch_startYear: true,
+              batch_endYear: true,
             },
           },
         },
@@ -697,7 +761,7 @@ export const updateMyStudentProfile = async (req, res) => {
 export const getMyStudentProfile = async (req, res) => {
   try {
     const userId = req.user.id;
-    console.log("Getting profile for user ID:", userId);
+    
 
     const user = await prisma.user.findUnique({
       where: { id: userId },
@@ -706,7 +770,7 @@ export const getMyStudentProfile = async (req, res) => {
       },
     });
 
-    console.log("Found user:", user);
+    
 
     if (!user) {
       return res.status(404).json({
@@ -728,6 +792,8 @@ export const getMyStudentProfile = async (req, res) => {
       linkedinUrl: user.linkedinUrl,
       twitterUrl: user.twitterUrl,
       githubUrl: user.githubUrl,
+      skills: user.skills || [],
+      resumeUrl: user.resumeUrl,
       student: user.student
         ? {
             currentSemester: user.student.currentSemester,
@@ -737,7 +803,7 @@ export const getMyStudentProfile = async (req, res) => {
         : null,
     };
 
-    console.log("Sending profile data:", profileData);
+    
 
     res.status(200).json({
       success: true,

@@ -85,15 +85,26 @@ export const searchStudentsController = async (req, res) => {
       });
     }
 
-    // Filter by name search (from User table)
+    // Filter by name or skills search (from User table)
     if (search && search.trim()) {
       conditions.push({
-        user: {
-          fullName: {
-            contains: search.trim(),
-            mode: "insensitive",
+        OR: [
+          {
+            user: {
+              fullName: {
+                contains: search.trim(),
+                mode: "insensitive",
+              },
+            },
           },
-        },
+          {
+            user: {
+              skills: {
+                has: search.trim().toLowerCase(), // Search in skills array
+              },
+            },
+          },
+        ],
       });
     }
 
@@ -118,9 +129,11 @@ export const searchStudentsController = async (req, res) => {
         graduationYear: true,
         user: {
           select: {
+            id: true,
             fullName: true,
             photoUrl: true,
             department: true,
+            skills: true, // Include skills for search
           },
         },
       },
@@ -140,12 +153,14 @@ export const searchStudentsController = async (req, res) => {
 
     // Transform the data to flatten the structure
     const transformedProfiles = studentProfiles.map((student) => ({
+      id: student.user.id, // Use only 'id' for user ID
       name: student.user.fullName,
       photoUrl: student.user.photoUrl,
       department: student.user.department,
       rollNumber: student.rollNumber,
       currentSemester: student.currentSemester,
       graduationYear: student.graduationYear,
+      skills: student.user.skills || [], // Include skills in response
     }));
 
     console.log(
@@ -165,7 +180,7 @@ export const searchStudentsController = async (req, res) => {
     }
 
     if (search) {
-      filters.push(`name containing "${search.trim()}"`);
+      filters.push(`name or skills containing "${search.trim()}"`);
     }
 
     if (filters.length > 0) {
@@ -750,6 +765,7 @@ export const getAlumniByTier = async (req, res) => {
 
       if (request.status !== "accepted") {
         return {
+          requestId: request.id, // added
           status: request.status,
           message: "Pending alumni acceptance",
           tier: request.tier,

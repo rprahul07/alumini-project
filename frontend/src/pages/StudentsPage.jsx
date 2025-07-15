@@ -3,8 +3,10 @@ import { useAuth } from '../contexts/AuthContext';
 import StudentGrid from '../components/StudentGrid';
 import EventPagination from '../components/EventPagination';
 import Navbar from '../components/Navbar';
+import StudentSearch from '../components/StudentSearch';
+import StudentFilterButton from '../components/StudentFilterButton';
+import StudentActiveFilters from '../components/StudentActiveFilters';
 import axios from '../config/axios';
-import { MagnifyingGlassIcon, AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
 import { useNavigate } from 'react-router-dom';
 
 const StudentsPage = () => {
@@ -16,8 +18,8 @@ const StudentsPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
-  // const [selectedDepartment, setSelectedDepartment] = useState(''); // For future filter
-  // const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
+  const [selectedDepartment, setSelectedDepartment] = useState('');
+  const [selectedSemester, setSelectedSemester] = useState('');
 
   // Redirect if not logged in
   if (!user && !authLoading) {
@@ -25,17 +27,26 @@ const StudentsPage = () => {
     return null;
   }
 
+
+
   // Fetch students from API
   const fetchStudents = async () => {
     try {
       setLoading(true);
       setError(null);
-      // TODO: Add search and pagination params when backend supports them
-      const response = await axios.get('/api/student/getall');
+      const limit = 12;
+      const offset = (currentPage - 1) * limit;
+      const params = new URLSearchParams({
+        search: searchTerm,
+        department: selectedDepartment,
+        currentSemester: selectedSemester,
+        limit,
+        offset,
+      });
+      const response = await axios.get(`/api/student/searchstudent?${params}`);
       if (response.data.success) {
-        setStudents(response.data.students || response.data.data?.students || []);
-        // TODO: Set totalPages from response if backend supports pagination
-        setTotalPages(1);
+        setStudents(response.data.data.profiles || []);
+        setTotalPages(response.data.data.pagination.totalPages || 1);
       } else {
         setError(response.data.message || 'Failed to fetch students');
       }
@@ -50,15 +61,38 @@ const StudentsPage = () => {
     if (!authLoading) {
       fetchStudents();
     }
-  }, [authLoading, currentPage]);
-
-  // Debounced search (UI only, not functional until backend supports it)
-  useEffect(() => {
-    // No-op for now
-  }, [searchTerm]);
+  }, [authLoading, currentPage, searchTerm, selectedDepartment, selectedSemester]);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
+  };
+
+  const handleSearchChange = (term) => {
+    setSearchTerm(term);
+    setCurrentPage(1);
+  };
+
+  const handleFilterChange = (filterType, value) => {
+    if (filterType === 'department') {
+      setSelectedDepartment(value);
+    } else if (filterType === 'semester') {
+      setSelectedSemester(value);
+    }
+    setCurrentPage(1);
+  };
+
+  const handleClearSearch = () => {
+    setSearchTerm('');
+    setCurrentPage(1);
+  };
+
+  const handleClearFilter = (filterType) => {
+    if (filterType === 'department') {
+      setSelectedDepartment('');
+    } else if (filterType === 'semester') {
+      setSelectedSemester('');
+    }
+    setCurrentPage(1);
   };
 
   return (
@@ -66,33 +100,28 @@ const StudentsPage = () => {
       <Navbar />
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          {/* Search and Filters - match EventsPage */}
+          {/* Search and Filters */}
           <div className="mb-6 flex flex-row gap-2 items-center w-full">
-            <div className="flex-1">
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  type="text"
-                  value={searchTerm}
-                  onChange={e => setSearchTerm(e.target.value)}
-                  placeholder="Search students (coming soon)"
-                  className="block w-full pl-10 pr-3 py-2 border-2 border-white/40 rounded-full leading-5 bg-white/40 backdrop-blur-md placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 shadow-lg transition-all text-sm sm:text-base"
-                  disabled
-                />
-              </div>
-            </div>
-            <button
-              // onClick={() => setIsFilterDrawerOpen(true)}
-              className="rounded-full px-4 py-2 font-semibold border-2 border-indigo-400 bg-white/60 backdrop-blur text-base sm:text-sm text-indigo-700 hover:bg-white/80 shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 flex items-center justify-center"
-              aria-label="Show Filters"
-              disabled
-            >
-              <AdjustmentsHorizontalIcon className="h-5 w-5 mr-1" />
-              <span className="hidden sm:inline">Filters</span>
-            </button>
+            <StudentSearch
+              searchTerm={searchTerm}
+              onSearchChange={handleSearchChange}
+              isLoading={loading}
+            />
+            <StudentFilterButton
+              selectedDepartment={selectedDepartment}
+              selectedSemester={selectedSemester}
+              onFilterChange={handleFilterChange}
+            />
           </div>
+
+          {/* Active Filters */}
+          <StudentActiveFilters
+            searchTerm={searchTerm}
+            selectedDepartment={selectedDepartment}
+            selectedSemester={selectedSemester}
+            onClearSearch={handleClearSearch}
+            onClearFilter={handleClearFilter}
+          />
           <div className="mt-8">
             {authLoading || loading ? (
               <div className="flex justify-center items-center py-20">

@@ -99,20 +99,6 @@ const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
               {event.type}
             </span>
           </div>
-
-          {/* Capacity Badge */}
-          {event.maxCapacity && (
-            <div className="absolute top-2 right-2">
-              <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold ${
-                isEventFull 
-                  ? 'bg-red-100 text-red-800' 
-                  : 'bg-green-100 text-green-800'
-              }`}>
-                <UserGroupIcon className="h-3 w-3 mr-1" />
-                {event.registeredUsers ? event.registeredUsers.length : 0}/{event.maxCapacity}
-              </span>
-            </div>
-          )}
         </div>
 
         {/* Event Content */}

@@ -28,8 +28,11 @@ import {
   removeUserFromEventController,
   searchEvents,
   withdrawFromEvents,
+  
 } from "../controllers/event/event.controller.js";
 import { uploadPhotoMiddleware } from "../middleware/upload.middleware.js";
+import { resumableUploadMiddleware } from "../middleware/resumableUpload.middleware.js";
+import { resumableMulter } from "../middleware/resumableMulter.middleware.js";
 import {
   searchAlumniProfilesController,
   searchStudentsController,
@@ -42,6 +45,7 @@ router.use(protect);
 router.get("/getall", getAllAlumni);
 router.get("/profile/get", getAlumniSelf);
 router.patch("/profile/update", uploadPhotoMiddleware, updateAlumniSelf);
+router.post("/upload/resume", resumableMulter, resumableUploadMiddleware);
 router.delete("/profile/delete-photo", deleteProfilePicture);
 router.get("/searchalumni", searchAlumniProfilesController);
 router.get("/searchstudent", searchStudentsController);
@@ -66,5 +70,6 @@ router.get("/tier/:alumniId", getAlumniByTier);
 router.get("/:userId", getAlumniById);
 router.delete("/:userId", deleteAlumniById);
 router.patch("/:userId", updateAlumniById);
+router.get("/events/registered", getRegisteredEventsController);
 
 export default router;

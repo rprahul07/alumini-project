@@ -10,9 +10,25 @@ const StudentCard = ({ student }) => {
   const department = student.department || (student.user && student.user.department) || '';
   const currentSemester = student.student?.currentSemester || student.currentSemester || '';
   const photoUrl = student.photoUrl || (student.user && student.user.photoUrl) || '';
+  
+  // Get the correct student ID - now the backend provides userId
+  const studentId = student.id || student.user?.id;
 
   const handleCardClick = (e) => {
     if (e.target.closest('button')) return;
+    if (!studentId) {
+      console.error('No student ID available');
+      return;
+    }
+    setShowModal(true);
+  };
+
+  const handleViewClick = (e) => {
+    e.stopPropagation();
+    if (!studentId) {
+      console.error('No student ID available');
+      return;
+    }
     setShowModal(true);
   };
 
@@ -54,16 +70,19 @@ const StudentCard = ({ student }) => {
           <div className="flex flex-col gap-2 mt-2">
             <button
               className="rounded-full px-4 py-1.5 font-semibold w-full text-sm flex items-center justify-center transition-colors bg-indigo-600 text-white hover:bg-indigo-700"
-              onClick={e => { e.stopPropagation(); setShowModal(true); }}
+              onClick={handleViewClick}
+              disabled={!studentId}
             >
               View
             </button>
           </div>
         </div>
       </div>
+      
+      {/* Render modal when showModal is true */}
       {showModal && (
         <StudentDetailsModal
-          studentId={student.userId || student.id}
+          studentId={studentId}
           open={showModal}
           onClose={() => setShowModal(false)}
         />

@@ -20,6 +20,169 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import Navbar from "../../components/Navbar";
 import AlumniEventSubmissions from "../../components/AlumniEventSubmissions";
+import JobCard from '../../components/opportunities/JobCard';
+import JobDetailsModal from '../../components/opportunities/JobDetailsModal';
+import axios from '../../config/axios';
+import MyActivityCard from '../../components/MyActivityCard';
+import { XMarkIcon } from '@heroicons/react/24/outline';
+
+const AdminOpportunities = () => {
+  const [pendingJobs, setPendingJobs] = useState([]);
+  const [approvedJobs, setApprovedJobs] = useState([]);
+  const [rejectedJobs, setRejectedJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedJob, setSelectedJob] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalLoading, setModalLoading] = useState(false);
+  const [actionLoading, setActionLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState('pending'); // 'pending', 'approved', 'rejected'
+
+  useEffect(() => {
+    if (activeTab === 'pending') {
+      fetchPendingJobs();
+    } else if (activeTab === 'approved') {
+      fetchApprovedJobs();
+    } else if (activeTab === 'rejected') {
+      fetchRejectedJobs();
+    }
+    // eslint-disable-next-line
+  }, [activeTab]);
+
+  const fetchPendingJobs = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.get('/api/job/admin/pending');
+      setPendingJobs(res.data.data || []);
+    } catch (err) {
+      toast.error('Failed to fetch pending jobs.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchApprovedJobs = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.get('/api/job/', { params: { status: 'approved', limit: 100 } });
+      setApprovedJobs(res.data.data.jobs || []);
+    } catch (err) {
+      toast.error('Failed to fetch approved jobs.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchRejectedJobs = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.get('/api/job/', { params: { status: 'rejected', limit: 100 } });
+      setRejectedJobs(res.data.data.jobs || []);
+    } catch (err) {
+      toast.error('Failed to fetch rejected jobs.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch full job details when viewing
+  const handleView = async (job) => {
+    setModalLoading(true);
+    setModalOpen(true);
+    try {
+      const res = await axios.get(`/api/job/${job.id}`);
+      setSelectedJob(res.data.data);
+    } catch {
+      setSelectedJob(null);
+    } finally {
+      setModalLoading(false);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setSelectedJob(null);
+  };
+
+  const handleAction = async (newStatus) => {
+    if (!selectedJob) return;
+    setActionLoading(true);
+    try {
+      await axios.patch(`/api/job/${selectedJob.id}/status`, { status: newStatus });
+      setPendingJobs(jobs => jobs.filter(j => j.id !== selectedJob.id));
+      toast.success(`Job ${newStatus === 'approved' ? 'approved' : 'rejected'} successfully.`);
+      handleCloseModal();
+    } catch (err) {
+      toast.error('Action failed.');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  // Table data and columns based on tab
+  let jobsToShow = [];
+  if (activeTab === 'pending') jobsToShow = pendingJobs;
+  else if (activeTab === 'approved') jobsToShow = approvedJobs;
+  else if (activeTab === 'rejected') jobsToShow = rejectedJobs;
+
+  return (
+    <div className="flex flex-col">
+      <div className="mb-4 flex gap-2">
+        <button
+          className={`px-4 py-2 rounded-full font-semibold text-sm border ${activeTab === 'pending' ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-indigo-600 border-indigo-600'}`}
+          onClick={() => setActiveTab('pending')}
+          disabled={activeTab === 'pending'}
+        >
+          Pending
+        </button>
+        <button
+          className={`px-4 py-2 rounded-full font-semibold text-sm border ${activeTab === 'approved' ? 'bg-green-600 text-white border-green-600' : 'bg-white text-green-600 border-green-600'}`}
+          onClick={() => setActiveTab('approved')}
+          disabled={activeTab === 'approved'}
+        >
+          Approved
+        </button>
+        {/* Rejected button removed for simplicity */}
+      </div>
+      {loading ? (
+        <div className="text-center text-gray-400 py-8">Loading...</div>
+      ) : jobsToShow.length === 0 ? (
+        <div className="text-center text-gray-400 py-8">No {activeTab} job requests.</div>
+      ) : (
+        <div className="flex flex-col gap-3 max-h-[340px] overflow-y-auto scrollbar-hide rounded-xl">
+          {jobsToShow.map(job => (
+            <div key={job.id} className="bg-white rounded-xl shadow p-4 flex flex-col sm:flex-row sm:items-center justify-between">
+              <div className="flex-1 min-w-0">
+                <div className="font-medium text-gray-900 truncate text-base">{job.jobTitle}</div>
+                <div className="text-sm text-gray-700 truncate">{job.companyName}</div>
+                <div className="text-xs text-gray-500">Creator: {job.user?.fullName || 'Unknown'}</div>
+                <div className="text-xs text-gray-500">Date: {new Date(job.createdAt).toLocaleDateString()}</div>
+              </div>
+              <div className="mt-3 sm:mt-0 flex gap-2 justify-end">
+                <button
+                  className="px-3 py-1 rounded-full bg-indigo-600 text-white text-xs font-semibold hover:bg-indigo-700 transition-colors"
+                  onClick={() => handleView(job)}
+                >
+                  View
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+      {/* Modal for job details and actions */}
+      {modalOpen && (
+        <JobDetailsModal
+          job={selectedJob}
+          open={modalOpen}
+          onClose={handleCloseModal}
+          onJobEdit={fetchApprovedJobs}
+          onJobDelete={fetchApprovedJobs}
+          showAlert={toast.success}
+        />
+      )}
+    </div>
+  );
+};
 
 // --- ProtectedRoute Component ---
 const ProtectedRoute = ({ children }) => {
@@ -398,7 +561,7 @@ const UserVerificationTable = ({ users, onVerify, onReject }) => {
           <button
             key={status}
             onClick={() => setFilterStatus(status)}
-            className={`px-4 py-2 rounded-xl font-medium transition-colors ${
+            className={`px-4 py-2 rounded-lg font-semibold shadow-sm transition-all ${
               filterStatus === status
                 ? "bg-indigo-600 text-white hover:bg-indigo-700"
                 : "bg-gray-100 text-gray-700 hover:bg-gray-200"
@@ -749,7 +912,7 @@ const AdminDashboard = () => {
   const [eventSection, setEventSection] = useState("alumni");
   const [dashboardStats, setDashboardStats] = useState(null);
   const [adminProfile, setAdminProfile] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [dashboardLoading, setDashboardLoading] = useState(true); // Only for initial dashboard fetch
   const [error, setError] = useState(null);
 
   // Data states
@@ -840,9 +1003,52 @@ const AdminDashboard = () => {
     },
   ]);
 
+  const [jobs, setJobs] = useState([]);
+  const [jobsLoading, setJobsLoading] = useState(false);
+  const [jobsError, setJobsError] = useState(null);
+  const [selectedJob, setSelectedJob] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+
+  const fetchPendingJobs = async () => {
+    setJobsLoading(true);
+    setJobsError(null);
+    try {
+      const res = await axios.get('/api/job/', { params: { status: 'pending' } });
+      setJobs(res.data.data.jobs);
+    } catch (err) {
+      setJobsError('Failed to load pending jobs.');
+    } finally {
+      setJobsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeView === 'job-approvals') {
+      fetchPendingJobs();
+    }
+    // eslint-disable-next-line
+  }, [activeView]);
+
+  const handleApproveJob = async (id) => {
+    try {
+      await axios.patch(`/api/job/${id}/status`, { status: 'approved' });
+      setJobs(jobs.filter(job => job.id !== id));
+    } catch {
+      alert('Failed to approve job.');
+    }
+  };
+  const handleRejectJob = async (id) => {
+    try {
+      await axios.patch(`/api/job/${id}/status`, { status: 'rejected' });
+      setJobs(jobs.filter(job => job.id !== id));
+    } catch {
+      alert('Failed to reject job.');
+    }
+  };
+
   useEffect(() => {
     const fetchAdminData = async () => {
-      setLoading(true);
+      setDashboardLoading(true);
       setError(null);
       try {
         const [statsRes, profileRes] = await Promise.all([
@@ -854,7 +1060,7 @@ const AdminDashboard = () => {
       } catch (err) {
         setError(err.message || "Failed to fetch admin data");
       } finally {
-        setLoading(false);
+        setDashboardLoading(false);
       }
     };
     fetchAdminData();
@@ -1003,9 +1209,9 @@ const AdminDashboard = () => {
   };
 
   const renderContent = () => {
-    if (loading) {
+    if (dashboardLoading) {
       return (
-        <div className="text-center py-10 text-gray-500">Loading data...</div>
+        <div className="text-center py-10 text-gray-500">Loading dashboard...</div>
       );
     }
     if (error) {
@@ -1023,7 +1229,6 @@ const AdminDashboard = () => {
                 Your admin dashboard for managing users, events, and more.
               </p>
             </div>
-
             {/* --- Statistics Cards (Redesigned) --- */}
             {dashboardStats && (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
@@ -1091,15 +1296,16 @@ const AdminDashboard = () => {
             )}
             {/* --- End Statistics Cards (Redesigned) --- */}
 
-            <UserVerificationTable
-              users={usersToVerify}
-              onVerify={handleVerifyUser}
-              onReject={handleRejectUser}
-            />
-
-            <AnnouncementsSection
-              announcements={announcements}
-              onCreate={handleCreateAnnouncement}
+            {/* Admin My Activity Card */}
+            <MyActivityCard
+              features={[
+                {
+                  key: 'opportunities',
+                  label: 'Opportunities',
+                  component: <AdminOpportunities />
+                }
+              ]}
+              defaultTab="opportunities"
             />
           </>
         );
@@ -1170,23 +1376,23 @@ const AdminDashboard = () => {
   return (
     <>
       <Navbar />
-    <div className="min-h-screen font-roboto bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-3">
-          <aside className="lg:col-span-1 space-y-4" aria-label="Sidebar and profile section">
-            <Sidebar
-              onNavigate={setActiveView}
-              onEventSectionChange={setEventSection}
-              activeView={activeView}
-              eventSection={eventSection}
-            />
-          </aside>
+      <div className="min-h-screen font-roboto bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-3">
+            <aside className="lg:col-span-1 space-y-4" aria-label="Sidebar and profile section">
+              <Sidebar
+                onNavigate={setActiveView}
+                onEventSectionChange={setEventSection}
+                activeView={activeView}
+                eventSection={eventSection}
+              />
+            </aside>
             <main className="lg:col-span-3 space-y-5 py-8">
-            {renderContent()}
-          </main>
+              {renderContent()}
+            </main>
+          </div>
         </div>
       </div>
-    </div>
     </>
   );
 };  

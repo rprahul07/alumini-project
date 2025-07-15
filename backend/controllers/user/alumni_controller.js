@@ -510,9 +510,13 @@ export const updateAlumniSelf = async (req, res) => {
       phoneNumber,
       department,
       bio,
+      skills,
+      resumeUrl,
       linkedinUrl,
       twitterUrl,
       githubUrl,
+      highestQualification,
+      totalExperience,
       graduationYear,
       course,
       currentJobTitle,
@@ -520,6 +524,31 @@ export const updateAlumniSelf = async (req, res) => {
       company_role,
       workExperience,
     } = req.body;
+
+    // Handle skills from FormData (multiple fields with same name)
+    let skillsArray = skills;
+    if (skills && !Array.isArray(skills)) {
+      // If skills is not an array, it might be a single value from FormData
+      skillsArray = [skills];
+    }
+    
+    // Validate skills array
+    if (skillsArray && !Array.isArray(skillsArray)) {
+      return res.status(400).json({
+        success: false,
+        message: "Skills must be an array",
+      });
+    }
+    
+
+    // Validate resumeUrl if provided
+    if (resumeUrl && typeof resumeUrl !== 'string') {
+      return res.status(400).json({
+        success: false,
+        message: "Resume URL must be a string",
+      });
+    }
+
 
     const user = await prisma.user.findUnique({
       where: { id: userId },
@@ -561,6 +590,11 @@ export const updateAlumniSelf = async (req, res) => {
     if (twitterUrl !== undefined) userUpdateData.twitterUrl = twitterUrl;
     if (githubUrl !== undefined) userUpdateData.githubUrl = githubUrl;
     if (newPhotoUrl) userUpdateData.photoUrl = newPhotoUrl;
+    if (resumeUrl !== undefined) userUpdateData.resumeUrl = resumeUrl;
+    if (skillsArray !== undefined) userUpdateData.skills = skillsArray;
+    if (highestQualification !== undefined) userUpdateData.highestQualification = highestQualification;
+    if (totalExperience !== undefined) userUpdateData.totalExperience = parseInt(totalExperience) || 0;
+
     if (workExperience !== undefined) {
       if (!Array.isArray(workExperience)) {
         return res.status(400).json({
@@ -619,6 +653,10 @@ export const updateAlumniSelf = async (req, res) => {
           twitterUrl: true,
           githubUrl: true,
           workExperience: true,
+          skills: true,
+          resumeUrl: true,
+          highestQualification: true,
+          totalExperience: true,
           alumni: {
             select: {
               id: true,
@@ -683,6 +721,8 @@ export const getAlumniSelf = async (req, res) => {
         twitterUrl: true,
         githubUrl: true,
         workExperience: true,
+        skills: true,
+        resumeUrl: true,
         role: true,
         alumni: {
           select: {
@@ -769,7 +809,7 @@ export const getAlumniByTier = async (req, res) => {
   try {
     const { alumniId } = req.params;
     const userId = req.user.id;
-    console.log(req.user.role);
+
     if (!alumniId) {
       return res.status(400).json({
         success: false,
@@ -807,7 +847,6 @@ export const getAlumniByTier = async (req, res) => {
         message: "Alumni not found",
       });
     }
-    console.log(alumni.role);
     if (!alumni.alumni || alumni.role !== "alumni") {
       return res.status(404).json({
         success: false,

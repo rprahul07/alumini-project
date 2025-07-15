@@ -1,0 +1,152 @@
+import React, { useState, useRef, useEffect } from 'react';
+import { FunnelIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
+
+const EventFilterButton = ({ 
+  selectedEventType, 
+  sortBy, 
+  sortOrder, 
+  onFilterChange, 
+  onSortChange 
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const eventTypeOptions = [
+    { value: '', label: 'All Types' },
+    { value: 'workshop', label: 'Workshop' },
+    { value: 'seminar', label: 'Seminar' },
+    { value: 'conference', label: 'Conference' },
+    { value: 'meetup', label: 'Meetup' },
+    { value: 'hackathon', label: 'Hackathon' },
+    { value: 'career_fair', label: 'Career Fair' },
+    { value: 'alumni_reunion', label: 'Alumni Reunion' },
+    { value: 'other', label: 'Other' }
+  ];
+
+  const sortOptions = [
+    { value: 'createdAt', label: 'Latest First' },
+    { value: 'createdAt_asc', label: 'Oldest First' },
+    { value: 'name', label: 'Title A-Z' },
+    { value: 'name_desc', label: 'Title Z-A' },
+    { value: 'date', label: 'Date (Earliest)' },
+    { value: 'date_desc', label: 'Date (Latest)' },
+    { value: 'type', label: 'Type A-Z' },
+    { value: 'type_desc', label: 'Type Z-A' },
+  ];
+
+  const handleEventTypeChange = (e) => {
+    onFilterChange('eventType', e.target.value);
+    setIsOpen(false);
+  };
+
+  const handleSortChange = (value) => {
+    if (value.includes('_')) {
+      const [field, order] = value.split('_');
+      onSortChange(field, order);
+    } else {
+      onSortChange(value, 'desc');
+    }
+    setIsOpen(false);
+  };
+
+  const getSortLabel = () => {
+    const option = sortOptions.find(opt => {
+      if (sortBy === 'createdAt' && sortOrder === 'desc') return opt.value === 'createdAt';
+      if (sortBy === 'createdAt' && sortOrder === 'asc') return opt.value === 'createdAt_asc';
+      if (sortBy === 'name' && sortOrder === 'asc') return opt.value === 'name';
+      if (sortBy === 'name' && sortOrder === 'desc') return opt.value === 'name_desc';
+      if (sortBy === 'date' && sortOrder === 'asc') return opt.value === 'date';
+      if (sortBy === 'date' && sortOrder === 'desc') return opt.value === 'date_desc';
+      if (sortBy === 'type' && sortOrder === 'asc') return opt.value === 'type';
+      if (sortBy === 'type' && sortOrder === 'desc') return opt.value === 'type_desc';
+      return false;
+    });
+    return option ? option.label : 'Latest First';
+  };
+
+  const getEventTypeLabel = () => {
+    const type = eventTypeOptions.find(t => t.value === selectedEventType);
+    return type ? type.label : 'All Types';
+  };
+
+  return (
+    <div className="relative" ref={dropdownRef}>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center gap-2 px-3 py-2 font-semibold border-2 border-indigo-400 bg-white/60 backdrop-blur text-sm text-indigo-700 hover:bg-white/80 shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 rounded-full whitespace-nowrap"
+      >
+        <FunnelIcon className="h-4 w-4" />
+        <span className="hidden sm:inline">Filters</span>
+        <ChevronDownIcon className={`h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+      </button>
+
+      {isOpen && (
+        <div className="absolute right-0 mt-2 w-80 sm:w-64 bg-white rounded-xl shadow-lg border border-gray-200 z-50 max-h-[80vh] overflow-y-auto scrollbar-hide">
+          <div className="p-4 space-y-4">
+            {/* Event Type Filter */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-3">
+                Event Type
+              </label>
+              <select
+                value={selectedEventType}
+                onChange={handleEventTypeChange}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 text-sm"
+              >
+                {eventTypeOptions.map((type) => (
+                  <option key={type.value} value={type.value}>
+                    {type.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Sort Options */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-3">
+                Sort By
+              </label>
+              <div className="space-y-2">
+                {sortOptions.map((option) => (
+                  <button
+                    key={option.value}
+                    onClick={() => handleSortChange(option.value)}
+                    className={`w-full text-left px-4 py-3 rounded-lg text-sm transition-colors ${
+                      getSortLabel() === option.label
+                        ? 'bg-indigo-100 text-indigo-700 font-medium'
+                        : 'text-gray-700 hover:bg-gray-50'
+                    }`}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Current Selection Display */}
+            <div className="pt-3 border-t border-gray-200">
+              <div className="text-xs text-gray-500 space-y-1">
+                <div>Type: <span className="font-medium text-gray-700">{getEventTypeLabel()}</span></div>
+                <div>Sort: <span className="font-medium text-gray-700">{getSortLabel()}</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default EventFilterButton; 
