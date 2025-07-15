@@ -16,6 +16,7 @@ import AboutPage from '../pages/AboutPage';
 import AlumniPage from '../pages/AlumniPage';
 import ContactPage from '../pages/ContactPage';
 import StudentsPage from '../pages/StudentsPage';
+import FaqPage from '../pages/FaqPage';
 
 // Protected route for a specific role
 function ProtectedRoute({ children, allowedRoles }) {
@@ -42,6 +43,7 @@ const AppRoutes = () => {
       <Route path="/alumni" element={<ProtectedRoute><AlumniPage /></ProtectedRoute>} />
       <Route path="/contact" element={<ContactPage />} />
       <Route path="/students" element={<StudentsPage />} />
+      <Route path="/faq" element={<FaqPage />} />
 
       {/* Student Dashboard */}
       <Route
