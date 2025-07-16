@@ -214,8 +214,8 @@ const AlumniDashboard = () => {
     <>
       <Navbar />
       <div className="min-h-screen font-roboto bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-           <div className="mt-3 bg-gradient-to-r from-green-100 via-white to-indigo-50 rounded-xl p-5 flex items-center min-h-[96px]">
+        <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+           <div className="mt-3 bg-gradient-to-b from-transparent via-green-100 to-green-200  rounded-xl p-5 flex items-center justify-center text-center min-h-[96px]">
                 <div>
                 <h1 className="text-2xl font-semibold text-gray-800 tracking-tight pt-0">
                     Welcome back, <span className="text-green-500 font-bold">{user?.fullName || 'Alumni'}</span>!
@@ -225,27 +225,21 @@ const AlumniDashboard = () => {
                   </p>
                     </div>
                   </div>
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-3 items-start">
+          <div class="flex flex-wrap lg:flex-nowrap gap-4 items-stretch w-full max-w-8xl mt-2">
             {/* Left Column - Profile and Navigation */}
-            <aside className="lg:col-span-1 flex flex-col gap-2 items-stretch justify-start min-h-0" aria-label="Sidebar and profile section">
+           
               <div className="flex-shrink-0">
                 <ProfileCard compact />
               </div>
-              <div className="flex-shrink-0">
-                <Sidebar compact />
-              </div>
-            </aside>
-            {/* Welcome Card - aligned horizontally with ProfileCard */}
-            <div className="lg:col-span-3">
              
-              <main className="space-y-5">
+              
                 {/* Statistics Cards Section - Redesigned to match project UI */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mt-2">
+                <div className="grid grid-cols-4 gap-2 w-full">
                   {/* Students */}
-                  <div className="flex items-center bg-white shadow-md rounded-xl p-4 border-t-8 border-indigo-500 transition-transform transform hover:scale-105">
+                  <div className="flex items-center max-h-[150px] mt-3 bg-white shadow-md rounded-xl p-4 border-t-8 border-indigo-500 transition-transform transform hover:scale-105">
                     <div className="flex-shrink-0 mr-4">
                       <div className="bg-indigo-100 p-3 rounded-full">
-                        <UserGroupIcon className="text-indigo-600 text-2xl" />
+                        <UserGroupIcon className=" w-6 h-6 text-indigo-600 text-2xl" />
                   </div>
                     </div>
                     <div>
@@ -254,10 +248,10 @@ const AlumniDashboard = () => {
                   </div>
                   </div>
                   {/* Mentorships Given */}
-                  <div className="flex items-center bg-white shadow-md rounded-xl p-4 border-t-8 border-purple-500 transition-transform transform hover:scale-105">
+                  <div className="flex items-center max-h-[150px] mt-3 bg-white shadow-md rounded-xl p-4 border-t-8 border-purple-500 transition-transform transform hover:scale-105">
                     <div className="flex-shrink-0 mr-4">
                       <div className="bg-purple-100 p-3 rounded-full">
-                        <AcademicCapIcon className="text-purple-600 text-2xl" />
+                        <AcademicCapIcon className="w-6 h-6 text-purple-600 text-2xl" />
                       </div>
                     </div>
                     <div>
@@ -266,10 +260,10 @@ const AlumniDashboard = () => {
                     </div>
                   </div>
                   {/* Jobs/Internships Posted */}
-                  <div className="flex items-center bg-white shadow-md rounded-xl p-4 border-t-8 border-green-500 transition-transform transform hover:scale-105">
+                  <div className="flex items-center max-h-[150px] mt-3 bg-white shadow-md rounded-xl p-4 border-t-8 border-green-500 transition-transform transform hover:scale-105">
                     <div className="flex-shrink-0 mr-4">
                       <div className="bg-green-100 p-3 rounded-full">
-                        <BriefcaseIcon className="text-green-600 text-2xl" />
+                        <BriefcaseIcon className="w-6 h-6 text-green-600 text-2xl" />
                       </div>
                     </div>
                     <div>
@@ -278,10 +272,10 @@ const AlumniDashboard = () => {
                     </div>
                   </div>
                   {/* Events Hosted */}
-                  <div className="flex items-center bg-white shadow-md rounded-xl p-4 border-t-8 border-yellow-500 transition-transform transform hover:scale-105">
+                  <div className="flex items-center max-h-[150px] mt-3 bg-white shadow-md rounded-xl p-4 border-t-8 border-yellow-500 transition-transform transform hover:scale-105">
                     <div className="flex-shrink-0 mr-4">
                       <div className="bg-yellow-100 p-3 rounded-full">
-                        <CalendarIcon className="text-yellow-600 text-2xl" />
+                        <CalendarIcon className="w-6 h-6 text-yellow-600 text-2xl" />
                       </div>
                     </div>
                     <div>
@@ -290,7 +284,8 @@ const AlumniDashboard = () => {
                     </div>
                   </div>
               </div>
-
+              </div>
+                <main className="space-y-5">
                 {/* Tabbed Board Section */}
                 <div className="max-h-[480px] overflow-y-auto scrollbar-hide">
                   <MyActivityCard
@@ -303,9 +298,7 @@ const AlumniDashboard = () => {
                   />
                 </div>
             </main>
-          </div>
         </div>
-      </div>
       </div>
       <ToastContainer />
     </>

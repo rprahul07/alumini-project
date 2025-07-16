@@ -94,8 +94,8 @@ const StudentDashboard = () => {
     <>
       <Navbar />
       <div className="min-h-screen font-roboto">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-           <div className="mt-5 bg-gradient-to-r from-blue-100 via-white to-indigo-50 rounded-xl p-5 flex items-center min-h-[96px]">
+        <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+           <div className="mt-5 bg-gradient-to-b from-transparent via-blue-100 to-blue-200 rounded-xl p-8 flex items-center justify-center text-center min-h-[96px]">
                 <div>
                 <h1 className="text-2xl font-semibold text-gray-800 tracking-tight pt-0">
                   Welcome back, <span className="text-blue-500 font-bold">{user?.fullName || 'Student'}</span>!
@@ -104,67 +104,62 @@ const StudentDashboard = () => {
                   Your personalized dashboard to explore opportunities and connect with the community.
                 </p>
               </div>
-                  </div>
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-3 items-start">
-            {/* Left Column - Profile and Navigation */}
-            <aside className="lg:col-span-1 flex flex-col gap-2 items-stretch justify-start min-h-0" aria-label="Sidebar and profile section">
-              <div className="flex-shrink-0">
-                <ProfileCard compact />
               </div>
-              <div className="flex-shrink-0">
-                <Sidebar compact />
+              <div class="flex flex-wrap lg:flex-nowrap gap-4 items-stretch w-full max-w-8xl mt-2">
+               
+               <div className="flex-shrink-0">
+               <ProfileCard compact />
               </div>
-            </aside>
-            {/* Welcome Card - aligned horizontally with ProfileCard */}
-            <div className="lg:col-span-3">
+              {/* Statistics Cards Section */}
+             <div className="grid grid-cols-3 gap-2 w-full">
+              {/* Alumni Count */}
+            <div className="flex items-center max-h-[150px] mt-3 bg-white shadow-md rounded-xl p-4 border-t-8 border-indigo-500 transition-transform transform hover:scale-105">
+              <div className="flex-shrink-0 mr-4">
+              <div className="bg-indigo-100 p-3 rounded-full">
+                <UserGroupIcon className="w-6 h-6 text-indigo-600 text-xl" />
+              </div>
+              </div>
+             <div>
+               <div className="text-xl font-bold text-gray-800">1,200</div>
+               <div className="text-gray-500 text-sm">Alumni Count</div>
+             </div>
+           </div>
+
+              {/* Jobs/Opportunities */}
+           <div className="flex items-center max-h-[150px] mt-3 bg-white shadow-md rounded-xl p-4 border-t-8 border-green-500 transition-transform transform hover:scale-105">
+              <div className="flex-shrink-0 mr-4">
+              <div className="bg-green-100 p-3 rounded-full">
+              <BriefcaseIcon className="w-6 h-6 text-green-600 text-xl" />
+              </div>
+              </div>
+             <div>
+              <div className="text-xl font-bold text-gray-800">87</div>
+              <div className="text-gray-500 text-sm">Jobs/Opportunities</div>
+             </div>
+           </div>
+
+            {/* Events */}
+          <div className="flex items-center max-h-[150px] mt-3 bg-white shadow-md rounded-xl p-4 border-t-8 border-purple-500 transition-transform transform hover:scale-105">
+            <div className="flex-shrink-0 mr-4">
+            <div className="bg-purple-100 p-3 rounded-full">
+             <CalendarIcon className="w-6 h-6text-purple-600 text-xl" />
+            </div>
+            </div>
+           <div>
+            <div className="text-xl font-bold text-gray-800">34</div>
+            <div className="text-gray-500 text-sm">Events Conducted</div>
+           </div>
+          </div>
+         </div>
+       </div>
              
-              {/* Statistics Cards Section - Redesigned to match project UI */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-4 mt-2">
-                {/* Alumni Count */}
-                <div className="flex items-center bg-white shadow-md rounded-xl p-4 border-t-8 border-indigo-500 transition-transform transform hover:scale-105 ">
-                  <div className="flex-shrink-0 mr-4">
-                    <div className="bg-indigo-100 p-3 rounded-full">
-                      <UserGroupIcon className="text-indigo-600 text-2xl" />
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold text-gray-800">1,200</div>
-                    <div className="text-gray-500 text-sm">Alumni Count</div>
-                  </div>
-                </div>
-                {/* Jobs/Opportunities */}
-                <div className="flex items-center bg-white shadow-md rounded-xl p-4 border-t-8 border-green-500 transition-transform transform hover:scale-105">
-                  <div className="flex-shrink-0 mr-4">
-                    <div className="bg-green-100 p-3 rounded-full">
-                      <BriefcaseIcon className="text-green-600 text-2xl" />
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold text-gray-800">87</div>
-                    <div className="text-gray-500 text-sm">Jobs/Opportunities</div>
-                  </div>
-                </div>
-                {/* Events */}
-                <div className="flex items-center bg-white shadow-md rounded-xl p-4 border-t-8 border-purple-500 transition-transform transform hover:scale-105">
-                  <div className="flex-shrink-0 mr-4">
-                    <div className="bg-purple-100 p-3 rounded-full">
-                      <CalendarIcon className="text-purple-600 text-2xl" />
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold text-gray-800">34</div>
-                    <div className="text-gray-500 text-sm">Events Conducted</div>
-                  </div>
-                </div>
-              </div>
               <main className="space-y-5">
                 {/* Activity Tabbed Card Section */}
                 <MyActivityCard />
               </main>
-                  </div>
           </div>
         </div>
-      </div>
+      
     </>
   );
 };

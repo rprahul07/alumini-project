@@ -79,14 +79,27 @@ const ProfileCard = ({ compact = false }) => {
   const twoFields = getTwoFields();
 
   return (
-    <div className={`bg-white rounded-2xl shadow-lg ${compact ? 'p-4 max-w-xs my-2' : 'p-6 max-w-xs my-6'} flex flex-col items-center border border-gray-100`}>
+    <div className={`bg-white shadow-md rounded-2xl min-h-[165px] min-w-xl ${compact ? 'px-5 max-w-xl my-2' : 'px-5 max-w-xl my-6'} flex items-center `}>
+      <div className="relative group">
       <img
         src={user.photoUrl || 'https://via.placeholder.com/150/EEEEEE/888888?text=No+Photo'}
         alt={user.fullName || 'User'}
-        className={compact ? 'w-14 h-14 rounded-full object-cover border-2 border-indigo-200 shadow mb-2' : 'w-20 h-20 rounded-full object-cover border-2 border-indigo-200 shadow mb-3'}
+        className={compact ? 'w-20 h-20 rounded-full object-cover border-2 border-indigo-200 shadow mb-2 gap-4' : 'w-20 h-20 rounded-full object-cover border-2 border-indigo-200 shadow mb-3'}
       />
-      <h2 className={compact ? 'text-lg font-bold text-gray-900 text-center mb-1' : 'text-xl font-bold text-gray-900 text-center mb-1'}>{user.fullName || 'User'}</h2>
-      <span className={`inline-block px-3 py-1 rounded-full ${compact ? 'text-xs mb-2' : 'text-sm font-semibold mb-3'} ${
+      <div className="absolute bottom-0 right-0 flex gap-1">
+        <button
+        onClick={() => navigate('/profile/edit')}
+        className={`bg-indigo-600 text-white p-1.5 rounded-full shadow-lg cursor-pointer hover:bg-indigo-700 transition-colors transform hover:scale-105 border-2 border-white`}
+      >
+        <FiEdit2 className="h-4 w-4" />
+      </button>
+       </div>
+       </div>
+      
+      <div className="flex flex-col m-5 w-half pl-2">
+        <div className='flex flex-rows'>
+      <h2 className={compact ? 'text-lg font-bold text-gray-900 text-center mb-1' : 'text-2xl font-bold text-gray-900 text-center mb-1'}>{user.fullName || 'User'}</h2>
+       <span className={`ml-2 mt-1 px-3 py-1 rounded-full ${compact ? 'text-xs mb-2' : 'text-sm font-semibold mb-3'} ${
         user.role?.toLowerCase() === 'alumni'
           ? 'bg-green-100 text-green-700'
           : user.role?.toLowerCase() === 'student'
@@ -97,40 +110,37 @@ const ProfileCard = ({ compact = false }) => {
       }`}>
         {getRoleDisplay(user.role)}
       </span>
-      <div className={`w-full flex flex-col items-center gap-1 ${compact ? 'mb-2' : 'mb-3'}`}>
+      </div>
+      <div className='flex flex-col items-start'>
+      <div className={`w-full flex flex-col  ${compact ? 'mb-2' : 'mb-3'}`}>
         {twoFields.map((field, idx) => (
-          <div key={idx} className={compact ? 'text-xs text-gray-700 text-center' : 'text-sm text-gray-700 text-center'}>
+          <div key={idx} className={compact ? 'text-base text-gray-700 text-left' : 'text-sm text-gray-700 text-center'}>
             <span className="font-medium">{field.label}:</span> {field.value || 'N/A'}
           </div>
         ))}
       </div>
       {(user.linkedinUrl || user.twitterUrl || user.githubUrl) && (
-        <div className={`flex space-x-2 ${compact ? 'mb-2' : 'mb-3'}`}>
+        <div className={`flex space-x-2 ${compact ? 'mb-2' : 'mb-5'}`}>
           {user.linkedinUrl && (
             <a href={user.linkedinUrl} target="_blank" rel="noopener noreferrer" title="LinkedIn">
-              <FiLinkedin className="h-5 w-5 text-indigo-600 hover:text-indigo-800" />
+              <FiLinkedin className="h-5 w-5 text-gray-400 hover:text-indigo-800" />
             </a>
           )}
           {user.twitterUrl && (
             <a href={user.twitterUrl} target="_blank" rel="noopener noreferrer" title="Twitter">
-              <FiTwitter className="h-5 w-5 text-blue-500 hover:text-blue-700" />
+              <FiTwitter className="h-5 w-5 text-gray-400 hover:text-blue-700" />
             </a>
           )}
           {user.githubUrl && (
             <a href={user.githubUrl} target="_blank" rel="noopener noreferrer" title="GitHub">
-              <FiGithub className="h-5 w-5 text-gray-800 hover:text-gray-900" />
+              <FiGithub className="h-5 w-5 text-gray-400 hover:text-gray-900" />
             </a>
           )}
         </div>
       )}
-      <button
-        onClick={() => navigate('/profile/edit')}
-        className={`mt-2 w-full flex items-center justify-center space-x-2 text-xs rounded-full px-3 py-1 font-semibold bg-indigo-500 text-white hover:bg-indigo-600 shadow transition ${compact ? '' : 'text-sm px-4 py-1.5'}`}
-      >
-        <FiEdit2 className="h-4 w-4" />
-        <span>Edit Profile</span>
-      </button>
-    </div>
+      </div>
+      </div>
+      </div>
   );
 };
 
