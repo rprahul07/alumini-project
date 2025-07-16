@@ -736,9 +736,11 @@ export const getEventRegisteredUsers = async (req, res) => {
       select: {
         id: true,
         name: true,
-        registeredUsers: true,
         maxCapacity: true,
         status: true,
+        event_registrations: {
+          select: { registered_user_id: true }
+        }
       },
     });
 
@@ -750,7 +752,7 @@ export const getEventRegisteredUsers = async (req, res) => {
       });
     }
 
-    const registeredUserIds = event.registeredUsers;
+    const registeredUserIds = event.event_registrations.map(r => r.registered_user_id);
     const totalRegisteredUsers = registeredUserIds.length;
 
     console.log(

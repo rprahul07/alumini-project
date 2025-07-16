@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import JobCard from './JobCard';
 import JobDetailsModal from './JobDetailsModal';
 import ApplicantDetailsModal from './ApplicantDetailsModal';
+import { toast } from 'react-toastify';
+import ConfirmDialog from '../ConfirmDialog';
 
 // Mock received applications data
 const initialApplications = [
@@ -78,6 +80,9 @@ const ReceivedApplications = () => {
   const [showModal, setShowModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [selectedApplicant, setSelectedApplicant] = useState(null);
+  const [confirmOpen, setConfirmOpen] = React.useState(false);
+  const [confirmAction, setConfirmAction] = React.useState(null);
+  const [confirmMessage, setConfirmMessage] = React.useState('');
 
   const filteredApplications = applications.filter(app => app.status === subTab);
 
@@ -92,9 +97,11 @@ const ReceivedApplications = () => {
   };
 
   const handleDelete = (id) => {
-    if (window.confirm('Are you sure you want to delete this application?')) {
+    setConfirmMessage('Are you sure you want to delete this application?');
+    setConfirmAction(() => () => {
       setApplications(applications.filter(app => app.id !== id));
-    }
+    });
+    setConfirmOpen(true);
   };
 
   return (
@@ -155,12 +162,19 @@ const ReceivedApplications = () => {
         job={selectedJob}
         open={showModal}
         onClose={() => setShowModal(false)}
-        onApply={() => alert('View applicant profile logic/modal goes here')}
+        onApply={() => toast.info('View applicant profile logic/modal goes here')}
       />
       <ApplicantDetailsModal
         open={showProfileModal}
         onClose={() => setShowProfileModal(false)}
         applicant={selectedApplicant}
+      />
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Delete Application"
+        message={confirmMessage}
+        onConfirm={() => { setConfirmOpen(false); if (confirmAction) confirmAction(); }}
+        onCancel={() => setConfirmOpen(false)}
       />
     </div>
   );

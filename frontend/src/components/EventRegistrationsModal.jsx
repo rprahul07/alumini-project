@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { XMarkIcon, UserIcon, EnvelopeIcon, AcademicCapIcon } from '@heroicons/react/24/outline';
 import axios from '../config/axios';
+import { toast } from 'react-toastify';
 
 const EventRegistrationsModal = ({ event, isOpen, onClose, user }) => {
   const [registrations, setRegistrations] = useState([]);
@@ -32,7 +33,7 @@ const EventRegistrationsModal = ({ event, isOpen, onClose, user }) => {
       }
     } catch (error) {
       console.error('Error fetching registrations:', error);
-      alert('Failed to fetch registrations');
+      toast.error('Failed to fetch registrations');
     } finally {
       setLoading(false);
     }

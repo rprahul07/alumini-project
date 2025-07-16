@@ -344,4 +344,4 @@ const CreateJobModal = ({ onClose, onSuccess, showAlert, editMode = false, jobTo
   );
 };
 
-export default CreateJobModal;
+export default CreateJobModal; 

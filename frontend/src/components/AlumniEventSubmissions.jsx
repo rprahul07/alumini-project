@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, Routes, Route } from "react-router-dom";
 import EditEvent from "./EditEvent";
 import { toast } from "react-toastify";
+import ConfirmDialog from './ConfirmDialog';
 
 const statusBadge = (status) => {
   // Normalize backend status to UI
@@ -47,6 +48,9 @@ const AlumniEventSubmissions = ({ sectionDefault = "alumni" }) => {
   const [actionMenuOpen, setActionMenuOpen] = useState(null); // Track which event's action menu is open
   const navigate = useNavigate();
   const limit = 5;
+  const [confirmOpen, setConfirmOpen] = React.useState(false);
+  const [confirmAction, setConfirmAction] = React.useState(null);
+  const [confirmMessage, setConfirmMessage] = React.useState('');
 
   // Fetch events from backend
   const fetchEvents = async (page = currentPage) => {
@@ -139,33 +143,21 @@ const AlumniEventSubmissions = ({ sectionDefault = "alumni" }) => {
       await fetchEvents(currentPage);
 
     } catch (err) {
-      alert("Error updating status: " + err.message);
+      toast.error("Error updating status: " + err.message);
       console.error("Status update error:", err);
     }
   };
 
   // Delete event handler
   const handleDeleteEvent = async (eventId) => {
-    if (!window.confirm("Are you sure you want to delete this event?")) return;
-    setLoading(true);
-    setError(null);
-    try {
-      // Use admin endpoint for deletion
-      const res = await fetch(`/api/admin/event/${eventId}`, {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-      });
-      const data = await res.json();
-      if (!res.ok || !data.success) throw new Error(data.message || "Failed to delete event");
-      setEvents((prev) => prev.filter((e) => e.id !== eventId));
-      toast.success("Event deleted successfully.");
-    } catch (err) {
-      toast.error(err.message || "Failed to delete event.");
-      setError(err.message || "Failed to delete event");
-    } finally {
-      setLoading(false);
-    }
+    setConfirmMessage("Are you sure you want to delete this event?");
+    setConfirmAction(() => () => {
+      setConfirmOpen(false);
+      setConfirmAction(null);
+      setConfirmMessage('');
+      handleDeleteEvent(eventId);
+    });
+    setConfirmOpen(true);
   };
 
   if (loading) return <div className="p-6">Loading events...</div>;
@@ -296,6 +288,13 @@ const AlumniEventSubmissions = ({ sectionDefault = "alumni" }) => {
       <Routes>
         <Route path="/admin/events/edit/:id" element={<EditEvent />} />
       </Routes>
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Delete Event"
+        message={confirmMessage}
+        onConfirm={() => { setConfirmOpen(false); if (confirmAction) confirmAction(); }}
+        onCancel={() => setConfirmOpen(false)}
+      />
     </div>
   );
 };

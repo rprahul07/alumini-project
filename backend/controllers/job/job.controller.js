@@ -309,36 +309,31 @@ const deleteJob = async (req, res) => {
   const jobId = parseInt(req.params.id);
 
   try {
-    const job = await prisma.job.findUnique({
-      where: {
-        id: jobId,
-      },
-    });
-
+    const job = await prisma.job.findUnique({ where: { id: jobId } });
     if (!job) {
       return res.status(404).json({ success: false, message: "Job not found" });
     }
-
-    // Check if the authenticated user is the job owner or an admin
     if (job.userId !== req.user.id && req.user.role !== "admin") {
       return res.status(403).json({
         success: false,
-        message:
-          "Access denied. You can only delete your own jobs or be an admin.",
+        message: "Access denied. You can only delete your own jobs or be an admin.",
         error: "Insufficient permissions",
       });
     }
 
-    await prisma.job.delete({
-      where: {
-        id: jobId,
-      },
-    });
+    await prisma.job.delete({ where: { id: jobId } });
 
-    res.status(200).json({ message: "Job removed" });
+    return res.status(200).json({ success: true, message: "Job removed" });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server Error" });
+    if (error.code === "P2003") {
+      console.log('P2003 error caught, sending custom message');
+      return res.status(400).json({
+        success: false,
+        message: "You cannot delete this job because it has applications. Please delete all applications for this job first.",
+      });
+    }
+    console.error('Delete job error:', error);
+    return res.status(500).json({ success: false, message: "Server Error" });
   }
 };
 

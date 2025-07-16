@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import axios from '../../config/axios';
 import { AcademicCapIcon, UserIcon, PhoneIcon, GlobeAltIcon, XMarkIcon, BuildingOfficeIcon } from '@heroicons/react/24/outline';
+import { toast } from 'react-toastify';
+import ConfirmDialog from '../ConfirmDialog';
 
 const statusColors = {
   pending: 'bg-yellow-100 text-yellow-700',
@@ -17,6 +19,9 @@ const SentRequests = ({ requests, loading, error, setRequests, showAlert }) => {
   const [selectedSentRequestForModal, setSelectedSentRequestForModal] = useState(null);
   const [contactLoading, setContactLoading] = useState(false);
   const [contactError, setContactError] = useState(false);
+  const [confirmOpen, setConfirmOpen] = React.useState(false);
+  const [confirmAction, setConfirmAction] = React.useState(null);
+  const [confirmMessage, setConfirmMessage] = React.useState('');
 
   // Delete handler (restored async logic)
   const handleDeleteSentRequest = async (req) => {
@@ -24,14 +29,7 @@ const SentRequests = ({ requests, loading, error, setRequests, showAlert }) => {
       showAlert('Request ID is missing. Cannot delete.', 'error');
       return;
     }
-    if (!window.confirm('Are you sure you want to permanently delete this request? This cannot be undone.')) return;
-    try {
-      await axios.delete(`/api/support/delete/requester/${req.id}`);
-      setRequests(prev => prev.filter(r => r.id !== req.id));
-      showAlert('Request deleted successfully!', 'success');
-    } catch (err) {
-      showAlert('Failed to delete request.', 'error');
-    }
+    setConfirmMessage('Are you sure you want to permanently delete this request? This cannot be undone.'); setConfirmAction(() => handleDeleteSentRequest); setConfirmOpen(true);
   };
 
   // View handler
@@ -375,6 +373,13 @@ const SentRequests = ({ requests, loading, error, setRequests, showAlert }) => {
           </div>
         </div>
       )}
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Delete Request"
+        message={confirmMessage}
+        onConfirm={() => { setConfirmOpen(false); if (confirmAction) confirmAction(); }}
+        onCancel={() => setConfirmOpen(false)}
+      />
     </div>
   );
 };

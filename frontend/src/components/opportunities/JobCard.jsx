@@ -1,7 +1,10 @@
 import React from 'react';
 import { CalendarIcon, BuildingOffice2Icon, UserIcon, ClockIcon } from '@heroicons/react/24/outline';
+import { toast } from 'react-toastify';
+import ConfirmDialog from '../ConfirmDialog';
+import axios from '../../config/axios';
 
-const JobCard = ({ job, user, isApplied, onClick, onApply }) => {
+const JobCard = ({ job, user, isApplied, onClick, onApply, onJobDeleted }) => {
   // Format date
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
@@ -62,6 +65,35 @@ const JobCard = ({ job, user, isApplied, onClick, onApply }) => {
 
   const buttonState = getButtonState();
 
+  const [confirmOpen, setConfirmOpen] = React.useState(false);
+  const [confirmAction, setConfirmAction] = React.useState(null);
+  const [confirmMessage, setConfirmMessage] = React.useState('');
+  const [actionLoading, setActionLoading] = React.useState(false);
+
+  // Admin delete handler
+  const handleDeleteJob = () => {
+    setConfirmMessage('Are you sure you want to delete this job? This action cannot be undone.');
+    setConfirmAction(() => handleDeleteJobConfirmed);
+    setConfirmOpen(true);
+  };
+
+  const handleDeleteJobConfirmed = async () => {
+    setActionLoading(true);
+    try {
+      const response = await axios.delete(`/api/job/${job.id}`);
+      if (response.data.success !== false) {
+        toast.success('Job deleted successfully!');
+        if (onJobDeleted) onJobDeleted(job.id);
+      } else {
+        toast.error(response.data.message || 'Failed to delete job.');
+      }
+    } catch (err) {
+      toast.error(err?.response?.data?.message || err?.message || 'Failed to delete job.');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
   return (
     <div
       className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden cursor-pointer transform hover:scale-[1.02] flex flex-col h-full w-full max-w-sm sm:max-w-md md:max-w-lg p-3 relative"
@@ -74,6 +106,16 @@ const JobCard = ({ job, user, isApplied, onClick, onApply }) => {
       >
         {job.type === 'internship' ? 'Internship' : 'Job'}
       </span>
+      {/* Admin Delete Button */}
+      {user && user.role === 'admin' && (
+        <button
+          className="absolute top-3 left-3 px-2 py-1 rounded-full bg-red-600 text-white text-xs font-semibold hover:bg-red-700 transition-colors z-10"
+          onClick={e => { e.stopPropagation(); handleDeleteJob(); }}
+          disabled={actionLoading}
+        >
+          {actionLoading ? 'Deleting...' : 'Delete'}
+        </button>
+      )}
       {/* Job Content */}
       <div className="p-3 flex flex-col flex-grow">
         {/* Job Title */}
@@ -130,6 +172,13 @@ const JobCard = ({ job, user, isApplied, onClick, onApply }) => {
           {buttonState.text}
         </button>
       </div>
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Delete Job"
+        message={confirmMessage}
+        onConfirm={() => { setConfirmOpen(false); if (confirmAction) confirmAction(); }}
+        onCancel={() => setConfirmOpen(false)}
+      />
     </div>
   );
 };

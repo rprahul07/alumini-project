@@ -3,12 +3,18 @@ import { CalendarIcon, ClockIcon, MapPinIcon, UserGroupIcon, UsersIcon } from '@
 import EventDetailsModal from './EventDetailsModal';
 import EventRegistrationsModal from './EventRegistrationsModal';
 import axios from '../config/axios';
+import { toast } from 'react-toastify';
+import ConfirmDialog from './ConfirmDialog';
 
 const EventCard = ({ event, user, onEventUpdate, showEdit, showDelete, onEdit, onDelete, sm }) => {
   const [isRegistering, setIsRegistering] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isRegistrationsModalOpen, setIsRegistrationsModalOpen] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
+  // Add state for confirm dialog if needed
+  const [confirmOpen, setConfirmOpen] = React.useState(false);
+  const [confirmAction, setConfirmAction] = React.useState(null);
+  const [confirmMessage, setConfirmMessage] = React.useState('');
 
   // Format date
   const formatDate = (dateString) => {
@@ -30,7 +36,7 @@ const EventCard = ({ event, user, onEventUpdate, showEdit, showDelete, onEdit, o
   const handleRegistration = async (e) => {
     e.stopPropagation(); // Prevent card click when clicking register button
     if (!user) {
-      alert('Only for registered users');
+      toast.error('Only for registered users');
       return;
     }
 
@@ -40,7 +46,7 @@ const EventCard = ({ event, user, onEventUpdate, showEdit, showDelete, onEdit, o
       const response = await axios.post(endpoint);
 
       if (response.data.success) {
-        alert(response.data.message || 'Action successful!');
+        toast.success(response.data.message || 'Action successful!');
         // Refetch events to update UI with new isRegistered and registeredCount
         if (onEventUpdate) {
           onEventUpdate();
@@ -48,17 +54,17 @@ const EventCard = ({ event, user, onEventUpdate, showEdit, showDelete, onEdit, o
       } else {
         // Show specific message if already registered
         if (response.data.message && response.data.message.toLowerCase().includes('already registered')) {
-          alert('You are already registered for this event.');
+          toast.info('You are already registered for this event.');
         } else {
-          alert(response.data.message || 'Failed to register for event');
+          toast.error(response.data.message || 'Failed to register for event');
         }
       }
     } catch (error) {
       // Show specific message if already registered
       if (error.response && error.response.data && error.response.data.message && error.response.data.message.toLowerCase().includes('already registered')) {
-        alert('You are already registered for this event.');
+        toast.info('You are already registered for this event.');
       } else {
-        alert('Network error. Please try again.');
+        toast.error('Network error. Please try again.');
       }
     } finally {
       setIsRegistering(false);
@@ -257,6 +263,13 @@ const EventCard = ({ event, user, onEventUpdate, showEdit, showDelete, onEdit, o
         user={user}
         isOpen={isRegistrationsModalOpen}
         onClose={() => setIsRegistrationsModalOpen(false)}
+      />
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Confirm Action"
+        message={confirmMessage}
+        onConfirm={() => { setConfirmOpen(false); if (confirmAction) confirmAction(); }}
+        onCancel={() => setConfirmOpen(false)}
       />
     </>
   );

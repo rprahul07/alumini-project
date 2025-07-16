@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import FaqHeading from '../../components/FaqHeading';
-import FaqButtons from '../../components/FaqButtons';
-import FaqList from '../../components/FaqList';
+import FaqHeading from '../components/FaqHeading';
+import FaqButtons from '../components/FaqButtons';
+import FaqList from '../components/FaqList';
 
 function FaqPage() {
   const [selectedCategory, setSelectedCategory] = useState('All');

@@ -16,6 +16,8 @@ import {
   PaperClipIcon,
   XMarkIcon as TagRemoveIcon,
 } from '@heroicons/react/24/outline';
+import { toast } from 'react-toastify';
+import ConfirmDialog from './ConfirmDialog';
 
 const ProfileEditor = () => {
   const navigate = useNavigate();
@@ -51,6 +53,9 @@ const ProfileEditor = () => {
   const [newSkill, setNewSkill] = useState('');
   const [resumeUrl, setResumeUrl] = useState(user?.resumeUrl || '');
   const [cvUploading, setCvUploading] = useState(false);
+  const [confirmOpen, setConfirmOpen] = React.useState(false);
+  const [confirmAction, setConfirmAction] = React.useState(null);
+  const [confirmMessage, setConfirmMessage] = React.useState('');
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -303,30 +308,9 @@ const ProfileEditor = () => {
       showAlert('No existing profile photo to delete.', 'info');
       return;
     }
-    if (!window.confirm('Are you sure you want to delete your profile photo?')) {
-      return;
-    }
-    try {
-      setLoading(true);
-      if (!user) throw new Error('User data not found');
-      const deletePhotoEndpoint = `/api/${user.role}/profile/delete-photo`;
-      const response = await axios.delete(deletePhotoEndpoint, { withCredentials: true });
-      if (response.data.success) {
-        setFormData((prev) => ({ ...prev, profilePhoto: null }));
-        const updatedUserData = {
-          ...user,
-          photoUrl: null,
-        };
-        updateUser(updatedUserData);
-        showAlert('Profile photo deleted successfully!', 'success');
-      } else {
-        showAlert(response.data.message || 'Error deleting profile photo', 'error');
-      }
-    } catch (error) {
-      showAlert(error.response?.data?.message || 'Failed to delete profile photo', 'error');
-    } finally {
-      setLoading(false);
-    }
+    setConfirmMessage('Are you sure you want to delete your profile photo?');
+    setConfirmAction(() => handleDeletePhoto);
+    setConfirmOpen(true);
   };
 
   if (loading) {
@@ -942,6 +926,13 @@ const ProfileEditor = () => {
           </div>
         </form>
       </div>
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Delete Profile Photo"
+        message={confirmMessage}
+        onConfirm={() => { setConfirmOpen(false); if (confirmAction) confirmAction(); }}
+        onCancel={() => setConfirmOpen(false)}
+      />
     </div>
   );
 };

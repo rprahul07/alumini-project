@@ -6,6 +6,7 @@ import EventDetailsModal from './EventDetailsModal';
 import EditEventModal from './EditEventModal';
 import toast from 'react-hot-toast';
 import EventCard from './EventCard';
+import ConfirmDialog from './ConfirmDialog';
 
 const AdminAllEventsButton = () => {
   const { user } = useAuth();
@@ -20,6 +21,9 @@ const AdminAllEventsButton = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [actionLoading, setActionLoading] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState('all');
+  const [confirmOpen, setConfirmOpen] = React.useState(false);
+  const [confirmAction, setConfirmAction] = React.useState(null);
+  const [confirmMessage, setConfirmMessage] = React.useState('');
 
   const fetchAllEvents = async () => {
     setLoading(true);
@@ -46,22 +50,25 @@ const AdminAllEventsButton = () => {
   };
 
   const handleDeleteEvent = async (eventId) => {
-    if (!window.confirm('Are you sure you want to delete this event?')) return;
-    setActionLoading(eventId);
-    try {
-      const endpoint = `/api/admin/event/${eventId}`;
-      const response = await axios.delete(endpoint);
-      if (response.data.success) {
-        toast.success('Event deleted successfully.');
-        setEvents(events => events.filter(e => e.id !== eventId));
-      } else {
-        toast.error(response.data.message || 'Failed to delete event.');
+    setConfirmMessage('Are you sure you want to delete this event?');
+    setConfirmAction(() => async () => {
+      setActionLoading(eventId);
+      try {
+        const endpoint = `/api/admin/event/${eventId}`;
+        const response = await axios.delete(endpoint);
+        if (response.data.success) {
+          toast.success('Event deleted successfully.');
+          setEvents(events => events.filter(e => e.id !== eventId));
+        } else {
+          toast.error(response.data.message || 'Failed to delete event.');
+        }
+      } catch (err) {
+        toast.error(err.response?.data?.message || 'An error occurred during deletion.');
+      } finally {
+        setActionLoading(null);
       }
-    } catch (err) {
-      toast.error(err.response?.data?.message || 'An error occurred during deletion.');
-    } finally {
-      setActionLoading(null);
-    }
+    });
+    setConfirmOpen(true);
   };
 
   const handleOpenModal = () => {
@@ -175,6 +182,13 @@ const AdminAllEventsButton = () => {
 
       {isDetailModalOpen && <EventDetailsModal isOpen={isDetailModalOpen} onClose={() => setIsDetailModalOpen(false)} event={selectedEvent} />}
       {isEditModalOpen && <EditEventModal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} event={selectedEvent} onEventUpdated={handleEventUpdated} />}
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Delete Event"
+        message={confirmMessage}
+        onConfirm={() => { setConfirmOpen(false); if (confirmAction) confirmAction(); }}
+        onCancel={() => setConfirmOpen(false)}
+      />
     </>
   );
 };
