@@ -13,6 +13,7 @@ import ApplyJobModal from './ApplyJobModal';
 import CreateJobModal from './CreateJobModal';
 import axios from '../../config/axios';
 import { useAuth } from '../../contexts/AuthContext';
+import { toast } from 'react-toastify';
 
 const JobDetailsModal = ({ job, open, onClose, onJobEdit, onJobDelete, showAlert }) => {
   const { user } = useAuth();
@@ -242,11 +243,12 @@ const JobDetailsModal = ({ job, open, onClose, onJobEdit, onJobDelete, showAlert
                 className="rounded-full px-4 py-1.5 font-semibold bg-red-600 text-white hover:bg-red-700 transition-colors"
                 onClick={async () => {
                   try {
-                    await axios.delete(`/api/job/${job.id}`);
+                    await axios.delete(`/api/job/${job.id}`); // axios instance from config handles credentials and token
+                    toast.success('Job deleted successfully!');
                     setShowDeleteModal(false);
                     onJobDelete && onJobDelete();
                   } catch (err) {
-                    alert('Failed to delete job.');
+                    toast.error(err.response?.data?.message || 'Failed to delete job.');
                   }
                 }}
               >

@@ -46,12 +46,18 @@ const RoleSelection = () => {
   };
 
   const handleContinue = () => {
-    navigate('/dashboard');
+    if (!user || !user.role) return;
+    const role = user.role.toLowerCase();
+    if (role === 'student') navigate('/student/dashboard');
+    else if (role === 'alumni') navigate('/alumni/dashboard');
+    else if (role === 'faculty') navigate('/faculty/dashboard');
+    else if (role === 'admin') navigate('/admin/dashboard');
+    else navigate('/');
   };
 
   const handleLogout = async () => {
     await logout();
-    window.location.reload();
+    navigate('/role-selection', { replace: true });
   };
 
   return (

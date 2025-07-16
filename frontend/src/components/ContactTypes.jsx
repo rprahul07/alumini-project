@@ -32,7 +32,7 @@ function ContactTypes() {
 <div>
   <p className="font-semibold">Frequently Asked Questions</p>
   <p className="text-gray-600 mb-1">Check our FAQ section for quick answers</p>
-  <Link to="/FaqPage" className="text-purple-700 font-semibold hover:underline">
+  <Link to="/faq" className="text-purple-700 font-semibold hover:underline">
     View FAQ →
   </Link>
 </div>

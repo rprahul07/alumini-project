@@ -12,6 +12,8 @@ import {
   UserIcon,
   PhotoIcon
 } from '@heroicons/react/24/outline';
+import { toast } from 'react-toastify';
+import ConfirmDialog from './ConfirmDialog';
 
 const AdminEventProposals = () => {
   const { user } = useAuth();
@@ -24,6 +26,9 @@ const AdminEventProposals = () => {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [actionLoading, setActionLoading] = useState(null);
+  const [confirmOpen, setConfirmOpen] = React.useState(false);
+  const [confirmAction, setConfirmAction] = React.useState(null);
+  const [confirmMessage, setConfirmMessage] = React.useState('');
 
   // Fetch all events for admin
   const fetchEvents = async () => {
@@ -86,29 +91,28 @@ const AdminEventProposals = () => {
                 : event
             )
           );
-          alert('Event approved successfully!');
+          toast.success('Event approved successfully!');
         } else {
-          alert(response.data.message || 'Failed to approve event');
+          toast.error(response.data.message || 'Failed to approve event');
         }
       } else if (action === 'reject') {
         // For rejection, we'll need to implement a reject endpoint or use a different approach
         // For now, let's show a confirmation dialog
-        if (confirm('Are you sure you want to reject this event? This action cannot be undone.')) {
-          // You can implement rejection logic here
-          alert('Event rejection feature will be implemented soon.');
-        }
+        setConfirmMessage('Are you sure you want to reject this event? This action cannot be undone.');
+        setConfirmAction(() => () => handleEventAction(eventId, 'reject'));
+        setConfirmOpen(true);
       }
     } catch (error) {
       console.error('Error handling event action:', error);
       
       if (error.response?.status === 401) {
-        alert('Please log in to perform this action');
+        toast.error('Please log in to perform this action');
       } else if (error.response?.status === 403) {
-        alert('Access denied. Only admins can approve events.');
+        toast.error('Access denied. Only admins can approve events.');
       } else if (error.response?.data?.message) {
-        alert(error.response.data.message);
+        toast.error(error.response.data.message);
       } else {
-        alert('Network error. Please try again.');
+        toast.error('Network error. Please try again.');
       }
     } finally {
       setActionLoading(null);
@@ -479,6 +483,14 @@ const AdminEventProposals = () => {
           </div>
         </div>
       )}
+
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Reject Event"
+        message={confirmMessage}
+        onConfirm={() => { setConfirmOpen(false); if (confirmAction) confirmAction(); }}
+        onCancel={() => setConfirmOpen(false)}
+      />
     </>
   );
 };

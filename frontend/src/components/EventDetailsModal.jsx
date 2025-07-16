@@ -1,12 +1,18 @@
 import React, { useState } from 'react';
 import { XMarkIcon, CalendarIcon, ClockIcon, MapPinIcon, UserGroupIcon, UserIcon } from '@heroicons/react/24/outline';
 import axios from '../config/axios';
+import { toast } from 'react-toastify';
+import ConfirmDialog from './ConfirmDialog';
 
 const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
   const [isRegistering, setIsRegistering] = useState(false);
   const [isRegistered, setIsRegistered] = useState(
     user && event.registeredUsers && event.registeredUsers.includes(user.id)
   );
+  // Add state for confirm dialog if needed
+  const [confirmOpen, setConfirmOpen] = React.useState(false);
+  const [confirmAction, setConfirmAction] = React.useState(null);
+  const [confirmMessage, setConfirmMessage] = React.useState('');
 
   if (!isOpen || !event) return null;
 
@@ -24,7 +30,7 @@ const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
   // Handle registration
   const handleRegistration = async () => {
     if (!user) {
-      alert('Please log in to register for events');
+      toast.error('Please log in to register for events');
       return;
     }
 
@@ -40,19 +46,19 @@ const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
           onEventUpdate();
         }
       } else {
-        alert(response.data.message || 'Failed to register for event');
+        toast.error(response.data.message || 'Failed to register for event');
       }
     } catch (error) {
       console.error('Registration error:', error);
       
       if (error.response?.status === 401) {
-        alert('Please log in to register for events');
+        toast.error('Please log in to register for events');
       } else if (error.response?.status === 403) {
-        alert('Access denied. You cannot register for this event.');
+        toast.error('Access denied. You cannot register for this event.');
       } else if (error.response?.data?.message) {
-        alert(error.response.data.message);
+        toast.error(error.response.data.message);
       } else {
-        alert('Network error. Please try again.');
+        toast.error('Network error. Please try again.');
       }
     } finally {
       setIsRegistering(false);
@@ -165,6 +171,13 @@ const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
           </div>
         </div>
       </div>
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Confirm Action"
+        message={confirmMessage}
+        onConfirm={() => { setConfirmOpen(false); if (confirmAction) confirmAction(); }}
+        onCancel={() => setConfirmOpen(false)}
+      />
     </div>
   );
 };

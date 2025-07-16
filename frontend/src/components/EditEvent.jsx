@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { toast } from 'react-toastify';
 
 const eventTypes = ["Seminar", "Workshop", "Meetup"];
 
@@ -26,7 +27,7 @@ const EditEvent = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     // TODO: Send PUT request to backend
-    alert("Event updated! (Mock)");
+    toast.success("Event updated! (Mock)");
     navigate(-1);
   };
 

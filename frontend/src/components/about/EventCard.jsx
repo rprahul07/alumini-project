@@ -20,7 +20,7 @@ const LinkedInIcon = () => (
 
 export default function EventCard({ title, imgSrc }) {
   return (
-    <div className="relative rounded-2xl overflow-hidden h-full w-full shadow-lg group hover:shadow-2xl transition-all duration-300">
+    <div className="relative rounded-2xl overflow-hidden h-full w-full min-h-[140px] max-h-[160px] sm:min-h-[180px] sm:max-h-[200px] md:min-h-[220px] md:max-h-[240px] shadow-lg group hover:shadow-2xl transition-all duration-300">
       <img
         src={imgSrc}
         alt={title}

@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { XMarkIcon, PlusIcon, PhotoIcon } from '@heroicons/react/24/outline';
 import axios from '../config/axios';
 import { useAuth } from '../contexts/AuthContext';
+import { toast } from 'react-toastify';
+import ConfirmDialog from './ConfirmDialog';
 
 const CreateEventModal = ({ isOpen, onClose, onEventCreated, isMobileModal }) => {
   const { user } = useAuth();
@@ -19,6 +21,10 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated, isMobileModal }) =>
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
+  // Add state for confirm dialog if needed
+  const [confirmOpen, setConfirmOpen] = React.useState(false);
+  const [confirmAction, setConfirmAction] = React.useState(null);
+  const [confirmMessage, setConfirmMessage] = React.useState('');
 
   // Event types (same as EventFilters for consistency)
   const eventTypes = [
@@ -187,7 +193,7 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated, isMobileModal }) =>
       setIsSubmitting(true);
       
       if (!user) {
-        alert('Please log in to create events');
+        toast.error('Please log in to create events');
         return;
       }
       
@@ -198,7 +204,7 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated, isMobileModal }) =>
       else if (user.role === 'faculty') endpoint = '/api/faculty/event/create';
       else if (user.role === 'alumni') endpoint = '/api/alumni/event/create';
       if (!endpoint) {
-        alert('Your role is not allowed to create events.');
+        toast.error('Your role is not allowed to create events.');
         return;
       }
       let successMessage;
@@ -235,25 +241,25 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated, isMobileModal }) =>
       });
       
       if (response.data.success) {
-        alert(successMessage); // Use the dynamic success message
+        toast.success(successMessage); // Use the dynamic success message
         handleClose();
         if (onEventCreated) {
           onEventCreated();
         }
       } else {
-        alert(response.data.message || 'Failed to create event');
+        toast.error(response.data.message || 'Failed to create event');
       }
     } catch (error) {
       console.error('Create event error:', error);
       
       if (error.response?.status === 401) {
-        alert('Please log in to create events');
+        toast.error('Please log in to create events');
       } else if (error.response?.status === 403) {
-        alert('Access denied. Only alumni, faculty, and admin can create events.');
+        toast.error('Access denied. Only alumni, faculty, and admin can create events.');
       } else if (error.response?.data?.message) {
-        alert(error.response.data.message);
+        toast.error(error.response.data.message);
       } else {
-        alert('Network error. Please try again.');
+        toast.error('Network error. Please try again.');
       }
     } finally {
       setIsSubmitting(false);
@@ -509,6 +515,13 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated, isMobileModal }) =>
           </div>
         </form>
       </div>
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Confirm Action"
+        message={confirmMessage}
+        onConfirm={() => { setConfirmOpen(false); if (confirmAction) confirmAction(); }}
+        onCancel={() => setConfirmOpen(false)}
+      />
     </div>
   );
 };

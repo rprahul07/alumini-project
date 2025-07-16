@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import axios from '../../config/axios';
 import { AcademicCapIcon, UserIcon, PhoneIcon, GlobeAltIcon, CheckIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { toast } from 'react-toastify';
+import ConfirmDialog from '../ConfirmDialog';
 
 const roleColors = {
   student: 'bg-blue-100 text-blue-700',
@@ -33,6 +35,9 @@ const ReceivedRequests = ({ requests, loading, error, setRequests, showAlert }) 
   const [acceptMsg, setAcceptMsg] = useState('');
   const [acceptTier, setAcceptTier] = useState(1);
   const [actionLoading, setActionLoading] = useState(false);
+  const [confirmOpen, setConfirmOpen] = React.useState(false);
+  const [confirmAction, setConfirmAction] = React.useState(null);
+  const [confirmMessage, setConfirmMessage] = React.useState('');
 
   // Helper functions
   const getFilteredRequests = () => {
@@ -104,31 +109,35 @@ const ReceivedRequests = ({ requests, loading, error, setRequests, showAlert }) 
   };
 
   const handleRejectRequest = async (req) => {
-    if (!window.confirm('Are you sure you want to reject this request?')) return;
-    setActionLoading(true);
-    try {
-      await axios.put(`/api/support/reject/${req.id}`);
-      setRequests(prev => prev.map(r => r.id === req.id ? { ...r, status: 'rejected' } : r));
-      showAlert('Request rejected successfully!', 'success');
-    } catch (err) {
-      showAlert('Failed to reject request.', 'error');
-    } finally {
-      setActionLoading(false);
-    }
+    setConfirmMessage('Are you sure you want to reject this request?');
+    setConfirmAction(() => () => {
+      setActionLoading(true);
+      axios.put(`/api/support/reject/${req.id}`).then(() => {
+        setRequests(prev => prev.map(r => r.id === req.id ? { ...r, status: 'rejected' } : r));
+        toast.success('Request rejected successfully!');
+      }).catch(() => {
+        toast.error('Failed to reject request.');
+      }).finally(() => {
+        setActionLoading(false);
+      });
+    });
+    setConfirmOpen(true);
   };
 
   const handleDeleteRequest = async (req) => {
-    if (!window.confirm('Are you sure you want to permanently delete this request? This cannot be undone.')) return;
-    setActionLoading(true);
-    try {
-      await axios.delete(`/api/support/delete/alumni/${req.id}`);
-      setRequests(prev => prev.filter(r => r.id !== req.id));
-      showAlert('Request deleted successfully!', 'success');
-    } catch (err) {
-      showAlert('Failed to delete request.', 'error');
-    } finally {
-      setActionLoading(false);
-    }
+    setConfirmMessage('Are you sure you want to permanently delete this request? This cannot be undone.');
+    setConfirmAction(() => () => {
+      setActionLoading(true);
+      axios.delete(`/api/support/delete/alumni/${req.id}`).then(() => {
+        setRequests(prev => prev.filter(r => r.id !== req.id));
+        toast.success('Request deleted successfully!');
+      }).catch(() => {
+        toast.error('Failed to delete request.');
+      }).finally(() => {
+        setActionLoading(false);
+      });
+    });
+    setConfirmOpen(true);
   };
 
   return (
@@ -479,6 +488,13 @@ const ReceivedRequests = ({ requests, loading, error, setRequests, showAlert }) 
           </div>
         </div>
       )}
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Confirm Action"
+        message={confirmMessage}
+        onConfirm={() => { setConfirmOpen(false); if (confirmAction) confirmAction(); }}
+        onCancel={() => setConfirmOpen(false)}
+      />
     </div>
   );
 };

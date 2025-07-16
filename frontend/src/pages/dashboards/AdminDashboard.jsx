@@ -17,7 +17,7 @@ import {
 } from "react-icons/fi";
 import apiService from "../../middleware/api";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-hot-toast";
+import { toast } from 'react-toastify';
 import Navbar from "../../components/Navbar";
 import AlumniEventSubmissions from "../../components/AlumniEventSubmissions";
 import JobCard from '../../components/opportunities/JobCard';
@@ -25,6 +25,7 @@ import JobDetailsModal from '../../components/opportunities/JobDetailsModal';
 import axios from '../../config/axios';
 import MyActivityCard from '../../components/MyActivityCard';
 import { XMarkIcon } from '@heroicons/react/24/outline';
+import ConfirmDialog from '../../components/ConfirmDialog';
 
 const AdminOpportunities = () => {
   const [pendingJobs, setPendingJobs] = useState([]);
@@ -36,6 +37,8 @@ const AdminOpportunities = () => {
   const [modalLoading, setModalLoading] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('pending'); // 'pending', 'approved', 'rejected'
+  const [deleteJobId, setDeleteJobId] = useState(null);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   useEffect(() => {
     if (activeTab === 'pending') {
@@ -118,6 +121,29 @@ const AdminOpportunities = () => {
     }
   };
 
+  const handleDeleteJob = async () => {
+    if (!deleteJobId) return;
+    try {
+      await axios.delete(`/api/job/${deleteJobId}`);
+      toast.success('Job deleted successfully!');
+      setShowDeleteDialog(false);
+      setDeleteJobId(null);
+      // Refresh jobs
+      if (activeTab === 'pending') fetchPendingJobs();
+      else if (activeTab === 'approved') fetchApprovedJobs();
+      else if (activeTab === 'rejected') fetchRejectedJobs();
+    } catch (err) {
+      console.log('Delete job error (full):', err);
+      toast.error(
+        err?.response?.data?.message ||
+        err?.message ||
+        'Failed to delete job.'
+      );
+      setShowDeleteDialog(false);
+      setDeleteJobId(null);
+    }
+  };
+
   // Table data and columns based on tab
   let jobsToShow = [];
   if (activeTab === 'pending') jobsToShow = pendingJobs;
@@ -164,6 +190,12 @@ const AdminOpportunities = () => {
                 >
                   View
                 </button>
+                <button
+                  className="px-3 py-1 rounded-full bg-red-600 text-white text-xs font-semibold hover:bg-red-700 transition-colors"
+                  onClick={() => { setDeleteJobId(job.id); setShowDeleteDialog(true); }}
+                >
+                  Delete
+                </button>
               </div>
             </div>
           ))}
@@ -177,9 +209,16 @@ const AdminOpportunities = () => {
           onClose={handleCloseModal}
           onJobEdit={fetchApprovedJobs}
           onJobDelete={fetchApprovedJobs}
-          showAlert={toast.success}
+          showAlert={toast}
         />
       )}
+      <ConfirmDialog
+        open={showDeleteDialog}
+        title="Delete Job"
+        message="Are you sure you want to delete this job? This action cannot be undone."
+        onConfirm={handleDeleteJob}
+        onCancel={() => { setShowDeleteDialog(false); setDeleteJobId(null); }}
+      />
     </div>
   );
 };
@@ -748,16 +787,22 @@ const UserTableDisplay = ({ userType, users, onUpdateUser, onDeleteUser }) => {
     setSelectedUserId(userId);
     setSelectedUserName(userName);
     setModalAction(action);
+    if (action === 'delete') {
+      setConfirmMessage(`Are you sure you want to delete ${userName}? This action cannot be undone.`);
+      setPendingAction(() => () => {
+        onDeleteUser(userId, userType);
+      });
     setIsConfirmModalOpen(true);
+    } else {
+      setIsConfirmModalOpen(true);
+    }
   };
 
   const handleConfirmAction = () => {
-    if (modalAction === "delete") {
-      onDeleteUser(selectedUserId, userType);
-    } else if (modalAction === "update") {
+    if (modalAction === 'update') {
       navigate(`/admin/edit-user/${userType}/${selectedUserId}`);
-    }
     setIsConfirmModalOpen(false);
+    }
     setSelectedUserId(null);
     setSelectedUserName("");
     setModalAction(null);
@@ -889,16 +934,34 @@ const UserTableDisplay = ({ userType, users, onUpdateUser, onDeleteUser }) => {
         </table>
       </div>
 
-      <ConfirmationModal
-        isOpen={isConfirmModalOpen}
+      <ConfirmDialog
+        open={isConfirmModalOpen}
         title={modalAction === "delete" ? "Confirm Deletion" : "Confirm Update"}
-        message={
-          modalAction === "delete"
+        message={modalAction === "delete"
             ? `Are you sure you want to delete ${selectedUserName}? This action cannot be undone.`
-            : `Are you sure you want to update ${selectedUserName}?`
-        }
-        onConfirm={handleConfirmAction}
-        onCancel={handleCancelAction}
+          : `Are you sure you want to update ${selectedUserName}?`}
+        onConfirm={async () => {
+          setIsConfirmModalOpen(false);
+          if (modalAction === 'delete') {
+            try {
+              await onDeleteUser(selectedUserId, userType);
+              toast.success('User deleted successfully');
+            } catch (err) {
+              toast.error('Failed to delete user');
+            }
+          } else if (modalAction === 'update') {
+            navigate(`/admin/edit-user/${userType}/${selectedUserId}`);
+          }
+          setSelectedUserId(null);
+          setSelectedUserName("");
+          setModalAction(null);
+        }}
+        onCancel={() => {
+          setIsConfirmModalOpen(false);
+          setSelectedUserId(null);
+          setSelectedUserName("");
+          setModalAction(null);
+        }}
       />
     </div>
   );
@@ -1009,6 +1072,16 @@ const AdminDashboard = () => {
   const [selectedJob, setSelectedJob] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmAction, setConfirmAction] = useState(null);
+  const [confirmMessage, setConfirmMessage] = useState('');
+
+  const [inputModalOpen, setInputModalOpen] = useState(false);
+  const [inputValue, setInputValue] = useState('');
+  const [inputTitle, setInputTitle] = useState('');
+  const [inputLabel, setInputLabel] = useState('');
+  const [inputCallback, setInputCallback] = useState(null);
+
   const fetchPendingJobs = async () => {
     setJobsLoading(true);
     setJobsError(null);
@@ -1034,7 +1107,7 @@ const AdminDashboard = () => {
       await axios.patch(`/api/job/${id}/status`, { status: 'approved' });
       setJobs(jobs.filter(job => job.id !== id));
     } catch {
-      alert('Failed to approve job.');
+      toast.error('Failed to approve job.');
     }
   };
   const handleRejectJob = async (id) => {
@@ -1042,7 +1115,7 @@ const AdminDashboard = () => {
       await axios.patch(`/api/job/${id}/status`, { status: 'rejected' });
       setJobs(jobs.filter(job => job.id !== id));
     } catch {
-      alert('Failed to reject job.');
+      toast.error('Failed to reject job.');
     }
   };
 
@@ -1110,11 +1183,13 @@ const AdminDashboard = () => {
   };
 
   const handleCreateAnnouncement = () => {
-    // This will open a modal or navigate to a creation page in a real app.
-    // For this demo, we'll use a placeholder modal.
-    alert(
-      "Create New Announcement/Event functionality goes here. A proper modal for input would appear!"
-    );
+    setInputTitle('Create New Announcement/Event');
+    setInputLabel('Announcement/Event Details');
+    setInputValue('');
+    setInputCallback(() => (val) => {
+      toast.info(`Announcement/Event created: ${val}`);
+    });
+    setInputModalOpen(true);
   };
 
   // Only re-fetch the affected list after update/delete
@@ -1393,6 +1468,45 @@ const AdminDashboard = () => {
           </div>
         </div>
       </div>
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Confirm Action"
+        message={confirmMessage}
+        onConfirm={() => { setConfirmOpen(false); if (confirmAction) confirmAction(); }}
+        onCancel={() => setConfirmOpen(false)}
+      />
+      {inputModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-1 sm:p-2 z-50">
+          <div className="bg-white rounded-2xl w-full max-w-sm sm:max-w-md md:max-w-lg shadow-xl p-4 sm:p-6">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-lg font-bold text-gray-900">{inputTitle}</h3>
+            </div>
+            <div className="mb-6 text-gray-700 text-sm sm:text-base">
+              <label className="block mb-2 font-semibold">{inputLabel}</label>
+              <input
+                type="text"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                value={inputValue}
+                onChange={e => setInputValue(e.target.value)}
+              />
+            </div>
+            <div className="flex flex-col sm:flex-row justify-end gap-2">
+              <button
+                onClick={() => setInputModalOpen(false)}
+                className="rounded-full px-4 py-1.5 font-semibold border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors w-full sm:w-auto"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => { setInputModalOpen(false); if (inputCallback) inputCallback(inputValue); }}
+                className="rounded-full px-4 py-1.5 font-semibold bg-indigo-600 text-white hover:bg-indigo-700 transition-colors w-full sm:w-auto"
+              >
+                Create
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };  

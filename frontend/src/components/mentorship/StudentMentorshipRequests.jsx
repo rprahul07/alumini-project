@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from '../../config/axios';
 import { AcademicCapIcon, UserIcon, PhoneIcon, GlobeAltIcon } from '@heroicons/react/24/outline';
+import ConfirmDialog from '../ConfirmDialog';
+import { toast } from 'react-toastify';
 
 const statusColors = {
   pending: 'bg-yellow-100 text-yellow-700',
@@ -18,6 +20,8 @@ const StudentMentorshipRequests = () => {
   const [actionLoading, setActionLoading] = useState(false);
   const [contactLoading, setContactLoading] = useState(false);
   const [contactError, setContactError] = useState(false);
+  const [confirmOpen, setConfirmOpen] = React.useState(false);
+  const [requestToDelete, setRequestToDelete] = React.useState(null);
 
   useEffect(() => {
     const fetchRequests = async () => {
@@ -48,15 +52,21 @@ const StudentMentorshipRequests = () => {
   };
 
   const handleDelete = async (req) => {
-    if (!window.confirm('Are you sure you want to delete this request?')) return;
+    setRequestToDelete(req);
+    setConfirmOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    setConfirmOpen(false);
     setActionLoading(true);
     try {
-      await axios.delete(`/api/support/delete/requester/${req.id}`);
-      setRequests(prev => prev.filter(r => r.id !== req.id));
+      await axios.delete(`/api/support/delete/requester/${requestToDelete.id}`);
+      setRequests(prev => prev.filter(r => r.id !== requestToDelete.id));
     } catch (err) {
-      alert('Failed to delete request.');
+      toast.error('Failed to delete request.');
     } finally {
       setActionLoading(false);
+      setRequestToDelete(null);
     }
   };
 
@@ -343,6 +353,13 @@ const StudentMentorshipRequests = () => {
           </div>
         </div>
       )}
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Delete Request"
+        message="Are you sure you want to delete this request?"
+        onConfirm={confirmDelete}
+        onCancel={() => { setConfirmOpen(false); setRequestToDelete(null); }}
+      />
     </div>
   );
 };

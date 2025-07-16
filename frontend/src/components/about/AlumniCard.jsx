@@ -25,7 +25,7 @@ export default function AlumniCard({
   profileImg,
 }) {
   return (
-    <div className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 p-6 flex flex-col h-full w-full mx-auto border border-gray-100 hover:border-[#5A32EA]/20 group">
+    <div className="bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 p-6 flex flex-col h-full w-full mx-auto border-2 border-[#5A32EA] group">
       {/* Centered content */}
       <div className="text-center">
         <div className="w-20 h-20 rounded-full border-4 border-[#5A32EA] overflow-hidden mx-auto flex-shrink-0 mb-4 group-hover:border-[#5A32EA]/80 transition-colors duration-300">

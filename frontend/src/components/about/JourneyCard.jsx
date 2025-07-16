@@ -48,7 +48,7 @@ export default function JourneyCard() {
   }, []);
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-8 h-full transition-all duration-500 hover:shadow-2xl hover:scale-[1.02] border border-gray-100">
+    <div className="bg-white rounded-3xl shadow-lg p-8 h-full transition-all duration-500 hover:shadow-2xl hover:scale-[1.02] border-2 border-[#5A32EA]">
       <style>{`
         @keyframes pulse-dot {
           0%, 100% { box-shadow: 0 0 0 0 rgba(90,50,234,0.25); }

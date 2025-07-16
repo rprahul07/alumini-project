@@ -8,6 +8,7 @@ import {
   UserIcon,
   DocumentTextIcon
 } from '@heroicons/react/24/outline';
+import { toast } from 'react-toastify';
 
 const SimpleApplyModal = ({ open, onClose, job, showAlert, onSuccess }) => {
   const [cvFile, setCvFile] = useState(null);
@@ -27,13 +28,13 @@ const SimpleApplyModal = ({ open, onClose, job, showAlert, onSuccess }) => {
     const allowedTypes = ['.pdf', '.doc', '.docx'];
     const fileExtension = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
     if (!allowedTypes.includes(fileExtension)) {
-      showAlert('Please upload a PDF, DOC, or DOCX file.', 'error');
+      toast.error('Please upload a PDF, DOC, or DOCX file.');
       return;
     }
     
     // Validate file size (5MB limit)
     if (file.size > 5 * 1024 * 1024) {
-      showAlert('File size must be less than 5MB.', 'error');
+      toast.error('File size must be less than 5MB.');
       return;
     }
     
@@ -55,7 +56,7 @@ const SimpleApplyModal = ({ open, onClose, job, showAlert, onSuccess }) => {
         throw new Error(res.data.message || 'Failed to upload CV');
       }
     } catch (err) {
-      showAlert(err.message || 'Failed to upload CV', 'error');
+      toast.error(err.message || 'Failed to upload CV');
     } finally {
       setCvUploading(false);
     }
@@ -69,7 +70,7 @@ const SimpleApplyModal = ({ open, onClose, job, showAlert, onSuccess }) => {
       if (response.data.success) {
         if (job.registrationType === 'external') {
           // For external jobs, redirect to the registration link
-          showAlert('Redirecting to external application...', 'success');
+          toast.success('Redirecting to external application...');
           setTimeout(() => {
             window.open(response.data.data.registrationLink, '_blank');
             onClose();
@@ -77,7 +78,7 @@ const SimpleApplyModal = ({ open, onClose, job, showAlert, onSuccess }) => {
           }, 1000);
         } else {
           // For internal jobs, show success message
-          showAlert('Application submitted successfully!', 'success');
+          toast.success('Application submitted successfully!');
           setTimeout(() => {
             onClose();
             if (onSuccess) onSuccess();
@@ -86,9 +87,9 @@ const SimpleApplyModal = ({ open, onClose, job, showAlert, onSuccess }) => {
       }
     } catch (err) {
       if (err.response?.status === 409) {
-        showAlert('You have already applied for this job.', 'error');
+        toast.error('You have already applied for this job.');
       } else {
-        showAlert('Failed to submit application. Please try again.', 'error');
+        toast.error('Failed to submit application. Please try again.');
       }
     } finally {
       setApplying(false);

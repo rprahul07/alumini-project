@@ -18,6 +18,7 @@ import EventDetailsModal from './EventDetailsModal';
 import EditEventModal from './EditEventModal';
 import toast from 'react-hot-toast';
 import EventCard from './EventCard';
+import ConfirmDialog from './ConfirmDialog';
 
 const MyEventsButton = () => {
   const { user } = useAuth();
@@ -32,6 +33,9 @@ const MyEventsButton = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [actionLoading, setActionLoading] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState('all');
+  const [confirmOpen, setConfirmOpen] = React.useState(false);
+  const [confirmAction, setConfirmAction] = React.useState(null);
+  const [confirmMessage, setConfirmMessage] = React.useState('');
 
   const fetchMyEvents = async () => {
     setLoading(true);
@@ -60,7 +64,12 @@ const MyEventsButton = () => {
   };
 
   const handleDeleteEvent = async (eventId) => {
-    if (!window.confirm('Are you sure you want to delete this event?')) return;
+    setConfirmMessage('Are you sure you want to delete this event?');
+    setConfirmAction(() => () => handleDeleteEventConfirmed(eventId));
+    setConfirmOpen(true);
+  };
+
+  const handleDeleteEventConfirmed = async (eventId) => {
     setActionLoading(eventId);
     try {
       const endpoint = `/api/${user.role}/event/${eventId}`;
@@ -194,6 +203,13 @@ const MyEventsButton = () => {
 
       {isDetailModalOpen && <EventDetailsModal isOpen={isDetailModalOpen} onClose={() => setIsDetailModalOpen(false)} event={selectedEvent} />}
       {isEditModalOpen && <EditEventModal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} event={selectedEvent} onEventUpdated={handleEventUpdated} />}
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Delete Event"
+        message={confirmMessage}
+        onConfirm={() => { setConfirmOpen(false); if (confirmAction) confirmAction(); }}
+        onCancel={() => setConfirmOpen(false)}
+      />
     </>
   );
 };

@@ -1,11 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import JourneyCard from '../components/about/JourneyCard';
 import AlumniCard from '../components/about/AlumniCard';
 import EventCard from '../components/about/EventCard';
 import Navbar from '../components/Navbar';
 import { FaArrowUp } from 'react-icons/fa';
 
+// Custom hook for fade in only on scroll
+function useInViewFade(threshold = 0.15) {
+  const ref = useRef(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const observer = new window.IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) setVisible(true);
+      },
+      { threshold }
+    );
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, [threshold]);
+  return [ref, visible];
+}
+
 export default function AboutUsPage() {
+  // Scroll to top on reload/mount
+  useEffect(() => {
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }, []);
+
   const alumniData = [
     {
       name: 'Arya Rajeev',
@@ -132,14 +157,31 @@ export default function AboutUsPage() {
   const eventCategories = ['All Events', 'Conferences', 'Networking', 'Workshops', 'Social Events'];
   const filteredEvents = activeCategory === 'All Events' ? allEvents : allEvents.filter((event) => event.category === activeCategory);
 
+  // Fade-in for JourneyCard (now using hook)
+  const [heroRef, heroVisible] = useInViewFade(0.2);
+  const [journeyRef, journeyVisible] = useInViewFade(0.2);
+  const [alumniRef, alumniVisible] = useInViewFade(0.15);
+  const [eventsRef, eventsVisible] = useInViewFade(0.15);
+
+  // Scroll-to-top button visibility
+  const [showScrollTop, setShowScrollTop] = useState(false);
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 200);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
     <>
       <Navbar />
       <div className="bg-white">
         {/* Hero Section */}
-        <section className="pt-20 pb-12 bg-gradient-to-b from-indigo-50 to-white">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
+        <section ref={heroRef} className={`pt-10 pb-12 bg-gradient-to-b from-indigo-50 to-white min-h-screen flex flex-col justify-start items-center transition-all duration-1000 ease-out
+          ${heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-start h-full">
+            <div className="text-center mb-8 mt-4">
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-800 leading-tight mb-4">
                 About CUCEK & Alumni Connect
               </h1>
@@ -147,28 +189,28 @@ export default function AboutUsPage() {
                 CUCEK is a premier educational institution dedicated to fostering excellence in higher education. Our Alumni Connect platform brings together our vast network of successful graduates, creating a community of lifelong learning and professional growth.
               </p>
             </div>
+            <img
+              src="https://lnk.ink/v2039"
+              alt="Journey"
+              className="block w-full max-w-2xl max-h-[400px] object-cover rounded-3xl shadow-xl transition-transform duration-500 hover:scale-105 hover:shadow-2xl border border-gray-200 mx-auto mb-0"
+            />
+          </div>
+        </section>
+        {/* Journey Section */}
+        <section ref={journeyRef} className="flex flex-col items-center justify-center w-full pt-0 pb-6 sm:py-8 px-2 sm:px-0 bg-white transition-all duration-1000 ease-out">
+          <div
+            className={`w-full max-w-4xl flex items-center justify-center transition-all duration-1000 ease-out
+              ${journeyVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+          >
+            <JourneyCard />
           </div>
         </section>
         {/* Main Content */}
         <div className="bg-white">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-20">
-            {/* Section 1: Journey & Image as cards */}
-            <section className="flex flex-col lg:flex-row items-stretch justify-between w-full gap-8">
-              <div className="w-full lg:w-7/12 flex items-center">
-                <JourneyCard />
-              </div>
-              <div className="w-full lg:w-5/12 flex items-center justify-center">
-                <img
-                  src="https://lnk.ink/v2039"
-                  alt="Journey"
-                  className="w-full max-h-[350px] object-cover rounded-3xl shadow-xl transition-transform duration-500 hover:scale-105 hover:shadow-2xl border border-gray-200"
-                />
-              </div>
-            </section>
-            {/* Divider */}
-            <div className="h-px w-full bg-gradient-to-r from-[#5A32EA] to-transparent" />
             {/* Section 2: Alumni Success Stories */}
-            <section className="text-center">
+            <section ref={alumniRef} className={`text-center transition-all duration-1000 ease-out
+              ${alumniVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
               <h2 className="text-3xl md:text-4xl font-bold text-[#5A32EA] mb-4 relative inline-block">
                 Alumni Success Stories
               </h2>
@@ -181,10 +223,9 @@ export default function AboutUsPage() {
                 ))}
               </div>
             </section>
-            {/* Divider */}
-            <div className="h-px w-full bg-gradient-to-r from-[#5A32EA] to-transparent" />
             {/* Section 3: Events & Activities */}
-            <section className="text-center">
+            <section ref={eventsRef} className={`text-center transition-all duration-1000 ease-out
+              ${eventsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
               <h2 className="text-3xl md:text-4xl font-bold text-[#5A32EA] mb-4 relative inline-block">
                 Alumni Events & Activities
               </h2>
@@ -206,9 +247,9 @@ export default function AboutUsPage() {
                   </button>
                 ))}
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-3 grid-flow-row-dense gap-6">
-                {filteredEvents.map((evt, idx) => (
-                  <div key={idx} className={`${evt.span}`}>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-4 items-start grid-flow-dense" style={{ gridAutoRows: '1fr' }}>
+                {filteredEvents.slice(0, 6).map((evt, idx) => (
+                  <div key={idx}>
                     <EventCard title={evt.title} imgSrc={evt.imgSrc} />
                   </div>
                 ))}
@@ -283,13 +324,15 @@ export default function AboutUsPage() {
         </footer>
       </div>
       {/* Scroll to top button */}
-      <button
-        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        className="fixed bottom-6 right-6 z-50 bg-[#5A32EA] hover:bg-[#4321b8] text-white rounded-full p-4 shadow-lg transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-purple-300"
-        aria-label="Scroll to top"
-      >
-        <FaArrowUp className="w-5 h-5" />
-      </button>
+      {showScrollTop && (
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          className="fixed bottom-6 right-6 z-50 bg-[#5A32EA] hover:bg-[#4321b8] text-white rounded-full p-4 shadow-lg transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-purple-300"
+          aria-label="Scroll to top"
+        >
+          <FaArrowUp className="w-5 h-5" />
+        </button>
+      )}
     </>
   );
 } 
