@@ -152,16 +152,16 @@ const AdminOpportunities = () => {
 
   return (
     <div className="flex flex-col">
-      <div className="mb-4 flex gap-2">
+      <div className="mb-4 flex flex-row gap-2 items-center">
         <button
-          className={`px-4 py-2 rounded-full font-semibold text-sm border ${activeTab === 'pending' ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-indigo-600 border-indigo-600'}`}
+          className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all duration-200 flex items-center space-x-1 focus:outline-none focus:ring-2 focus:ring-indigo-300 ${activeTab === 'pending' ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-indigo-600 border-indigo-600'}`}
           onClick={() => setActiveTab('pending')}
           disabled={activeTab === 'pending'}
         >
           Pending
         </button>
         <button
-          className={`px-4 py-2 rounded-full font-semibold text-sm border ${activeTab === 'approved' ? 'bg-green-600 text-white border-green-600' : 'bg-white text-green-600 border-green-600'}`}
+          className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all duration-200 flex items-center space-x-1 focus:outline-none focus:ring-2 focus:ring-indigo-300 ${activeTab === 'approved' ? 'bg-green-600 text-white border-green-600' : 'bg-white text-green-600 border-green-600'}`}
           onClick={() => setActiveTab('approved')}
           disabled={activeTab === 'approved'}
         >
@@ -1371,7 +1371,8 @@ const AdminDashboard = () => {
             )}
             {/* --- End Statistics Cards (Redesigned) --- */}
 
-            {/* Admin My Activity Card */}
+            {/* Admin My Activity Card - White Card */}
+            <div className="bg-white rounded-2xl shadow-lg flex-1 min-h-0 p-4 flex flex-col overflow-y-auto scrollbar-hide min-w-0 w-full h-[600px] min-h-[500px] max-h-[700px]">
             <MyActivityCard
               features={[
                 {
@@ -1382,6 +1383,7 @@ const AdminDashboard = () => {
               ]}
               defaultTab="opportunities"
             />
+            </div>
           </>
         );
       case "students":

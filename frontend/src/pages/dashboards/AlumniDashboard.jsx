@@ -151,153 +151,97 @@ const AlumniDashboard = () => {
   const { user } = useAuth();
   const { showAlert, AlertComponent } = useAlert();
 
-  // Static data
+  // Modern stats (dynamic values if available)
   const stats = [
-    { title: "Connections", value: 450, Icon: UserGroupIcon, color: "blue", progress: 75, progressText: "25 to next milestone" },
-    { title: "Events Attended", value: 25, Icon: CalendarIcon, color: "green", progress: 60, progressText: "5 events this year" },
-    { title: "Mentorships", value: 12, Icon: BriefcaseIcon, color: "purple", progress: 90, progressText: "3 new mentees" },
-  ];
-  const jobs = [
     {
-      position: "Software Engineer (Full-stack)",
-      company: "Innovate Solutions",
-      location: "Bengaluru, India",
-      type: "Full-time",
-      appliedOn: "2024-07-01",
-      department: "Software Engineering",
-      status: "Under Review"
+      title: 'Mentorships Given',
+      value: 42,
+      Icon: AcademicCapIcon,
+      iconBg: 'bg-gradient-to-br from-indigo-200 to-purple-200',
+      iconColor: 'text-indigo-600',
     },
     {
-      position: "Senior UX Designer",
-      company: "Creative Minds Co.",
-      location: "Remote",
-      type: "Contract",
-      appliedOn: "2024-06-25",
-      department: "Product Design",
-      status: "Interview Scheduled"
+      title: 'Events Hosted',
+      value: 21,
+      Icon: CalendarIcon,
+      iconBg: 'bg-gradient-to-br from-pink-100 to-purple-100',
+      iconColor: 'text-pink-500',
     },
     {
-      position: "Data Scientist",
-      company: "Analytics Hub",
-      location: "Mumbai, India",
-      type: "Full-time",
-      appliedOn: "2024-06-20",
-      department: "Data Science",
-      status: "Rejected"
+      title: 'Opportunities Posted',
+      value: 17,
+      Icon: BriefcaseIcon,
+      iconBg: 'bg-gradient-to-br from-blue-100 to-indigo-100',
+      iconColor: 'text-blue-600',
     },
-    {
-      position: "Marketing Specialist",
-      company: "Growth Marketing Ltd.",
-      location: "Kochi, India",
-      type: "Full-time",
-      appliedOn: "2024-06-15",
-      department: "Marketing",
-      status: "Accepted"
-    }
   ];
-  const mentorshipRequests = [
-    { studentName: "Anjali Menon", department: "Computer Science", semester: 6, message: "Looking for guidance on full-stack development and career opportunities...", role: 'alumni' },
-    { studentName: "Rohan Kumar", department: "Mechanical", semester: 4, message: "Interested in learning about the automotive industry and higher studies options.", role: 'student' },
-  ];
-  
-  const handleAcceptMentorship = (studentName) => {
-    // Handle accept logic
-    console.log(`Accepted mentorship for ${studentName}`);
-  };
-
-  const handleRejectMentorship = (studentName) => {
-    // Handle reject logic
-    console.log(`Rejected mentorship for ${studentName}`);
-  };
+  const mentorshipsCompleted = 42;
+  const mentorshipsGoal = 50;
+  const mentorshipProgress = Math.min(100, Math.round((mentorshipsCompleted / mentorshipsGoal) * 100));
 
   return (
     <>
       <Navbar />
-      <div className="min-h-screen font-roboto bg-gray-50">
-        <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
-           <div className="mt-3 bg-gradient-to-b from-transparent via-green-100 to-green-200  rounded-xl p-5 flex items-center justify-center text-center min-h-[96px]">
-                <div>
-                <h1 className="text-2xl font-semibold text-gray-800 tracking-tight pt-0">
-                    Welcome back, <span className="text-green-500 font-bold">{user?.fullName || 'Alumni'}</span>!
-                </h1>
-                  <p className="text-lx text-gray-500">
-                    Your personalized dashboard to explore opportunities and connect with the community.
-                  </p>
-                    </div>
-                  </div>
-          <div class="flex flex-wrap lg:flex-nowrap gap-4 items-stretch w-full max-w-8xl mt-2">
-            {/* Left Column - Profile and Navigation */}
-           
-              <div className="flex-shrink-0">
-                <ProfileCard compact />
-              </div>
-             
-              
-                {/* Statistics Cards Section - Redesigned to match project UI */}
-                <div className="grid grid-cols-4 gap-2 w-full">
-                  {/* Students */}
-                  <div className="flex items-center max-h-[150px] mt-3 bg-white shadow-md rounded-xl p-4 border-t-8 border-indigo-500 transition-transform transform hover:scale-105">
-                    <div className="flex-shrink-0 mr-4">
-                      <div className="bg-indigo-100 p-3 rounded-full">
-                        <UserGroupIcon className=" w-6 h-6 text-indigo-600 text-2xl" />
-                  </div>
-                    </div>
-                    <div>
-                      <div className="text-2xl font-bold text-gray-800">900</div>
-                      <div className="text-gray-500 text-sm">Students</div>
-                  </div>
-                  </div>
-                  {/* Mentorships Given */}
-                  <div className="flex items-center max-h-[150px] mt-3 bg-white shadow-md rounded-xl p-4 border-t-8 border-purple-500 transition-transform transform hover:scale-105">
-                    <div className="flex-shrink-0 mr-4">
-                      <div className="bg-purple-100 p-3 rounded-full">
-                        <AcademicCapIcon className="w-6 h-6 text-purple-600 text-2xl" />
+      {/* Top nav bar (already present) */}
+      <div className="min-h-screen font-roboto bg-gradient-to-br from-purple-50 to-white h-full">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 h-full">
+          <div className="flex flex-col lg:flex-row gap-8 min-h-[600px] h-full items-stretch">
+            {/* Sidebar: Profile + Thin Stats */}
+            <div className="flex flex-col h-full w-full lg:w-1/3 max-w-xs mx-auto lg:mx-0 items-stretch min-w-0">
+              <ProfileCard />
+              {/* Stats Section - Modern Glassmorphism Card */}
+              <div className="relative bg-white/80 backdrop-blur-md rounded-2xl shadow-xl p-6 mt-4 w-full max-w-xs border border-gray-100">
+                <div className="flex flex-col gap-2 w-full">
+                  {stats.map((stat, i) => (
+                    <div
+                      key={stat.title}
+                      className={`flex flex-row items-center gap-4 py-3 px-2 rounded-xl group transition relative z-10`}
+                    >
+                      <div className={`w-10 h-10 flex items-center justify-center rounded-xl ${stat.iconBg} shadow group-hover:scale-110 transition`}>
+                        <stat.Icon className={`w-6 h-6 ${stat.iconColor}`} />
+                      </div>
+                      <div className="flex flex-col justify-center text-left">
+                        <div className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500 tracking-tight mb-0.5">{stat.value}</div>
+                        <div className="text-sm font-semibold text-gray-700 tracking-wide capitalize">{stat.title}</div>
                       </div>
                     </div>
-                    <div>
-                      <div className="text-2xl font-bold text-gray-800">42</div>
-                      <div className="text-gray-500 text-sm">Mentorships Given</div>
-                    </div>
-                  </div>
-                  {/* Jobs/Internships Posted */}
-                  <div className="flex items-center max-h-[150px] mt-3 bg-white shadow-md rounded-xl p-4 border-t-8 border-green-500 transition-transform transform hover:scale-105">
-                    <div className="flex-shrink-0 mr-4">
-                      <div className="bg-green-100 p-3 rounded-full">
-                        <BriefcaseIcon className="w-6 h-6 text-green-600 text-2xl" />
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-2xl font-bold text-gray-800">58</div>
-                      <div className="text-gray-500 text-sm">Opportunities</div>
-                    </div>
-                  </div>
-                  {/* Events Hosted */}
-                  <div className="flex items-center max-h-[150px] mt-3 bg-white shadow-md rounded-xl p-4 border-t-8 border-yellow-500 transition-transform transform hover:scale-105">
-                    <div className="flex-shrink-0 mr-4">
-                      <div className="bg-yellow-100 p-3 rounded-full">
-                        <CalendarIcon className="w-6 h-6 text-yellow-600 text-2xl" />
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-2xl font-bold text-gray-800">21</div>
-                      <div className="text-gray-500 text-sm">Events Hosted</div>
-                    </div>
-                  </div>
+                  ))}
+                </div>
               </div>
+            </div>
+            {/* Main Content: Hero + Activity */}
+            <div className="flex-1 min-w-0 flex flex-col gap-6 h-full">
+              {/* Minimal Welcome Card */}
+              <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-md p-6 w-full border border-gray-100 flex flex-col md:flex-row items-center justify-between gap-4 flex-shrink-0">
+                <div className="flex-1 min-w-0">
+                  <h1 className="text-xl md:text-2xl font-semibold text-gray-900 mb-1">
+                    Welcome back, <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500">{user?.fullName || 'Alumni'}</span>
+                  </h1>
+                  <div className="w-full max-w-xs mt-2">
+                    <div className="w-full h-2 bg-gray-100 rounded-full">
+                      <div className="h-2 rounded-full bg-gradient-to-r from-indigo-400 to-purple-400 transition-all" style={{ width: '100%' }}></div>
+                    </div>
+                  </div>
+                </div>
+                <div className="hidden md:block flex-shrink-0">
+                  <div className="bg-indigo-50 rounded-full p-3 flex items-center justify-center">
+                    <span className="text-3xl">🎓</span>
+                  </div>
+                </div>
               </div>
-                <main className="space-y-5">
-                {/* Tabbed Board Section */}
-                <div className="max-h-[480px] overflow-y-auto scrollbar-hide">
+              {/* Activity Section */}
+              <div className="bg-white rounded-2xl shadow-lg flex-1 min-h-0 p-4 flex flex-col overflow-y-auto scrollbar-hide min-w-0 w-full h-[600px] min-h-[500px] max-h-[700px]">
                   <MyActivityCard
                     features={[
-                      { key: 'mentorship', label: 'Mentorship', component: <MentorshipRequests showAlert={showAlert} jobs={jobs} /> },
-                      { key: 'opportunities', label: 'Opportunities', component: <Opportunities showAlert={showAlert} /> },
+                    { key: 'opportunities', label: 'Opportunities', component: <Opportunities /> },
                       { key: 'events', label: 'Events', component: <Events /> },
+                    { key: 'mentorships', label: 'Mentorships', component: <MentorshipRequests /> },
                     ]}
-                    defaultTab="mentorship"
+                  defaultTab="opportunities"
                   />
                 </div>
-            </main>
+            </div>
+          </div>
         </div>
       </div>
       <ToastContainer />

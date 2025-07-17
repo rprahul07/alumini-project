@@ -70,7 +70,7 @@ const ProfileCard = ({ compact = false }) => {
 
   if (!user) {
     return (
-      <div className={`bg-white rounded-2xl shadow-lg ${compact ? 'p-4 max-w-xs my-2' : 'p-8 max-w-sm my-10'} text-center mx-auto`}>
+      <div className={`bg-white rounded-2xl shadow-lg p-6 max-w-xs my-6 text-center mx-auto`}>
         <p className="text-gray-600">Could not load profile. Please log in again.</p>
       </div>
     );
@@ -79,27 +79,26 @@ const ProfileCard = ({ compact = false }) => {
   const twoFields = getTwoFields();
 
   return (
-    <div className={`bg-white shadow-md rounded-2xl min-h-[165px] min-w-xl ${compact ? 'px-5 max-w-xl my-2' : 'px-5 max-w-xl my-6'} flex items-center `}>
-      <div className="relative group">
-      <img
-        src={user.photoUrl || 'https://via.placeholder.com/150/EEEEEE/888888?text=No+Photo'}
-        alt={user.fullName || 'User'}
-        className={compact ? 'w-20 h-20 rounded-full object-cover border-2 border-indigo-200 shadow mb-2 gap-4' : 'w-20 h-20 rounded-full object-cover border-2 border-indigo-200 shadow mb-3'}
-      />
-      <div className="absolute bottom-0 right-0 flex gap-1">
+    <div className="bg-white shadow-md rounded-2xl p-6 max-w-xs w-full flex flex-col items-center mx-auto">
+      {/* Photo with edit button */}
+      <div className="relative">
+        <img
+          src={user.photoUrl || 'https://via.placeholder.com/150/EEEEEE/888888?text=No+Photo'}
+          alt={user.fullName || 'User'}
+          className="w-24 h-24 rounded-full object-cover border-2 border-indigo-200 shadow mb-3"
+        />
         <button
-        onClick={() => navigate('/profile/edit')}
-        className={`bg-indigo-600 text-white p-1.5 rounded-full shadow-lg cursor-pointer hover:bg-indigo-700 transition-colors transform hover:scale-105 border-2 border-white`}
-      >
-        <FiEdit2 className="h-4 w-4" />
-      </button>
-       </div>
-       </div>
-      
-      <div className="flex flex-col m-5 w-half pl-2">
-        <div className='flex flex-rows'>
-      <h2 className={compact ? 'text-lg font-bold text-gray-900 text-center mb-1' : 'text-2xl font-bold text-gray-900 text-center mb-1'}>{user.fullName || 'User'}</h2>
-       <span className={`ml-2 mt-1 px-3 py-1 rounded-full ${compact ? 'text-xs mb-2' : 'text-sm font-semibold mb-3'} ${
+          onClick={() => navigate('/profile/edit')}
+          className="absolute bottom-1 right-1 bg-indigo-600 text-white p-1.5 rounded-full shadow-lg cursor-pointer hover:bg-indigo-700 transition-colors border-2 border-white"
+          title="Edit Profile"
+        >
+          <FiEdit2 className="h-4 w-4" />
+        </button>
+      </div>
+      {/* Name */}
+      <h2 className="text-xl font-bold text-gray-900 mt-1 mb-1 text-center">{user.fullName || 'User'}</h2>
+      {/* Role badge */}
+      <span className={`px-3 py-1 rounded-full text-xs font-semibold mb-2 text-center ${
         user.role?.toLowerCase() === 'alumni'
           ? 'bg-green-100 text-green-700'
           : user.role?.toLowerCase() === 'student'
@@ -110,17 +109,17 @@ const ProfileCard = ({ compact = false }) => {
       }`}>
         {getRoleDisplay(user.role)}
       </span>
-      </div>
-      <div className='flex flex-col items-start'>
-      <div className={`w-full flex flex-col  ${compact ? 'mb-2' : 'mb-3'}`}>
+      {/* Details */}
+      <div className="flex flex-col items-center w-full mb-2">
         {twoFields.map((field, idx) => (
-          <div key={idx} className={compact ? 'text-base text-gray-700 text-left' : 'text-sm text-gray-700 text-center'}>
+          <div key={idx} className="text-sm text-gray-700 mb-1 text-center">
             <span className="font-medium">{field.label}:</span> {field.value || 'N/A'}
           </div>
         ))}
       </div>
+      {/* Social Icons */}
       {(user.linkedinUrl || user.twitterUrl || user.githubUrl) && (
-        <div className={`flex space-x-2 ${compact ? 'mb-2' : 'mb-5'}`}>
+        <div className="flex space-x-2 mt-3 justify-center">
           {user.linkedinUrl && (
             <a href={user.linkedinUrl} target="_blank" rel="noopener noreferrer" title="LinkedIn">
               <FiLinkedin className="h-5 w-5 text-gray-400 hover:text-indigo-800" />
@@ -138,9 +137,7 @@ const ProfileCard = ({ compact = false }) => {
           )}
         </div>
       )}
-      </div>
-      </div>
-      </div>
+    </div>
   );
 };
 

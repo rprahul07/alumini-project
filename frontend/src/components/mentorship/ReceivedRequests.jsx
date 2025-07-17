@@ -141,7 +141,7 @@ const ReceivedRequests = ({ requests, loading, error, setRequests, showAlert }) 
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 h-full">
       {/* Nested Navigation for Received Requests */}
       <div className="flex flex-wrap gap-1 overflow-x-auto">
         {[
@@ -149,12 +149,10 @@ const ReceivedRequests = ({ requests, loading, error, setRequests, showAlert }) 
           { key: 'accepted', label: 'Accepted', color: 'green' },
           { key: 'rejected', label: 'Rejected', color: 'red' }
         ].map(({ key, label, color }) => {
-          const counts = getRequestCounts();
-          const count = counts[key];
           return (
             <button
               key={key}
-              className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all duration-200 flex items-center space-x-1 ${
+              className={`px-2 py-1 rounded-full text-[10px] font-semibold border transition-all duration-200 flex items-center space-x-1 ${
                 receivedSubTab === key 
                   ? `bg-${color}-600 text-white border-${color}-600` 
                   : `bg-white text-${color}-600 border-${color}-200 hover:bg-${color}-50`
@@ -162,116 +160,111 @@ const ReceivedRequests = ({ requests, loading, error, setRequests, showAlert }) 
               onClick={() => setReceivedSubTab(key)}
             >
               <span>{label}</span>
-              <span className={`inline-flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold ${
-                receivedSubTab === key 
-                  ? 'bg-white text-gray-900' 
-                  : `bg-${color}-100 text-${color}-700`
-              }`}>
-                {count}
-              </span>
             </button>
           );
         })}
       </div>
       {/* Requests Table */}
-      <div className="overflow-x-auto rounded-xl shadow bg-white">
-        <table className="w-full table-fixed divide-y divide-gray-200 text-xs" role="grid" aria-label="Mentorship requests table">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-2 py-2 w-48 text-left font-medium text-gray-500 uppercase tracking-wider">Name</th>
-              <th className="px-2 py-2 w-24 text-left font-medium text-gray-500 uppercase tracking-wider">Role</th>
-              <th className="px-2 py-2 w-40 text-right font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {loading ? (
-              <tr><td colSpan={3} className="text-center text-gray-500 py-6">Loading...</td></tr>
-            ) : error ? (
-              <tr><td colSpan={3} className="text-center text-red-500 py-6">{error}</td></tr>
-            ) : getFilteredRequests().length === 0 ? (
-              <tr><td colSpan={3} className="text-center text-gray-500 py-6">No {receivedSubTab} mentorship requests.</td></tr>
-            ) : (
-              getFilteredRequests().map(req => {
-                const u = req.requester;
-                return (
-                  <tr key={req.id} className="hover:bg-gray-50 cursor-pointer">
-                    <td className="px-2 py-2 whitespace-nowrap font-semibold">
-                      <div className="flex items-center gap-2">
-                        <img src={u.photoUrl} alt={u.fullName} className="w-7 h-7 rounded-full object-cover border border-gray-200" />
-                        <span className="truncate max-w-[120px] block">{u.fullName}</span>
-                      </div>
-                    </td>
-                    <td className="px-2 py-2 whitespace-nowrap">
-                      <span className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${roleColors[u.role] || 'bg-gray-100 text-gray-700'}`}>{u.role}</span>
-                    </td>
-                    <td className="px-2 py-2 whitespace-nowrap text-right relative flex gap-2 justify-end">
-                      {req.status === 'pending' && (
+      <div className="h-full">
+        <div className="overflow-x-auto rounded-xl shadow bg-white h-full">
+          <table className="w-full table-fixed divide-y divide-gray-200 text-xs h-full" role="grid" aria-label="Mentorship requests table">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-2 py-2 w-48 text-left font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                <th className="px-2 py-2 w-24 text-left font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                <th className="px-2 py-2 w-40 text-right font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {loading ? (
+                <tr><td colSpan={3} className="text-center text-gray-500 py-6">Loading...</td></tr>
+              ) : error ? (
+                <tr><td colSpan={3} className="text-center text-red-500 py-6">{error}</td></tr>
+              ) : getFilteredRequests().length === 0 ? (
+                <tr><td colSpan={3} className="text-center text-gray-500 py-6">No {receivedSubTab} mentorship requests.</td></tr>
+              ) : (
+                getFilteredRequests().map(req => {
+                  const u = req.requester;
+                  return (
+                    <tr key={req.id} className="hover:bg-gray-50 cursor-pointer">
+                      <td className="px-2 py-2 whitespace-nowrap font-semibold">
+                        <div className="flex items-center gap-2">
+                          <img src={u.photoUrl} alt={u.fullName} className="w-7 h-7 rounded-full object-cover border border-gray-200" />
+                          <span className="truncate max-w-[120px] block">{u.fullName}</span>
+                        </div>
+                      </td>
+                      <td className="px-2 py-2 whitespace-nowrap">
+                        <span className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${roleColors[u.role] || 'bg-gray-100 text-gray-700'}`}>{u.role}</span>
+                      </td>
+                      <td className="px-2 py-2 whitespace-nowrap text-right relative flex gap-2 justify-end">
+                        {req.status === 'pending' && (
+                          <button
+                            className="inline-block px-2 py-1 rounded-full bg-green-100 text-green-700 font-semibold text-xs hover:bg-green-200 transition-colors"
+                            onClick={e => { e.stopPropagation(); handleAccept(req); }}
+                          >
+                            Accept
+                          </button>
+                        )}
                         <button
-                          className="inline-block px-2 py-1 rounded-full bg-green-100 text-green-700 font-semibold text-xs hover:bg-green-200 transition-colors"
-                          onClick={e => { e.stopPropagation(); handleAccept(req); }}
+                          className="inline-block px-2 py-1 rounded-full bg-indigo-100 text-indigo-700 font-semibold text-xs hover:bg-indigo-200 transition-colors"
+                          onClick={e => { e.stopPropagation(); handleViewProfile(req); }}
                         >
-                          Accept
+                          View Profile
                         </button>
-                      )}
-                      <button
-                        className="inline-block px-2 py-1 rounded-full bg-indigo-100 text-indigo-700 font-semibold text-xs hover:bg-indigo-200 transition-colors"
-                        onClick={e => { e.stopPropagation(); handleViewProfile(req); }}
-                      >
-                        View Profile
-                      </button>
-                      <div className="relative inline-block">
-                        <button
-                          className="inline-block px-2 py-1 rounded-full bg-gray-100 text-gray-700 font-semibold text-xs hover:bg-gray-200 transition-colors"
-                          onClick={e => {
-                            e.stopPropagation();
-                            if (openDropdownId === req.id) {
-                              setOpenDropdownId(null);
-                            } else {
-                              const rect = e.currentTarget.getBoundingClientRect();
-                              setDropdownPosition({
-                                top: rect.bottom + window.scrollY,
-                                left: rect.right + window.scrollX - 128,
-                                width: rect.width
-                              });
-                              setOpenDropdownId(req.id);
-                            }
-                          }}
-                        >
-                          ⋮
-                        </button>
-                        {openDropdownId === req.id && ReactDOM.createPortal(
-                          <div style={{ position: 'absolute', top: dropdownPosition.top, left: dropdownPosition.left, width: 128, zIndex: 9999 }} className="bg-white border border-gray-200 rounded-lg shadow-lg">
-                            <ul className="py-1 text-sm">
-                              {req.status === 'pending' && (
+                        <div className="relative inline-block">
+                          <button
+                            className="inline-block px-2 py-1 rounded-full bg-gray-100 text-gray-700 font-semibold text-xs hover:bg-gray-200 transition-colors"
+                            onClick={e => {
+                              e.stopPropagation();
+                              if (openDropdownId === req.id) {
+                                setOpenDropdownId(null);
+                              } else {
+                                const rect = e.currentTarget.getBoundingClientRect();
+                                setDropdownPosition({
+                                  top: rect.bottom + window.scrollY,
+                                  left: rect.right + window.scrollX - 128,
+                                  width: rect.width
+                                });
+                                setOpenDropdownId(req.id);
+                              }
+                            }}
+                          >
+                            ⋮
+                          </button>
+                          {openDropdownId === req.id && ReactDOM.createPortal(
+                            <div style={{ position: 'absolute', top: dropdownPosition.top, left: dropdownPosition.left, width: 128, zIndex: 9999 }} className="bg-white border border-gray-200 rounded-lg shadow-lg">
+                              <ul className="py-1 text-sm">
+                                {req.status === 'pending' && (
+                                  <li>
+                                    <button
+                                      className="w-full text-left px-4 py-2 hover:bg-red-50 text-red-700"
+                                      onClick={e => { e.stopPropagation(); setOpenDropdownId(null); handleRejectRequest(req); }}
+                                    >
+                                      ✗ Reject
+                                    </button>
+                                  </li>
+                                )}
                                 <li>
                                   <button
                                     className="w-full text-left px-4 py-2 hover:bg-red-50 text-red-700"
-                                    onClick={e => { e.stopPropagation(); setOpenDropdownId(null); handleRejectRequest(req); }}
+                                    onClick={e => { e.stopPropagation(); setOpenDropdownId(null); handleDeleteRequest(req); }}
                                   >
-                                    ✗ Reject
+                                    🗑️ Delete
                                   </button>
                                 </li>
-                              )}
-                              <li>
-                                <button
-                                  className="w-full text-left px-4 py-2 hover:bg-red-50 text-red-700"
-                                  onClick={e => { e.stopPropagation(); setOpenDropdownId(null); handleDeleteRequest(req); }}
-                                >
-                                  🗑️ Delete
-                                </button>
-                              </li>
-                            </ul>
-                          </div>,
-                          document.body
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })
-            )}
-          </tbody>
-        </table>
+                              </ul>
+                            </div>,
+                            document.body
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
       {/* View Profile Modal */}
       {showProfileModal && selectedRequest && (

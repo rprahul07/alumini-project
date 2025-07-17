@@ -93,40 +93,54 @@ const MyCreatedJobs = ({ showAlert }) => {
       ) : jobs.length === 0 ? (
         <div className="text-center text-gray-400">You have not created any jobs yet.</div>
       ) : (
-        <div className="flex flex-col gap-3">
+        <div className="h-full overflow-x-auto rounded-xl shadow bg-white">
+          <table className="w-full table-fixed divide-y divide-gray-200 text-xs h-full" role="grid" aria-label="My created jobs table">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-2 py-2 w-48 text-left font-medium text-gray-500 uppercase tracking-wider">Job Title</th>
+                <th className="px-2 py-2 w-32 text-left font-medium text-gray-500 uppercase tracking-wider">Company</th>
+                <th className="px-2 py-2 w-24 text-left font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                <th className="px-2 py-2 w-40 text-right font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
           {jobs.map((job) => (
-            <div key={job.id} className="bg-white rounded-xl shadow p-4 flex flex-col sm:flex-row sm:items-center justify-between">
-              <div className="flex-1 min-w-0">
-                <div className="font-medium text-gray-900 truncate text-base">{job.jobTitle || '-'}</div>
-                <div className="text-sm text-gray-700 truncate">{job.companyName || '-'}</div>
-                <div className="mt-1">
+                <tr key={job.id} className="hover:bg-gray-50 cursor-pointer">
+                  <td className="px-2 py-2 whitespace-nowrap font-semibold">
+                    <span className="truncate max-w-[120px] block">{job.jobTitle || '-'}</span>
+                  </td>
+                  <td className="px-2 py-2 whitespace-nowrap">
+                    <span className="truncate max-w-[100px] block">{job.companyName || '-'}</span>
+                  </td>
+                  <td className="px-2 py-2 whitespace-nowrap">
                   <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
                     job.status === 'approved' ? 'bg-green-100 text-green-700' :
                     job.status === 'rejected' ? 'bg-red-100 text-red-700' :
                     'bg-yellow-100 text-yellow-700'
                   }`}>
-                    {job.status === 'approved' ? '✓ Approved' :
+                      {job.status === 'approved' ? 'Approved' :
                      job.status === 'rejected' ? '✗ Rejected' :
                      '⏳ Pending'}
                   </span>
-                </div>
-              </div>
-              <div className="mt-3 sm:mt-0 flex gap-2 justify-end">
+                  </td>
+                  <td className="px-2 py-2 whitespace-nowrap text-right flex gap-2 justify-end">
                 <button
-                  className="inline-flex items-center px-3 py-1.5 rounded-full bg-indigo-100 text-indigo-700 font-semibold text-xs hover:bg-indigo-200 transition-colors"
+                      className="inline-block px-2 py-1 rounded-full bg-indigo-100 text-indigo-700 font-semibold text-xs hover:bg-indigo-200 transition-colors"
                   onClick={() => { setSelectedJob(job); setShowModal(true); }}
                 >
                   View
                 </button>
                 <button
-                  className="inline-flex items-center px-3 py-1.5 rounded-full bg-blue-100 text-blue-700 font-semibold text-xs hover:bg-blue-200 transition-colors"
+                      className="inline-block px-2 py-1 rounded-full bg-blue-100 text-blue-700 font-semibold text-xs hover:bg-blue-200 transition-colors"
                   onClick={() => handleViewApplications(job.id)}
                 >
                   Applications
                 </button>
-              </div>
-            </div>
+                  </td>
+                </tr>
           ))}
+            </tbody>
+          </table>
         </div>
       )}
       <JobDetailsModal

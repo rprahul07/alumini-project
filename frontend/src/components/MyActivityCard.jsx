@@ -6,9 +6,9 @@ const MyActivityCard = ({ features, defaultTab }) => {
   const currentFeature = features.find(f => f.key === mainTab);
 
   return (
-    <section className="bg-white rounded-xl shadow-md p-3 sm:p-4 flex flex-col min-h-[320px] md:min-h-[420px] max-h-[480px] overflow-y-auto scrollbar-hide">
-      {/* Parent tab bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
+    <section className="flex flex-col h-full min-h-[320px]">
+      {/* Header: fixed */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4 flex-shrink-0">
         <div className="flex items-center space-x-2">
           <h2 className="text-lg sm:text-xl font-bold text-gray-900">My Activity</h2>
         </div>
@@ -24,8 +24,8 @@ const MyActivityCard = ({ features, defaultTab }) => {
           ))}
         </div>
       </div>
-      {/* Render selected feature */}
-      <div className="flex-1 overflow-y-auto scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+      {/* Content: scrollable */}
+      <div className="flex-1 overflow-visible scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
         {currentFeature?.component}
       </div>
     </section>

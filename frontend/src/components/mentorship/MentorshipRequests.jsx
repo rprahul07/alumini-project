@@ -59,15 +59,15 @@ const MentorshipRequests = ({ showAlert, jobs }) => {
   return (
     <div className="flex flex-col h-full">
       {/* Nested mentorship tabs */}
-      <div className="flex flex-row gap-2 mb-4">
+      <div className="flex flex-row gap-2 mb-4 items-center">
         <button
-          className={`px-3 py-1 rounded-full text-xs font-semibold border transition-colors ${tab === 'received' ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-indigo-600 border-indigo-200 hover:bg-indigo-50'}`}
+          className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all duration-200 flex items-center space-x-1 focus:outline-none focus:ring-2 focus:ring-indigo-300 ${tab === 'received' ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-indigo-600 border-indigo-200 hover:bg-indigo-50'}`}
           onClick={() => setTab('received')}
         >
           Received Requests
         </button>
         <button
-          className={`px-3 py-1 rounded-full text-xs font-semibold border transition-colors ${tab === 'sent' ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-indigo-600 border-indigo-200 hover:bg-indigo-50'}`}
+          className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all duration-200 flex items-center space-x-1 focus:outline-none focus:ring-2 focus:ring-indigo-300 ${tab === 'sent' ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-indigo-600 border-indigo-200 hover:bg-indigo-50'}`}
           onClick={() => setTab('sent')}
         >
           Sent Requests

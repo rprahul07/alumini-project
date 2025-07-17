@@ -1,213 +1,106 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Navbar from '../../components/Navbar';
 import ProfileCard from '../../components/ProfileCard';
-import Sidebar from '../../components/Sidebar';
+import { AcademicCapIcon, CalendarIcon, BriefcaseIcon } from '@heroicons/react/24/outline';
 import { useAuth } from '../../contexts/AuthContext';
-import {
-  UserGroupIcon,
-  BriefcaseIcon,
-  CalendarIcon,
-  MapPinIcon,
-  ClockIcon,
-  AcademicCapIcon, // For Mentorship
-  SparklesIcon,    // For Clubs/Activities
-  ArrowRightIcon, // Added for 'View All' buttons
-  UserIcon,
-  EnvelopeIcon,
-  GlobeAltIcon,
-  PhoneIcon,
-} from '@heroicons/react/24/outline';
-
-import axios from '../../config/axios';
-import ReactDOM from 'react-dom';
 import StudentMentorshipRequests from '../../components/mentorship/StudentMentorshipRequests';
 import AppliedJobs from '../../components/opportunities/AppliedJobs';
+import MyActivityCard from '../../components/MyActivityCard';
 
-// --- StudentDashboard Main Component ---
 const StudentDashboard = () => {
   const { user } = useAuth();
-
-  const upcomingEvents = [
+  // Example dynamic stats (replace with real data if available)
+  const stats = [
     {
-      date: 'JUL 18',
-      title: 'Workshop: Mastering React Hooks',
-      time: '1:00 PM - 3:00 PM',
-      location: 'Computer Lab 3, Block A',
-      tags: ['Technical', 'Hands-on']
+      title: 'Mentorships Received',
+      value: 15,
+      Icon: AcademicCapIcon,
+      iconBg: 'bg-gradient-to-br from-indigo-200 to-purple-200',
+      iconColor: 'text-indigo-600',
     },
     {
-      date: 'AUG 02',
-      title: 'Career Fair 2025: Internship Focus',
-      time: '10:00 AM - 4:00 PM',
-      location: 'University Gymnasium',
-      tags: ['Internship', 'Networking']
+      title: 'Events Attended',
+      value: 34,
+      Icon: CalendarIcon,
+      iconBg: 'bg-gradient-to-br from-pink-100 to-purple-100',
+      iconColor: 'text-pink-500',
     },
     {
-      date: 'AUG 25',
-      title: 'Guest Lecture: Blockchain Beyond Crypto',
-      time: '11:00 AM - 12:30 PM',
-      location: 'Online Webinar',
-      tags: ['Virtual', 'Innovation']
-    }
+      title: 'Opportunities Applied',
+      value: 12,
+      Icon: BriefcaseIcon,
+      iconBg: 'bg-gradient-to-br from-blue-100 to-indigo-100',
+      iconColor: 'text-blue-600',
+    },
   ];
-
-  const mentors = [
-    {
-      name: 'Dr. Sarah Johnson',
-      title: 'Senior Software Engineer at Google',
-      tags: ['Software Development', 'Career Guidance', 'AI/ML']
-    },
-    {
-      name: 'Prof. Michael Chen',
-      title: 'Research Director at Microsoft',
-      tags: ['AI/ML', 'Research', 'Academic Guidance']
-    },
-    {
-      name: 'Priya Sharma',
-      title: 'Product Manager at Flipkart (Alumni)',
-      tags: ['Product Management', 'Startup Insights', 'E-commerce']
-    }
-  ];
-
-  const clubsAndActivities = [
-    {
-      name: 'Code Club',
-      members: '150+ members',
-      iconColor: 'blue',
-      description: 'Weekly coding challenges and hackathons.'
-    },
-    {
-      name: 'Robotics Team',
-      members: '40 members',
-      iconColor: 'green',
-      description: 'Building and competing with autonomous robots.'
-    },
-    {
-      name: 'Entrepreneurship Cell',
-      members: '80+ members',
-      iconColor: 'purple',
-      description: 'Ideation sessions and startup mentorship.'
-    }
-  ];
+  const mentorshipsCompleted = 15;
+  const mentorshipsGoal = 20;
+  const mentorshipProgress = Math.min(100, Math.round((mentorshipsCompleted / mentorshipsGoal) * 100));
 
   return (
     <>
       <Navbar />
-      <div className="min-h-screen font-roboto">
-        <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
-           <div className="mt-5 bg-gradient-to-b from-transparent via-blue-100 to-blue-200 rounded-xl p-8 flex items-center justify-center text-center min-h-[96px]">
-                <div>
-                <h1 className="text-2xl font-semibold text-gray-800 tracking-tight pt-0">
-                  Welcome back, <span className="text-blue-500 font-bold">{user?.fullName || 'Student'}</span>!
-                </h1>
-                <p className="text-lx text-gray-500">
-                  Your personalized dashboard to explore opportunities and connect with the community.
-                </p>
+      <div className="min-h-screen font-roboto bg-gradient-to-br from-purple-50 to-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex flex-col lg:flex-row gap-8 min-h-[600px] items-stretch">
+            {/* Sidebar: Profile + Stats */}
+            <div className="flex flex-col h-full w-full lg:w-1/3 max-w-xs mx-auto lg:mx-0 items-stretch min-w-0">
+              <ProfileCard />
+              {/* Stats Section - Modern Glassmorphism Card */}
+              <div className="relative bg-white/80 backdrop-blur-md rounded-2xl shadow-xl p-6 mt-4 w-full max-w-xs border border-gray-100">
+                <div className="flex flex-col gap-2 w-full">
+                  {stats.map((stat, i) => (
+                    <div
+                      key={stat.title}
+                      className={`flex flex-row items-center gap-4 py-3 px-2 rounded-xl group transition relative z-10`}
+                    >
+                      <div className={`w-10 h-10 flex items-center justify-center rounded-xl ${stat.iconBg} shadow group-hover:scale-110 transition`}>
+                        <stat.Icon className={`w-6 h-6 ${stat.iconColor}`} />
+                      </div>
+                      <div className="flex flex-col justify-center text-left">
+                        <div className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500 tracking-tight mb-0.5">{stat.value}</div>
+                        <div className="text-sm font-semibold text-gray-700 tracking-wide capitalize">{stat.title}</div>
               </div>
               </div>
-              <div class="flex flex-wrap lg:flex-nowrap gap-4 items-stretch w-full max-w-8xl mt-2">
-               
-               <div className="flex-shrink-0">
-               <ProfileCard compact />
-              </div>
-              {/* Statistics Cards Section */}
-             <div className="grid grid-cols-3 gap-2 w-full">
-              {/* Alumni Count */}
-            <div className="flex items-center max-h-[150px] mt-3 bg-white shadow-md rounded-xl p-4 border-t-8 border-indigo-500 transition-transform transform hover:scale-105">
-              <div className="flex-shrink-0 mr-4">
-              <div className="bg-indigo-100 p-3 rounded-full">
-                <UserGroupIcon className="w-6 h-6 text-indigo-600 text-xl" />
+                  ))}
               </div>
               </div>
-             <div>
-               <div className="text-xl font-bold text-gray-800">1,200</div>
-               <div className="text-gray-500 text-sm">Alumni Count</div>
+              </div>
+            {/* Main Content: Hero + Activity */}
+            <div className="flex-1 min-w-0 flex flex-col gap-6 h-full">
+              {/* Minimal Welcome Card */}
+              <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-md p-6 w-full border border-gray-100 flex flex-col md:flex-row items-center justify-between gap-4">
+                <div className="flex-1 min-w-0">
+                  <h1 className="text-xl md:text-2xl font-semibold text-gray-900 mb-1">
+                    Welcome back, <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500">{user?.fullName || 'Student'}</span>
+                  </h1>
+                  <div className="w-full max-w-xs mt-2">
+                    <div className="w-full h-2 bg-gray-100 rounded-full">
+                      <div className="h-2 rounded-full bg-gradient-to-r from-indigo-400 to-purple-400 transition-all" style={{ width: '100%' }}></div>
+                    </div>
+                  </div>
              </div>
-           </div>
-
-              {/* Jobs/Opportunities */}
-           <div className="flex items-center max-h-[150px] mt-3 bg-white shadow-md rounded-xl p-4 border-t-8 border-green-500 transition-transform transform hover:scale-105">
-              <div className="flex-shrink-0 mr-4">
-              <div className="bg-green-100 p-3 rounded-full">
-              <BriefcaseIcon className="w-6 h-6 text-green-600 text-xl" />
+                <div className="hidden md:block flex-shrink-0">
+                  <div className="bg-indigo-50 rounded-full p-3 flex items-center justify-center">
+                    <span className="text-3xl">🎓</span>
+                  </div>
               </div>
               </div>
-             <div>
-              <div className="text-xl font-bold text-gray-800">87</div>
-              <div className="text-gray-500 text-sm">Jobs/Opportunities</div>
-             </div>
-           </div>
-
-            {/* Events */}
-          <div className="flex items-center max-h-[150px] mt-3 bg-white shadow-md rounded-xl p-4 border-t-8 border-purple-500 transition-transform transform hover:scale-105">
-            <div className="flex-shrink-0 mr-4">
-            <div className="bg-purple-100 p-3 rounded-full">
-             <CalendarIcon className="w-6 h-6text-purple-600 text-xl" />
-            </div>
-            </div>
-           <div>
-            <div className="text-xl font-bold text-gray-800">34</div>
-            <div className="text-gray-500 text-sm">Events Conducted</div>
+              {/* Activity Section - White Card */}
+              <div className="bg-white rounded-2xl shadow-lg flex-1 min-h-0 p-4 flex flex-col overflow-y-auto scrollbar-hide min-w-0 w-full h-[600px] min-h-[500px] max-h-[700px]">
+                <MyActivityCard
+                  features={[
+                    { key: 'mentorship', label: 'Mentorship', component: <StudentMentorshipRequests /> },
+                    { key: 'opportunities', label: 'Opportunities', component: <AppliedJobs /> },
+                  ]}
+                  defaultTab="mentorship"
+                />
+              </div>
            </div>
           </div>
          </div>
        </div>
-             
-              <main className="space-y-5">
-                {/* Activity Tabbed Card Section */}
-                <MyActivityCard />
-              </main>
-          </div>
-        </div>
-      
     </>
-  );
-};
-
-// --- MyActivityCard Component for Student ---
-const statusColors = {
-  pending: 'bg-yellow-100 text-yellow-700',
-  accepted: 'bg-green-100 text-green-700',
-  rejected: 'bg-gray-200 text-gray-500',
-};
-const tierLabels = ['', 'Basic', 'Advanced', 'Premium'];
-
-const MyActivityCard = () => {
-  const [mainTab, setMainTab] = useState('mentorship');
-  const features = [
-    {
-      key: 'mentorship',
-      label: 'Mentorship',
-      component: <StudentMentorshipRequests />,
-    },
-    {
-      key: 'opportunities',
-      label: 'Opportunities',
-      component: <AppliedJobs />,
-    },
-  ];
-  return (
-    <section className="bg-white rounded-xl shadow-md p-3 sm:p-4 flex flex-col min-h-[320px] md:min-h-[420px] overflow-y-auto scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
-        <div className="flex items-center space-x-2">
-        <h2 className="text-lg sm:text-xl font-bold text-gray-900">My Activity</h2>
-      </div>
-        <div className="grid grid-cols-1 sm:flex sm:flex-wrap gap-2">
-          {features.map(feature => (
-                    <button
-              key={feature.key}
-              className={`px-3 py-1 sm:px-3 sm:py-1 rounded-full text-sm font-semibold border transition-colors ${mainTab === feature.key ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-indigo-600 border-indigo-200 hover:bg-indigo-50'}`}
-              onClick={() => setMainTab(feature.key)}
-                    >
-              {feature.label}
-                    </button>
-          ))}
-                    </div>
-      </div>
-      <div className="flex-1 overflow-y-auto">
-        {features.find(f => f.key === mainTab)?.component}
-        </div>
-    </section>
   );
 };
 
