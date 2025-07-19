@@ -191,6 +191,27 @@ const AdminOpportunities = () => {
                   View
                 </button>
                 <button
+                  className="px-3 py-1 rounded-full bg-green-600 text-white text-xs font-semibold hover:bg-green-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                  onClick={async () => {
+                    if (job.status === 'pending') {
+                      setActionLoading(job.id);
+                      try {
+                        await axios.patch(`/api/job/${job.id}/status`, { status: 'approved' });
+                        setPendingJobs(jobs => jobs.filter(j => j.id !== job.id));
+                        toast.success('Job approved successfully.');
+                      } catch {
+                        toast.error('Failed to approve job.');
+                      } finally {
+                        setActionLoading(false);
+                      }
+                    }
+                  }}
+                  disabled={actionLoading === job.id || job.status !== 'pending'}
+                  style={{ display: job.status === 'pending' ? undefined : 'none' }}
+                >
+                  {actionLoading === job.id ? 'Accepting...' : 'Accept'}
+                </button>
+                <button
                   className="px-3 py-1 rounded-full bg-red-600 text-white text-xs font-semibold hover:bg-red-700 transition-colors"
                   onClick={() => { setDeleteJobId(job.id); setShowDeleteDialog(true); }}
                 >

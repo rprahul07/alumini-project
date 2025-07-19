@@ -107,15 +107,6 @@ const JobCard = ({ job, user, isApplied, onClick, onApply, onJobDeleted }) => {
         {job.type === 'internship' ? 'Internship' : 'Job'}
       </span>
       {/* Admin Delete Button */}
-      {user && user.role === 'admin' && (
-        <button
-          className="absolute top-3 left-3 px-2 py-1 rounded-full bg-red-600 text-white text-xs font-semibold hover:bg-red-700 transition-colors z-10"
-          onClick={e => { e.stopPropagation(); handleDeleteJob(); }}
-          disabled={actionLoading}
-        >
-          {actionLoading ? 'Deleting...' : 'Delete'}
-        </button>
-      )}
       {/* Job Content */}
       <div className="p-3 flex flex-col flex-grow">
         {/* Job Title */}
