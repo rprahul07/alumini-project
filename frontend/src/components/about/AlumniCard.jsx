@@ -21,57 +21,54 @@ export default function AlumniCard({
   position,
   company,
   tags,
-  story,
   profileImg,
 }) {
   return (
-    <div className="bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 p-6 flex flex-col h-full w-full mx-auto border-2 border-[#5A32EA] group">
-      {/* Centered content */}
-      <div className="text-center">
-        <div className="w-20 h-20 rounded-full border-4 border-[#5A32EA] overflow-hidden mx-auto flex-shrink-0 mb-4 group-hover:border-[#5A32EA]/80 transition-colors duration-300">
-          <img 
-            src={profileImg} 
-            alt={name} 
+    <div className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden cursor-pointer transform hover:scale-[1.02] flex flex-col w-full max-w-[270px] sm:w-[270px] mx-auto my-4 sm:my-2 p-4 sm:p-0 border border-gray-100">
+      {/* Centered Circle Avatar */}
+      <div className="flex justify-center items-center pt-6 pb-2">
+        <div className="w-20 h-20 rounded-full bg-gray-200 overflow-hidden border-4 border-white shadow-md">
+          <img
+            src={profileImg}
+            alt={name}
             className="w-full h-full object-cover"
-            onError={(e) => {
+            loading="lazy"
+            onError={e => {
               e.target.src = 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80&h=80&fit=crop';
             }}
           />
         </div>
-        <div className="mb-4">
-          <h4 className="text-lg font-bold text-gray-900 mb-1">{name}</h4>
-          <p className="text-sm text-gray-500 mb-1">{batch}</p>
-          <p className="text-sm text-gray-500">{department}</p>
+      </div>
+      {/* Content */}
+      <div className="flex flex-col flex-grow px-0 sm:px-4 pt-2 pb-2">
+        <h4 className="font-bold text-gray-900 mb-1 text-base sm:text-base md:text-lg leading-tight line-clamp-1 text-center">{name}</h4>
+        <div className="flex flex-wrap gap-2 mb-1 justify-center">
+          <span className="text-xs text-gray-500 font-medium">{batch}</span>
+          <span className="text-xs text-gray-400 font-medium">{department}</span>
         </div>
-        <div className="mb-4">
-          <p className="font-semibold text-gray-800 text-sm mb-1">{position}</p>
-          <p className="text-sm text-gray-600">{company}</p>
-        </div>
-        <div className="flex flex-wrap justify-center gap-2 mb-4">
-          {tags.map((tag, i) => (
+        <div className="font-semibold text-gray-800 text-xs mb-1 line-clamp-1 text-center">{position}</div>
+        <div className="text-xs text-gray-600 mb-2 line-clamp-1 text-center">{company}</div>
+        <div className="flex flex-wrap gap-1 mb-2 justify-center">
+          {tags && tags.map((tag, i) => (
             <span
               key={i}
-              className="bg-purple-100 text-purple-700 px-2 py-1 rounded-full text-xs font-medium"
+              className="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-xs font-medium"
             >
               {tag}
             </span>
           ))}
         </div>
       </div>
-      {/* Story section */}
-      <div className="flex-grow text-left text-sm text-gray-600 leading-relaxed mb-4 pr-2">
-        <p className="line-clamp-3">{story}</p>
-      </div>
       {/* Footer */}
-      <div className="flex justify-between items-center w-full pt-4 border-t border-gray-200">
+      <div className="flex justify-between items-center w-full px-0 sm:px-4 pb-3 pt-2 mt-auto gap-2">
         <a
           href="#"
-          className="flex items-center gap-2 text-[#0A66C2] font-medium text-sm hover:underline transition-colors"
+          className="flex items-center gap-2 text-[#0A66C2] font-medium text-xs hover:underline transition-colors"
         >
           <LinkedInIcon />
           Profile
         </a>
-        <button className="bg-[#5A32EA] text-white px-4 py-2 rounded-full font-medium flex items-center gap-2 text-sm hover:bg-[#4321b8] transition-colors group-hover:shadow-lg">
+        <button className="bg-[#5A32EA] text-white px-4 py-2 rounded-full font-medium flex items-center gap-2 text-xs hover:bg-[#4321b8] transition-colors group-hover:shadow-lg">
           View Story
           <span className="font-bold text-lg transition-transform duration-300 group-hover:translate-x-1">
             <FiArrowRight className="inline-block align-middle text-xl" />
