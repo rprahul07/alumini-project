@@ -96,20 +96,26 @@ const EventCard = ({ event, user, onEventUpdate, showEdit, showDelete, onEdit, o
   const isRegistered = !!event.isRegistered;
   console.log('DEBUG: EventCard event:', event);
 
+  // Check if event is in the past
+  const isPastEvent = new Date(event.date) < new Date(new Date().setHours(0,0,0,0));
+
   // Registration button logic
   const isLoggedIn = !!user;
   const isFaculty = user?.role === 'faculty';
-  const buttonText = (!isLoggedIn || isFaculty)
-    ? "Login to register"
-    : (isRegistered ? "Registered" : "Register Now");
-  const buttonDisabled = !isLoggedIn || isFaculty || isRegistered || isRegistering || (maxCapacity && registeredCount >= maxCapacity);
-  const buttonClass = (!isLoggedIn || isFaculty)
-    ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-    : isRegistered
-      ? "bg-green-500 text-white cursor-not-allowed"
-      : maxCapacity && registeredCount >= maxCapacity
-        ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-        : "bg-indigo-600 text-white hover:bg-indigo-700";
+  const registrationClosed = isPastEvent || (maxCapacity && registeredCount >= maxCapacity);
+  const buttonText = registrationClosed
+    ? 'Registration Closed'
+    : (!isLoggedIn || isFaculty)
+      ? 'Login to register'
+      : (isRegistered ? 'Registered' : 'Register Now');
+  const buttonDisabled = registrationClosed || !isLoggedIn || isFaculty || isRegistered || isRegistering;
+  const buttonClass = registrationClosed
+    ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+    : (!isLoggedIn || isFaculty)
+      ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+      : isRegistered
+        ? 'bg-green-500 text-white cursor-not-allowed'
+        : 'bg-indigo-600 text-white hover:bg-indigo-700';
 
   return (
     <>
@@ -235,12 +241,12 @@ const EventCard = ({ event, user, onEventUpdate, showEdit, showDelete, onEdit, o
           ) : (
             // Registration button for all other users
             <button
-              onClick={isLoggedIn && !isRegistered && !isFaculty ? handleRegistration : undefined}
+              onClick={isLoggedIn && !isRegistered && !isFaculty && !registrationClosed ? handleRegistration : undefined}
               onMouseEnter={() => setIsHovering(true)}
               onMouseLeave={() => setIsHovering(false)}
               disabled={buttonDisabled}
               className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors flex items-center justify-center ${buttonClass}`}
-              title={!isLoggedIn || isFaculty ? "Login to register" : ""}
+              title={!isLoggedIn || isFaculty ? 'Login to register' : ''}
             >
               {buttonText}
             </button>

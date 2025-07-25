@@ -571,6 +571,7 @@ export const searchEvents = async (req, res) => {
       type = "",
       sortBy = "date",
       sortOrder = "asc",
+      timeFilter = "all",
     } = req.query;
 
     // Calculate pagination
@@ -605,8 +606,34 @@ export const searchEvents = async (req, res) => {
     }
 
     // Event type filter
+    const mainTypes = [
+      'workshop',
+      'seminar',
+      'conference',
+      'meetup',
+      'hackathon',
+      'career_fair',
+      'alumni_reunion'
+    ];
     if (type && type.trim()) {
-      whereClause.type = { contains: type.trim(), mode: "insensitive" };
+      if (type.trim().toLowerCase() === 'other') {
+        whereClause.type = { notIn: mainTypes };
+      } else {
+        whereClause.type = { equals: type.trim(), mode: 'insensitive' };
+      }
+    }
+
+    // Add upcoming/past filter if requested
+    if (timeFilter === 'upcoming') {
+      // Only events today or in the future (from midnight)
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      whereClause.date = { gte: today };
+    } else if (timeFilter === 'past') {
+      // Only events before today (before midnight)
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      whereClause.date = { lt: today };
     }
 
     console.log("Search filters applied (approved events only):", {

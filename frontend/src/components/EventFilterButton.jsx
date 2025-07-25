@@ -1,12 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { FunnelIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
+import { EVENT_TYPES } from '../constants/eventTypes';
 
 const EventFilterButton = ({ 
   selectedEventType, 
   sortBy, 
   sortOrder, 
   onFilterChange, 
-  onSortChange 
+  onSortChange, 
+  timeFilter = 'all',
+  onTimeFilterChange,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -23,27 +26,15 @@ const EventFilterButton = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const eventTypeOptions = [
-    { value: '', label: 'All Types' },
-    { value: 'workshop', label: 'Workshop' },
-    { value: 'seminar', label: 'Seminar' },
-    { value: 'conference', label: 'Conference' },
-    { value: 'meetup', label: 'Meetup' },
-    { value: 'hackathon', label: 'Hackathon' },
-    { value: 'career_fair', label: 'Career Fair' },
-    { value: 'alumni_reunion', label: 'Alumni Reunion' },
-    { value: 'other', label: 'Other' }
-  ];
+  // Use shared event types for dropdown
+  const eventTypeOptions = EVENT_TYPES;
 
+  // Only the required sort options
   const sortOptions = [
     { value: 'createdAt', label: 'Latest First' },
     { value: 'createdAt_asc', label: 'Oldest First' },
-    { value: 'name', label: 'Title A-Z' },
-    { value: 'name_desc', label: 'Title Z-A' },
     { value: 'date', label: 'Date (Earliest)' },
-    { value: 'date_desc', label: 'Date (Latest)' },
-    { value: 'type', label: 'Type A-Z' },
-    { value: 'type_desc', label: 'Type Z-A' },
+    { value: 'date_desc', label: 'Date (Latest)' }
   ];
 
   const handleEventTypeChange = (e) => {
@@ -65,12 +56,8 @@ const EventFilterButton = ({
     const option = sortOptions.find(opt => {
       if (sortBy === 'createdAt' && sortOrder === 'desc') return opt.value === 'createdAt';
       if (sortBy === 'createdAt' && sortOrder === 'asc') return opt.value === 'createdAt_asc';
-      if (sortBy === 'name' && sortOrder === 'asc') return opt.value === 'name';
-      if (sortBy === 'name' && sortOrder === 'desc') return opt.value === 'name_desc';
       if (sortBy === 'date' && sortOrder === 'asc') return opt.value === 'date';
       if (sortBy === 'date' && sortOrder === 'desc') return opt.value === 'date_desc';
-      if (sortBy === 'type' && sortOrder === 'asc') return opt.value === 'type';
-      if (sortBy === 'type' && sortOrder === 'desc') return opt.value === 'type_desc';
       return false;
     });
     return option ? option.label : 'Latest First';
@@ -111,6 +98,36 @@ const EventFilterButton = ({
                   </option>
                 ))}
               </select>
+            </div>
+
+            {/* Event Time Filter */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-3">
+                Event Time
+              </label>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => onTimeFilterChange && onTimeFilterChange('all')}
+                  className={`px-4 py-2 rounded-lg text-sm border transition-colors ${timeFilter === 'all' ? 'bg-indigo-100 text-indigo-700 font-medium border-indigo-400' : 'text-gray-700 border-gray-300 hover:bg-gray-50'}`}
+                >
+                  All
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onTimeFilterChange && onTimeFilterChange('upcoming')}
+                  className={`px-4 py-2 rounded-lg text-sm border transition-colors ${timeFilter === 'upcoming' ? 'bg-indigo-100 text-indigo-700 font-medium border-indigo-400' : 'text-gray-700 border-gray-300 hover:bg-gray-50'}`}
+                >
+                  Upcoming
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onTimeFilterChange && onTimeFilterChange('past')}
+                  className={`px-4 py-2 rounded-lg text-sm border transition-colors ${timeFilter === 'past' ? 'bg-indigo-100 text-indigo-700 font-medium border-indigo-400' : 'text-gray-700 border-gray-300 hover:bg-gray-50'}`}
+                >
+                  Past
+                </button>
+              </div>
             </div>
 
             {/* Sort Options */}

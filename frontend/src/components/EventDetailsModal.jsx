@@ -67,8 +67,29 @@ const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
 
   // Check if user can register
   const canRegister = user && (user.role === 'student' || user.role === 'alumni');
-  const isEventFull = event.maxCapacity && event.registeredUsers && 
-    event.registeredUsers.length >= event.maxCapacity;
+  // Check if event is in the past
+  const isPastEvent = new Date(event.date) < new Date(new Date().setHours(0,0,0,0));
+  const maxCapacity = Number(event.maxCapacity) > 0 ? Number(event.maxCapacity) : null;
+  const registeredCount = event.registeredUsers ? event.registeredUsers.length : 0;
+  const isEventFull = maxCapacity && registeredCount >= maxCapacity;
+  const registrationClosed = isPastEvent || isEventFull;
+
+  // Registration button logic
+  const isLoggedIn = !!user;
+  const isFaculty = user?.role === 'faculty';
+  const buttonText = registrationClosed
+    ? 'Registration Closed'
+    : (!isLoggedIn || isFaculty)
+      ? 'Login to register'
+      : (isRegistered ? 'Registered' : 'Register Now');
+  const buttonDisabled = registrationClosed || !isLoggedIn || isFaculty || isRegistered || isRegistering;
+  const buttonClass = registrationClosed
+    ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+    : (!isLoggedIn || isFaculty)
+      ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+      : isRegistered
+        ? 'bg-green-500 text-white cursor-not-allowed'
+        : 'bg-indigo-600 text-white hover:bg-indigo-700';
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-1 sm:p-2 z-50">
@@ -158,6 +179,17 @@ const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
                 Login to Register
               </a>
             </div>
+          )}
+
+          {/* Registration Button */}
+          {canRegister && (
+            <button
+              onClick={!isRegistered && !registrationClosed ? handleRegistration : undefined}
+              disabled={buttonDisabled}
+              className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors flex items-center justify-center w-full mt-2 ${buttonClass}`}
+            >
+              {buttonText}
+            </button>
           )}
 
           {/* Close Button */}

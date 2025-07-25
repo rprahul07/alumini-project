@@ -23,6 +23,7 @@ const EventsPage = () => {
   const [selectedEventType, setSelectedEventType] = useState('');
   const [sortBy, setSortBy] = useState('createdAt');
   const [sortOrder, setSortOrder] = useState('desc');
+  const [timeFilter, setTimeFilter] = useState('all');
 
   // Fetch events from API
   const fetchEvents = async () => {
@@ -37,17 +38,18 @@ const EventsPage = () => {
         search: searchTerm,
         type: selectedEventType,
         sortBy: sortBy,
-        sortOrder: sortOrder
+        sortOrder: sortOrder,
+        timeFilter: timeFilter,
       });
 
       let endpoint;
       const role = user?.role?.toLowerCase();
       if (user && role) {
-        endpoint = (searchTerm || selectedEventType || sortBy !== 'createdAt' || sortOrder !== 'desc')
+        endpoint = (searchTerm || selectedEventType || sortBy !== 'createdAt' || sortOrder !== 'desc' || timeFilter !== 'all')
           ? `/api/${role}/event/search?${params}`
           : `/api/${role}/event/all?${params}`;
       } else {
-        endpoint = (searchTerm || selectedEventType || sortBy !== 'createdAt' || sortOrder !== 'desc')
+        endpoint = (searchTerm || selectedEventType || sortBy !== 'createdAt' || sortOrder !== 'desc' || timeFilter !== 'all')
           ? `/api/public/event/search?${params}`
           : `/api/public/event/all?${params}`;
       }
@@ -83,7 +85,7 @@ const EventsPage = () => {
     if (!authLoading) {
       fetchEvents();
     }
-  }, [authLoading, currentPage, searchTerm, selectedEventType, sortBy, sortOrder]);
+  }, [authLoading, currentPage, searchTerm, selectedEventType, sortBy, sortOrder, timeFilter]);
 
   // Handle search
   const handleSearchChange = (term) => {
@@ -122,6 +124,12 @@ const EventsPage = () => {
     if (filterType === 'eventType') {
       setSelectedEventType('');
     }
+    setCurrentPage(1);
+  };
+
+  // Handle time filter change
+  const handleTimeFilterChange = (filter) => {
+    setTimeFilter(filter);
     setCurrentPage(1);
   };
 
@@ -164,6 +172,8 @@ const EventsPage = () => {
               sortOrder={sortOrder}
               onFilterChange={handleFilterChange}
               onSortChange={handleSortChange}
+              timeFilter={timeFilter}
+              onTimeFilterChange={handleTimeFilterChange}
             />
           </div>
 

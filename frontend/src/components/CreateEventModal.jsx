@@ -4,6 +4,7 @@ import axios from '../config/axios';
 import { useAuth } from '../contexts/AuthContext';
 import { toast } from 'react-toastify';
 import ConfirmDialog from './ConfirmDialog';
+import { EVENT_TYPES } from '../constants/eventTypes';
 
 const CreateEventModal = ({ isOpen, onClose, onEventCreated, isMobileModal }) => {
   const { user } = useAuth();
@@ -25,28 +26,6 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated, isMobileModal }) =>
   const [confirmOpen, setConfirmOpen] = React.useState(false);
   const [confirmAction, setConfirmAction] = React.useState(null);
   const [confirmMessage, setConfirmMessage] = React.useState('');
-
-  // Event types (same as EventFilters for consistency)
-  const eventTypes = [
-    { value: '', label: 'Select Event Type' },
-    { value: 'Academic Workshop', label: 'Academic Workshop' },
-    { value: 'Workshop', label: 'Workshop' },
-    { value: 'Technical Seminar', label: 'Technical Seminar' },
-    { value: 'Industry Conference', label: 'Industry Conference' },
-    { value: 'Online Webinar', label: 'Online Webinar' },
-    { value: 'Coding Hackathon', label: 'Coding Hackathon' },
-    { value: 'Networking Meetup', label: 'Networking Meetup' },
-    { value: 'Skill Training', label: 'Skill Training' },
-    { value: 'Academic Competition', label: 'Academic Competition' },
-    { value: 'Cultural Festival', label: 'Cultural Festival' },
-    { value: 'Sports Tournament', label: 'Sports Tournament' },
-    { value: 'Career Fair', label: 'Career Fair' },
-    { value: 'Research Symposium', label: 'Research Symposium' },
-    { value: 'Student Club Event', label: 'Student Club Event' },
-    { value: 'Alumni Reunion', label: 'Alumni Reunion' },
-    { value: 'Faculty Development', label: 'Faculty Development' },
-    { value: 'Other', label: 'Other' }
-  ];
 
   // Departments (same as EventFilters for consistency)
   const departments = [
@@ -357,7 +336,7 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated, isMobileModal }) =>
                 onChange={handleInputChange}
                 className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 ${errors.type ? 'border-red-500' : 'border-gray-300'} text-sm`}
               >
-                {eventTypes.map((type) => (
+                {EVENT_TYPES.filter(t => t.value !== '').map((type) => (
                   <option key={type.value} value={type.value}>
                     {type.label}
                   </option>
