@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
-import JourneyCard from '../components/about/JourneyCard';
+import Timeline from '../components/about/Timeline';
 import AlumniCard from '../components/about/AlumniCard';
 import EventCard from '../components/about/EventCard';
 import Navbar from '../components/Navbar';
-import { FaArrowUp } from 'react-icons/fa';
+import { FaArrowUp, FaChevronDown } from 'react-icons/fa';
+import heroBg from '../assets/Thirike.jpg';
 
 // Custom hook for fade in only on scroll
 function useInViewFade(threshold = 0.15) {
@@ -157,11 +158,28 @@ export default function AboutUsPage() {
   const eventCategories = ['All Events', 'Conferences', 'Networking', 'Workshops', 'Social Events'];
   const filteredEvents = activeCategory === 'All Events' ? allEvents : allEvents.filter((event) => event.category === activeCategory);
 
+  // Milestones for Timeline (from previous JourneyCard)
+  const journeyMilestones = [
+    { year: '1965', summary: 'Founded', details: 'CUCEK was established with a vision to provide quality education and shape future leaders.' },
+    { year: '1980', summary: 'Expansion', details: 'Expanded our academic programs and established international partnerships.' },
+    { year: '1995', summary: 'Innovation', details: 'Launched innovative research initiatives and state-of-the-art facilities.' },
+    { year: '2005', summary: 'Online Learning', details: 'Introduced online learning platforms and distance education programs.' },
+    { year: '2015', summary: 'Alumni Connect', details: 'Launched Alumni Connect to foster stronger connections between graduates and the institution.' },
+    { year: '2020', summary: 'Global Reach', details: 'Expanded global reach with international campuses and virtual learning environments.' },
+  ];
+
   // Fade-in for JourneyCard (now using hook)
   const [heroRef, heroVisible] = useInViewFade(0.2);
   const [journeyRef, journeyVisible] = useInViewFade(0.2);
   const [alumniRef, alumniVisible] = useInViewFade(0.15);
   const [eventsRef, eventsVisible] = useInViewFade(0.15);
+
+  // Scroll to timeline section when arrow is clicked
+  const handleHeroArrowClick = () => {
+    if (journeyRef && journeyRef.current) {
+      journeyRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   // Scroll-to-top button visibility
   const [showScrollTop, setShowScrollTop] = useState(false);
@@ -173,43 +191,56 @@ export default function AboutUsPage() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const [showAllAlumni, setShowAllAlumni] = useState(false);
+  const alumniSectionRef = useRef(null);
+  const [showAllEvents, setShowAllEvents] = useState(false);
+  const eventsSectionRef = useRef(null);
+
   return (
     <>
       <Navbar />
-      <div className="bg-white">
-        {/* Hero Section */}
-        <section ref={heroRef} className={`pt-10 pb-12 bg-gradient-to-b from-indigo-50 to-white min-h-screen flex flex-col justify-start items-center transition-all duration-1000 ease-out
-          ${heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-start h-full">
-            <div className="text-center mb-8 mt-4">
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-800 leading-tight mb-4">
-                About CUCEK & Alumni Connect
-              </h1>
-              <p className="text-base md:text-lg text-gray-600 max-w-3xl mx-auto">
-                CUCEK is a premier educational institution dedicated to fostering excellence in higher education. Our Alumni Connect platform brings together our vast network of successful graduates, creating a community of lifelong learning and professional growth.
+      {/* Hero Section - Full viewport with background image and overlay */}
+      <section
+        style={{
+          backgroundImage: `url(${heroBg})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          minHeight: '100vh',
+          position: 'relative',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+        className="relative w-full"
+      >
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-black/60 z-0" />
+        {/* Centered Content */}
+        <div className="relative z-10 flex flex-col items-center justify-center w-full h-full text-center px-4">
+          <h1 className="text-4xl md:text-6xl font-extrabold text-white drop-shadow-lg mb-6" style={{textShadow: '0 2px 16px rgba(0,0,0,0.7)'}}>Alumni Connect</h1>
+          <p className="text-lg md:text-2xl text-white font-medium max-w-2xl mx-auto drop-shadow-md" style={{textShadow: '0 1px 8px rgba(0,0,0,0.6)'}}>
+            Join our growing network of successful graduates and build meaningful connections, share experiences, and explore opportunities together.
               </p>
             </div>
-            <img
-              src="https://lnk.ink/v2039"
-              alt="Journey"
-              className="block w-full max-w-2xl max-h-[400px] object-cover rounded-3xl shadow-xl transition-transform duration-500 hover:scale-105 hover:shadow-2xl border border-gray-200 mx-auto mb-0"
-            />
-          </div>
+        {/* Scroll Down Indicator */}
+        <button
+          onClick={handleHeroArrowClick}
+          className="absolute bottom-20 left-1/2 -translate-x-1/2 z-10 animate-bounce bg-transparent border-none outline-none cursor-pointer"
+          aria-label="Scroll to next section"
+        >
+          <svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="white" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
+        </button>
         </section>
-        {/* Journey Section */}
-        <section ref={journeyRef} className="flex flex-col items-center justify-center w-full pt-0 pb-6 sm:py-8 px-2 sm:px-0 bg-white transition-all duration-1000 ease-out">
-          <div
-            className={`w-full max-w-4xl flex items-center justify-center transition-all duration-1000 ease-out
-              ${journeyVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
-          >
-            <JourneyCard />
-          </div>
-        </section>
-        {/* Main Content */}
+      {/* Timeline Section - Our Journey */}
+      <section ref={journeyRef} className={`hidden sm:flex transition-all duration-1000 ease-out ${journeyVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+        style={{ minHeight: '100vh', alignItems: 'center', justifyContent: 'center', background: 'white' }}>
+        <Timeline milestones={journeyMilestones} />
+      </section>
+      {/* Main Content (rest of About page) */}
         <div className="bg-white">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-20">
             {/* Section 2: Alumni Success Stories */}
-            <section ref={alumniRef} className={`text-center transition-all duration-1000 ease-out
+            <section ref={el => { alumniRef.current = el; alumniSectionRef.current = el; }} className={`text-center transition-all duration-1000 ease-out
               ${alumniVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
               <h2 className="text-3xl md:text-4xl font-bold text-[#5A32EA] mb-4 relative inline-block">
                 Alumni Success Stories
@@ -217,14 +248,45 @@ export default function AboutUsPage() {
               <p className="text-base md:text-lg text-gray-600 mt-4 mb-12 max-w-3xl mx-auto">
                 Discover how CUCEK alumni are making an impact across the globe.
               </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
-                {alumniData.map((alum, idx) => (
+              <div className="w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 items-stretch mb-10">
+                  {(showAllAlumni ? alumniData : alumniData.slice(0, 4)).map((alum, idx) => (
                   <AlumniCard key={idx} {...alum} />
                 ))}
+                </div>
               </div>
+              {alumniData.length > 4 && !showAllAlumni && (
+                <div className="flex justify-center mt-6">
+                  <button
+                    onClick={() => setShowAllAlumni(true)}
+                    className="flex items-center justify-center w-10 h-10 rounded-full bg-white border border-[#5A32EA] text-[#5A32EA] shadow hover:bg-[#f3e8ff] transition-colors"
+                    aria-label="Show more alumni"
+                  >
+                    <FaChevronDown className="w-6 h-6" />
+                  </button>
+                </div>
+              )}
+              {alumniData.length > 4 && showAllAlumni && (
+                <div className="flex justify-center mt-6">
+                  <button
+                    onClick={() => {
+                      setShowAllAlumni(false);
+                      setTimeout(() => {
+                        if (alumniSectionRef.current) {
+                          alumniSectionRef.current.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }, 50);
+                    }}
+                    className="flex items-center justify-center w-10 h-10 rounded-full bg-white border border-[#5A32EA] text-[#5A32EA] shadow hover:bg-[#f3e8ff] transition-colors"
+                    aria-label="Collapse alumni list"
+                  >
+                    <FaChevronDown className="w-6 h-6 rotate-180" />
+                  </button>
+                </div>
+              )}
             </section>
             {/* Section 3: Events & Activities */}
-            <section ref={eventsRef} className={`text-center transition-all duration-1000 ease-out
+            <section ref={el => { eventsRef.current = el; eventsSectionRef.current = el; }} className={`text-center transition-all duration-1000 ease-out
               ${eventsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
               <h2 className="text-3xl md:text-4xl font-bold text-[#5A32EA] mb-4 relative inline-block">
                 Alumni Events & Activities
@@ -247,13 +309,42 @@ export default function AboutUsPage() {
                   </button>
                 ))}
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-4 items-start grid-flow-dense" style={{ gridAutoRows: '1fr' }}>
-                {filteredEvents.slice(0, 6).map((evt, idx) => (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-4 items-start grid-flow-dense mb-10" style={{ gridAutoRows: '1fr' }}>
+                {(showAllEvents ? filteredEvents : filteredEvents.slice(0, 3)).map((evt, idx) => (
                   <div key={idx}>
                     <EventCard title={evt.title} imgSrc={evt.imgSrc} />
                   </div>
                 ))}
               </div>
+              {filteredEvents.length > 3 && !showAllEvents && (
+                <div className="flex justify-center mt-6">
+                  <button
+                    onClick={() => setShowAllEvents(true)}
+                    className="flex items-center justify-center w-10 h-10 rounded-full bg-white border border-[#5A32EA] text-[#5A32EA] shadow hover:bg-[#f3e8ff] transition-colors"
+                    aria-label="Show more events"
+                  >
+                    <FaChevronDown className="w-6 h-6" />
+                  </button>
+                </div>
+              )}
+              {filteredEvents.length > 3 && showAllEvents && (
+                <div className="flex justify-center mt-6">
+                  <button
+                    onClick={() => {
+                      setShowAllEvents(false);
+                      setTimeout(() => {
+                        if (eventsSectionRef.current) {
+                          eventsSectionRef.current.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }, 50);
+                    }}
+                    className="flex items-center justify-center w-10 h-10 rounded-full bg-white border border-[#5A32EA] text-[#5A32EA] shadow hover:bg-[#f3e8ff] transition-colors"
+                    aria-label="Collapse events list"
+                  >
+                    <FaChevronDown className="w-6 h-6 rotate-180" />
+                  </button>
+                </div>
+              )}
             </section>
           </div>
         </div>
@@ -322,7 +413,6 @@ export default function AboutUsPage() {
             </div>
           </div>
         </footer>
-      </div>
       {/* Scroll to top button */}
       {showScrollTop && (
         <button
