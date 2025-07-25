@@ -31,9 +31,9 @@ const EventFilterButton = ({
 
   // Only the required sort options
   const sortOptions = [
-    { value: 'createdAt', label: 'Latest First' },
+    { value: 'createdAt_desc', label: 'Latest First' },
     { value: 'createdAt_asc', label: 'Oldest First' },
-    { value: 'date', label: 'Date (Earliest)' },
+    { value: 'date_asc', label: 'Date (Earliest)' },
     { value: 'date_desc', label: 'Date (Latest)' }
   ];
 
@@ -43,23 +43,13 @@ const EventFilterButton = ({
   };
 
   const handleSortChange = (value) => {
-    if (value.includes('_')) {
-      const [field, order] = value.split('_');
-      onSortChange(field, order);
-    } else {
-      onSortChange(value, 'desc');
-    }
+    const [field, order] = value.split('_');
+    onSortChange(field, order);
     setIsOpen(false);
   };
 
   const getSortLabel = () => {
-    const option = sortOptions.find(opt => {
-      if (sortBy === 'createdAt' && sortOrder === 'desc') return opt.value === 'createdAt';
-      if (sortBy === 'createdAt' && sortOrder === 'asc') return opt.value === 'createdAt_asc';
-      if (sortBy === 'date' && sortOrder === 'asc') return opt.value === 'date';
-      if (sortBy === 'date' && sortOrder === 'desc') return opt.value === 'date_desc';
-      return false;
-    });
+    const option = sortOptions.find(opt => opt.value === `${sortBy}_${sortOrder}`);
     return option ? option.label : 'Latest First';
   };
 

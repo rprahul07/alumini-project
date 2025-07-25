@@ -21,7 +21,7 @@ const EventsPage = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedEventType, setSelectedEventType] = useState('');
-  const [sortBy, setSortBy] = useState('createdAt');
+  const [sortBy, setSortBy] = useState('date');
   const [sortOrder, setSortOrder] = useState('desc');
   const [timeFilter, setTimeFilter] = useState('all');
 
