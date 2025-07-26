@@ -14,9 +14,11 @@ const Opportunities = ({ showAlert }) => {
   // Tab visibility logic
   const canCreate = user?.role === 'alumni' || user?.role === 'admin';
 
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
   const handleCreateSuccess = () => {
-    // Refresh the jobs list if needed
-    // The modal will handle the success message
+    // Trigger refresh of MyCreatedJobs component
+    setRefreshTrigger(prev => prev + 1);
   };
 
   return (
@@ -72,7 +74,7 @@ const Opportunities = ({ showAlert }) => {
       </div>
       {/* Tab Content */}
       <div className="flex-1 overflow-y-auto">
-        {activeTab === 'myjobs' && canCreate && <MyCreatedJobs showAlert={showAlert} />}
+        {activeTab === 'myjobs' && canCreate && <MyCreatedJobs showAlert={showAlert} refreshTrigger={refreshTrigger} />}
         {activeTab === 'applied' && <AppliedJobs />}
       </div>
 

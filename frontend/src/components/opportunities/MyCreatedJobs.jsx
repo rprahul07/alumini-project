@@ -11,7 +11,7 @@ import {
   CalendarIcon
 } from '@heroicons/react/24/outline';
 
-const MyCreatedJobs = ({ showAlert }) => {
+const MyCreatedJobs = ({ showAlert, refreshTrigger = 0 }) => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -61,7 +61,7 @@ const MyCreatedJobs = ({ showAlert }) => {
 
   useEffect(() => {
     fetchJobs();
-  }, []);
+  }, [refreshTrigger]);
 
   // Refresh jobs after edit or delete
   const handleJobEdit = () => {

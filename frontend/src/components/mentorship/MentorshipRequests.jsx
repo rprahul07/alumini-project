@@ -43,15 +43,12 @@ const MentorshipRequests = ({ showAlert, jobs }) => {
       .then(res => {
         if (res.data.success) {
           setSentRequests(res.data.requests.map(r => ({ ...r, id: r.requestId })));
-        } else setSentError(res.data.message || 'Failed to fetch sent requests');
+        } else {
+          setSentError(res.data.message || 'Failed to fetch sent requests');
+        }
       })
       .catch((error) => {
-        if (error.response && error.response.status === 404 && error.response.data && error.response.data.message === 'No support requests found for this user.') {
-          setSentRequests([]);
-          setSentError('You have no support requests yet.');
-        } else {
-          setSentError('Network error.');
-        }
+        setSentError('Network error.');
       })
       .finally(() => setSentLoading(false));
   }, [tab]);

@@ -23,6 +23,51 @@ const CreateJobModal = ({ onClose, onSuccess, showAlert, editMode = false, jobTo
   const [isRemote, setIsRemote] = useState(false);
   const [location, setLocation] = useState('');
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
+
+  // Get today's date in YYYY-MM-DD format for min attribute
+  const today = new Date().toISOString().split('T')[0];
+
+  // Validate form before submission
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!companyName.trim()) {
+      newErrors.companyName = 'Company name is required';
+    }
+    
+    if (!jobTitle.trim()) {
+      newErrors.jobTitle = 'Job title is required';
+    }
+    
+    if (!description.trim()) {
+      newErrors.description = 'Description is required';
+    }
+    
+    // Only validate location if not remote
+    if (!isRemote && !location.trim()) {
+      newErrors.location = 'Location is required';
+    }
+    
+    // Validate deadline - prevent past dates
+    if (deadline) {
+      const deadlineDate = new Date(deadline);
+      const todayDate = new Date();
+      todayDate.setHours(0, 0, 0, 0);
+      
+      if (deadlineDate < todayDate) {
+        newErrors.deadline = 'Deadline cannot be in the past';
+      }
+    }
+    
+    // Validate external registration requirements
+    if (registrationType === 'external' && !registrationLink.trim()) {
+      newErrors.registrationLink = 'Registration link is required for external registration';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   // Unified prefill for all fields in edit mode
   useEffect(() => {
@@ -58,11 +103,18 @@ const CreateJobModal = ({ onClose, onSuccess, showAlert, editMode = false, jobTo
       setRegistrationLink('');
       setGetEmailNotification(true);
       setJobType('job');
+      setErrors({});
     }
   }, [editMode, jobToEdit]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validate form before submission
+    if (!validateForm()) {
+      return;
+    }
+    
     setLoading(true);
     try {
       const payload = {
@@ -88,9 +140,7 @@ const CreateJobModal = ({ onClose, onSuccess, showAlert, editMode = false, jobTo
       }
       
       if (onSuccess) onSuccess();
-      setTimeout(() => {
-        onClose();
-      }, 1000);
+      onClose();
     } catch (err) {
       showAlert && showAlert(editMode ? 'Failed to update opportunity.' : 'Failed to create opportunity.', 'error');
     } finally {
@@ -135,7 +185,11 @@ const CreateJobModal = ({ onClose, onSuccess, showAlert, editMode = false, jobTo
                 checked={isRemote}
                 onChange={e => {
                   setIsRemote(e.target.checked);
-                  if (e.target.checked) setLocation('');
+                  if (e.target.checked) {
+                    setLocation('');
+                    // Clear location error when remote is selected
+                    setErrors(prev => ({ ...prev, location: undefined }));
+                  }
                 }}
                 className="form-checkbox h-4 w-4 text-indigo-600"
               />
@@ -148,12 +202,17 @@ const CreateJobModal = ({ onClose, onSuccess, showAlert, editMode = false, jobTo
                 <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
                 <input
                   type="text"
-                  className="block w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition-colors"
+                  className={`block w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition-colors ${
+                    errors.location ? 'border-red-500' : 'border-gray-300'
+                  }`}
                   value={location || ''}
                   onChange={e => setLocation(e.target.value)}
                   placeholder="Enter location (e.g., City, Office Address)"
                   required={!isRemote}
                 />
+                {errors.location && (
+                  <p className="mt-1 text-sm text-red-600">{errors.location}</p>
+                )}
               </div>
             )}
             
@@ -162,32 +221,47 @@ const CreateJobModal = ({ onClose, onSuccess, showAlert, editMode = false, jobTo
                 <label className="block text-sm font-medium text-gray-700 mb-2">Company Name</label>
                 <input 
                   type="text" 
-                  className="block w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition-colors" 
+                  className={`block w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition-colors ${
+                    errors.companyName ? 'border-red-500' : 'border-gray-300'
+                  }`}
                   value={companyName} 
                   onChange={e => setCompanyName(e.target.value)} 
                   required 
                 />
+                {errors.companyName && (
+                  <p className="mt-1 text-sm text-red-600">{errors.companyName}</p>
+                )}
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Job Title</label>
                 <input 
                   type="text" 
-                  className="block w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition-colors" 
+                  className={`block w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition-colors ${
+                    errors.jobTitle ? 'border-red-500' : 'border-gray-300'
+                  }`}
                   value={jobTitle} 
                   onChange={e => setJobTitle(e.target.value)} 
                   required 
                 />
+                {errors.jobTitle && (
+                  <p className="mt-1 text-sm text-red-600">{errors.jobTitle}</p>
+                )}
               </div>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
               <textarea 
-                className="block w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none resize-none min-h-[100px] transition-colors" 
+                className={`block w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none resize-none min-h-[100px] transition-colors ${
+                  errors.description ? 'border-red-500' : 'border-gray-300'
+                }`}
                 value={description} 
                 onChange={e => setDescription(e.target.value)} 
                 required 
               />
+              {errors.description && (
+                <p className="mt-1 text-sm text-red-600">{errors.description}</p>
+              )}
             </div>
           </div>
 
@@ -246,12 +320,18 @@ const CreateJobModal = ({ onClose, onSuccess, showAlert, editMode = false, jobTo
                 <div className="relative">
                   <input
                     type="date"
-                    className="block w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition-colors pr-10"
+                    className={`block w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition-colors pr-10 ${
+                      errors.deadline ? 'border-red-500' : 'border-gray-300'
+                    }`}
                     value={deadline}
                     onChange={e => setDeadline(e.target.value)}
+                    min={today}
                   />
                   <CalendarIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
                 </div>
+                {errors.deadline && (
+                  <p className="mt-1 text-sm text-red-600">{errors.deadline}</p>
+                )}
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Registration Type</label>
@@ -259,7 +339,11 @@ const CreateJobModal = ({ onClose, onSuccess, showAlert, editMode = false, jobTo
                   <select
                     className="block w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none appearance-none transition-colors pr-10"
                     value={registrationType}
-                    onChange={e => setRegistrationType(e.target.value)}
+                    onChange={e => {
+                      setRegistrationType(e.target.value);
+                      // Clear registration link error when switching types
+                      setErrors(prev => ({ ...prev, registrationLink: undefined }));
+                    }}
                   >
                     <option value="internal">Internal (Apply on site)</option>
                     <option value="external">External (Redirect to company site)</option>
@@ -274,12 +358,17 @@ const CreateJobModal = ({ onClose, onSuccess, showAlert, editMode = false, jobTo
                 <label className="block text-sm font-medium text-gray-700 mb-2">Registration Link</label>
                 <input 
                   type="url" 
-                  className="block w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition-colors" 
+                  className={`block w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition-colors ${
+                    errors.registrationLink ? 'border-red-500' : 'border-gray-300'
+                  }`}
                   value={registrationLink} 
                   onChange={e => setRegistrationLink(e.target.value)} 
                   required 
                   placeholder="https://company.com/apply"
                 />
+                {errors.registrationLink && (
+                  <p className="mt-1 text-sm text-red-600">{errors.registrationLink}</p>
+                )}
               </div>
             )}
           </div>
