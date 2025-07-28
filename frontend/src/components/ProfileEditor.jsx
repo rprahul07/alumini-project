@@ -22,7 +22,7 @@ import ConfirmDialog from './ConfirmDialog';
 const ProfileEditor = () => {
   const navigate = useNavigate();
   const { showAlert } = useAlert();
-  const { user, updateUser } = useAuth();
+  const { user, setUser } = useAuth();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
@@ -67,9 +67,9 @@ const ProfileEditor = () => {
           return;
         }
         const getEndpoint = user.role === 'admin' ? `/api/${user.role}/profile` : `/api/${user.role}/profile/get/`;
-        console.log('🔍 Fetching profile from:', getEndpoint);
+        
         const response = await axios.get(getEndpoint, { withCredentials: true });
-        console.log('📥 Profile response:', response.data);
+
         if (response.data.success) {
           const profileData = response.data.data;
           const newFormData = {
@@ -109,12 +109,11 @@ const ProfileEditor = () => {
             newFormData.designation = profileData.faculty.designation || '';
           }
           setFormData(newFormData);
-          console.log('🎯 Setting skills:', profileData.skills);
-          console.log('🎯 Setting resumeUrl:', profileData.resumeUrl);
+       
           if (profileData.skills && Array.isArray(profileData.skills)) {
             setSkills(profileData.skills);
           } else {
-            console.log('⚠️ Skills is not an array, setting empty array');
+          
             setSkills([]);
           }
           if (profileData.resumeUrl) setResumeUrl(profileData.resumeUrl);
@@ -152,13 +151,13 @@ const ProfileEditor = () => {
     e.preventDefault();
     const skill = newSkill.trim();
     if (skill && !skills.includes(skill)) {
-      console.log('➕ Adding skill:', skill);
+      
       setSkills([...skills, skill]);
       setNewSkill('');
     }
   };
   const handleSkillRemove = (skill) => {
-    console.log('➖ Removing skill:', skill);
+    
     setSkills(skills.filter(s => s !== skill));
   };
   const handleCvChange = async (e) => {
@@ -189,12 +188,12 @@ const ProfileEditor = () => {
       formData.append('totalChunks', '1'); // single file
       // Use correct endpoint based on role
       const uploadEndpoint = `/api/${user.role}/upload/resume`;
-      console.log('📤 Uploading to endpoint:', uploadEndpoint);
+      
       const res = await axios.post(uploadEndpoint, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
         withCredentials: true,
       });
-      console.log('📥 CV upload response:', res.data);
+      
       if (res.data.success && res.data.url) {
         setResumeUrl(res.data.url);
         showAlert('CV uploaded successfully!', 'success');
@@ -202,7 +201,7 @@ const ProfileEditor = () => {
         showAlert(res.data.message || 'Failed to upload CV', 'error');
       }
     } catch (err) {
-      console.error('❌ CV upload error:', err);
+    
       showAlert('Failed to upload CV', 'error');
     } finally {
       setCvUploading(false);
@@ -215,9 +214,16 @@ const ProfileEditor = () => {
     setError(null);
     try {
       if (!user) throw new Error('User data not found');
-      console.log('💾 Submitting profile update...');
-      console.log('📋 Current skills:', skills);
-      console.log('📋 Current resumeUrl:', resumeUrl);
+      
+      // Validation checks
+      if (!formData.fullName || formData.fullName.trim() === '') {
+        throw new Error('Full name is required');
+      }
+      if (!formData.email || formData.email.trim() === '') {
+        throw new Error('Email is required');
+      }
+      
+      
       const formDataToSend = new FormData();
       formDataToSend.append('fullName', formData.fullName);
       formDataToSend.append('email', formData.email);
@@ -228,8 +234,8 @@ const ProfileEditor = () => {
       formDataToSend.append('twitterUrl', formData.twitterUrl || '');
       formDataToSend.append('githubUrl', formData.githubUrl || '');
       
-      // Only add professional fields for alumni and faculty
-      if (user.role === 'alumni' || user.role === 'faculty') {
+      // Only add professional fields for alumni (faculty doesn't support these fields in backend)
+      if (user.role === 'alumni') {
         formDataToSend.append('highestQualification', formData.highestQualification || '');
         formDataToSend.append('totalExperience', formData.totalExperience || '');
       }
@@ -260,29 +266,64 @@ const ProfileEditor = () => {
       }
       // Only include skills and resumeUrl for students and alumni
       if (user.role === 'student' || user.role === 'alumni') {
-        console.log('📤 Adding skills to form data:', skills);
-        console.log('📤 Skills array length:', skills.length);
+       
         skills.forEach((skill, index) => {
-          console.log(`📤 Adding skill ${index + 1}:`, skill);
+       
           formDataToSend.append('skills', skill);
         });
         if (resumeUrl) {
-          console.log('📤 Adding resumeUrl to form data:', resumeUrl);
+          
           formDataToSend.append('resumeUrl', resumeUrl);
         }
       }
       if (formData.profilePhoto instanceof File) {
         formDataToSend.append('photo', formData.profilePhoto);
       }
-      console.log('📤 Sending update request to:', `/api/${user.role}/profile/update`);
-      const response = await axios.patch(`/api/${user.role}/profile/update`, formDataToSend, {
+      
+      // Validate endpoint and make request
+      const endpoint = `/api/${user.role}/profile/update`;
+      console.log('📤 Sending update request to:', endpoint);
+      console.log('🔐 User auth context:', { id: user?.id, role: user?.role, email: user?.email });
+      
+      // Debug FormData contents more thoroughly
+      console.log('📋 FormData entries:');
+      for (let [key, value] of formDataToSend.entries()) {
+        console.log(`  ${key}:`, value);
+      }
+      
+      // Verify user role is valid
+      if (!['student', 'alumni', 'faculty', 'admin'].includes(user.role)) {
+        throw new Error(`Invalid user role: ${user.role}`);
+      }
+      
+      // Test server connectivity first
+      try {
+        console.log('🔍 Testing server connectivity...');
+        const testResponse = await axios.get('/api/auth/check', { withCredentials: true });
+        console.log('✅ Server test successful:', testResponse.data);
+      } catch (testError) {
+        console.error('❌ Server connectivity test failed:', testError);
+        throw new Error('Server connection failed. Please ensure the backend is running.');
+      }
+      
+      const response = await axios.patch(endpoint, formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
         withCredentials: true,
+        timeout: 30000, // 30 second timeout
       });
-      console.log('📥 Update response:', response.data);
-      if (response.data.success) {
+      
+      // Enhanced success checking
+      const isSuccess = response.status === 200 && (
+        response.data.success === true || 
+        response.data.success === 'true' ||
+        (response.data.message && response.data.message.includes('successfully'))
+      );
+      
+     
+      
+      if (isSuccess) {
         const updatedUserData = {
           ...user,
           fullName: response.data.data.fullName,
@@ -295,13 +336,34 @@ const ProfileEditor = () => {
           twitterUrl: response.data.data.twitterUrl,
           githubUrl: response.data.data.githubUrl,
         };
-        updateUser(updatedUserData);
+        setUser(updatedUserData);
         showAlert('Profile updated successfully!', 'success');
       } else {
+        
         showAlert(response.data.message || 'Failed to update profile.', 'error');
       }
     } catch (error) {
-      showAlert(error.response?.data?.message || 'Failed to update profile. Please check your input.', 'error');
+      console.error('🔍 Error message:', error.message);
+      console.error('🔍 Error name:', error.name);
+      console.error('🔍 Network error?', !error.response);
+      
+      let errorMessage = 'Failed to update profile. Please check your input.';
+      
+      if (error.response) {
+        // Server responded with error status
+        errorMessage = error.response.data?.message || `Server error: ${error.response.status}`;
+        console.log('🚨 Server error detected:', error.response.status, error.response.data);
+      } else if (error.request) {
+        // Network error
+        errorMessage = 'Network error. Please check your connection.';
+        console.log('🚨 Network error detected');
+      } else {
+        // Other error
+        errorMessage = error.message || 'Unknown error occurred.';
+        console.log('🚨 Unknown error detected:', error.message);
+      }
+      
+      showAlert(errorMessage, 'error');
     } finally {
       setLoading(false);
     }
@@ -555,8 +617,8 @@ const ProfileEditor = () => {
             </div>
           </div>
           
-          {/* Modern Professional Information Section - Only for Alumni and Faculty */}
-          {(formData.userRole === 'alumni' || formData.userRole === 'faculty') && (
+          {/* Modern Professional Information Section*/}
+          {(formData.userRole === 'alumni') && (
             <div className="mb-6 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
               {/* Header */}
               <div className="px-6 py-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-100">

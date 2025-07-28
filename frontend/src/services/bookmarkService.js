@@ -18,6 +18,17 @@ export const bookmarkAPI = {
       };
     } catch (error) {
       console.error('Error fetching bookmarks:', error);
+      
+      // If bookmark API doesn't exist (404), return empty data gracefully
+      if (error.response?.status === 404) {
+        console.warn('Bookmark API not found - feature may not be implemented yet');
+        return {
+          success: true,
+          data: [],
+          message: 'Bookmark feature not available'
+        };
+      }
+      
       return {
         success: false,
         data: [],
@@ -41,6 +52,15 @@ export const bookmarkAPI = {
       };
     } catch (error) {
       console.error('Error adding bookmark:', error);
+      
+      // If bookmark API doesn't exist (404), return failure gracefully
+      if (error.response?.status === 404) {
+        return {
+          success: false,
+          message: 'Bookmark feature not available'
+        };
+      }
+      
       return {
         success: false,
         message: error.response?.data?.message || 'Failed to bookmark alumni'
@@ -63,6 +83,15 @@ export const bookmarkAPI = {
       };
     } catch (error) {
       console.error('Error removing bookmark:', error);
+      
+      // If bookmark API doesn't exist (404), return failure gracefully
+      if (error.response?.status === 404) {
+        return {
+          success: false,
+          message: 'Bookmark feature not available'
+        };
+      }
+      
       return {
         success: false,
         message: error.response?.data?.message || 'Failed to remove bookmark'

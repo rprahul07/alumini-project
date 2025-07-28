@@ -23,7 +23,9 @@ const AlumniPage = () => {
     isBookmarked, 
     toggleBookmark, 
     bookmarkCount,
-    loading: bookmarkLoading 
+    loading: bookmarkLoading,
+    fetchBookmarks,
+    initialized
   } = useBookmarks();
   const navigate = useNavigate();
   const [alumni, setAlumni] = useState([]);
@@ -115,9 +117,13 @@ const AlumniPage = () => {
   useEffect(() => {
     if (!authLoading) {
       fetchSupportRequests();
+      // Fetch bookmarks when the alumni page loads
+      if (user && !initialized) {
+        fetchBookmarks();
+      }
     }
     // eslint-disable-next-line
-  }, [authLoading]);
+  }, [authLoading, initialized]);
 
   // Handle page change
   const handlePageChange = (page) => {

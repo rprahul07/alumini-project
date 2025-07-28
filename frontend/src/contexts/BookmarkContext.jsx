@@ -19,21 +19,31 @@ export const BookmarkProvider = ({ children }) => {
   const [bookmarkedAlumni, setBookmarkedAlumni] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [initialized, setInitialized] = useState(false);
 
-  // Fetch bookmarks when user is available
+  // Clear bookmarks when user logs out
   useEffect(() => {
-    if (user) {
-      fetchBookmarks();
-    } else {
-      // Clear bookmarks when user logs out
+    if (!user) {
       setBookmarkedAlumni([]);
+      setInitialized(false);
+      setError(null);
     }
   }, [user]);
 
   /**
-   * Fetch all bookmarks from API
+   * Fetch all bookmarks from API - now called only on demand
    */
   const fetchBookmarks = async () => {
+    if (!user) {
+      console.log('No user found, skipping bookmark fetch');
+      return;
+    }
+
+    // Don't fetch again if already initialized
+    if (initialized) {
+      return;
+    }
+
     setLoading(true);
     setError(null);
     
@@ -43,6 +53,7 @@ export const BookmarkProvider = ({ children }) => {
         // Extract alumni IDs from the bookmark data
         const alumniIds = result.data.map(bookmark => bookmark.alumniId || bookmark.userId);
         setBookmarkedAlumni(alumniIds);
+        setInitialized(true);
       } else {
         setError(result.message);
       }
@@ -169,6 +180,7 @@ export const BookmarkProvider = ({ children }) => {
     bookmarkedAlumni,
     loading,
     error,
+    initialized,
     isBookmarked,
     toggleBookmark,
     addBookmark,
