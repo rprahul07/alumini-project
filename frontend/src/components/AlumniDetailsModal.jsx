@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { XMarkIcon, EnvelopeIcon, PhoneIcon, GlobeAltIcon, AcademicCapIcon, UserIcon, BuildingOfficeIcon } from '@heroicons/react/24/outline';
+import { Heart } from 'lucide-react';
 import axios from '../config/axios';
 import useAlert from '../hooks/useAlert';
 import { useAuth } from '../contexts/AuthContext';
 
-const AlumniDetailsModal = ({ open, onClose, alumni, onRequestMentorship, onRefresh }) => {
+const AlumniDetailsModal = ({ open, onClose, alumni, onRequestMentorship, onRefresh, isBookmarked = false, onBookmarkToggle, bookmarkLoading = false }) => {
   const [contactInfo, setContactInfo] = useState(null);
   const [contactLoading, setContactLoading] = useState(false);
   const [contactError, setContactError] = useState(false);
@@ -194,12 +195,32 @@ const AlumniDetailsModal = ({ open, onClose, alumni, onRequestMentorship, onRefr
           {/* Header */}
           <div className="flex items-center justify-between mb-2">
             <h2 className="text-base sm:text-lg font-bold text-gray-900">Alumni Profile</h2>
-            <button
-              onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 transition-colors"
-            >
-              <XMarkIcon className="h-6 w-6" />
-            </button>
+            <div className="flex items-center gap-2">
+              {/* Bookmark Button */}
+              <button
+                onClick={() => onBookmarkToggle && onBookmarkToggle(alumni?.userId)}
+                disabled={bookmarkLoading}
+                className={`p-1.5 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors ${
+                  bookmarkLoading ? 'cursor-not-allowed opacity-50' : ''
+                }`}
+              >
+                {bookmarkLoading ? (
+                  <div className="w-3 h-3 border border-gray-400 border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <Heart 
+                    size={14} 
+                    className={`${isBookmarked ? 'text-red-500 fill-red-500' : 'text-gray-600'} transition-colors`} 
+                  />
+                )}
+              </button>
+              {/* Close Button */}
+              <button
+                onClick={onClose}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <XMarkIcon className="h-6 w-6" />
+              </button>
+            </div>
           </div>
 
           {/* Alumni Image */}

@@ -227,8 +227,12 @@ const ProfileEditor = () => {
       formDataToSend.append('linkedinUrl', formData.linkedinUrl || '');
       formDataToSend.append('twitterUrl', formData.twitterUrl || '');
       formDataToSend.append('githubUrl', formData.githubUrl || '');
-      formDataToSend.append('highestQualification', formData.highestQualification || '');
-      formDataToSend.append('totalExperience', formData.totalExperience || '');
+      
+      // Only add professional fields for alumni and faculty
+      if (user.role === 'alumni' || user.role === 'faculty') {
+        formDataToSend.append('highestQualification', formData.highestQualification || '');
+        formDataToSend.append('totalExperience', formData.totalExperience || '');
+      }
       if (user.role === 'student') {
         if (formData.currentSemester) {
           formDataToSend.append('currentSemester', formData.currentSemester);
@@ -551,67 +555,69 @@ const ProfileEditor = () => {
             </div>
           </div>
           
-          {/* Modern Professional Information Section */}
-          <div className="mb-6 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-            {/* Header */}
-            <div className="px-6 py-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-100">
-              <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                Professional Information
-              </h3>
-              <p className="text-sm text-gray-600 mt-1">Your educational background and experience</p>
-            </div>
-            
-            <div className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Highest Qualification */}
-                <div>
-                  <label htmlFor="highestQualification" className="block text-sm font-medium text-gray-700 mb-2">Highest Qualification</label>
-                  <div className="relative">
-                    <div className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400">
-                      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
-                      </svg>
+          {/* Modern Professional Information Section - Only for Alumni and Faculty */}
+          {(formData.userRole === 'alumni' || formData.userRole === 'faculty') && (
+            <div className="mb-6 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+              {/* Header */}
+              <div className="px-6 py-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-100">
+                <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                  Professional Information
+                </h3>
+                <p className="text-sm text-gray-600 mt-1">Your educational background and experience</p>
+              </div>
+              
+              <div className="p-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Highest Qualification */}
+                  <div>
+                    <label htmlFor="highestQualification" className="block text-sm font-medium text-gray-700 mb-2">Highest Qualification</label>
+                    <div className="relative">
+                      <div className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+                        </svg>
+                      </div>
+                      <input
+                        type="text"
+                        id="highestQualification"
+                        name="highestQualification"
+                        value={formData.highestQualification}
+                        onChange={handleChange}
+                        maxLength={100}
+                        className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                        placeholder="e.g. B.Tech in Computer Science, MBA, PhD in Physics"
+                      />
                     </div>
-                    <input
-                      type="text"
-                      id="highestQualification"
-                      name="highestQualification"
-                      value={formData.highestQualification}
-                      onChange={handleChange}
-                      maxLength={100}
-                      className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                      placeholder="e.g. B.Tech in Computer Science, MBA, PhD in Physics"
-                    />
                   </div>
-                </div>
 
-                {/* Total Experience */}
-                <div>
-                  <label htmlFor="totalExperience" className="block text-sm font-medium text-gray-700 mb-2">Total Experience (Years)</label>
-                  <div className="relative">
-                    <div className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400">
-                      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6a2 2 0 01-2 2H8a2 2 0 01-2-2V8a2 2 0 012-2V6" />
-                      </svg>
+                  {/* Total Experience */}
+                  <div>
+                    <label htmlFor="totalExperience" className="block text-sm font-medium text-gray-700 mb-2">Total Experience (Years)</label>
+                    <div className="relative">
+                      <div className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6a2 2 0 01-2 2H8a2 2 0 01-2-2V8a2 2 0 012-2V6" />
+                        </svg>
+                      </div>
+                      <input
+                        type="number"
+                        id="totalExperience"
+                        name="totalExperience"
+                        value={formData.totalExperience}
+                        onChange={handleChange}
+                        min="0"
+                        max="50"
+                        className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                        placeholder="0"
+                      />
                     </div>
-                    <input
-                      type="number"
-                      id="totalExperience"
-                      name="totalExperience"
-                      value={formData.totalExperience}
-                      onChange={handleChange}
-                      min="0"
-                      max="50"
-                      className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                      placeholder="0"
-                    />
                   </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
           
           {/* Modern Role-specific Section */}
           {formData.userRole && (

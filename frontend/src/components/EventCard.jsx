@@ -113,7 +113,7 @@ const EventCard = ({ event, user, onEventUpdate, showEdit, showDelete, onEdit, o
     ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
     : (!isLoggedIn || isFaculty)
       ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-      : isRegistered
+    : isRegistered
         ? 'bg-green-500 text-white cursor-not-allowed'
         : 'bg-indigo-600 text-white hover:bg-indigo-700';
 

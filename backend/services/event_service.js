@@ -441,7 +441,7 @@ export const removeUserFromEvent = async (
         },
         _count: {
           select: {
-            registrations: true,
+            event_registrations: true,
           },
         },
       },
@@ -455,15 +455,15 @@ export const removeUserFromEvent = async (
     }
 
     // Check if the user to be removed is actually registered for the event
-    const existingRegistration = await prisma.eventRegistration.findUnique({
+    const existingRegistration = await prisma.event_registrations.findUnique({
       where: {
-        registeredUserId_eventId: {
-          registeredUserId: userIdToRemoveInt,
-          eventId: eventIdInt,
+        registered_user_id_event_id: {
+          registered_user_id: userIdToRemoveInt,
+          event_id: eventIdInt,
         },
       },
       include: {
-        user: {
+        users: {
           select: {
             id: true,
             fullName: true,
@@ -484,11 +484,11 @@ export const removeUserFromEvent = async (
     }
 
     // Remove the registration
-    await prisma.eventRegistration.delete({
+    await prisma.event_registrations.delete({
       where: {
-        registeredUserId_eventId: {
-          registeredUserId: userIdToRemoveInt,
-          eventId: eventIdInt,
+        registered_user_id_event_id: {
+          registered_user_id: userIdToRemoveInt,
+          event_id: eventIdInt,
         },
       },
     });
@@ -505,7 +505,7 @@ export const removeUserFromEvent = async (
         location: true,
         _count: {
           select: {
-            registrations: true,
+            event_registrations: true,
           },
         },
       },
@@ -520,11 +520,11 @@ export const removeUserFromEvent = async (
           eventId: updatedEvent.id,
           eventName: updatedEvent.name,
           removedUserId: userIdToRemoveInt,
-          removedUserName: existingRegistration.user.fullName,
-          removedUserEmail: existingRegistration.user.email,
-          removedUserRole: existingRegistration.user.role,
+          removedUserName: existingRegistration.users.fullName,
+          removedUserEmail: existingRegistration.users.email,
+          removedUserRole: existingRegistration.users.role,
           registrationId: existingRegistration.id,
-          newRegistrationCount: updatedEvent._count.registrations,
+          newRegistrationCount: updatedEvent._count.event_registrations,
         },
         userType: organizerRole,
       },
@@ -542,12 +542,12 @@ export const removeUserFromEvent = async (
           removedByRole: organizerRole,
           registrationId: existingRegistration.id,
         },
-        userType: existingRegistration.user.role,
+        userType: existingRegistration.users.role,
       },
     });
 
     console.log(
-      `User ${existingRegistration.user.fullName} (ID: ${userIdToRemoveInt}) removed from event: ${updatedEvent.name} by organizer ${organizerUserId}`
+      `User ${existingRegistration.users.fullName} (ID: ${userIdToRemoveInt}) removed from event: ${updatedEvent.name} by organizer ${organizerUserId}`
     );
 
     // Return success response
@@ -561,16 +561,16 @@ export const removeUserFromEvent = async (
         eventTime: updatedEvent.time,
         eventLocation: updatedEvent.location,
         removedUser: {
-          id: existingRegistration.user.id,
-          fullName: existingRegistration.user.fullName,
-          email: existingRegistration.user.email,
-          role: existingRegistration.user.role,
+          id: existingRegistration.users.id,
+          fullName: existingRegistration.users.fullName,
+          email: existingRegistration.users.email,
+          role: existingRegistration.users.role,
         },
         registrationId: existingRegistration.id,
-        newRegistrationCount: updatedEvent._count.registrations,
+        newRegistrationCount: updatedEvent._count.event_registrations,
         maxCapacity: updatedEvent.maxCapacity,
         availableSpots: updatedEvent.maxCapacity
-          ? updatedEvent.maxCapacity - updatedEvent._count.registrations
+          ? updatedEvent.maxCapacity - updatedEvent._count.event_registrations
           : null,
       },
     };
@@ -729,10 +729,10 @@ export const getRegisteredEvents = async (userId, userRole) => {
     }
 
     // Fetch only upcoming event registrations for the user with event details
-    const registrations = await prisma.eventRegistration.findMany({
+    const registrations = await prisma.event_registrations.findMany({
       where: {
-        registeredUserId: userId,
-        event: {
+        registered_user_id: userId,
+        events: {
           date: {
             gte: new Date(), // Only get events with date >= today
           },
@@ -740,8 +740,8 @@ export const getRegisteredEvents = async (userId, userRole) => {
       },
       select: {
         id: true,
-        registeredAt: true,
-        event: {
+        registered_at: true,
+        events: {
           select: {
             id: true,
             name: true,
@@ -758,7 +758,7 @@ export const getRegisteredEvents = async (userId, userRole) => {
             updatedAt: true,
             _count: {
               select: {
-                registrations: true,
+                event_registrations: true,
               },
             },
             user: {
@@ -771,7 +771,7 @@ export const getRegisteredEvents = async (userId, userRole) => {
         },
       },
       orderBy: {
-        event: {
+        events: {
           date: "asc", // Order by event date (upcoming events first)
         },
       },
@@ -780,29 +780,29 @@ export const getRegisteredEvents = async (userId, userRole) => {
     // Transform the data to a more user-friendly format
     const upcomingEvents = registrations.map((registration) => ({
       registrationId: registration.id,
-      registeredAt: registration.registeredAt,
-      eventId: registration.event.id,
-      eventName: registration.event.name,
-      eventDate: registration.event.date,
-      eventTime: registration.event.time,
-      eventType: registration.event.type,
-      description: registration.event.description,
-      location: registration.event.location,
-      organizer: registration.event.organizer,
-      imageUrl: registration.event.imageUrl,
-      status: registration.event.status,
-      maxCapacity: registration.event.maxCapacity,
-      currentRegistrations: registration.event._count.registrations,
-      createdAt: registration.event.createdAt,
-      updatedAt: registration.event.updatedAt,
+      registeredAt: registration.registered_at,
+      eventId: registration.events.id,
+      eventName: registration.events.name,
+      eventDate: registration.events.date,
+      eventTime: registration.events.time,
+      eventType: registration.events.type,
+      description: registration.events.description,
+      location: registration.events.location,
+      organizer: registration.events.organizer,
+      imageUrl: registration.events.imageUrl,
+      status: registration.events.status,
+      maxCapacity: registration.events.maxCapacity,
+      currentRegistrations: registration.events._count.event_registrations,
+      createdAt: registration.events.createdAt,
+      updatedAt: registration.events.updatedAt,
       eventCreator: {
-        id: registration.event.user.id,
-        name: registration.event.user.fullName,
+        id: registration.events.user.id,
+        name: registration.events.user.fullName,
       },
       // Add some useful computed fields
-      availableSpots: registration.event.maxCapacity
-        ? registration.event.maxCapacity -
-          registration.event._count.registrations
+      availableSpots: registration.events.maxCapacity
+        ? registration.events.maxCapacity -
+          registration.events._count.event_registrations
         : null,
     }));
 
@@ -1026,11 +1026,11 @@ export const getEventRegistrations = async (
         type: true,
         maxCapacity: true,
         description: true,
-        registrations: {
+        event_registrations: {
           select: {
             id: true,
-            registeredAt: true,
-            user: {
+            registered_at: true,
+            users: {
               select: {
                 id: true,
                 fullName: true,
@@ -1065,12 +1065,12 @@ export const getEventRegistrations = async (
             },
           },
           orderBy: {
-            registeredAt: "asc",
+            registered_at: "asc",
           },
         },
         _count: {
           select: {
-            registrations: true,
+            event_registrations: true,
           },
         },
       },
@@ -1104,36 +1104,36 @@ export const getEventRegistrations = async (
       eventType: event.type,
       eventDescription: event.description,
       maxCapacity: event.maxCapacity,
-      totalRegistrations: event._count.registrations,
-      registeredUsers: event.registrations.map((registration) => ({
+      totalRegistrations: event._count.event_registrations,
+      registeredUsers: event.event_registrations.map((registration) => ({
         registrationId: registration.id,
-        registeredAt: registration.registeredAt,
-        userId: registration.user.id,
-        fullName: registration.user.fullName,
-        department: registration.user.department,
-        role: registration.user.role,
-        photoUrl: registration.user.photoUrl,
-        bio: registration.user.bio,
+        registeredAt: registration.registered_at,
+        userId: registration.users.id,
+        fullName: registration.users.fullName,
+        department: registration.users.department,
+        role: registration.users.role,
+        photoUrl: registration.users.photoUrl,
+        bio: registration.users.bio,
         roleDetails:
-          registration.user.role === "student"
+          registration.users.role === "student"
             ? {
-                rollNumber: registration.user.student?.rollNumber,
-                currentSemester: registration.user.student?.currentSemester,
-                graduationYear: registration.user.student?.graduationYear,
-                batchStartYear: registration.user.student?.batch_startYear,
-                batchEndYear: registration.user.student?.batch_endYear,
+                rollNumber: registration.users.student?.rollNumber,
+                currentSemester: registration.users.student?.currentSemester,
+                graduationYear: registration.users.student?.graduationYear,
+                batchStartYear: registration.users.student?.batch_startYear,
+                batchEndYear: registration.users.student?.batch_endYear,
               }
-            : registration.user.role === "alumni"
+            : registration.users.role === "alumni"
               ? {
-                  graduationYear: registration.user.alumni?.graduationYear,
-                  course: registration.user.alumni?.course,
-                  currentJobTitle: registration.user.alumni?.currentJobTitle,
-                  companyName: registration.user.alumni?.companyName,
-                  companyRole: registration.user.alumni?.company_role,
+                  graduationYear: registration.users.alumni?.graduationYear,
+                  course: registration.users.alumni?.course,
+                  currentJobTitle: registration.users.alumni?.currentJobTitle,
+                  companyName: registration.users.alumni?.companyName,
+                  companyRole: registration.users.alumni?.company_role,
                 }
-              : registration.user.role === "faculty"
+              : registration.users.role === "faculty"
                 ? {
-                    designation: registration.user.faculty?.designation,
+                    designation: registration.users.faculty?.designation,
                   }
                 : null,
       })),
@@ -1211,11 +1211,11 @@ export const withdrawFromEvent = async (userId, userRole, eventId) => {
     }
 
     // Check if user is registered for this event
-    const existingRegistration = await prisma.eventRegistration.findUnique({
+    const existingRegistration = await prisma.event_registrations.findUnique({
       where: {
-        registeredUserId_eventId: {
-          registeredUserId: userId,
-          eventId: eventIdInt,
+        registered_user_id_event_id: {
+          registered_user_id: userId,
+          event_id: eventIdInt,
         },
       },
     });
@@ -1236,7 +1236,7 @@ export const withdrawFromEvent = async (userId, userRole, eventId) => {
         location: true,
         _count: {
           select: {
-            registrations: true,
+            event_registrations: true,
           },
         },
       },
@@ -1259,11 +1259,11 @@ export const withdrawFromEvent = async (userId, userRole, eventId) => {
     }
 
     // Delete the registration
-    await prisma.eventRegistration.delete({
+    await prisma.event_registrations.delete({
       where: {
-        registeredUserId_eventId: {
-          registeredUserId: userId,
-          eventId: eventIdInt,
+        registered_user_id_event_id: {
+          registered_user_id: userId,
+          event_id: eventIdInt,
         },
       },
     });
@@ -1280,7 +1280,7 @@ export const withdrawFromEvent = async (userId, userRole, eventId) => {
         location: true,
         _count: {
           select: {
-            registrations: true,
+            event_registrations: true,
           },
         },
       },
@@ -1312,7 +1312,7 @@ export const withdrawFromEvent = async (userId, userRole, eventId) => {
         eventDate: updatedEvent.date,
         eventTime: updatedEvent.time,
         eventLocation: updatedEvent.location,
-        remainingRegistrations: updatedEvent._count.registrations,
+        remainingRegistrations: updatedEvent._count.event_registrations,
         maxCapacity: updatedEvent.maxCapacity,
         withdrawnAt: new Date(),
       },

@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { useBookmarks } from '../contexts/BookmarkContext';
 import Navbar from '../components/Navbar';
 import AlumniSearch from '../components/AlumniSearch';
 import AlumniFilterButton from '../components/AlumniFilterButton';
 import AlumniActiveFilters from '../components/AlumniActiveFilters';
 import AlumniCard from '../components/AlumniCard';
+import BookmarkFilterButton from '../components/BookmarkFilterButton';
 import MentorshipRequestModal from '../components/MentorshipRequestModal';
 import AlumniDetailsModal from '../components/AlumniDetailsModal';
 import axios from '../config/axios';
@@ -16,6 +18,13 @@ import { useNavigate } from 'react-router-dom';
 
 const AlumniPage = () => {
   const { user, loading: authLoading } = useAuth();
+  const { 
+    bookmarkedAlumni, 
+    isBookmarked, 
+    toggleBookmark, 
+    bookmarkCount,
+    loading: bookmarkLoading 
+  } = useBookmarks();
   const navigate = useNavigate();
   const [alumni, setAlumni] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -35,6 +44,7 @@ const AlumniPage = () => {
   const [selectedRole, setSelectedRole] = useState('');
   const { showAlert } = useAlert();
   const [supportRequests, setSupportRequests] = useState([]);
+  const [showBookmarked, setShowBookmarked] = useState(false);
 
   // Redirect if not logged in
   if (!user && !authLoading) {
@@ -58,7 +68,14 @@ const AlumniPage = () => {
       if (selectedRole) params.append('role', selectedRole);
       const response = await axios.get(`/api/alumni/searchalumni?${params}`);
       if (response.data.success) {
-        setAlumni(response.data.data.profiles || []);
+        let alumniData = response.data.data.profiles || [];
+        
+        // Filter by bookmarks if showBookmarked is true
+        if (showBookmarked) {
+          alumniData = alumniData.filter(alumni => isBookmarked(alumni.userId));
+        }
+        
+        setAlumni(alumniData);
         setTotalPages(response.data.data.pagination.totalPages);
       } else {
         setError('Failed to load alumni. Please try again or adjust your filters.');
@@ -87,7 +104,7 @@ const AlumniPage = () => {
     setCurrentPage(1);
     fetchAlumni();
     // eslint-disable-next-line
-  }, [searchTerm, selectedGraduationYear, selectedCompany, selectedRole, sortBy, sortOrder]);
+  }, [searchTerm, selectedGraduationYear, selectedCompany, selectedRole, sortBy, sortOrder, showBookmarked]);
 
   // Fetch on page change
   useEffect(() => {
@@ -190,6 +207,28 @@ const AlumniPage = () => {
     setCurrentPage(1);
   };
 
+  // Handle bookmark toggle
+  const handleBookmarkToggle = async (alumniId) => {
+    const result = await toggleBookmark(alumniId);
+    
+    if (result.success) {
+      showAlert(result.message, 'success');
+    } else {
+      showAlert(result.message, 'error');
+    }
+    
+    // If we're showing bookmarked only and this alumni was unbookmarked, refresh the list
+    if (showBookmarked && !isBookmarked(alumniId)) {
+      fetchAlumni();
+    }
+  };
+
+  // Handle bookmark filter toggle
+  const handleBookmarkFilterToggle = () => {
+    setShowBookmarked(!showBookmarked);
+    setCurrentPage(1);
+  };
+
   return (
     <>
       <Navbar />
@@ -206,6 +245,11 @@ const AlumniPage = () => {
               sortOrder={sortOrder}
               onFilterChange={handleFilterChange}
               onSortChange={handleSortChange}
+            />
+            <BookmarkFilterButton
+              showBookmarked={showBookmarked}
+              onToggle={handleBookmarkFilterToggle}
+              bookmarkCount={bookmarkCount}
             />
           </div>
 
@@ -240,7 +284,10 @@ const AlumniPage = () => {
               </div>
             ) : alumni.length === 0 ? (
               <div className="text-center text-gray-500 py-20 text-lg font-medium">
-                No alumni found. Try adjusting your filters or search.
+                {showBookmarked 
+                  ? "No bookmarked alumni found. Start bookmarking alumni you're interested in!"
+                  : "No alumni found. Try adjusting your filters or search."
+                }
               </div>
             ) : (
               <>
@@ -256,6 +303,9 @@ const AlumniPage = () => {
                           onCardClick={handleAlumniCardClick}
                           buttonDisabled={true}
                           buttonLabel="You can't send yourself"
+                          isBookmarked={isBookmarked(a.userId)}
+                          onBookmarkToggle={handleBookmarkToggle}
+                          bookmarkLoading={bookmarkLoading}
                         />
                       );
                     }
@@ -283,6 +333,9 @@ const AlumniPage = () => {
                         onCardClick={handleAlumniCardClick}
                         buttonDisabled={buttonDisabled}
                         buttonLabel={buttonLabel}
+                        isBookmarked={isBookmarked(a.userId)}
+                        onBookmarkToggle={handleBookmarkToggle}
+                        bookmarkLoading={bookmarkLoading}
                       />
                     );
                   })}
@@ -315,6 +368,9 @@ const AlumniPage = () => {
             alumni={selectedAlumniForDetails || {}}
             onRequestMentorship={handleRequestMentorship}
             onRefresh={fetchAlumni}
+            isBookmarked={selectedAlumniForDetails ? isBookmarked(selectedAlumniForDetails.userId) : false}
+            onBookmarkToggle={handleBookmarkToggle}
+            bookmarkLoading={bookmarkLoading}
           />
 
           {/* Centered Alert */}
