@@ -3,16 +3,30 @@ import { XMarkIcon, CalendarIcon, ClockIcon, MapPinIcon, UserGroupIcon, UserIcon
 import axios from '../config/axios';
 import { toast } from 'react-toastify';
 import ConfirmDialog from './ConfirmDialog';
+import { useAuth } from '../contexts/AuthContext';
 
 const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
+  // Use auth context as primary source, fallback to prop for backward compatibility
+  const { user: authUser, loading: authLoading } = useAuth();
+  const currentUser = authUser || user; // Use authUser as primary, user prop as fallback
+  
   const [isRegistering, setIsRegistering] = useState(false);
   const [isRegistered, setIsRegistered] = useState(
-    user && event.registeredUsers && event.registeredUsers.includes(user.id)
+    currentUser && event && event.registeredUsers && event.registeredUsers.includes(currentUser.id)
   );
   // Add state for confirm dialog if needed
   const [confirmOpen, setConfirmOpen] = React.useState(false);
   const [confirmAction, setConfirmAction] = React.useState(null);
   const [confirmMessage, setConfirmMessage] = React.useState('');
+
+  // Update registration status when user or event changes
+  React.useEffect(() => {
+    if (currentUser && event && event.registeredUsers) {
+      setIsRegistered(event.registeredUsers.includes(currentUser.id));
+    } else {
+      setIsRegistered(false);
+    }
+  }, [currentUser, event]);
 
   if (!isOpen || !event) return null;
 
@@ -29,7 +43,7 @@ const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
 
   // Handle registration
   const handleRegistration = async () => {
-    if (!user) {
+    if (!currentUser) {
       toast.error('Please log in to register for events');
       return;
     }
@@ -37,7 +51,7 @@ const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
     try {
       setIsRegistering(true);
       
-      const endpoint = `/api/${user.role}/event/${event.id}`;
+      const endpoint = `/api/${currentUser.role}/event/${event.id}`;
       const response = await axios.post(endpoint);
 
       if (response.data.success) {
@@ -65,31 +79,54 @@ const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
     }
   };
 
-  // Check if user can register
-  const canRegister = user && (user.role === 'student' || user.role === 'alumni');
+  // Check if user can register - improved logic with auth loading handling
+  const isLoggedIn = !authLoading && !!currentUser;
+  const isEventCreator = currentUser && event.user && currentUser.id === event.user.id;
+  const isAdmin = currentUser?.role === 'admin';
+  const isFaculty = currentUser?.role === 'faculty';
+  
+  const canRegister = isLoggedIn && 
+    (currentUser.role === 'student' || currentUser.role === 'alumni') && 
+    !isEventCreator && 
+    !isAdmin;
+  
   // Check if event is in the past
-  const isPastEvent = new Date(event.date) < new Date(new Date().setHours(0,0,0,0));
-  const maxCapacity = Number(event.maxCapacity) > 0 ? Number(event.maxCapacity) : null;
-  const registeredCount = event.registeredUsers ? event.registeredUsers.length : 0;
+  const isPastEvent = event ? new Date(event.date) < new Date(new Date().setHours(0,0,0,0)) : false;
+  const maxCapacity = event && Number(event.maxCapacity) > 0 ? Number(event.maxCapacity) : null;
+  const registeredCount = event && event.registeredUsers ? event.registeredUsers.length : 0;
   const isEventFull = maxCapacity && registeredCount >= maxCapacity;
   const registrationClosed = isPastEvent || isEventFull;
 
-  // Registration button logic
-  const isLoggedIn = !!user;
-  const isFaculty = user?.role === 'faculty';
-  const buttonText = registrationClosed
-    ? 'Registration Closed'
-    : (!isLoggedIn || isFaculty)
-      ? 'Login to register'
-      : (isRegistered ? 'Registered' : 'Register Now');
-  const buttonDisabled = registrationClosed || !isLoggedIn || isFaculty || isRegistered || isRegistering;
-  const buttonClass = registrationClosed
-    ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-    : (!isLoggedIn || isFaculty)
-      ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-      : isRegistered
-        ? 'bg-green-500 text-white cursor-not-allowed'
-        : 'bg-indigo-600 text-white hover:bg-indigo-700';
+  // Registration button logic - improved with loading state
+  const buttonText = authLoading
+    ? 'Loading...'
+    : registrationClosed
+      ? 'Registration Closed'
+      : !isLoggedIn
+        ? 'Login to Register'
+        : isEventCreator
+          ? 'You Created This Event'
+        : isAdmin
+          ? 'Admin Cannot Register'
+        : isFaculty
+          ? 'Faculty Cannot Register'
+          : isRegistered
+            ? 'Registered'
+            : 'Register Now';
+            
+  const buttonDisabled = authLoading || registrationClosed || !isLoggedIn || isFaculty || isAdmin || isEventCreator || isRegistered || isRegistering;
+  
+  const buttonClass = authLoading
+    ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+    : registrationClosed
+      ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+      : !isLoggedIn
+        ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+        : isEventCreator || isAdmin || isFaculty
+          ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+          : isRegistered
+            ? 'bg-green-500 text-white cursor-not-allowed'
+            : 'bg-indigo-600 text-white hover:bg-indigo-700';
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-1 sm:p-2 z-50">
@@ -164,7 +201,7 @@ const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
           </div>
 
           {/* Guest User CTA */}
-          {!user && (
+          {!isLoggedIn && !authLoading && (
             <div className="border-t pt-6 text-center">
               <h4 className="text-lg font-semibold text-gray-900 mb-2">
                 Want to join this event?
@@ -179,17 +216,6 @@ const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
                 Login to Register
               </a>
             </div>
-          )}
-
-          {/* Registration Button */}
-          {canRegister && (
-            <button
-              onClick={!isRegistered && !registrationClosed ? handleRegistration : undefined}
-              disabled={buttonDisabled}
-              className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors flex items-center justify-center w-full mt-2 ${buttonClass}`}
-            >
-              {buttonText}
-            </button>
           )}
 
           {/* Close Button */}

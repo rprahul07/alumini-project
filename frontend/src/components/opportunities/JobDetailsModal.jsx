@@ -180,24 +180,26 @@ const JobDetailsModal = ({ job, open, onClose, onJobEdit, onJobDelete, showAlert
           )}
 
           {/* Action Buttons */}
-          <div className="flex justify-between gap-3 pt-4 border-t border-gray-100">
+          <div className="flex justify-between items-center gap-3 pt-4 border-t border-gray-100">
             <button
               onClick={onClose}
-              className="rounded-full px-4 py-1.5 font-semibold border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
+              className="rounded-full px-4 py-1.5 font-semibold bg-gradient-to-r from-gray-50 to-slate-50 border border-gray-200 text-gray-700 hover:from-gray-100 hover:to-slate-100 transition-all duration-200 shadow-sm"
             >
               Close
             </button>
+            
             {canEditDelete && (
-              <div className="flex gap-2">
+              <div className="flex items-center gap-2">
                 <button
                   onClick={() => setShowEditModal(true)}
-                  className="rounded-full px-4 py-1.5 font-semibold bg-indigo-600 text-white hover:bg-indigo-700 transition-colors"
+                  className="rounded-full px-4 py-1.5 font-semibold bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 text-indigo-700 hover:from-indigo-100 hover:to-purple-100 transition-all duration-200 shadow-sm"
                 >
                   Edit
                 </button>
+                
                 <button
                   onClick={() => setShowDeleteModal(true)}
-                  className="rounded-full px-4 py-1.5 font-semibold bg-red-600 text-white hover:bg-red-700 transition-colors"
+                  className="rounded-full px-4 py-1.5 font-semibold bg-gradient-to-r from-red-50 to-pink-50 border border-red-200 text-red-700 hover:from-red-100 hover:to-pink-100 transition-all duration-200 shadow-sm"
                 >
                   Delete
                 </button>
@@ -219,31 +221,41 @@ const JobDetailsModal = ({ job, open, onClose, onJobEdit, onJobDelete, showAlert
           jobToEdit={job}
         />
       )}
-      {/* Delete Confirmation Modal (to be implemented) */}
+      {/* Delete Confirmation Modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-          <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-xs relative">
+          <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-sm mx-4 relative">
             <button
-              className="absolute top-2 right-2 text-gray-400 hover:text-gray-600 text-xl font-bold"
+              className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 transition-colors"
               onClick={() => setShowDeleteModal(false)}
               aria-label="Close"
             >
-              ×
+              <XMarkIcon className="h-5 w-5" />
             </button>
-            <h2 className="text-lg font-bold text-red-700 mb-4 text-center">Delete Job?</h2>
-            <p className="text-gray-700 mb-4 text-center">Are you sure you want to delete this job? This action cannot be undone.</p>
-            <div className="flex justify-between gap-3 pt-4 border-t border-gray-100">
+            
+            <div className="text-center mb-6">
+              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </div>
+              <h2 className="text-lg font-semibold text-gray-900 mb-2">Delete Job?</h2>
+              <p className="text-gray-600 text-sm">Are you sure you want to delete this job? This action cannot be undone.</p>
+            </div>
+            
+            <div className="flex justify-center gap-3">
               <button
-                className="rounded-full px-4 py-1.5 font-semibold border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
+                className="rounded-full px-4 py-1.5 font-semibold bg-gradient-to-r from-gray-50 to-slate-50 border border-gray-200 text-gray-700 hover:from-gray-100 hover:to-slate-100 transition-all duration-200 shadow-sm"
                 onClick={() => setShowDeleteModal(false)}
               >
                 Cancel
               </button>
+              
               <button
-                className="rounded-full px-4 py-1.5 font-semibold bg-red-600 text-white hover:bg-red-700 transition-colors"
+                className="rounded-full px-4 py-1.5 font-semibold bg-gradient-to-r from-red-600 to-red-700 text-white hover:from-red-700 hover:to-red-800 transition-all duration-200 shadow-sm"
                 onClick={async () => {
                   try {
-                    await axios.delete(`/api/job/${job.id}`); // axios instance from config handles credentials and token
+                    await axios.delete(`/api/job/${job.id}`);
                     toast.success('Job deleted successfully!');
                     setShowDeleteModal(false);
                     onJobDelete && onJobDelete();

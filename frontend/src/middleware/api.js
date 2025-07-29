@@ -109,8 +109,16 @@ const authAPI = {
   },
 
   checkAuth: async () => {
-    const response = await axios.get("/api/auth/check");
-    return handleApiResponse(response);
+    try {
+      const response = await axios.get("/api/auth/check");
+      return handleApiResponse(response);
+    } catch (error) {
+      // Don't log 401 errors as they're expected for unauthenticated users
+      if (error.response?.status !== 401) {
+        console.error('Auth check error:', error);
+      }
+      throw error;
+    }
   },
 };
 

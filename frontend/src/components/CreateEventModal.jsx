@@ -13,7 +13,6 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated, isMobileModal, edit
     date: '',
     time: '',
     type: '',
-    department: '',
     location: '',
     organizer: '',
     description: '',
@@ -30,68 +29,34 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated, isMobileModal, edit
 
   // Prefill form for edit mode
   React.useEffect(() => {
-    if (isOpen) {
-      if (editMode && eventToEdit) {
-        // Debug: Log the eventToEdit data
-        console.log('Edit mode - eventToEdit:', eventToEdit);
-        
-        setFormData({
-          name: eventToEdit.name || '',
-          date: eventToEdit.date ? new Date(eventToEdit.date).toISOString().split('T')[0] : '',
-          time: eventToEdit.time || '',
-          type: eventToEdit.type || '',
-          department: eventToEdit.department || '',
-          location: eventToEdit.location || '',
-          organizer: eventToEdit.organizer || '',
-          description: eventToEdit.description || '',
-          maxCapacity: eventToEdit.maxCapacity ? String(eventToEdit.maxCapacity) : '',
-          imageFile: null
-        });
-        
-        // Debug: Check department value
-        console.log('Department being set:', eventToEdit.department);
-        console.log('Available departments:', departments.map(d => d.value));
-        
-        // Set photo preview for existing image
-        if (eventToEdit.imageUrl) {
-          setPhotoPreview(eventToEdit.imageUrl);
-        } else {
-          setPhotoPreview(null);
-        }
-        
-        // Clear any previous errors
-        setErrors({});
-      } else {
-        // Create mode - reset form
-        setFormData({
-          name: '',
-          date: '',
-          time: '',
-          type: '',
-          department: '',
-          location: '',
-          organizer: '',
-          description: '',
-          maxCapacity: '',
-          imageFile: null
-        });
-        setPhotoPreview(null);
-        setErrors({});
-      }
+    if (editMode && eventToEdit) {
+      setFormData({
+        name: eventToEdit.name || '',
+        date: eventToEdit.date ? new Date(eventToEdit.date).toISOString().split('T')[0] : '',
+        time: eventToEdit.time || '',
+        type: eventToEdit.type || '',
+        location: eventToEdit.location || '',
+        organizer: eventToEdit.organizer || '',
+        description: eventToEdit.description || '',
+        maxCapacity: eventToEdit.maxCapacity || '',
+        imageFile: null
+      });
+      setPhotoPreview(eventToEdit.imageUrl || null);
+    } else if (!editMode) {
+      setFormData({
+        name: '',
+        date: '',
+        time: '',
+        type: '',
+        location: '',
+        organizer: '',
+        description: '',
+        maxCapacity: '',
+        imageFile: null
+      });
+      setPhotoPreview(null);
     }
   }, [editMode, eventToEdit, isOpen]);
-
-  // Departments (same as EventFilters for consistency)
-  const departments = [
-    { value: '', label: 'Select Department' },
-    { value: 'CSE', label: 'Computer Science Engineering' },
-    { value: 'MECH', label: 'Mechanical Engineering' },
-    { value: 'Civil', label: 'Civil Engineering' },
-    { value: 'EEE', label: 'Electrical & Electronics Engineering' },
-    { value: 'IT', label: 'Information Technology' },
-    { value: 'EC', label: 'Electronics & Communication' },
-    { value: 'MCA', label: 'Master of Computer Applications' }
-  ];
 
   // Locations (best practices)
   const locations = [
@@ -137,15 +102,8 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated, isMobileModal, edit
         setErrors(prev => ({ ...prev, imageFile: 'Image size must be less than 5MB' }));
         return;
       }
-      
-      // Clean up previous photo preview URL if it was created by createObjectURL
-      if (photoPreview && photoPreview.startsWith('blob:')) {
-        URL.revokeObjectURL(photoPreview);
-      }
-      
       setFormData(prev => ({ ...prev, imageFile: file }));
       setPhotoPreview(URL.createObjectURL(file));
-      
       if (errors.imageFile) {
         setErrors(prev => ({ ...prev, imageFile: '' }));
       }
@@ -165,7 +123,6 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated, isMobileModal, edit
     }
     if (!formData.time) newErrors.time = 'Event time is required';
     if (!formData.type) newErrors.type = 'Event type is required';
-    if (!formData.department) newErrors.department = 'Department is required';
     if (!formData.location) newErrors.location = 'Location is required';
     if (!formData.organizer.trim()) newErrors.organizer = 'Organizer is required';
     if (formData.maxCapacity && (formData.maxCapacity < 1 || formData.maxCapacity > 1000)) newErrors.maxCapacity = 'Capacity must be between 1 and 1000';
@@ -210,7 +167,6 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated, isMobileModal, edit
       submitData.append('date', formData.date);
       submitData.append('time', formData.time);
       submitData.append('type', formData.type);
-      submitData.append('department', formData.department);
       submitData.append('location', formData.location);
       submitData.append('organizer', formData.organizer);
       submitData.append('description', formData.description);
@@ -247,17 +203,11 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated, isMobileModal, edit
 
   // Reset form
   const handleClose = () => {
-    // Clean up photo preview URL if it was created by createObjectURL
-    if (photoPreview && photoPreview.startsWith('blob:')) {
-      URL.revokeObjectURL(photoPreview);
-    }
-    
     setFormData({
       name: '',
       date: '',
       time: '',
       type: '',
-      department: '',
       location: '',
       organizer: '',
       description: '',
@@ -345,7 +295,6 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated, isMobileModal, edit
                   className={`block w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition-colors ${errors.type ? 'border-red-500' : 'border-gray-300'}`}
                   required
                 >
-                  <option value="">Select Event Type</option>
                   {EVENT_TYPES.filter(t => t.value !== '').map((type) => (
                     <option key={type.value} value={type.value}>
                       {type.label}
@@ -353,23 +302,6 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated, isMobileModal, edit
                   ))}
                 </select>
                 {errors.type && <p className="mt-1 text-sm text-red-600">{errors.type}</p>}
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Department</label>
-                <select
-                  name="department"
-                  value={formData.department}
-                  onChange={handleInputChange}
-                  className={`block w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition-colors ${errors.department ? 'border-red-500' : 'border-gray-300'}`}
-                  required
-                >
-                  {departments.map((dept) => (
-                    <option key={dept.value} value={dept.value}>
-                      {dept.label}
-                    </option>
-                  ))}
-                </select>
-                {errors.department && <p className="mt-1 text-sm text-red-600">{errors.department}</p>}
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
@@ -437,20 +369,7 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated, isMobileModal, edit
               <div className="mt-1 flex justify-center px-2 pt-3 pb-4 border-2 border-gray-300 border-dashed rounded-lg hover:border-gray-400 transition-colors">
                 <div className="space-y-1 text-center">
                   {photoPreview ? (
-                    <div className="relative">
-                      <img 
-                        src={photoPreview} 
-                        alt="Event" 
-                        className="mx-auto h-20 w-20 object-cover rounded-lg mb-2"
-                        onError={(e) => {
-                          console.log('Image load error:', e.target.src);
-                          setPhotoPreview(null);
-                        }}
-                      />
-                      {editMode && eventToEdit?.imageUrl && !formData.imageFile && (
-                        <p className="text-xs text-blue-600 mt-1">Current event image</p>
-                      )}
-                    </div>
+                    <img src={photoPreview} alt="Event" className="mx-auto h-20 w-20 object-cover rounded-lg mb-2" />
                   ) : (
                     <PhotoIcon className="mx-auto h-10 w-10 text-gray-400" />
                   )}
@@ -459,7 +378,7 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated, isMobileModal, edit
                       htmlFor="imageFile"
                       className="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"
                     >
-                      <span>{photoPreview && editMode ? 'Change image' : 'Upload a file'}</span>
+                      <span>Upload a file</span>
                       <input
                         id="imageFile"
                         name="imageFile"
