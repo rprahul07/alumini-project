@@ -197,7 +197,7 @@ const HomePage = () => {
           </button>
         )}
       </div>
-      <div className="lg:w-full pt-10 lg:pt-0 md:pt-10 ">
+      <div className="lg:w-full pt-10 lg:pt-0 md:pt-10 lg:px-10 ">
         <img
           src={thirikeImg}
           alt="CUCEK Alumni Network"

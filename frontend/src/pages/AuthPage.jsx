@@ -24,13 +24,13 @@ const iconMap = {
   phoneNumber: <FiPhone className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />,
   password: <FiLock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />,
   confirmPassword: <FiLock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />,
-  currentSemester: <FiCalendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />,
-  rollNumber: <FiUser className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />,
-  graduationYear: <FiCalendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />,
-  currentJobTitle: <FiBriefcase className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />,
-  companyName: <FiAward className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />,
-  designation: <FiAward className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />,
-  department: <FiBriefcase className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />,
+  currentSemester: <FiCalendar className="absolute left-3 top-[44px] -translate-y-1/2 text-gray-400" />,
+  rollNumber: <FiUser className="absolute left-3 top-[44px] -translate-y-1/2 text-gray-400" />,
+  graduationYear: <FiCalendar className="absolute left-3 top-[44px] -translate-y-1/2 text-gray-400" />,
+  currentJobTitle: <FiBriefcase className="absolute left-3 top-[44px] -translate-y-1/2 text-gray-400" />,
+  companyName: <FiAward className="absolute left-3 top-[45px] -translate-y-1/2 text-gray-400" />,
+  designation: <FiAward className="absolute left-3 top-[44px] -translate-y-1/2 text-gray-400" />,
+  department: <FiBriefcase className="absolute left-3 top-[44px] -translate-y-1/2 text-gray-400" />,
 };
 
 const AuthPage = () => {
