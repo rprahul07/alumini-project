@@ -35,7 +35,8 @@ model User {
   supportRequestsReceived supportRequest[]    @relation("SupportAlumni")
   supportRequestsSent     supportRequest[]    @relation("SupportRequester")
   jobRegistrations        JobRegistration[]
-  
+  bookmarks               Bookmark[]
+  passwordReset           PasswordReset?
   // New fields for skills and resume
   skills                  String[]            @default([]) // Array of strings to store skills
   resumeUrl               String?             @map("resume_url") @db.VarChar(500) // URL of the uploaded resume
@@ -52,20 +53,20 @@ model Alumni {
   companyName     String  @map("company_name") @db.VarChar(100)
   userId          Int     @unique @map("user_id")
   company_role    String? @map("company_role") @db.VarChar(100)
-  user            User    @relation(fields: [userId], references: [id])
-
+  user            User    @relation(fields: [userId], references: [id], onDelete: Cascade) // Added onDelete: Cascade
+  bookmarks       Bookmark[]
   @@map("alumni")
 }
 
 model Student {
-  id              Int    @id @default(autoincrement())
-  rollNumber      String @unique @map("roll_number") @db.VarChar(50)
-  userId          Int    @unique @map("user_id")
-  currentSemester Int    @map("current_semester")
-  graduationYear  Int?   @map("graduation_year")
-  batch_endYear   Int?   @map("batch_end_year")
-  batch_startYear Int?   @map("batch_start_year")
-  user            User   @relation(fields: [userId], references: [id])
+  id              Int     @id @default(autoincrement())
+  rollNumber      String  @unique @map("roll_number") @db.VarChar(50)
+  userId          Int     @unique @map("user_id")
+  currentSemester Int     @map("current_semester")
+  graduationYear  Int?    @map("graduation_year")
+  batch_endYear   Int?    @map("batch_end_year")
+  batch_startYear Int?    @map("batch_start_year")
+  user            User    @relation(fields: [userId], references: [id], onDelete: Cascade) // Added onDelete: Cascade
 
   @@map("students")
 }
@@ -74,7 +75,7 @@ model Faculty {
   id          Int    @id @default(autoincrement())
   designation String @db.VarChar(100)
   userId      Int    @unique @map("user_id")
-  user        User   @relation(fields: [userId], references: [id])
+  user        User   @relation(fields: [userId], references: [id], onDelete: Cascade) // Added onDelete: Cascade
 
   @@map("faculty")
 }
@@ -82,28 +83,28 @@ model Faculty {
 model Admin {
   id     Int  @id @default(autoincrement())
   userId Int  @unique @map("user_id")
-  user   User @relation(fields: [userId], references: [id])
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade) // Added onDelete: Cascade
 
   @@map("admins")
 }
 
 model Event {
-  id                  Int                   @id @default(autoincrement())
-  userId              Int                   @map("user_id")
-  name                String                @db.VarChar(200)
+  id                  Int                 @id @default(autoincrement())
+  userId              Int                 @map("user_id")
+  name                String              @db.VarChar(200)
   date                DateTime
-  time                String                @db.VarChar(20)
-  type                String                @db.VarChar(100)
+  time                String              @db.VarChar(20)
+  type                String              @db.VarChar(100)
   description         String?
-  location            String                @db.VarChar(200)
-  organizer           String                @db.VarChar(100)
-  imageUrl            String?               @map("image_url") @db.VarChar(500)
-  status              EventStatus           @default(pending)
-  maxCapacity         Int?                  @map("max_capacity")
-  createdAt           DateTime              @default(now()) @map("created_at")
-  updatedAt           DateTime              @updatedAt @map("updated_at")
+  location            String              @db.VarChar(200)
+  organizer           String              @db.VarChar(100)
+  imageUrl            String?             @map("image_url") @db.VarChar(500)
+  status              EventStatus         @default(pending)
+  maxCapacity         Int?                @map("max_capacity")
+  createdAt           DateTime            @default(now()) @map("created_at")
+  updatedAt           DateTime            @updatedAt @map("updated_at")
   event_registrations event_registrations[]
-  user                User                  @relation(fields: [userId], references: [id])
+  user                User                @relation(fields: [userId], references: [id], onDelete: Cascade) // Added onDelete: Cascade
 
   @@index([userId])
   @@index([date])
@@ -121,8 +122,8 @@ model supportRequest {
   descriptionbyUser   String   @default("") @db.VarChar(500)
   descriptionbyAlumni String?  @default("") @db.VarChar(500)
   tier                Int      @default(1)
-  alumni              User?    @relation("SupportAlumni", fields: [alumniId], references: [id])
-  requester           User     @relation("SupportRequester", fields: [support_requester], references: [id])
+  alumni              User?    @relation("SupportAlumni", fields: [alumniId], references: [id], onDelete: SetNull) // Consider SetNull if a support request can exist without an alumni
+  requester           User     @relation("SupportRequester", fields: [support_requester], references: [id], onDelete: Cascade) // Added onDelete: Cascade
 
   @@index([support_requester])
   @@index([alumniId])
@@ -168,8 +169,8 @@ model event_registrations {
   registered_user_id Int
   event_id           Int
   registered_at      DateTime @default(now())
-  events             Event    @relation(fields: [event_id], references: [id])
-  users              User     @relation(fields: [registered_user_id], references: [id])
+  events             Event    @relation(fields: [event_id], references: [id], onDelete: Cascade) // Added onDelete: Cascade
+  users              User     @relation(fields: [registered_user_id], references: [id], onDelete: Cascade) // Added onDelete: Cascade
 
   @@unique([registered_user_id, event_id])
   @@index([event_id])
@@ -190,32 +191,32 @@ enum EventStatus {
 }
 
 model Job {
-  id                 Int           @id @default(autoincrement())
-  userId             Int           @map("user_id")
-  companyName        String        @db.VarChar(200)
-  jobTitle           String        @db.VarChar(200)
-  description        String
-  location           String?       @db.VarChar(200)
-  deadline           DateTime?     @map("deadline")
-  registrationType   RegistrationType @map("registration_type") @default(internal)
-  registrationLink   String?       @map("registration_link") @db.VarChar(500)
-  getEmailNotification Boolean?      @map("get_email_notification")
-  type               JobType       @default(job)
-  status             JobStatus     @default(pending)
-  createdAt          DateTime      @default(now()) @map("created_at")
-  user               User          @relation(fields: [userId], references: [id])
-  jobRegistrations   JobRegistration[]
+  id                   Int               @id @default(autoincrement())
+  userId               Int               @map("user_id")
+  companyName          String            @db.VarChar(200)
+  jobTitle             String            @db.VarChar(200)
+  description          String
+  location             String?           @db.VarChar(200)
+  deadline             DateTime?         @map("deadline")
+  registrationType     RegistrationType  @map("registration_type") @default(internal)
+  registrationLink     String?           @map("registration_link") @db.VarChar(500)
+  getEmailNotification Boolean?          @map("get_email_notification")
+  type                 JobType           @default(job)
+  status               JobStatus         @default(pending)
+  createdAt            DateTime          @default(now()) @map("created_at")
+  user                 User              @relation(fields: [userId], references: [id], onDelete: Cascade) // Added onDelete: Cascade
+  jobRegistrations     JobRegistration[]
 
   @@map("jobs")
 }
 
 model ResumableUpload {
-  fileId       String   @id @unique
-  fileName     String
-  totalChunks  Int
+  fileId        String   @id @unique
+  fileName      String
+  totalChunks   Int
   uploadedBlocks String[]
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt @map("updated_at")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt @map("updated_at")
 
   @@map("resumable_uploads")
 }
@@ -226,12 +227,12 @@ enum RegistrationType {
 }
 
 model JobRegistration {
-  id                   Int           @id @default(autoincrement())
-  createdAt            DateTime @default(now())
-  jobId                Int
-  userId               Int
-  job                  Job      @relation(fields: [jobId], references: [id])
-  user                 User     @relation(fields: [userId], references: [id])
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  jobId     Int
+  userId    Int
+  job       Job      @relation(fields: [jobId], references: [id], onDelete: Cascade) // Added onDelete: Cascade
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade) // Added onDelete: Cascade
 
   @@unique([jobId, userId])
 }
@@ -246,4 +247,26 @@ enum JobStatus {
 enum JobType {
   job
   internship
+}
+
+model Bookmark {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  alumniId  Int
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade) // Added onDelete: Cascade
+  alumni    Alumni   @relation(fields: [alumniId], references: [id], onDelete: Cascade) // Added onDelete: Cascade
+
+  @@unique([userId, alumniId])
+  @@index([userId])
+  @@index([alumniId])
+}
+model PasswordReset {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @unique
+  token     String   @db.VarChar(10)
+  expiresAt DateTime
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("password_resets")
 }
