@@ -421,6 +421,12 @@ export const updateAlumniById = async (req, res) => {
           photoUrl: true,
           bio: true,
           linkedinUrl: true,
+          twitterUrl: true,
+          githubUrl: true,
+          highestQualification: true,
+          totalExperience: true,
+          skills: true,
+          resumeUrl: true,
           alumni: {
             select: {
               id: true,
@@ -723,6 +729,8 @@ export const getAlumniSelf = async (req, res) => {
         workExperience: true,
         skills: true,
         resumeUrl: true,
+        highestQualification: true,
+        totalExperience: true,
         role: true,
         alumni: {
           select: {

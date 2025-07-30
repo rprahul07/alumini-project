@@ -208,6 +208,27 @@ const ProfileEditor = () => {
     }
   };
 
+  const redirectToDashboard = () => {
+    setTimeout(() => {
+      switch (user.role) {
+        case 'student':
+          navigate('/student/dashboard');
+          break;
+        case 'alumni':
+          navigate('/alumni/dashboard');
+          break;
+        case 'faculty':
+          navigate('/faculty/dashboard');
+          break;
+        case 'admin':
+          navigate('/admin/dashboard');
+          break;
+        default:
+          navigate('/');
+      }
+    }, 1500);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -338,6 +359,7 @@ const ProfileEditor = () => {
         };
         setUser(updatedUserData);
         showAlert('Profile updated successfully!', 'success');
+        redirectToDashboard();
       } else {
         
         showAlert(response.data.message || 'Failed to update profile.', 'error');
