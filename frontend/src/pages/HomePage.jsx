@@ -175,7 +175,7 @@ const HomePage = () => {
         {/* Hero Section */}
         {/* Hero Section */}
 <section
-  className="hero-section pt-10 pb-24 bg-white relative z-0"
+  className="hero-section p-10 pb-24 lg:px-20 md:pt-10 bg-white relative z-0"
   id="home"
 >
   <div className="container mx-auto">
@@ -197,11 +197,11 @@ const HomePage = () => {
           </button>
         )}
       </div>
-      <div className="lg:w-full mt-6 mb-20 lg:mt-0">
+      <div className="lg:w-full pt-10 lg:pt-0 md:pt-10 ">
         <img
           src={thirikeImg}
           alt="CUCEK Alumni Network"
-          className="hero-image w-full max-w-2xl rounded-xl shadow-xl"
+          className="hero-image w-full rounded-xl shadow-xl"
           onError={(e) => handleImageError(e, defaultImages.hero)}
           loading="lazy"
         />
@@ -211,7 +211,7 @@ const HomePage = () => {
 </section>
 
 {/* Stats Section */}
-<section className="section stats-section -mt-16 z-10 relative">
+<section className="section py-10 lg:pt-5 lg:px-10 stats-section -mt-16 z-10 relative">
   <div className="container mx-auto px-6">
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       <div className="stat-card bg-white rounded-xl p-6 text-center shadow-xl relative overflow-hidden hover:shadow-2xl transition-shadow">
@@ -247,7 +247,7 @@ const HomePage = () => {
 
 
         {/* Features Section */}
-        <section className="feature-section py-10" id="features">
+        <section className="feature-section py-10 lg:px-20 sm:py-10" id="features">
           <div className="container mx-auto px-6">
             <h2 className="section-title text-2xl md:text-3xl font-bold mb-8 relative inline-block">
               Why Join CUCEK Alumni Connect
@@ -292,7 +292,7 @@ const HomePage = () => {
         </section>
 
         {/* Testimonials Section */}
-        <section className="section py-10" id="testimonials">
+        <section className="section py-10 lg:px-20 sm:py-10" id="testimonials">
           <div className="container mx-auto px-4">
             <h2 className="section-title text-3xl md:text-4xl font-bold mb-12 relative inline-block">
               What Alumni Say
@@ -334,7 +334,7 @@ const HomePage = () => {
         </section>
 
         {/* About Section */}
-        <section className="section py-10" id="about">
+        <section className="section py-10 lg:px-20 sm:p-10" id="about">
           <div className="container mx-auto px-4">
             <div className="flex flex-col lg:flex-row items-center gap-16">
               <div className="lg:w-1/2">
