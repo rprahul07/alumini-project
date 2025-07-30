@@ -74,49 +74,63 @@ const AuthPage = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setFormError('');
-    clearError();
-    try {
-      if (authType === 'login') {
-        const result = await login({
-          email: formData.email,
-          password: formData.password,
-          role: selectedRole
-        });
-        if (result.success) {
-          toast.success('Login successful!');
-        }
-      } else {
-        if (formData.password !== formData.confirmPassword) {
-          setFormError('Passwords do not match');
-          return;
-        }
-        const regData = {
-          ...formData,
-          role: selectedRole,
-          currentSemester: selectedRole === 'student' ? parseInt(formData.currentSemester) : undefined,
-          department: formData.department || '',
-          rollNumber: formData.rollNumber || '',
-          ...(selectedRole !== 'student' && { currentSemester: undefined }),
-          ...(selectedRole !== 'alumni' && {
-            graduationYear: undefined,
-            currentJobTitle: undefined,
-            companyName: undefined
-          }),
-          ...(selectedRole !== 'faculty' && { designation: undefined })
-        };
-        const result = await register(regData);
-        if (result.success) {
-          toast.success('Registration successful! Please login.');
-          setAuthType('login');
-        }
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setFormError('');
+  clearError();
+
+  const emailRegex = /^\S+@\S+\.\S+$/;
+  if (!emailRegex.test(formData.email)) {
+    toast.error("Please enter a valid email address");
+    return;
+  }
+
+  if (!formData.password || formData.password.trim() === '') {
+    toast.error("Password cannot be empty");
+    return;
+  }
+
+  try {
+    if (authType === 'login') {
+      const result = await login({
+        email: formData.email,
+        password: formData.password,
+        role: selectedRole
+      });
+      if (result.success) {
+        toast.success('Login successful!');
       }
-    } catch (err) {
-      setFormError(err.message || 'Authentication failed');
+    } else {
+      if (formData.password !== formData.confirmPassword) {
+        toast.error('Passwords do not match');
+        return;
+      }
+
+      const regData = {
+        ...formData,
+        role: selectedRole,
+        currentSemester: selectedRole === 'student' ? parseInt(formData.currentSemester) : undefined,
+        department: formData.department || '',
+        rollNumber: formData.rollNumber || '',
+        ...(selectedRole !== 'student' && { currentSemester: undefined }),
+        ...(selectedRole !== 'alumni' && {
+          graduationYear: undefined,
+          currentJobTitle: undefined,
+          companyName: undefined
+        }),
+        ...(selectedRole !== 'faculty' && { designation: undefined })
+      };
+
+      const result = await register(regData);
+      if (result.success) {
+        toast.success('Registration successful! Please login.');
+        setAuthType('login');
+      }
     }
-  };
+  } catch (err) {
+    setFormError(err.message || 'Authentication failed');
+  }
+};
 
   const renderRoleSpecificFields = () => {
     switch (selectedRole) {
@@ -267,6 +281,19 @@ const AuthPage = () => {
         return null;
     }
   };
+  const validateLogin = () => {
+  const emailRegex = /^\S+@\S+\.\S+$/;
+
+  if (!emailRegex.test(formData.email)) {
+    setFormError('Please enter a valid email address');
+    return false;
+  }
+  if (!formData.password || formData.password.trim() === '') {
+    setFormError('Password cannot be empty');
+    return false;
+  }
+  return true;
+};
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 py-8 px-4">

@@ -173,9 +173,8 @@ const HomePage = () => {
       <Navbar isHome />
       <div className="bg-gradient-to-r from-indigo-200 to-white">
         {/* Hero Section */}
-        {/* Hero Section */}
 <section
-  className="hero-section p-10 pb-24 lg:px-20 md:pt-10 bg-white relative z-0"
+  className="hero-section p-10 pb-24 lg:px-20 md:pt-20 pt-20 bg-white relative"
   id="home"
 >
   <div className="container mx-auto">
@@ -190,7 +189,7 @@ const HomePage = () => {
         {!user && (
           <button
             onClick={() => navigate('/role-selection')}
-            className="cta-button bg-[#5A32EA] text-white px-6 py-3 rounded-xl text-base font-semibold hover:bg-[#4827b8] transition-all shadow-lg hover:shadow-xl"
+            className="cta-button bg-[#5A32EA] text-white px-6 py-3 rounded-full text-base font-semibold hover:bg-[#4827b8] transition-all shadow-lg hover:shadow-xl"
             aria-label="Sign Up Now"
           >
             Sign Up Now
@@ -211,7 +210,7 @@ const HomePage = () => {
 </section>
 
 {/* Stats Section */}
-<section className="section py-10 lg:pt-5 lg:px-10 stats-section -mt-16 z-10 relative">
+<section className="section py-10 lg:pt-5 lg:px-10 stats-section -mt-16 z-20 relative">
   <div className="container mx-auto px-6">
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       <div className="stat-card bg-white rounded-xl p-6 text-center shadow-xl relative overflow-hidden hover:shadow-2xl transition-shadow">
@@ -358,7 +357,7 @@ const HomePage = () => {
                 {!user && (
                   <button
                     onClick={() => navigate('/role-selection')}
-                    className="cta-button bg-[#5A32EA] text-white px-8 py-4 rounded-2xl text-lg font-semibold hover:bg-[#4827b8] transition-all shadow-lg hover:shadow-xl mt-4"
+                    className="cta-button bg-[#5A32EA] text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-[#4827b8] transition-all shadow-lg hover:shadow-xl mt-4"
                     aria-label="Join Our Community"
                   >
                     Join Our Community

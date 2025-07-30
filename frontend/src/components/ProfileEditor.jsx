@@ -208,6 +208,27 @@ const ProfileEditor = () => {
     }
   };
 
+  const redirectToDashboard = () => {
+    setTimeout(() => {
+      switch (user.role) {
+        case 'student':
+          navigate('/student/dashboard');
+          break;
+        case 'alumni':
+          navigate('/alumni/dashboard');
+          break;
+        case 'faculty':
+          navigate('/faculty/dashboard');
+          break;
+        case 'admin':
+          navigate('/admin/dashboard');
+          break;
+        default:
+          navigate('/');
+      }
+    }, 1500);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -338,6 +359,7 @@ const ProfileEditor = () => {
         };
         setUser(updatedUserData);
         showAlert('Profile updated successfully!', 'success');
+        redirectToDashboard();
       } else {
         
         showAlert(response.data.message || 'Failed to update profile.', 'error');
@@ -967,7 +989,10 @@ const ProfileEditor = () => {
           <div className="flex flex-col sm:flex-row justify-end gap-3 pt-6 border-t border-gray-200 mt-6">
             <button
               type="button"
-              onClick={() => navigate('/profile')}
+              onClick={() => {
+                const dashboardRoute = user?.role ? `/${user.role}/dashboard` : '/';
+                navigate(dashboardRoute);
+              }}
               className="rounded-full px-4 py-1.5 font-semibold border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
             >
               Cancel

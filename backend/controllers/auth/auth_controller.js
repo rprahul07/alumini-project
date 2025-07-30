@@ -7,11 +7,12 @@ import {
   checkEmailExists,
   findUserByRole,
   verifyPassword,
-} from "../services/user.service.js";
-import { createStudent } from "./student.controller.js";
-import { createAlumni } from "./alumni_controller.js";
-import { createFaculty } from "./faculty_controller.js";
+} from "../../services/user_service.js";
+import { createStudent } from "../user/student_controller.js";
+import { createAlumni } from "../user/alumni_controller.js";
+import { createFaculty } from "../user/faculty_controller.js";
 import { ROLES } from "../../constants/user_constants.js";
+import { sendEmailToAlumni } from "../../utils/sendEmail.js";
 
 export const signup = async (req, res) => {
   try {
@@ -142,6 +143,83 @@ export const checkAuth = async (req, res) => {
         role: req.user.role,
       })
     );
+  } catch (error) {
+    handleError(error, req, res);
+  }
+};
+
+
+export const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) throw new AppError("Email is required", 400);
+
+    const user = await prisma.user.findUnique({
+      where: { email },
+      select: { id: true, email: true },
+    });
+
+    if (!user) throw new AppError("User not found", 404);
+
+    const resetToken = Math.floor(1000 + Math.random() * 9000).toString();
+
+    // Upsert token
+    await prisma.passwordReset.upsert({
+      where: { userId: user.id },
+      update: {
+        token: resetToken,
+        expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+      },
+      create: {
+        userId: user.id,
+        token: resetToken,
+        expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+      },
+    });
+
+    await sendEmailToAlumni({
+      to: user.email,
+      subject: "Password Reset",
+      body: `<p>Your OTP is <b>${resetToken}</b>. It will expire in 10 minutes.</p>`,
+    });
+
+    res.status(200).json(createResponse(true, "OTP sent to your email."));
+  } catch (error) {
+    handleError(error, req, res);
+  }
+};
+export const verifyOTP = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+
+    if (!email || !otp) throw new AppError("Email and OTP required", 400);
+
+    const user = await prisma.user.findUnique({
+      where: { email },
+      select: { id: true },
+    });
+
+    if (!user) throw new AppError("User not found", 404);
+
+    const resetRecord = await prisma.passwordReset.findUnique({
+      where: { userId: user.id },
+    });
+
+    if (
+      !resetRecord ||
+      resetRecord.token !== otp ||
+      resetRecord.expiresAt < new Date()
+    ) {
+      throw new AppError("Invalid or expired OTP", 400);
+    }
+
+    // Clean up OTP after verification
+    await prisma.passwordReset.delete({
+      where: { userId: user.id },
+    });
+
+    res.status(200).json(createResponse(true, "OTP verified. You can now reset your password."));
   } catch (error) {
     handleError(error, req, res);
   }
