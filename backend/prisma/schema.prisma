@@ -36,6 +36,7 @@ model User {
   supportRequestsSent     supportRequest[]    @relation("SupportRequester")
   jobRegistrations        JobRegistration[]
   bookmarks               Bookmark[]
+  passwordReset           PasswordReset?
   // New fields for skills and resume
   skills                  String[]            @default([]) // Array of strings to store skills
   resumeUrl               String?             @map("resume_url") @db.VarChar(500) // URL of the uploaded resume
@@ -259,4 +260,13 @@ model Bookmark {
   @@unique([userId, alumniId])
   @@index([userId])
   @@index([alumniId])
+}
+model PasswordReset {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @unique
+  token     String   @db.VarChar(10)
+  expiresAt DateTime
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("password_resets")
 }
