@@ -989,7 +989,10 @@ const ProfileEditor = () => {
           <div className="flex flex-col sm:flex-row justify-end gap-3 pt-6 border-t border-gray-200 mt-6">
             <button
               type="button"
-              onClick={() => navigate('/profile')}
+              onClick={() => {
+                const dashboardRoute = user?.role ? `/${user.role}/dashboard` : '/';
+                navigate(dashboardRoute);
+              }}
               className="rounded-full px-4 py-1.5 font-semibold border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
             >
               Cancel
