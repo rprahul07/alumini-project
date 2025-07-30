@@ -43,8 +43,8 @@ const EventFilterButton = ({
   };
 
   const handleSortChange = (value) => {
-    const [field, order] = value.split('_');
-    onSortChange(field, order);
+      const [field, order] = value.split('_');
+      onSortChange(field, order);
     setIsOpen(false);
   };
 

@@ -22,7 +22,7 @@ import ConfirmDialog from './ConfirmDialog';
 const ProfileEditor = () => {
   const navigate = useNavigate();
   const { showAlert } = useAlert();
-  const { user, updateUser } = useAuth();
+  const { user, setUser } = useAuth();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
@@ -67,9 +67,9 @@ const ProfileEditor = () => {
           return;
         }
         const getEndpoint = user.role === 'admin' ? `/api/${user.role}/profile` : `/api/${user.role}/profile/get/`;
-        console.log('🔍 Fetching profile from:', getEndpoint);
+        
         const response = await axios.get(getEndpoint, { withCredentials: true });
-        console.log('📥 Profile response:', response.data);
+
         if (response.data.success) {
           const profileData = response.data.data;
           const newFormData = {
@@ -109,12 +109,11 @@ const ProfileEditor = () => {
             newFormData.designation = profileData.faculty.designation || '';
           }
           setFormData(newFormData);
-          console.log('🎯 Setting skills:', profileData.skills);
-          console.log('🎯 Setting resumeUrl:', profileData.resumeUrl);
+       
           if (profileData.skills && Array.isArray(profileData.skills)) {
             setSkills(profileData.skills);
           } else {
-            console.log('⚠️ Skills is not an array, setting empty array');
+          
             setSkills([]);
           }
           if (profileData.resumeUrl) setResumeUrl(profileData.resumeUrl);
@@ -152,13 +151,13 @@ const ProfileEditor = () => {
     e.preventDefault();
     const skill = newSkill.trim();
     if (skill && !skills.includes(skill)) {
-      console.log('➕ Adding skill:', skill);
+      
       setSkills([...skills, skill]);
       setNewSkill('');
     }
   };
   const handleSkillRemove = (skill) => {
-    console.log('➖ Removing skill:', skill);
+    
     setSkills(skills.filter(s => s !== skill));
   };
   const handleCvChange = async (e) => {
@@ -189,12 +188,12 @@ const ProfileEditor = () => {
       formData.append('totalChunks', '1'); // single file
       // Use correct endpoint based on role
       const uploadEndpoint = `/api/${user.role}/upload/resume`;
-      console.log('📤 Uploading to endpoint:', uploadEndpoint);
+      
       const res = await axios.post(uploadEndpoint, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
         withCredentials: true,
       });
-      console.log('📥 CV upload response:', res.data);
+      
       if (res.data.success && res.data.url) {
         setResumeUrl(res.data.url);
         showAlert('CV uploaded successfully!', 'success');
@@ -202,7 +201,7 @@ const ProfileEditor = () => {
         showAlert(res.data.message || 'Failed to upload CV', 'error');
       }
     } catch (err) {
-      console.error('❌ CV upload error:', err);
+    
       showAlert('Failed to upload CV', 'error');
     } finally {
       setCvUploading(false);
@@ -215,9 +214,16 @@ const ProfileEditor = () => {
     setError(null);
     try {
       if (!user) throw new Error('User data not found');
-      console.log('💾 Submitting profile update...');
-      console.log('📋 Current skills:', skills);
-      console.log('📋 Current resumeUrl:', resumeUrl);
+      
+      // Validation checks
+      if (!formData.fullName || formData.fullName.trim() === '') {
+        throw new Error('Full name is required');
+      }
+      if (!formData.email || formData.email.trim() === '') {
+        throw new Error('Email is required');
+      }
+      
+      
       const formDataToSend = new FormData();
       formDataToSend.append('fullName', formData.fullName);
       formDataToSend.append('email', formData.email);
@@ -227,8 +233,12 @@ const ProfileEditor = () => {
       formDataToSend.append('linkedinUrl', formData.linkedinUrl || '');
       formDataToSend.append('twitterUrl', formData.twitterUrl || '');
       formDataToSend.append('githubUrl', formData.githubUrl || '');
-      formDataToSend.append('highestQualification', formData.highestQualification || '');
-      formDataToSend.append('totalExperience', formData.totalExperience || '');
+      
+      // Only add professional fields for alumni (faculty doesn't support these fields in backend)
+      if (user.role === 'alumni') {
+        formDataToSend.append('highestQualification', formData.highestQualification || '');
+        formDataToSend.append('totalExperience', formData.totalExperience || '');
+      }
       if (user.role === 'student') {
         if (formData.currentSemester) {
           formDataToSend.append('currentSemester', formData.currentSemester);
@@ -256,29 +266,64 @@ const ProfileEditor = () => {
       }
       // Only include skills and resumeUrl for students and alumni
       if (user.role === 'student' || user.role === 'alumni') {
-        console.log('📤 Adding skills to form data:', skills);
-        console.log('📤 Skills array length:', skills.length);
+       
         skills.forEach((skill, index) => {
-          console.log(`📤 Adding skill ${index + 1}:`, skill);
+       
           formDataToSend.append('skills', skill);
         });
         if (resumeUrl) {
-          console.log('📤 Adding resumeUrl to form data:', resumeUrl);
+          
           formDataToSend.append('resumeUrl', resumeUrl);
         }
       }
       if (formData.profilePhoto instanceof File) {
         formDataToSend.append('photo', formData.profilePhoto);
       }
-      console.log('📤 Sending update request to:', `/api/${user.role}/profile/update`);
-      const response = await axios.patch(`/api/${user.role}/profile/update`, formDataToSend, {
+      
+      // Validate endpoint and make request
+      const endpoint = `/api/${user.role}/profile/update`;
+      console.log('📤 Sending update request to:', endpoint);
+      console.log('🔐 User auth context:', { id: user?.id, role: user?.role, email: user?.email });
+      
+      // Debug FormData contents more thoroughly
+      console.log('📋 FormData entries:');
+      for (let [key, value] of formDataToSend.entries()) {
+        console.log(`  ${key}:`, value);
+      }
+      
+      // Verify user role is valid
+      if (!['student', 'alumni', 'faculty', 'admin'].includes(user.role)) {
+        throw new Error(`Invalid user role: ${user.role}`);
+      }
+      
+      // Test server connectivity first
+      try {
+        console.log('🔍 Testing server connectivity...');
+        const testResponse = await axios.get('/api/auth/check', { withCredentials: true });
+        console.log('✅ Server test successful:', testResponse.data);
+      } catch (testError) {
+        console.error('❌ Server connectivity test failed:', testError);
+        throw new Error('Server connection failed. Please ensure the backend is running.');
+      }
+      
+      const response = await axios.patch(endpoint, formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
         withCredentials: true,
+        timeout: 30000, // 30 second timeout
       });
-      console.log('📥 Update response:', response.data);
-      if (response.data.success) {
+      
+      // Enhanced success checking
+      const isSuccess = response.status === 200 && (
+        response.data.success === true || 
+        response.data.success === 'true' ||
+        (response.data.message && response.data.message.includes('successfully'))
+      );
+      
+     
+      
+      if (isSuccess) {
         const updatedUserData = {
           ...user,
           fullName: response.data.data.fullName,
@@ -291,13 +336,34 @@ const ProfileEditor = () => {
           twitterUrl: response.data.data.twitterUrl,
           githubUrl: response.data.data.githubUrl,
         };
-        updateUser(updatedUserData);
+        setUser(updatedUserData);
         showAlert('Profile updated successfully!', 'success');
       } else {
+        
         showAlert(response.data.message || 'Failed to update profile.', 'error');
       }
     } catch (error) {
-      showAlert(error.response?.data?.message || 'Failed to update profile. Please check your input.', 'error');
+      console.error('🔍 Error message:', error.message);
+      console.error('🔍 Error name:', error.name);
+      console.error('🔍 Network error?', !error.response);
+      
+      let errorMessage = 'Failed to update profile. Please check your input.';
+      
+      if (error.response) {
+        // Server responded with error status
+        errorMessage = error.response.data?.message || `Server error: ${error.response.status}`;
+        console.log('🚨 Server error detected:', error.response.status, error.response.data);
+      } else if (error.request) {
+        // Network error
+        errorMessage = 'Network error. Please check your connection.';
+        console.log('🚨 Network error detected');
+      } else {
+        // Other error
+        errorMessage = error.message || 'Unknown error occurred.';
+        console.log('🚨 Unknown error detected:', error.message);
+      }
+      
+      showAlert(errorMessage, 'error');
     } finally {
       setLoading(false);
     }
@@ -551,67 +617,69 @@ const ProfileEditor = () => {
             </div>
           </div>
           
-          {/* Modern Professional Information Section */}
-          <div className="mb-6 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-            {/* Header */}
-            <div className="px-6 py-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-100">
-              <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                Professional Information
-              </h3>
-              <p className="text-sm text-gray-600 mt-1">Your educational background and experience</p>
-            </div>
-            
-            <div className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Highest Qualification */}
-                <div>
-                  <label htmlFor="highestQualification" className="block text-sm font-medium text-gray-700 mb-2">Highest Qualification</label>
-                  <div className="relative">
-                    <div className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400">
-                      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
-                      </svg>
+          {/* Modern Professional Information Section*/}
+          {(formData.userRole === 'alumni') && (
+            <div className="mb-6 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+              {/* Header */}
+              <div className="px-6 py-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-100">
+                <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                  Professional Information
+                </h3>
+                <p className="text-sm text-gray-600 mt-1">Your educational background and experience</p>
+              </div>
+              
+              <div className="p-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Highest Qualification */}
+                  <div>
+                    <label htmlFor="highestQualification" className="block text-sm font-medium text-gray-700 mb-2">Highest Qualification</label>
+                    <div className="relative">
+                      <div className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+                        </svg>
+                      </div>
+                      <input
+                        type="text"
+                        id="highestQualification"
+                        name="highestQualification"
+                        value={formData.highestQualification}
+                        onChange={handleChange}
+                        maxLength={100}
+                        className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                        placeholder="e.g. B.Tech in Computer Science, MBA, PhD in Physics"
+                      />
                     </div>
-                    <input
-                      type="text"
-                      id="highestQualification"
-                      name="highestQualification"
-                      value={formData.highestQualification}
-                      onChange={handleChange}
-                      maxLength={100}
-                      className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                      placeholder="e.g. B.Tech in Computer Science, MBA, PhD in Physics"
-                    />
                   </div>
-                </div>
 
-                {/* Total Experience */}
-                <div>
-                  <label htmlFor="totalExperience" className="block text-sm font-medium text-gray-700 mb-2">Total Experience (Years)</label>
-                  <div className="relative">
-                    <div className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400">
-                      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6a2 2 0 01-2 2H8a2 2 0 01-2-2V8a2 2 0 012-2V6" />
-                      </svg>
+                  {/* Total Experience */}
+                  <div>
+                    <label htmlFor="totalExperience" className="block text-sm font-medium text-gray-700 mb-2">Total Experience (Years)</label>
+                    <div className="relative">
+                      <div className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6a2 2 0 01-2 2H8a2 2 0 01-2-2V8a2 2 0 012-2V6" />
+                        </svg>
+                      </div>
+                      <input
+                        type="number"
+                        id="totalExperience"
+                        name="totalExperience"
+                        value={formData.totalExperience}
+                        onChange={handleChange}
+                        min="0"
+                        max="50"
+                        className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                        placeholder="0"
+                      />
                     </div>
-                    <input
-                      type="number"
-                      id="totalExperience"
-                      name="totalExperience"
-                      value={formData.totalExperience}
-                      onChange={handleChange}
-                      min="0"
-                      max="50"
-                      className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                      placeholder="0"
-                    />
                   </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
           
           {/* Modern Role-specific Section */}
           {formData.userRole && (

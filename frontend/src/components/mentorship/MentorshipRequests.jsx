@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import ReceivedRequests from './ReceivedRequests';
 import SentRequests from './SentRequests';
 import axios from '../../config/axios';
+import { useAuth } from '../../contexts/AuthContext';
 
 const MentorshipRequests = ({ showAlert, jobs }) => {
+  const { user } = useAuth();
   // Mentorship sub-tab state
   const [tab, setTab] = useState('received');
   const [receivedRequests, setReceivedRequests] = useState([]);
@@ -13,8 +15,15 @@ const MentorshipRequests = ({ showAlert, jobs }) => {
   const [sentLoading, setSentLoading] = useState(false);
   const [sentError, setSentError] = useState(null);
 
-  // Fetch received requests
+  // Fetch received requests - skip for faculty users
   useEffect(() => {
+    // Don't make API calls for faculty users as they don't have access to mentorship endpoints
+    if (!user || user.role === 'faculty') {
+      setLoading(false);
+      setError('Mentorship requests are not available for faculty users');
+      return;
+    }
+
     const fetchRequests = async () => {
       try {
         setLoading(true);
@@ -32,7 +41,7 @@ const MentorshipRequests = ({ showAlert, jobs }) => {
       }
     };
     fetchRequests();
-  }, []);
+  }, [user]);
 
   // Fetch sent requests
   useEffect(() => {
@@ -48,7 +57,7 @@ const MentorshipRequests = ({ showAlert, jobs }) => {
         }
       })
       .catch((error) => {
-        setSentError('Network error.');
+          setSentError('Network error.');
       })
       .finally(() => setSentLoading(false));
   }, [tab]);

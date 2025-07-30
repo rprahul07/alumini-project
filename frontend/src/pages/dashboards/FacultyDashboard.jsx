@@ -3,10 +3,6 @@ import Navbar from '../../components/Navbar';
 import ProfileCard from '../../components/ProfileCard';
 import { AcademicCapIcon, CalendarIcon, BookOpenIcon } from '@heroicons/react/24/outline';
 import { useAuth } from '../../contexts/AuthContext';
-import MentorshipRequests from '../../components/mentorship/MentorshipRequests';
-import Opportunities from '../../components/opportunities/Opportunities';
-import Events from '../../components/events/Events';
-import MyActivityCard from '../../components/MyActivityCard';
 
 const FacultyDashboard = () => {
   const { user } = useAuth();
@@ -34,9 +30,6 @@ const FacultyDashboard = () => {
       iconColor: 'text-blue-600',
     },
   ];
-  const mentorshipsCompleted = 28;
-  const mentorshipsGoal = 40;
-  const mentorshipProgress = Math.min(100, Math.round((mentorshipsCompleted / mentorshipsGoal) * 100));
 
   return (
     <>
@@ -87,16 +80,17 @@ const FacultyDashboard = () => {
                   </div>
                 </div>
               </div>
-              {/* Activity Section - White Card */}
-              <div className="bg-white rounded-2xl shadow-lg flex-1 min-h-0 p-4 flex flex-col overflow-y-auto scrollbar-hide min-w-0 w-full h-[600px] min-h-[500px] max-h-[700px]">
-                <MyActivityCard
-                  features={[
-                    { key: 'mentorship', label: 'Mentorship', component: <MentorshipRequests /> },
-                    { key: 'opportunities', label: 'Opportunities', component: <Opportunities /> },
-                    { key: 'events', label: 'Events', component: <Events /> },
-                  ]}
-                  defaultTab="mentorship"
-                />
+              {/* Faculty Information Section */}
+              <div className="bg-white rounded-2xl shadow-lg flex-1 p-6 flex flex-col overflow-y-auto">
+                <div className="text-center py-12">
+                  <div className="bg-indigo-50 rounded-full p-4 w-20 h-20 mx-auto mb-4 flex items-center justify-center">
+                    <AcademicCapIcon className="w-10 h-10 text-indigo-600" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">Faculty Dashboard</h3>
+                  <p className="text-gray-600 max-w-md mx-auto">
+                    Welcome to your faculty dashboard. Your profile and statistics are displayed in the sidebar.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
