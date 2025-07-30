@@ -370,7 +370,7 @@ const ContactPage = () => {
                         <h4 className="font-semibold text-gray-900">Campus Address</h4>
                         <p className="text-gray-600">
                           Cochin University of Science and Technology<br />
-                          Kochi, Kerala 682022, India
+                          Pulincunnu, Kerala 682022, India
                         </p>
                         <span className="inline-block bg-orange-100 text-orange-800 text-xs px-3 py-1 rounded-full mt-2">
                           Visitors Welcome
