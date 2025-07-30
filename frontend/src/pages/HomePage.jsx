@@ -189,7 +189,7 @@ const HomePage = () => {
         {!user && (
           <button
             onClick={() => navigate('/role-selection')}
-            className="cta-button bg-[#5A32EA] text-white px-6 py-3 rounded-xl text-base font-semibold hover:bg-[#4827b8] transition-all shadow-lg hover:shadow-xl"
+            className="cta-button bg-[#5A32EA] text-white px-6 py-3 rounded-full text-base font-semibold hover:bg-[#4827b8] transition-all shadow-lg hover:shadow-xl"
             aria-label="Sign Up Now"
           >
             Sign Up Now
@@ -357,7 +357,7 @@ const HomePage = () => {
                 {!user && (
                   <button
                     onClick={() => navigate('/role-selection')}
-                    className="cta-button bg-[#5A32EA] text-white px-8 py-4 rounded-2xl text-lg font-semibold hover:bg-[#4827b8] transition-all shadow-lg hover:shadow-xl mt-4"
+                    className="cta-button bg-[#5A32EA] text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-[#4827b8] transition-all shadow-lg hover:shadow-xl mt-4"
                     aria-label="Join Our Community"
                   >
                     Join Our Community

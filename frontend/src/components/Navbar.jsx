@@ -267,21 +267,6 @@ const Navbar = ({ isHome = false }) => {
   const avatarRef = useRef(null);
   const location = useLocation();
 
-  // Handle body padding based on current route
-  useEffect(() => {
-    const isHomePage = location.pathname === '/';
-    if (isHomePage) {
-      document.body.style.paddingTop = '0';
-    } else {
-      document.body.style.paddingTop = '64px';
-    }
-
-    // Cleanup on unmount
-    return () => {
-      document.body.style.paddingTop = '0';
-    };
-  }, [location.pathname]);
-
   // Handle scroll effect
   useEffect(() => {
     const handleScroll = () => {
@@ -441,7 +426,6 @@ const Navbar = ({ isHome = false }) => {
                 onClick={() => navigate('/role-selection')}
                 className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-2 rounded-full text-sm font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
               >
-                <i className="fas fa-rocket mr-2"></i>
                 Get Started
               </button>
             )}
@@ -513,7 +497,6 @@ const Navbar = ({ isHome = false }) => {
                 onClick={() => { setIsMenuOpen(false); navigate('/role-selection'); }}
                 className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 px-6 rounded-xl text-sm font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 shadow-lg"
               >
-                <i className="fas fa-rocket mr-2"></i>
                 Get Started
               </button>
             </div>
