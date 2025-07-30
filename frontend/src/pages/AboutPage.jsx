@@ -232,7 +232,7 @@ export default function AboutUsPage() {
         </button>
         </section>
       {/* Timeline Section - Our Journey */}
-      <section ref={journeyRef} className={`hidden sm:flex transition-all duration-1000 ease-out ${journeyVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+      <section ref={journeyRef} className={`flex transition-all duration-1000 ease-out ${journeyVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
         style={{ minHeight: '100vh', alignItems: 'center', justifyContent: 'center', background: 'white' }}>
         <Timeline milestones={journeyMilestones} />
       </section>
