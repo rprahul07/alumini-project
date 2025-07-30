@@ -1,0 +1,20 @@
+export const EVENT_TYPES = [
+  { value: '', label: 'All Types' },
+  { value: 'Academic Workshop', label: 'Academic Workshop' },
+  { value: 'Workshop', label: 'Workshop' },
+  { value: 'Technical Seminar', label: 'Technical Seminar' },
+  { value: 'Industry Conference', label: 'Industry Conference' },
+  { value: 'Online Webinar', label: 'Online Webinar' },
+  { value: 'Coding Hackathon', label: 'Coding Hackathon' },
+  { value: 'Networking Meetup', label: 'Networking Meetup' },
+  { value: 'Skill Training', label: 'Skill Training' },
+  { value: 'Academic Competition', label: 'Academic Competition' },
+  { value: 'Cultural Festival', label: 'Cultural Festival' },
+  { value: 'Sports Tournament', label: 'Sports Tournament' },
+  { value: 'Career Fair', label: 'Career Fair' },
+  { value: 'Research Symposium', label: 'Research Symposium' },
+  { value: 'Student Club Event', label: 'Student Club Event' },
+  { value: 'Alumni Reunion', label: 'Alumni Reunion' },
+  { value: 'Faculty Development', label: 'Faculty Development' },
+  { value: 'Other', label: 'Other' }
+]; 

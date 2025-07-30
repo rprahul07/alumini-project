@@ -5,6 +5,7 @@ import { AcademicCapIcon, CalendarIcon, BriefcaseIcon } from '@heroicons/react/2
 import { useAuth } from '../../contexts/AuthContext';
 import StudentMentorshipRequests from '../../components/mentorship/StudentMentorshipRequests';
 import AppliedJobs from '../../components/opportunities/AppliedJobs';
+import Events from '../../components/events/Events';
 import MyActivityCard from '../../components/MyActivityCard';
 
 const StudentDashboard = () => {
@@ -92,6 +93,7 @@ const StudentDashboard = () => {
                   features={[
                     { key: 'mentorship', label: 'Mentorship', component: <StudentMentorshipRequests /> },
                     { key: 'opportunities', label: 'Opportunities', component: <AppliedJobs /> },
+                    { key: 'events', label: 'Events', component: <Events /> },
                   ]}
                   defaultTab="mentorship"
                 />

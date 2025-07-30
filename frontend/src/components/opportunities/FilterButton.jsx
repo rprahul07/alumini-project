@@ -32,10 +32,6 @@ const FilterButton = ({
   const sortOptions = [
     { value: 'createdAt', label: 'Latest First' },
     { value: 'createdAt_asc', label: 'Oldest First' },
-    { value: 'jobTitle', label: 'Title A-Z' },
-    { value: 'jobTitle_desc', label: 'Title Z-A' },
-    { value: 'companyName', label: 'Company A-Z' },
-    { value: 'companyName_desc', label: 'Company Z-A' },
   ];
 
   const handleTypeChange = (e) => {

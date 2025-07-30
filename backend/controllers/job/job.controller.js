@@ -4,10 +4,11 @@ import { sendEmailToAlumni } from "../../utils/sendEmail.js";
 
 const createJob = async (req, res) => {
   try {
-    if (req.user.role !== "alumni") {
+    // Allow both alumni and admin to create jobs
+    if (req.user.role !== "alumni" && req.user.role !== "admin") {
       return res.status(403).json({
         success: false,
-        message: "Access denied. Only alumni can create jobs.",
+        message: "Access denied. Only alumni and admin can create jobs.",
         error: "Insufficient permissions",
       });
     }
@@ -47,6 +48,20 @@ const createJob = async (req, res) => {
         success: false,
         message: "Invalid job type. Must be either 'job' or 'internship'.",
       });
+    }
+
+    // Validate deadline - prevent past dates
+    if (deadline) {
+      const deadlineDate = new Date(deadline);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0); // Set to start of today
+      
+      if (deadlineDate < today) {
+        return res.status(400).json({
+          success: false,
+          message: "Deadline cannot be in the past. Please select a future date.",
+        });
+      }
     }
 
     // Validate external registration requirements

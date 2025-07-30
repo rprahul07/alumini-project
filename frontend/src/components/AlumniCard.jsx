@@ -1,4 +1,4 @@
-import { Mail, Linkedin } from 'lucide-react';
+import { Mail, Linkedin, Heart } from 'lucide-react';
 
 const AlumniCard = ({
   alumni,
@@ -6,6 +6,9 @@ const AlumniCard = ({
   onCardClick,
   buttonDisabled = false,
   buttonLabel = 'Request Mentorship',
+  isBookmarked = false,
+  onBookmarkToggle,
+  bookmarkLoading = false,
 }) => {
   // Destructure alumni data with fallbacks
   const {
@@ -114,6 +117,27 @@ const AlumniCard = ({
             <span className="text-indigo-400 text-4xl font-bold">?</span>
           </div>
         )}
+        
+        {/* Bookmark Button */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onBookmarkToggle && onBookmarkToggle(alumni.userId);
+          }}
+          disabled={bookmarkLoading}
+          className={`absolute top-2 right-2 p-1 bg-white/80 backdrop-blur-sm rounded-full shadow-md hover:bg-white transition-all ${
+            bookmarkLoading ? 'cursor-not-allowed opacity-50' : ''
+          }`}
+        >
+          {bookmarkLoading ? (
+            <div className="w-3 h-3 border border-gray-400 border-t-transparent rounded-full animate-spin" />
+          ) : (
+            <Heart 
+              size={14} 
+              className={`${isBookmarked ? 'text-red-500 fill-red-500' : 'text-gray-600'} transition-colors`} 
+            />
+          )}
+        </button>
       </div>
       {/* Main Content */}
       <div className="flex flex-col flex-grow p-4">

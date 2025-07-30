@@ -5,10 +5,7 @@ import EventSearch from '../components/EventSearch';
 import EventFilterButton from '../components/EventFilterButton';
 import EventActiveFilters from '../components/EventActiveFilters';
 import EventPagination from '../components/EventPagination';
-import CreateEventButton from '../components/CreateEventButton';
-import MyEventsButton from '../components/MyEventsButton';
-import AdminEventProposals from '../components/AdminEventProposals';
-import AdminAllEventsButton from '../components/AdminAllEventsButton';
+
 import axios from '../config/axios';
 import Navbar from '../components/Navbar';
 
@@ -21,8 +18,9 @@ const EventsPage = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedEventType, setSelectedEventType] = useState('');
-  const [sortBy, setSortBy] = useState('createdAt');
+  const [sortBy, setSortBy] = useState('date');
   const [sortOrder, setSortOrder] = useState('desc');
+  const [timeFilter, setTimeFilter] = useState('all');
 
   // Fetch events from API
   const fetchEvents = async () => {
@@ -37,17 +35,18 @@ const EventsPage = () => {
         search: searchTerm,
         type: selectedEventType,
         sortBy: sortBy,
-        sortOrder: sortOrder
+        sortOrder: sortOrder,
+        timeFilter: timeFilter,
       });
 
       let endpoint;
       const role = user?.role?.toLowerCase();
       if (user && role) {
-        endpoint = (searchTerm || selectedEventType || sortBy !== 'createdAt' || sortOrder !== 'desc')
+        endpoint = (searchTerm || selectedEventType || sortBy !== 'createdAt' || sortOrder !== 'desc' || timeFilter !== 'all')
           ? `/api/${role}/event/search?${params}`
           : `/api/${role}/event/all?${params}`;
       } else {
-        endpoint = (searchTerm || selectedEventType || sortBy !== 'createdAt' || sortOrder !== 'desc')
+        endpoint = (searchTerm || selectedEventType || sortBy !== 'createdAt' || sortOrder !== 'desc' || timeFilter !== 'all')
           ? `/api/public/event/search?${params}`
           : `/api/public/event/all?${params}`;
       }
@@ -83,7 +82,7 @@ const EventsPage = () => {
     if (!authLoading) {
       fetchEvents();
     }
-  }, [authLoading, currentPage, searchTerm, selectedEventType, sortBy, sortOrder]);
+  }, [authLoading, currentPage, searchTerm, selectedEventType, sortBy, sortOrder, timeFilter]);
 
   // Handle search
   const handleSearchChange = (term) => {
@@ -125,29 +124,17 @@ const EventsPage = () => {
     setCurrentPage(1);
   };
 
+  // Handle time filter change
+  const handleTimeFilterChange = (filter) => {
+    setTimeFilter(filter);
+    setCurrentPage(1);
+  };
+
   return (
     <>
       <Navbar />
       <div className="min-h-screen bg-gray-50">
-        {/* Action Buttons Row (compact, no big header) */}
-        {user && user.role !== 'student' && (
-          <div className="bg-white shadow-sm border-b sticky top-0 z-10">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex flex-row gap-2 items-center">
-              {user && (user.role === 'alumni' || user.role === 'faculty' || user.role === 'admin') && (
-                <CreateEventButton onEventCreated={fetchEvents} />
-              )}
-              {user && (user.role === 'alumni' || user.role === 'faculty') && (
-                <MyEventsButton />
-              )}
-              {user && user.role === 'admin' && (
-                <>
-                  <AdminEventProposals />
-                  <AdminAllEventsButton />
-                </>
-              )}
-            </div>
-          </div>
-        )}
+
 
         {/* Main Content */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -164,6 +151,8 @@ const EventsPage = () => {
               sortOrder={sortOrder}
               onFilterChange={handleFilterChange}
               onSortChange={handleSortChange}
+              timeFilter={timeFilter}
+              onTimeFilterChange={handleTimeFilterChange}
             />
           </div>
 
