@@ -57,7 +57,7 @@ const AdminLogin = () => {
           Admin Login
         </h2>
         <p className="mt-2 text-center text-sm text-gray-600">
-          Use admin@example.com / password to login
+          Use admin@example.com / admin@alumni123 to login
         </p>
       </div>
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
