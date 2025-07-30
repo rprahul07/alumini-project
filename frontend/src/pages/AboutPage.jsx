@@ -308,7 +308,7 @@ const AboutPage = () => {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-white pt-20">
         {/* Dynamic Hero Section with Floating Elements */}
         <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
           {/* Animated Background Elements */}
