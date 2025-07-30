@@ -38,10 +38,6 @@ const AlumniFilterButton = ({
   const sortOptions = [
     { value: 'createdAt', label: 'Latest First' },
     { value: 'createdAt_asc', label: 'Oldest First' },
-    { value: 'fullName', label: 'Name A-Z' },
-    { value: 'fullName_desc', label: 'Name Z-A' },
-    { value: 'companyName', label: 'Company A-Z' },
-    { value: 'companyName_desc', label: 'Company Z-A' },
     { value: 'graduationYear', label: 'Graduation Year (Newest)' },
     { value: 'graduationYear_asc', label: 'Graduation Year (Oldest)' },
   ];
