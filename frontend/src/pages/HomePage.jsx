@@ -171,81 +171,82 @@ const HomePage = () => {
   return (
     <>
       <Navbar isHome />
-      <div className="bg-white">
+      <div className="bg-gradient-to-r from-indigo-200 to-white">
         {/* Hero Section */}
-        <section
-          className="hero-section pt-20 pb-12 bg-gradient-to-b from-indigo-50 to-white"
-          id="home"
-        >
-          <div className="container mx-auto px-6">
-            <div className="flex flex-col lg:flex-row items-center gap-8">
-              <div className="lg:w-1/2 text-center lg:text-left">
-                <h1 className="hero-title text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-800 leading-tight mb-4">
-                  Connect with CUCEK Alumni Worldwide
-                </h1>
-                <p className="hero-subtitle text-base md:text-lg text-gray-600 mb-6 max-w-xl">
-                  Join our growing network of successful graduates and build meaningful connections, share experiences, and explore opportunities together.
-                </p>
-                {!user && (
-                  <button
-                    onClick={() => navigate('/role-selection')}
-                    className="cta-button bg-[#5A32EA] text-white px-6 py-3 rounded-xl text-base font-semibold hover:bg-[#4827b8] transition-all shadow-lg hover:shadow-xl"
-                    aria-label="Sign Up Now"
-                  >
-                    Sign Up Now
-                  </button>
-                )}
-              </div>
-              <div className="lg:w-1/2 mt-6 lg:mt-0 text-center">
-                <img
-                  src={thirikeImg}
-                  alt="CUCEK Alumni Network"
-                  className="hero-image w-full max-w-md mx-auto rounded-xl shadow-xl"
-                  onError={(e) => handleImageError(e, defaultImages.hero)}
-                  loading="lazy"
-                />
-              </div>
-            </div>
-          </div>
-        </section>
+<section
+  className="hero-section p-10 pb-24 lg:px-20 md:pt-20 pt-20 bg-white relative"
+  id="home"
+>
+  <div className="container mx-auto">
+    <div className="flex flex-col lg:flex-row items-center">
+      <div className="lg:w-full text-center lg:text-left">
+        <h1 className="hero-title text-3xl md:text-4xl lg:text-6xl font-extrabold bg-gradient-to-r from-indigo-800 to-indigo-600 bg-clip-text text-transparent leading-tight mb-4">
+          Connect with CUCEK Alumni Worldwide
+        </h1>
+        <p className="hero-subtitle text-base md:text-lg text-gray-600 mb-6 max-w-xl">
+          Join our growing network of successful graduates and build meaningful connections, share experiences, and explore opportunities together.
+        </p>
+        {!user && (
+          <button
+            onClick={() => navigate('/role-selection')}
+            className="cta-button bg-[#5A32EA] text-white px-6 py-3 rounded-xl text-base font-semibold hover:bg-[#4827b8] transition-all shadow-lg hover:shadow-xl"
+            aria-label="Sign Up Now"
+          >
+            Sign Up Now
+          </button>
+        )}
+      </div>
+      <div className="lg:w-full pt-10 lg:pt-0 md:pt-10 ">
+        <img
+          src={thirikeImg}
+          alt="CUCEK Alumni Network"
+          className="hero-image w-full rounded-xl shadow-xl"
+          onError={(e) => handleImageError(e, defaultImages.hero)}
+          loading="lazy"
+        />
+      </div>
+    </div>
+  </div>
+</section>
 
-        {/* Stats Section */}
-        <section className="section stats-section py-12 bg-white">
-          <div className="container mx-auto px-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="stat-card bg-white rounded-xl p-6 text-center shadow-md relative overflow-hidden hover:shadow-lg transition-shadow">
-                <div className="absolute top-0 left-0 w-full h-1 bg-[#5A32EA]"></div>
-                <div className="stat-number text-4xl font-bold text-black mb-2">
-                  {animatedStats.alumniMembers.toLocaleString()}
-                </div>
-                <div className="stat-label text-sm text-gray-600 uppercase tracking-wider">
-                  Alumni Members
-                </div>
-              </div>
-              <div className="stat-card bg-white rounded-xl p-6 text-center shadow-md relative overflow-hidden hover:shadow-lg transition-shadow">
-                <div className="absolute top-0 left-0 w-full h-1 bg-[#5A32EA]"></div>
-                <div className="stat-number text-4xl font-bold text-black mb-2">
-                  {animatedStats.activeUsers.toLocaleString()}
-                </div>
-                <div className="stat-label text-sm text-gray-600 uppercase tracking-wider">
-                  Active Users
-                </div>
-              </div>
-              <div className="stat-card bg-white rounded-xl p-6 text-center shadow-md relative overflow-hidden hover:shadow-lg transition-shadow">
-                <div className="absolute top-0 left-0 w-full h-1 bg-[#5A32EA]"></div>
-                <div className="stat-number text-4xl font-bold text-black mb-2">
-                  {animatedStats.eventsHosted.toLocaleString()}
-                </div>
-                <div className="stat-label text-sm text-gray-600 uppercase tracking-wider">
-                  Events Hosted
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+{/* Stats Section */}
+<section className="section py-10 lg:pt-5 lg:px-10 stats-section -mt-16 z-20 relative">
+  <div className="container mx-auto px-6">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="stat-card bg-white rounded-xl p-6 text-center shadow-xl relative overflow-hidden hover:shadow-2xl transition-shadow">
+        <div className="absolute top-0 left-0 w-full h-1 bg-[#5A32EA]"></div>
+        <div className="stat-number text-4xl font-bold text-black mb-2">
+          {animatedStats.alumniMembers.toLocaleString()}
+        </div>
+        <div className="stat-label text-sm text-gray-600 uppercase tracking-wider">
+          Alumni Members
+        </div>
+      </div>
+      <div className="stat-card bg-white rounded-xl p-6 text-center shadow-xl relative overflow-hidden hover:shadow-2xl transition-shadow">
+        <div className="absolute top-0 left-0 w-full h-1 bg-[#5A32EA]"></div>
+        <div className="stat-number text-4xl font-bold text-black mb-2">
+          {animatedStats.activeUsers.toLocaleString()}
+        </div>
+        <div className="stat-label text-sm text-gray-600 uppercase tracking-wider">
+          Active Users
+        </div>
+      </div>
+      <div className="stat-card bg-white rounded-xl p-6 text-center shadow-xl relative overflow-hidden hover:shadow-2xl transition-shadow">
+        <div className="absolute top-0 left-0 w-full h-1 bg-[#5A32EA]"></div>
+        <div className="stat-number text-4xl font-bold text-black mb-2">
+          {animatedStats.eventsHosted.toLocaleString()}
+        </div>
+        <div className="stat-label text-sm text-gray-600 uppercase tracking-wider">
+          Events Hosted
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 
         {/* Features Section */}
-        <section className="feature-section py-16 bg-[#F5F5F5]" id="features">
+        <section className="feature-section py-10 lg:px-20 sm:py-10" id="features">
           <div className="container mx-auto px-6">
             <h2 className="section-title text-2xl md:text-3xl font-bold mb-8 relative inline-block">
               Why Join CUCEK Alumni Connect
@@ -290,7 +291,7 @@ const HomePage = () => {
         </section>
 
         {/* Testimonials Section */}
-        <section className="section py-20" id="testimonials">
+        <section className="section py-10 lg:px-20 sm:py-10" id="testimonials">
           <div className="container mx-auto px-4">
             <h2 className="section-title text-3xl md:text-4xl font-bold mb-12 relative inline-block">
               What Alumni Say
@@ -332,7 +333,7 @@ const HomePage = () => {
         </section>
 
         {/* About Section */}
-        <section className="section py-20" id="about">
+        <section className="section py-10 lg:px-20 sm:p-10" id="about">
           <div className="container mx-auto px-4">
             <div className="flex flex-col lg:flex-row items-center gap-16">
               <div className="lg:w-1/2">
