@@ -48,6 +48,7 @@ export const createBookmarkForAlumni = async (req, res) => {
       data: bookmark,
     });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({
       success: false,
       message: "Error creating bookmark",
@@ -79,9 +80,18 @@ export const getBookmarksForUser = async (req, res) => {
       },
     });
 
-    return sendResponse(res, 200, true, "Bookmarks fetched successfully", bookmarks);
+    return res.status(200).json({
+      success: true,
+      message: "Bookmarks fetched successfully",
+      data: bookmarks,
+    });
   } catch (error) {
-    return handleError(res, error, "Error fetching bookmarks");
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: "Error fetching bookmarks",
+      error: error.message,
+    });
   }
 };
 
@@ -89,20 +99,47 @@ export const getBookmarksForUser = async (req, res) => {
 export const deleteBookmarkForAlumni = async (req, res) => {
   try {
     const userId = req.user.id;
-    const alumni = await findAlumniByUserId(req.params.alumniId);
+    const userIdParam = parseInt(req.params.alumniId); // This is actually User.id from frontend
+
+    // Find the Alumni record by User.id
+    const alumni = await prisma.alumni.findUnique({
+      where: { userId: userIdParam }
+    });
+
+    if (!alumni) {
+      return res.status(404).json({
+        success: false,
+        message: "Alumni not found"
+      });
+    }
 
     const bookmark = await prisma.bookmark.delete({
       where: {
         userId_alumniId: {
           userId,
-          alumniId: alumni.id,
+          alumniId: alumni.id, // Use the Alumni.id, not User.id
         },
       },
     });
 
-    return sendResponse(res, 200, true, "Bookmark deleted successfully", bookmark);
+    return res.status(200).json({
+      success: true,
+      message: "Bookmark deleted successfully",
+      data: bookmark,
+    });
   } catch (error) {
-    return handleError(res, error, "Error deleting bookmark");
+    console.error(error);
+    if (error.code === 'P2025') {
+      return res.status(404).json({
+        success: false,
+        message: "Bookmark not found",
+      });
+    }
+    return res.status(500).json({
+      success: false,
+      message: "Error deleting bookmark",
+      error: error.message,
+    });
   }
 };
 
