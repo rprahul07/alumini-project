@@ -120,10 +120,7 @@ try {
           };
           console.log('Storing user data:', userData);
           localStorage.setItem('user', JSON.stringify(userData));
-          // Store token and role in localStorage
-          if (response.data.token) {
-            localStorage.setItem('token', response.data.token);
-          }
+          // Token handled securely via HTTP-only cookies
           localStorage.setItem('role', userObj.role.toLowerCase());
 
           // Redirect based on role after successful login

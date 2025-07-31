@@ -13,10 +13,10 @@ const AdminProtectedRoute = ({ children }) => {
 
   useEffect(() => {
     const checkAuth = () => {
-      const token = localStorage.getItem('token');
+      // Token handled via HTTP-only cookies, check user data
       const userStr = localStorage.getItem('user');
       
-      if (!token || !userStr) {
+      if (!userStr) {
         setIsAuthenticated(false);
         setIsChecking(false);
         return;
@@ -27,7 +27,7 @@ const AdminProtectedRoute = ({ children }) => {
         setIsAuthenticated(user.role === 'admin');
       } catch (error) {
         setIsAuthenticated(false);
-        localStorage.removeItem('token');
+        // Clear invalid user data (token handled via HTTP-only cookies)
         localStorage.removeItem('user');
         localStorage.removeItem('role');
       }

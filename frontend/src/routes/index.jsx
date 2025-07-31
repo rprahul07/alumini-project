@@ -29,10 +29,10 @@ function ProtectedRoute({ children, allowedRoles }) {
   // If user is null but we haven't checked auth yet, and we have session indicators, check auth
   React.useEffect(() => {
     const hasSessionIndicators = () => {
-      const token = localStorage.getItem('token');
+      // Check for stored user data (token handled via HTTP-only cookies)
       const storedRole = localStorage.getItem('userRole');
       const selectedRole = localStorage.getItem('selectedRole');
-      return !!(token || storedRole || selectedRole);
+      return !!(storedRole || selectedRole);
     };
 
     if (!user && !authChecked && !loading && hasSessionIndicators()) {
