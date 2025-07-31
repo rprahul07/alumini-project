@@ -7,7 +7,7 @@ const MainLayout = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
-      <main className="py-8">
+      <main className="py-8 pt-16">
         <Outlet />
       </main>
     </div>
