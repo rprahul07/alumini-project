@@ -11,6 +11,7 @@ import alumniRouter from "./routes/alumni_routes.js";
 import { AppError } from "./utils/response.utils.js";
 import support_router from "./routes/support_requests/support_request_routes.js";
 import jobRouter from "./routes/job_routes.js";
+import bookmarkRouter from "./routes/bookmark_routes.js";
 
 // Load environment variables
 dotenv.config();
@@ -81,6 +82,7 @@ app.use("/api/faculty", facultyRouter);
 app.use("/api/public", publicRouter);
 app.use("/api/support", support_router);
 app.use("/api/job", jobRouter);
+app.use("/api/bookmark", bookmarkRouter);
 
 // Error handler for Prisma errors
 app.use((err, req, res, next) => {

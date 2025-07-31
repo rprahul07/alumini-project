@@ -4,12 +4,41 @@ import prisma from "../../lib/prisma.js";
 export const createBookmarkForAlumni = async (req, res) => {
   try {
     const userId = req.user.id;
-    const alumniId = parseInt(req.params.alumniId);
+    const userIdParam = parseInt(req.params.alumniId); // This is actually User.id from frontend
+
+    // Find the Alumni record by User.id
+    const alumni = await prisma.alumni.findUnique({
+      where: { userId: userIdParam }
+    });
+
+    if (!alumni) {
+      return res.status(404).json({
+        success: false,
+        message: "Alumni not found"
+      });
+    }
+
+    // Check if bookmark already exists
+    const existingBookmark = await prisma.bookmark.findUnique({
+      where: {
+        userId_alumniId: {
+          userId,
+          alumniId: alumni.id,
+        },
+      },
+    });
+
+    if (existingBookmark) {
+      return res.status(400).json({
+        success: false,
+        message: "Alumni already bookmarked"
+      });
+    }
 
     const bookmark = await prisma.bookmark.create({
       data: {
         userId,
-        alumniId,
+        alumniId: alumni.id, // Use the Alumni.id, not User.id
       },
     });
 
@@ -33,21 +62,26 @@ export const getBookmarksForUser = async (req, res) => {
     const userId = req.user.id;
     const bookmarks = await prisma.bookmark.findMany({
       where: { userId },
-      include: { alumni: true },
+      include: { 
+        alumni: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                fullName: true,
+                photoUrl: true,
+                bio: true,
+                department: true,
+              }
+            }
+          }
+        }
+      },
     });
 
-    return res.status(200).json({
-      success: true,
-      message: "Bookmarks fetched successfully",
-      data: bookmarks,
-    });
+    return sendResponse(res, 200, true, "Bookmarks fetched successfully", bookmarks);
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-      success: false,
-      message: "Error fetching bookmarks",
-      error: error.message,
-    });
+    return handleError(res, error, "Error fetching bookmarks");
   }
 };
 
@@ -55,29 +89,20 @@ export const getBookmarksForUser = async (req, res) => {
 export const deleteBookmarkForAlumni = async (req, res) => {
   try {
     const userId = req.user.id;
-    const alumniId = parseInt(req.params.alumniId);
+    const alumni = await findAlumniByUserId(req.params.alumniId);
 
     const bookmark = await prisma.bookmark.delete({
       where: {
         userId_alumniId: {
           userId,
-          alumniId,
+          alumniId: alumni.id,
         },
       },
     });
 
-    return res.status(200).json({
-      success: true,
-      message: "Bookmark deleted successfully",
-      data: bookmark,
-    });
+    return sendResponse(res, 200, true, "Bookmark deleted successfully", bookmark);
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-      success: false,
-      message: "Error deleting bookmark",
-      error: error.message,
-    });
+    return handleError(res, error, "Error deleting bookmark");
   }
 };
 

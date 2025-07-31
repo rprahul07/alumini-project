@@ -67,7 +67,7 @@ const ProfileEditor = () => {
           return;
         }
         const getEndpoint = user.role === 'admin' ? `/api/${user.role}/profile` : `/api/${user.role}/profile/get/`;
-        
+
         const response = await axios.get(getEndpoint, { withCredentials: true });
 
         if (response.data.success) {
@@ -109,11 +109,11 @@ const ProfileEditor = () => {
             newFormData.designation = profileData.faculty.designation || '';
           }
           setFormData(newFormData);
-       
+
           if (profileData.skills && Array.isArray(profileData.skills)) {
             setSkills(profileData.skills);
           } else {
-          
+
             setSkills([]);
           }
           if (profileData.resumeUrl) setResumeUrl(profileData.resumeUrl);
@@ -151,19 +151,19 @@ const ProfileEditor = () => {
     e.preventDefault();
     const skill = newSkill.trim();
     if (skill && !skills.includes(skill)) {
-      
+
       setSkills([...skills, skill]);
       setNewSkill('');
     }
   };
   const handleSkillRemove = (skill) => {
-    
+
     setSkills(skills.filter(s => s !== skill));
   };
   const handleCvChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    
+
     // Validate file type
     const allowedTypes = ['.pdf', '.doc', '.docx'];
     const fileExtension = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
@@ -171,13 +171,13 @@ const ProfileEditor = () => {
       showAlert('Please upload a PDF, DOC, or DOCX file.', 'error');
       return;
     }
-    
+
     // Validate file size (5MB limit)
     if (file.size > 5 * 1024 * 1024) {
       showAlert('File size must be less than 5MB.', 'error');
       return;
     }
-    
+
     console.log('📤 Uploading CV file:', file.name, 'Size:', file.size);
     setCvUploading(true);
     try {
@@ -188,12 +188,12 @@ const ProfileEditor = () => {
       formData.append('totalChunks', '1'); // single file
       // Use correct endpoint based on role
       const uploadEndpoint = `/api/${user.role}/upload/resume`;
-      
+
       const res = await axios.post(uploadEndpoint, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
         withCredentials: true,
       });
-      
+
       if (res.data.success && res.data.url) {
         setResumeUrl(res.data.url);
         showAlert('CV uploaded successfully!', 'success');
@@ -201,7 +201,7 @@ const ProfileEditor = () => {
         showAlert(res.data.message || 'Failed to upload CV', 'error');
       }
     } catch (err) {
-    
+
       showAlert('Failed to upload CV', 'error');
     } finally {
       setCvUploading(false);
@@ -235,7 +235,7 @@ const ProfileEditor = () => {
     setError(null);
     try {
       if (!user) throw new Error('User data not found');
-      
+
       // Validation checks
       if (!formData.fullName || formData.fullName.trim() === '') {
         throw new Error('Full name is required');
@@ -243,8 +243,8 @@ const ProfileEditor = () => {
       if (!formData.email || formData.email.trim() === '') {
         throw new Error('Email is required');
       }
-      
-      
+
+
       const formDataToSend = new FormData();
       formDataToSend.append('fullName', formData.fullName);
       formDataToSend.append('email', formData.email);
@@ -254,7 +254,7 @@ const ProfileEditor = () => {
       formDataToSend.append('linkedinUrl', formData.linkedinUrl || '');
       formDataToSend.append('twitterUrl', formData.twitterUrl || '');
       formDataToSend.append('githubUrl', formData.githubUrl || '');
-      
+
       // Only add professional fields for alumni (faculty doesn't support these fields in backend)
       if (user.role === 'alumni') {
         formDataToSend.append('highestQualification', formData.highestQualification || '');
@@ -287,36 +287,36 @@ const ProfileEditor = () => {
       }
       // Only include skills and resumeUrl for students and alumni
       if (user.role === 'student' || user.role === 'alumni') {
-       
+
         skills.forEach((skill, index) => {
-       
+
           formDataToSend.append('skills', skill);
         });
         if (resumeUrl) {
-          
+
           formDataToSend.append('resumeUrl', resumeUrl);
         }
       }
       if (formData.profilePhoto instanceof File) {
         formDataToSend.append('photo', formData.profilePhoto);
       }
-      
+
       // Validate endpoint and make request
       const endpoint = `/api/${user.role}/profile/update`;
       console.log('📤 Sending update request to:', endpoint);
       console.log('🔐 User auth context:', { id: user?.id, role: user?.role, email: user?.email });
-      
+
       // Debug FormData contents more thoroughly
       console.log('📋 FormData entries:');
       for (let [key, value] of formDataToSend.entries()) {
         console.log(`  ${key}:`, value);
       }
-      
+
       // Verify user role is valid
       if (!['student', 'alumni', 'faculty', 'admin'].includes(user.role)) {
         throw new Error(`Invalid user role: ${user.role}`);
       }
-      
+
       // Test server connectivity first
       try {
         console.log('🔍 Testing server connectivity...');
@@ -326,7 +326,7 @@ const ProfileEditor = () => {
         console.error('❌ Server connectivity test failed:', testError);
         throw new Error('Server connection failed. Please ensure the backend is running.');
       }
-      
+
       const response = await axios.patch(endpoint, formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -334,16 +334,16 @@ const ProfileEditor = () => {
         withCredentials: true,
         timeout: 30000, // 30 second timeout
       });
-      
+
       // Enhanced success checking
       const isSuccess = response.status === 200 && (
-        response.data.success === true || 
+        response.data.success === true ||
         response.data.success === 'true' ||
         (response.data.message && response.data.message.includes('successfully'))
       );
-      
-     
-      
+
+
+
       if (isSuccess) {
         const updatedUserData = {
           ...user,
@@ -361,16 +361,16 @@ const ProfileEditor = () => {
         showAlert('Profile updated successfully!', 'success');
         redirectToDashboard();
       } else {
-        
+
         showAlert(response.data.message || 'Failed to update profile.', 'error');
       }
     } catch (error) {
       console.error('🔍 Error message:', error.message);
       console.error('🔍 Error name:', error.name);
       console.error('🔍 Network error?', !error.response);
-      
+
       let errorMessage = 'Failed to update profile. Please check your input.';
-      
+
       if (error.response) {
         // Server responded with error status
         errorMessage = error.response.data?.message || `Server error: ${error.response.status}`;
@@ -384,7 +384,7 @@ const ProfileEditor = () => {
         errorMessage = error.message || 'Unknown error occurred.';
         console.log('🚨 Unknown error detected:', error.message);
       }
-      
+
       showAlert(errorMessage, 'error');
     } finally {
       setLoading(false);
@@ -521,124 +521,124 @@ const ProfileEditor = () => {
               </h3>
               <p className="text-sm text-gray-600 mt-1">Your personal and contact details</p>
             </div>
-            
+
             <div className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Full Name */}
-              <div>
+                <div>
                   <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
-                <div className="relative">
+                  <div className="relative">
                     <div className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400">
                       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                       </svg>
                     </div>
-                  <input
-                    type="text"
-                    id="fullName"
-                    name="fullName"
-                    value={formData.fullName}
-                    onChange={handleChange}
+                    <input
+                      type="text"
+                      id="fullName"
+                      name="fullName"
+                      value={formData.fullName}
+                      onChange={handleChange}
                       className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                       placeholder="Enter your full name"
-                    required
-                  />
+                      required
+                    />
+                  </div>
                 </div>
-              </div>
 
                 {/* Email Address */}
-              <div>
+                <div>
                   <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
-                <div className="relative">
+                  <div className="relative">
                     <div className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400">
                       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                       </svg>
                     </div>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
                       className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm bg-gray-50 cursor-not-allowed"
                       placeholder="your.email@example.com"
-                    required
-                    readOnly
-                  />
+                      required
+                      readOnly
+                    />
+                  </div>
                 </div>
-              </div>
 
                 {/* Phone Number */}
-              <div>
+                <div>
                   <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-                <div className="relative">
+                  <div className="relative">
                     <div className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400">
                       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                       </svg>
                     </div>
-                  <input
-                    type="tel"
-                    id="phoneNumber"
-                    name="phoneNumber"
-                    value={formData.phoneNumber}
-                    onChange={handleChange}
+                    <input
+                      type="tel"
+                      id="phoneNumber"
+                      name="phoneNumber"
+                      value={formData.phoneNumber}
+                      onChange={handleChange}
                       className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                       placeholder="+91 9876543210"
-                  />
+                    />
+                  </div>
                 </div>
-              </div>
 
                 {/* Department */}
-              <div>
+                <div>
                   <label htmlFor="department" className="block text-sm font-medium text-gray-700 mb-2">College Department</label>
-                <div className="relative">
+                  <div className="relative">
                     <div className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400">
                       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                       </svg>
                     </div>
-                  <input
-                    type="text"
-                    id="department"
-                    name="department"
-                    value={formData.department}
-                    onChange={handleChange}
+                    <input
+                      type="text"
+                      id="department"
+                      name="department"
+                      value={formData.department}
+                      onChange={handleChange}
                       className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                    placeholder="e.g., Computer Science"
-                  />
+                      placeholder="e.g., Computer Science"
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
 
               {/* Bio Section */}
               <div className="mt-4">
                 <label htmlFor="bio" className="block text-sm font-medium text-gray-700 mb-2">Bio</label>
-              <div className="relative">
+                <div className="relative">
                   <div className="absolute top-3 left-3 w-5 h-5 text-gray-400">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                     </svg>
                   </div>
-                <textarea
-                  id="bio"
-                  name="bio"
+                  <textarea
+                    id="bio"
+                    name="bio"
                     rows={3}
-                  maxLength={400}
-                  value={formData.bio || ''}
-                  onChange={handleChange}
+                    maxLength={400}
+                    value={formData.bio || ''}
+                    onChange={handleChange}
                     className="w-full pl-10 pr-12 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none"
                     placeholder="Tell us about yourself, your interests, and what you're passionate about..."
-                />
+                  />
                   <span className="absolute bottom-2 right-3 text-xs text-gray-400 select-none">
-                  {formData.bio?.length || 0}/400
-                </span>
+                    {formData.bio?.length || 0}/400
+                  </span>
                 </div>
               </div>
             </div>
           </div>
-          
+
           {/* Modern Professional Information Section*/}
           {(formData.userRole === 'alumni') && (
             <div className="mb-6 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -650,7 +650,7 @@ const ProfileEditor = () => {
                 </h3>
                 <p className="text-sm text-gray-600 mt-1">Your educational background and experience</p>
               </div>
-              
+
               <div className="p-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Highest Qualification */}
@@ -702,7 +702,7 @@ const ProfileEditor = () => {
               </div>
             </div>
           )}
-          
+
           {/* Modern Role-specific Section */}
           {formData.userRole && (
             <div className="mb-6 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -710,17 +710,17 @@ const ProfileEditor = () => {
               <div className="px-6 py-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-100">
                 <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
                   <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                {formData.userRole === 'student' ? 'Academic Information' :
-                  formData.userRole === 'alumni' ? 'Professional Information' :
-                    formData.userRole === 'faculty' ? 'Faculty Information' : 'Additional Information'}
-              </h3>
+                  {formData.userRole === 'student' ? 'Academic Information' :
+                    formData.userRole === 'alumni' ? 'Professional Information' :
+                      formData.userRole === 'faculty' ? 'Faculty Information' : 'Additional Information'}
+                </h3>
                 <p className="text-sm text-gray-600 mt-1">
                   {formData.userRole === 'student' ? 'Your academic details and current studies' :
                     formData.userRole === 'alumni' ? 'Your professional experience and career details' :
                       formData.userRole === 'faculty' ? 'Your faculty position and academic role' : 'Additional information about your profile'}
                 </p>
               </div>
-              
+
               <div className="p-6">
                 <RoleSpecificProfileForm
                   role={formData.userRole}
@@ -741,75 +741,75 @@ const ProfileEditor = () => {
               </h3>
               <p className="text-sm text-gray-600 mt-1">Connect your professional social media profiles</p>
             </div>
-            
+
             <div className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {/* LinkedIn */}
-              <div>
+                <div>
                   <label htmlFor="linkedinUrl" className="block text-sm font-medium text-gray-700 mb-2">LinkedIn</label>
-                <div className="relative">
+                  <div className="relative">
                     <div className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400">
                       <svg fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
                       </svg>
                     </div>
-                  <input
-                    type="url"
-                    id="linkedinUrl"
-                    name="linkedinUrl"
-                    value={formData.linkedinUrl || ''}
-                    onChange={handleChange}
+                    <input
+                      type="url"
+                      id="linkedinUrl"
+                      name="linkedinUrl"
+                      value={formData.linkedinUrl || ''}
+                      onChange={handleChange}
                       className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                       placeholder="https://linkedin.com/in/yourprofile"
-                  />
+                    />
+                  </div>
                 </div>
-              </div>
 
                 {/* Twitter */}
-              <div>
+                <div>
                   <label htmlFor="twitterUrl" className="block text-sm font-medium text-gray-700 mb-2">Twitter</label>
-                <div className="relative">
+                  <div className="relative">
                     <div className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400">
                       <svg fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                        <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" />
                       </svg>
                     </div>
-                  <input
-                    type="url"
-                    id="twitterUrl"
-                    name="twitterUrl"
-                    value={formData.twitterUrl || ''}
-                    onChange={handleChange}
+                    <input
+                      type="url"
+                      id="twitterUrl"
+                      name="twitterUrl"
+                      value={formData.twitterUrl || ''}
+                      onChange={handleChange}
                       className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                       placeholder="https://twitter.com/yourhandle"
-                  />
+                    />
+                  </div>
                 </div>
-              </div>
 
                 {/* GitHub */}
-              <div>
+                <div>
                   <label htmlFor="githubUrl" className="block text-sm font-medium text-gray-700 mb-2">GitHub</label>
-                <div className="relative">
+                  <div className="relative">
                     <div className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400">
                       <svg fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
                       </svg>
                     </div>
-                  <input
-                    type="url"
-                    id="githubUrl"
-                    name="githubUrl"
-                    value={formData.githubUrl || ''}
-                    onChange={handleChange}
+                    <input
+                      type="url"
+                      id="githubUrl"
+                      name="githubUrl"
+                      value={formData.githubUrl || ''}
+                      onChange={handleChange}
                       className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                       placeholder="https://github.com/yourusername"
-                  />
+                    />
                   </div>
                 </div>
               </div>
             </div>
           </div>
-                    {/* Modern Resume/CV and Skills Section - Only for Students and Alumni */}
+          {/* Modern Resume/CV and Skills Section - Only for Students and Alumni */}
           {(formData.userRole === 'student' || formData.userRole === 'alumni') && (
             <div className="mb-6 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
               {/* Header */}
@@ -820,15 +820,15 @@ const ProfileEditor = () => {
                 </h3>
                 <p className="text-sm text-gray-600 mt-1">Upload your resume and showcase your skills</p>
               </div>
-              
+
               <div className="p-6">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                                      {/* Modern CV Upload Section */}
+                  {/* Modern CV Upload Section */}
                   <div className="space-y-3">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Resume/CV</label>
                       {console.log('📄 Current resumeUrl:', resumeUrl)}
-                      
+
                       {/* Current CV Display */}
                       {resumeUrl ? (
                         <div className="mb-3 p-3 bg-green-50 border border-green-200 rounded-xl">
@@ -840,8 +840,8 @@ const ProfileEditor = () => {
                             </div>
                             <div className="flex-1">
                               <p className="text-sm font-medium text-green-800">Current CV</p>
-                              <a href={resumeUrl} target="_blank" rel="noopener noreferrer" 
-                                 className="text-xs text-green-600 hover:text-green-800 underline">
+                              <a href={resumeUrl} target="_blank" rel="noopener noreferrer"
+                                className="text-xs text-green-600 hover:text-green-800 underline">
                                 View CV
                               </a>
                             </div>
@@ -862,24 +862,23 @@ const ProfileEditor = () => {
                           </div>
                         </div>
                       )}
-                      
+
                       {/* Modern File Upload */}
                       <div className="relative">
-                        <input 
-                          type="file" 
-                          accept=".pdf,.doc,.docx" 
-                          onChange={handleCvChange} 
+                        <input
+                          type="file"
+                          accept=".pdf,.doc,.docx"
+                          onChange={handleCvChange}
                           disabled={cvUploading}
                           className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                           id="cv-upload"
                         />
-                        <label 
+                        <label
                           htmlFor="cv-upload"
-                          className={`block w-full p-3 border-2 border-dashed rounded-xl text-center transition-all duration-200 ${
-                            cvUploading 
-                              ? 'border-blue-200 bg-blue-50 cursor-not-allowed' 
+                          className={`block w-full p-3 border-2 border-dashed rounded-xl text-center transition-all duration-200 ${cvUploading
+                              ? 'border-blue-200 bg-blue-50 cursor-not-allowed'
                               : 'border-gray-300 bg-gray-50 hover:border-blue-400 hover:bg-blue-50 cursor-pointer'
-                          }`}
+                            }`}
                         >
                           <div className="flex flex-col items-center gap-2">
                             {cvUploading ? (
@@ -908,7 +907,7 @@ const ProfileEditor = () => {
                   <div className="space-y-3">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Skills</label>
-                      
+
                       {/* Skills Input */}
                       <div className="flex gap-2 mb-3">
                         <div className="flex-1 relative">
@@ -945,20 +944,20 @@ const ProfileEditor = () => {
                           Add
                         </button>
                       </div>
-                      
+
                       {/* Skills Tags */}
                       <div className="min-h-[50px] p-3 bg-gray-50 rounded-xl border border-gray-200">
                         {console.log('🎨 Rendering skills:', skills)}
                         {skills.length > 0 ? (
                           <div className="flex flex-wrap gap-2">
                             {skills.map(skill => (
-                              <span 
-                                key={skill} 
+                              <span
+                                key={skill}
                                 className="inline-flex items-center gap-1 bg-blue-100 text-blue-800 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 hover:bg-blue-200"
                               >
                                 {skill}
-                                <button 
-                                  type="button" 
+                                <button
+                                  type="button"
                                   onClick={() => handleSkillRemove(skill)}
                                   className="ml-1 w-4 h-4 rounded-full hover:bg-blue-300 flex items-center justify-center transition-colors"
                                 >

@@ -339,6 +339,7 @@ export const searchAlumniProfilesController = async (req, res) => {
     const alumniProfiles = await prisma.alumni.findMany({
       where: whereClause,
       select: {
+        id: true,                // Alumni table primary key - ADDED
         graduationYear: true,
         currentJobTitle: true,
         companyName: true,
@@ -373,6 +374,7 @@ export const searchAlumniProfilesController = async (req, res) => {
       const supportRequest = alumni.user.supportRequestsReceived[0] || null;
 
       return {
+        alumniId: alumni.id,        
         userId: alumni.user.id,
         name: alumni.user.fullName,
         photoUrl: alumni.user.photoUrl,

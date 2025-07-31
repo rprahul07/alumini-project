@@ -13,6 +13,8 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import EventPagination from '../components/EventPagination';
 import { useNavigate } from 'react-router-dom';
+import { bookmarkAPI } from '../services/bookmarkService';
+import BookmarkFilterButton from '../components/BookmarkFilterButton';
 
 const AlumniPage = () => {
   const { user, loading: authLoading } = useAuth();
@@ -35,6 +37,11 @@ const AlumniPage = () => {
   const [selectedRole, setSelectedRole] = useState('');
   const { showAlert } = useAlert();
   const [supportRequests, setSupportRequests] = useState([]);
+
+  // Bookmark-related state
+  const [bookmarkedUserIds, setBookmarkedUserIds] = useState(new Set());
+  const [bookmarkLoading, setBookmarkLoading] = useState(false);
+  const [showBookmarkedOnly, setShowBookmarkedOnly] = useState(false);
 
   // Redirect if not logged in
   if (!user && !authLoading) {
@@ -82,6 +89,22 @@ const AlumniPage = () => {
     }
   };
 
+  // Fetch bookmarks for current user
+  const fetchBookmarks = async () => {
+    try {
+      const result = await bookmarkAPI.getBookmarks();
+      if (result.success) {
+        // Extract User IDs from bookmark data
+        const userIds = result.data
+          .map(bookmark => bookmark.alumni?.user?.id)
+          .filter(Boolean);
+        setBookmarkedUserIds(new Set(userIds));
+      }
+    } catch (error) {
+      console.error('Error fetching bookmarks:', error);
+    }
+  };
+
   // Fetch alumni when filters/search/page change
   useEffect(() => {
     setCurrentPage(1);
@@ -98,6 +121,7 @@ const AlumniPage = () => {
   useEffect(() => {
     if (!authLoading) {
       fetchSupportRequests();
+      fetchBookmarks();
     }
     // eslint-disable-next-line
   }, [authLoading]);
@@ -190,6 +214,54 @@ const AlumniPage = () => {
     setCurrentPage(1);
   };
 
+  // Handle bookmark toggle
+  const handleBookmarkToggle = async (alumniUserId) => {
+    setBookmarkLoading(true);
+    const isBookmarked = bookmarkedUserIds.has(alumniUserId);
+    
+    // Optimistic update for immediate UI feedback
+    setBookmarkedUserIds(prev => {
+      const newSet = new Set(prev);
+      if (isBookmarked) {
+        newSet.delete(alumniUserId);
+      } else {
+        newSet.add(alumniUserId);
+      }
+      return newSet;
+    });
+    
+    try {
+      const result = isBookmarked 
+        ? await bookmarkAPI.removeBookmark(alumniUserId)
+        : await bookmarkAPI.addBookmark(alumniUserId);
+        
+      if (result.success) {
+        showAlert(result.message, 'success');
+      } else {
+        throw new Error(result.message);
+      }
+    } catch (error) {
+      // Revert optimistic update on error
+      setBookmarkedUserIds(prev => {
+        const newSet = new Set(prev);
+        if (isBookmarked) {
+          newSet.add(alumniUserId);
+        } else {
+          newSet.delete(alumniUserId);
+        }
+        return newSet;
+      });
+      showAlert('Failed to update bookmark', 'error');
+    } finally {
+      setBookmarkLoading(false);
+    }
+  };
+
+  // Filter alumni based on bookmark status
+  const filteredAlumni = showBookmarkedOnly 
+    ? alumni.filter(a => bookmarkedUserIds.has(a.userId))
+    : alumni;
+
   return (
     <>
       <Navbar />
@@ -198,15 +270,23 @@ const AlumniPage = () => {
           {/* Search and Filters */}
           <div className="mb-6 flex flex-row gap-2 items-center w-full">
             <AlumniSearch onSearch={handleSearch} isLoading={loading} />
-            <AlumniFilterButton 
-              selectedGraduationYear={selectedGraduationYear}
-              selectedCompany={selectedCompany}
-              selectedRole={selectedRole}
-              sortBy={sortBy}
-              sortOrder={sortOrder}
-              onFilterChange={handleFilterChange}
-              onSortChange={handleSortChange}
-            />
+            <div className="flex gap-2">
+              <AlumniFilterButton 
+                selectedGraduationYear={selectedGraduationYear}
+                selectedCompany={selectedCompany}
+                selectedRole={selectedRole}
+                sortBy={sortBy}
+                sortOrder={sortOrder}
+                onFilterChange={handleFilterChange}
+                onSortChange={handleSortChange}
+              />
+              <BookmarkFilterButton
+                showBookmarkedOnly={showBookmarkedOnly}
+                onToggle={() => setShowBookmarkedOnly(!showBookmarkedOnly)}
+                bookmarkCount={bookmarkedUserIds.size}
+                loading={bookmarkLoading}
+              />
+            </div>
           </div>
 
           {/* Active Filters */}
@@ -242,10 +322,14 @@ const AlumniPage = () => {
               <div className="text-center text-gray-500 py-20 text-lg font-medium">
                 No alumni found. Try adjusting your filters or search.
               </div>
+            ) : filteredAlumni.length === 0 ? (
+              <div className="text-center text-gray-500 py-20 text-lg font-medium">
+                No bookmarked alumni found. Bookmark some alumni to see them here.
+              </div>
             ) : (
               <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 justify-center">
-                  {alumni.map((a) => {
+                  {filteredAlumni.map((a) => {
                     // Disable for self
                     if (user && a.userId === user.id) {
                       return (
@@ -256,6 +340,9 @@ const AlumniPage = () => {
                           onCardClick={handleAlumniCardClick}
                           buttonDisabled={true}
                           buttonLabel="You can't send yourself"
+                          isBookmarked={bookmarkedUserIds.has(a.userId)}
+                          onBookmarkToggle={handleBookmarkToggle}
+                          bookmarkLoading={bookmarkLoading}
                         />
                       );
                     }
@@ -283,6 +370,9 @@ const AlumniPage = () => {
                         onCardClick={handleAlumniCardClick}
                         buttonDisabled={buttonDisabled}
                         buttonLabel={buttonLabel}
+                        isBookmarked={bookmarkedUserIds.has(a.userId)}
+                        onBookmarkToggle={handleBookmarkToggle}
+                        bookmarkLoading={bookmarkLoading}
                       />
                     );
                   })}

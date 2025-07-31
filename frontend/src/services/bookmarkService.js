@@ -10,7 +10,7 @@ export const bookmarkAPI = {
    */
   getBookmarks: async () => {
     try {
-      const response = await axios.get('/api/bookmarks');
+      const response = await axios.get('/api/bookmark/bookmark/get');
       return {
         success: true,
         data: response.data.data || [],
@@ -18,17 +18,6 @@ export const bookmarkAPI = {
       };
     } catch (error) {
       console.error('Error fetching bookmarks:', error);
-      
-      // If bookmark API doesn't exist (404), return empty data gracefully
-      if (error.response?.status === 404) {
-        console.warn('Bookmark API not found - feature may not be implemented yet');
-        return {
-          success: true,
-          data: [],
-          message: 'Bookmark feature not available'
-        };
-      }
-      
       return {
         success: false,
         data: [],
@@ -39,12 +28,12 @@ export const bookmarkAPI = {
 
   /**
    * Add an alumni to bookmarks
-   * @param {number} alumniId - The alumni user ID to bookmark
+   * @param {number} alumniUserId - The alumni user ID (from User table)
    * @returns {Promise} Promise that resolves to the operation result
    */
-  addBookmark: async (alumniId) => {
+  addBookmark: async (alumniUserId) => {
     try {
-      const response = await axios.post('/api/bookmarks', { alumniId });
+      const response = await axios.post(`/api/bookmark/bookmark/create/${alumniUserId}`);
       return {
         success: true,
         data: response.data.data,
@@ -52,15 +41,6 @@ export const bookmarkAPI = {
       };
     } catch (error) {
       console.error('Error adding bookmark:', error);
-      
-      // If bookmark API doesn't exist (404), return failure gracefully
-      if (error.response?.status === 404) {
-        return {
-          success: false,
-          message: 'Bookmark feature not available'
-        };
-      }
-      
       return {
         success: false,
         message: error.response?.data?.message || 'Failed to bookmark alumni'
@@ -70,12 +50,12 @@ export const bookmarkAPI = {
 
   /**
    * Remove an alumni from bookmarks
-   * @param {number} alumniId - The alumni user ID to remove from bookmarks
+   * @param {number} alumniUserId - The alumni user ID (from User table)
    * @returns {Promise} Promise that resolves to the operation result
    */
-  removeBookmark: async (alumniId) => {
+  removeBookmark: async (alumniUserId) => {
     try {
-      const response = await axios.delete(`/api/bookmarks/${alumniId}`);
+      const response = await axios.delete(`/api/bookmark/bookmark/delete/${alumniUserId}`);
       return {
         success: true,
         data: response.data.data,
@@ -83,15 +63,6 @@ export const bookmarkAPI = {
       };
     } catch (error) {
       console.error('Error removing bookmark:', error);
-      
-      // If bookmark API doesn't exist (404), return failure gracefully
-      if (error.response?.status === 404) {
-        return {
-          success: false,
-          message: 'Bookmark feature not available'
-        };
-      }
-      
       return {
         success: false,
         message: error.response?.data?.message || 'Failed to remove bookmark'
@@ -101,15 +72,15 @@ export const bookmarkAPI = {
 
   /**
    * Toggle bookmark status for an alumni
-   * @param {number} alumniId - The alumni user ID
+   * @param {number} alumniUserId - The alumni user ID (from User table)
    * @param {boolean} isCurrentlyBookmarked - Current bookmark status
    * @returns {Promise} Promise that resolves to the operation result
    */
-  toggleBookmark: async (alumniId, isCurrentlyBookmarked) => {
+  toggleBookmark: async (alumniUserId, isCurrentlyBookmarked) => {
     if (isCurrentlyBookmarked) {
-      return await bookmarkAPI.removeBookmark(alumniId);
+      return await bookmarkAPI.removeBookmark(alumniUserId);
     } else {
-      return await bookmarkAPI.addBookmark(alumniId);
+      return await bookmarkAPI.addBookmark(alumniUserId);
     }
   }
 };
