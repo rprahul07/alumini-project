@@ -35,6 +35,19 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
+        // Check if there are any indicators that user might be logged in
+        const hasStoredUser = localStorage.getItem('user');
+        const hasStoredRole = localStorage.getItem(USER_ROLE_KEY) || localStorage.getItem('userRole');
+        const hasSelectedRole = localStorage.getItem(SELECTED_ROLE_KEY);
+        
+        // If no indicators of previous login, skip API call
+        if (!hasStoredUser && !hasStoredRole && !hasSelectedRole) {
+          setUser(null);
+          setLoading(false);
+          return;
+        }
+
+        // Make API call only if there are indicators of previous login
         const response = await authAPI.checkAuth();
         if (response.success) {
           const storedRole = localStorage.getItem(USER_ROLE_KEY);
@@ -61,7 +74,11 @@ export const AuthProvider = ({ children }) => {
           setUser(null);
         }
       } catch (err) {
+        // Clear any stale localStorage data on auth failure
         localStorage.removeItem(USER_ROLE_KEY);
+        localStorage.removeItem('user');
+        localStorage.removeItem('role');
+        localStorage.removeItem('userRole');
         setUser(null);
       } finally {
         setLoading(false);
@@ -174,8 +191,6 @@ export const AuthProvider = ({ children }) => {
 
   // Get user role from state or localStorage
   const role = user?.role || localStorage.getItem(USER_ROLE_KEY) || selectedRole || null;
-  console.log('AuthContext - Current role:', role);
-  console.log('AuthContext - Current user:', user);
 
   return (
     <AuthContext.Provider
