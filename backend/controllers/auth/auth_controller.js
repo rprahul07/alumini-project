@@ -13,6 +13,8 @@ import { createAlumni } from "../user/alumni_controller.js";
 import { createFaculty } from "../user/faculty_controller.js";
 import { ROLES } from "../../constants/user_constants.js";
 import { sendEmailToAlumni } from "../../utils/sendEmail.js";
+import prisma from "../../lib/prisma.js";
+import bcrypt from "bcryptjs";
 
 export const signup = async (req, res) => {
   try {
@@ -189,19 +191,27 @@ export const forgotPassword = async (req, res) => {
     handleError(error, req, res);
   }
 };
-export const verifyOTP = async (req, res) => {
+
+export const verifyOTPAndResetPassword= async (req, res) => {
   try {
-    const { email, otp } = req.body;
+    const { email, otp, newPassword } = req.body;
 
-    if (!email || !otp) throw new AppError("Email and OTP required", 400);
+    // Validate input
+    if (!email || !otp || !newPassword) {
+      throw new AppError("Email, OTP, and new password are required", 400);
+    }
 
+    // Find user by email
     const user = await prisma.user.findUnique({
       where: { email },
       select: { id: true },
     });
 
-    if (!user) throw new AppError("User not found", 404);
+    if (!user) {
+      throw new AppError("User not found", 404);
+    }
 
+    // Find OTP record for the user
     const resetRecord = await prisma.passwordReset.findUnique({
       where: { userId: user.id },
     });
@@ -214,12 +224,21 @@ export const verifyOTP = async (req, res) => {
       throw new AppError("Invalid or expired OTP", 400);
     }
 
-    // Clean up OTP after verification
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update user's password
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { password: hashedPassword },
+    });
+
+    // Delete OTP record after successful reset
     await prisma.passwordReset.delete({
       where: { userId: user.id },
     });
 
-    res.status(200).json(createResponse(true, "OTP verified. You can now reset your password."));
+    res.status(200).json(createResponse(true, "Password reset successful"));
   } catch (error) {
     handleError(error, req, res);
   }
