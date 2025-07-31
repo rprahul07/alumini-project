@@ -109,16 +109,28 @@ const authAPI = {
   },
 
   checkAuth: async () => {
-    try {
-      const response = await axios.get("/api/auth/check");
-      return handleApiResponse(response);
-    } catch (error) {
-      // Don't log 401 errors as they're expected for unauthenticated users
-      if (error.response?.status !== 401) {
-        console.error('Auth check error:', error);
-      }
-      throw error;
+    const response = await axios.get("/api/auth/check");
+    return handleApiResponse(response);
+  },
+
+  forgotPassword: async (email) => {
+    if (!email) {
+      throw new Error("Email is required");
     }
+    const response = await axios.post("/api/auth/forgot-password", { email });
+    return handleApiResponse(response);
+  },
+
+  resetPassword: async (email, otp, newPassword) => {
+    if (!email || !otp || !newPassword) {
+      throw new Error("Email, OTP, and new password are required");
+    }
+    const response = await axios.post("/api/auth/verify-otp", { 
+      email, 
+      otp, 
+      newPassword 
+    });
+    return handleApiResponse(response);
   },
 };
 
