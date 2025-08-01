@@ -268,42 +268,68 @@ const AboutPage = () => {
   ];
 
   // University achievements and milestones
-  const achievements = [
-    {
-      icon: 'fas fa-trophy',
-      title: 'Top Engineering College',
-      description: 'Ranked #1 in Kerala for innovation and research',
-      color: 'text-yellow-500'
-    },
-    {
-      icon: 'fas fa-globe',
-      title: 'Global Recognition',
-      description: 'Alumni working in 85+ countries worldwide',
-      color: 'text-blue-500'
-    },
-    {
-      icon: 'fas fa-rocket',
-      title: 'Innovation Hub',
-      description: '200+ startups founded by our graduates',
-      color: 'text-purple-500'
-    },
-    {
-      icon: 'fas fa-users',
-      title: 'Strong Network',
-      description: '98% employment rate within 6 months',
-      color: 'text-green-500'
-    }
-  ];
+ const achievements = [
+  {
+    icon: 'fas fa-trophy',
+    title: 'One of the Top Engineering Colleges in Kerala',
+    description: 'Constituent college of CUSAT with NBA-accredited programs and research center status since 2017.',
+    color: 'text-yellow-500'
+  },
+  {
+    icon: 'fas fa-globe',
+    title: 'Global Recognition',
+    description: 'CUCEK alumni are placed in global companies.',
+    color: 'text-blue-500'
+  },
+  {
+    icon: 'fas fa-rocket',
+    title: 'Innovation Hub',
+    description: 'Encourages student projects, coding clubs, and startup mentorship through alumni and faculty.',
+    color: 'text-purple-500'
+  },
+  {
+    icon: 'fas fa-users',
+    title: 'Strong Network',
+    description: 'Active alumni support and regular placement drives with leading recruiters like TCS, EY, and Accenture.',
+    color: 'text-green-500'
+  }
+];
+
 
   // University timeline milestones
-  const timelineMilestones = [
-    { year: '1999', title: 'Founded', description: 'CUCEK was established with a vision for excellence.' },
-    { year: '2005', title: 'Expansion', description: 'Expanded academic programs and research facilities.' },
-    { year: '2008', title: 'Innovation Hub', description: 'Became a leading center for technological innovation.' },
-    { year: '2015', title: 'Digital Era', description: 'Launched online learning and digital initiatives.' },
-    { year: '2018', title: 'Alumni Network', description: 'Established the alumni connect platform.' },
-    { year: '2025', title: 'Global Impact', description: 'Alumni making worldwide impact across industries.' }
-  ];
+ const timelineMilestones = [
+  {
+    year: '1999',
+    title: 'Established',
+    description: 'CUCEK was founded in October 1999 as the rural engineering campus of CUSAT at Pulincunnu, Kuttanad.'
+  },
+  {
+    year: 'Early 2000s',
+    title: 'Academic Expansion',
+    description: 'Introduced multiple B.Tech programs—Civil, CSE, IT, ECE, EEE & Mechanical Engineering—and MCA with structured intake.'
+  },
+  {
+    year: '2017',
+    title: 'Researched Designation',
+    description: 'Elevated to a CUSAT Research Centre, supporting doctoral studies under nine supervisors.'
+  },
+  {
+    year: '2018',
+    title: 'Alumni Engagement',
+    description: 'Launched the official alumni connect platform for networking, mentoring, and community building.'
+  },
+  {
+    year: '2020',
+    title: 'Digital Transition',
+    description: 'Adopted online classes and virtual labs in line with COVID‑19 adaptations across Kerala’s higher education.'
+  },
+  {
+    year: '2025',
+    title: 'Placement Milestone',
+    description: 'Placement activity gained visibility with top packages up to ₹29.17 LPA and average placements around ₹3.3 LPA.'
+  }
+];
+
 
   return (
     <>
