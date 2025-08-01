@@ -417,8 +417,8 @@ const HomePage = () => {
                 <h5 className="footer-title text-lg font-bold mb-6">Resources</h5>
                 <div className="space-y-4">
                   <a onClick={() => navigate('/events')} className="footer-link block text-gray-600 hover:text-[#5A32EA] transition-colors">Events</a>
-                  <a onClick={() => navigate('/faq')} className="footer-link block text-gray-600 hover:text-[#5A32EA] transition-colors">FAQ</a>
-                  <a onClick={() => navigate('/contact')} className="footer-link block text-gray-600 hover:text-[#5A32EA] transition-colors">Support</a>
+                  <a onClick={() => navigate('/contact#faq')} className="footer-link block text-gray-600 hover:text-[#5A32EA] transition-colors">FAQ</a>
+                  <a href="/contact#support" className="footer-link block text-gray-600 hover:text-[#5A32EA] transition-colors">Support</a>
                 </div>
               </div>
               <div>
