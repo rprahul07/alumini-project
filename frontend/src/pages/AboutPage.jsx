@@ -290,7 +290,7 @@ const AboutPage = () => {
   {
     icon: 'fas fa-users',
     title: 'Strong Network',
-    description: 'Active alumni support and regular placement drives with leading recruiters like TCS, EY, and Accenture.',
+    description: 'Active alumni support and regular placement drives with leading recruiters.',
     color: 'text-green-500'
   }
 ];
