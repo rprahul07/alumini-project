@@ -22,8 +22,8 @@ import { searchEvents } from "../controllers/event/event.controller.js";
 const router = express.Router();
 
 // Apply protect middleware to all admin routes
-router.use(protect);
-router.use(isAdmin);
+  // router.use(protect);
+  // router.use(isAdmin);
 
 // Admin dashboard stats
 router.get("/dashboard-stats", getAdminDashboardStats);
