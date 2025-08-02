@@ -12,7 +12,7 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated, isMobileModal, edit
     name: '',
     date: '',
     time: '',
-    type: '',
+    type: 'Academic Workshop', // Set default to Academic Workshop
     location: '',
     organizer: '',
     description: '',
@@ -47,7 +47,7 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated, isMobileModal, edit
         name: '',
         date: '',
         time: '',
-        type: '',
+        type: 'Academic Workshop', // Set default to Academic Workshop
         location: '',
         organizer: '',
         description: '',
@@ -119,7 +119,7 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated, isMobileModal, edit
       const selectedDate = new Date(formData.date);
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-      if (selectedDate < today) newErrors.date = 'Event date must be in the future';
+      if (selectedDate < today) newErrors.date = 'Event date cannot be in the past. Please select today or a future date.';
     }
     if (!formData.time) newErrors.time = 'Event time is required';
     if (!formData.type) newErrors.type = 'Event type is required';
@@ -207,7 +207,7 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated, isMobileModal, edit
       name: '',
       date: '',
       time: '',
-      type: '',
+      type: 'Academic Workshop', // Set default to Academic Workshop
       location: '',
       organizer: '',
       description: '',

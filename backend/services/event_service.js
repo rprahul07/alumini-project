@@ -46,12 +46,16 @@ export const createEventForUser = async (userId, userRole, eventData) => {
       };
     }
 
-    // Check if the event date is in the future
-    if (eventDate < new Date()) {
+    // Check if the event date is today or in the future (compare dates only, not time)
+    const today = new Date();
+    const todayDateOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const eventDateOnly = new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate());
+    
+    if (eventDateOnly < todayDateOnly) {
       return {
         success: false,
         statusCode: 400,
-        message: "Event date must be in the future.",
+        message: "Event date cannot be in the past. Please select today or a future date.",
       };
     }
     const parsedMaxCapacity = parseInt(maxCapacity);
@@ -236,12 +240,16 @@ export const editEventForUser = async (
         };
       }
 
-      // Check if the event date is in the future
-      if (eventDate < new Date()) {
+      // Check if the event date is today or in the future (compare dates only, not time)
+      const today = new Date();
+      const todayDateOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      const eventDateOnly = new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate());
+      
+      if (eventDateOnly < todayDateOnly) {
         return {
           success: false,
           statusCode: 400,
-          message: "Event date must be in the future.",
+          message: "Event date cannot be in the past. Please select today or a future date.",
         };
       }
 
@@ -478,8 +486,12 @@ export const removeUserFromEvent = async (
       throw new Error("User is not registered for this event.");
     }
 
-    // Prevent removing users from past events (optional business rule)
-    if (new Date(event.date) < new Date()) {
+    // Prevent removing users from past events (optional business rule) - compare dates only
+    const today = new Date();
+    const todayDateOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const eventDateOnly = new Date(event.date.getFullYear(), event.date.getMonth(), event.date.getDate());
+    
+    if (eventDateOnly < todayDateOnly) {
       throw new Error("Cannot remove users from past events.");
     }
 
@@ -734,7 +746,7 @@ export const getRegisteredEvents = async (userId, userRole) => {
         registered_user_id: userId,
         events: {
           date: {
-            gte: new Date(), // Only get events with date >= today
+            gte: new Date(new Date().setHours(0, 0, 0, 0)), // Only get events with date >= today (start of day)
           },
         },
       },
@@ -901,8 +913,12 @@ export const registerForEvents = async (userId, userRole, eventId) => {
       throw new Error("Cannot register for events that are not approved.");
     }
 
-    // Check if event date has passed
-    if (new Date(event.date) < new Date()) {
+    // Check if event date has passed - compare dates only
+    const today = new Date();
+    const todayDateOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const eventDateOnly = new Date(event.date.getFullYear(), event.date.getMonth(), event.date.getDate());
+    
+    if (eventDateOnly < todayDateOnly) {
       throw new Error("Cannot register for past events.");
     }
 
@@ -1247,8 +1263,12 @@ export const withdrawFromEvent = async (userId, userRole, eventId) => {
       throw new Error("Event not found.");
     }
 
-    // Check if event date has passed (optional - you might want to allow withdrawal from past events)
-    if (new Date(event.date) < new Date()) {
+    // Check if event date has passed (optional - you might want to allow withdrawal from past events) - compare dates only
+    const today = new Date();
+    const todayDateOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const eventDateOnly = new Date(event.date.getFullYear(), event.date.getMonth(), event.date.getDate());
+    
+    if (eventDateOnly < todayDateOnly) {
       throw new Error("Cannot withdraw from past events.");
     }
 
