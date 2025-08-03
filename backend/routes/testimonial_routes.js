@@ -8,7 +8,7 @@ testimonialRouter.use(protect)
 testimonialRouter.post("/create",createTestimonial);
 testimonialRouter.get("/all",getAllTestimonials);
 testimonialRouter.get("/:id",getTestimonialById);
-testimonialRouter.patch("/:id",updateTestimonial);
+testimonialRouter.patch("/:id", updateTestimonial);
 testimonialRouter.delete("/:id",deleteTestimonial);
 
 export default testimonialRouter;
