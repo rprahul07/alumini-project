@@ -179,7 +179,7 @@ export const editEventByIdForAdmin = async (req, res) => {
       imageUrl: updatedEvent.imageUrl,
       maxCapacity: updatedEvent.maxCapacity,
       status: updatedEvent.status,
-      registeredCount: updatedEvent.registeredUsers.length,
+      // registeredCount: updatedEvent.registeredUsers.length,
       createdAt: updatedEvent.createdAt,
       updatedAt: updatedEvent.updatedAt,
       createdBy: {

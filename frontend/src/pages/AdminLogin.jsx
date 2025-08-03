@@ -40,6 +40,7 @@ const AdminLogin = () => {
       });
       if (result.success) {
         toast.success('Login successful!');
+        localStorage.setItem('token', result.token);
         navigate('/admin/dashboard', { replace: true });
       } else {
         setFormError(result.error || 'Login failed');
