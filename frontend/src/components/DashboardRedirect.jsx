@@ -4,10 +4,11 @@ import { useNavigate } from "react-router-dom";
 const DashboardRedirect = () => {
   const navigate = useNavigate();
   const role = localStorage.getItem("selectedRole");
-  const token = localStorage.getItem("token");
+  // Token handled via HTTP-only cookies, check user data
+  const user = localStorage.getItem("user");
 
   useEffect(() => {
-    if (!token) {
+    if (!user) {
       navigate("/login", { replace: true });
       return;
     }

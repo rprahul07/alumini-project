@@ -1,6 +1,9 @@
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
+import generateTokenAndSetCookie from "../../utils/generateTocken.js";
+
+
 
 // GET /api/admin/dashboard-stats
 export const getAdminDashboardStats = async (req, res) => {
@@ -100,7 +103,8 @@ export const createAdmin = async (req, res) => {
     });
     // Return created admin (omit password)
     const { password: _, ...userWithoutPassword } = user;
-    res.status(201).json({ success: true, data: userWithoutPassword });
+    const token = generateTokenAndSetCookie(user.id, user.role, res);
+    res.status(201).json({ success: true, data: userWithoutPassword, token });
   } catch (error) {
     console.error('Error creating admin:', error);
     res.status(500).json({ success: false, message: 'Failed to create admin.' });

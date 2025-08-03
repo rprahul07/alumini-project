@@ -8,10 +8,14 @@ import facultyRouter from "./routes/faculty_routes.js";
 import publicRouter from "./routes/public_routes.js";
 import studentRouter from "./routes/student_routes.js";
 import alumniRouter from "./routes/alumni_routes.js";
+import announcementRouter from "./routes/announcement_routes.js";
+import galleryRouter from "./routes/gallery.routes.js";
+import contactusRouter from "./routes/contactus.js";
 import { AppError } from "./utils/response.utils.js";
 import support_router from "./routes/support_requests/support_request_routes.js";
 import jobRouter from "./routes/job_routes.js";
 import bookmarkRouter from "./routes/bookmark_routes.js";
+import testimonialRouter from "./routes/testimonial_routes.js";
 
 // Load environment variables
 dotenv.config();
@@ -83,6 +87,10 @@ app.use("/api/public", publicRouter);
 app.use("/api/support", support_router);
 app.use("/api/job", jobRouter);
 app.use("/api/bookmark", bookmarkRouter);
+app.use("/api/testimonial", testimonialRouter);
+app.use("/api/announcements", announcementRouter);
+app.use("/api/gallery", galleryRouter);
+app.use("/api/contactus", contactusRouter);
 
 // Error handler for Prisma errors
 app.use((err, req, res, next) => {

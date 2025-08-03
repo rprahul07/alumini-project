@@ -7,12 +7,14 @@ import { PlusIcon } from '@heroicons/react/24/outline';
 
 const Events = ({ showAlert }) => {
   const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState('myevents');
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [isCreateSelected, setIsCreateSelected] = useState(false);
-
+  
   // Tab visibility logic
   const canCreate = user?.role === 'alumni' || user?.role === 'faculty' || user?.role === 'admin';
+  
+  // Set default tab based on user role - students should see registered events by default
+  const [activeTab, setActiveTab] = useState(canCreate ? 'myevents' : 'registered');
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [isCreateSelected, setIsCreateSelected] = useState(false);
 
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 

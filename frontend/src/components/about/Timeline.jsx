@@ -188,7 +188,7 @@ export default function Timeline({ milestones }) {
                       </div>
                       {/* Description Card - Compact, always centered and never overflowing */}
                       <div className="w-[90vw] max-w-sm mx-auto mt-2">
-                        <div className="bg-white border border-gray-200 shadow-md rounded-xl p-4 text-gray-800 text-sm font-normal min-h-[120px] max-h-[160px] overflow-y-auto">
+                        <div className="bg-white border border-gray-200 shadow-md rounded-xl p-4 text-gray-800 text-sm font-normal min-h-[120px] max-h-[160px] overflow-y-auto" style={{scrollbarWidth: 'thin', scrollbarColor: '#D1D5DB transparent'}}>
                           <div className="font-semibold text-[#5A32EA] mb-2 text-sm">{m.year} - {m.summary}</div>
                           <div className="text-sm leading-relaxed line-clamp-3">{m.details}</div>
                         </div>
@@ -201,13 +201,6 @@ export default function Timeline({ milestones }) {
           </div>
         )}
       </div>
-
-      {/* Hide scrollbar for webkit browsers */}
-      <style jsx>{`
-        .scrollbar-hide::-webkit-scrollbar {
-          display: none;
-        }
-      `}</style>
     </section>
   );
 } 

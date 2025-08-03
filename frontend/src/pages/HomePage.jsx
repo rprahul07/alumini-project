@@ -410,30 +410,23 @@ const HomePage = () => {
                   <a href="#features" className="footer-link block text-gray-600 hover:text-[#5A32EA] transition-colors">Features</a>
                   <a href="#testimonials" className="footer-link block text-gray-600 hover:text-[#5A32EA] transition-colors">Testimonials</a>
                   <a href="#about" className="footer-link block text-gray-600 hover:text-[#5A32EA] transition-colors">About</a>
-                  <a href="#signup" className="footer-link block text-gray-600 hover:text-[#5A32EA] transition-colors">Join Now</a>
+                  <a onClick={() => navigate('/role-selection')} className="footer-link block text-gray-600 hover:text-[#5A32EA] transition-colors">Join Now</a>
                 </div>
               </div>
               <div>
                 <h5 className="footer-title text-lg font-bold mb-6">Resources</h5>
                 <div className="space-y-4">
-                  <a href="#" className="footer-link block text-gray-600 hover:text-[#5A32EA] transition-colors">Blog</a>
-                  <a href="#" className="footer-link block text-gray-600 hover:text-[#5A32EA] transition-colors">Events</a>
-                  <a href="#" className="footer-link block text-gray-600 hover:text-[#5A32EA] transition-colors">Career Center</a>
-                  <a href="#" className="footer-link block text-gray-600 hover:text-[#5A32EA] transition-colors">FAQ</a>
-                  <a href="#" className="footer-link block text-gray-600 hover:text-[#5A32EA] transition-colors">Support</a>
+                  <a onClick={() => navigate('/events')} className="footer-link block text-gray-600 hover:text-[#5A32EA] transition-colors">Events</a>
+                  <a onClick={() => navigate('/contact#faq')} className="footer-link block text-gray-600 hover:text-[#5A32EA] transition-colors">FAQ</a>
+                  <a href="/contact#support" className="footer-link block text-gray-600 hover:text-[#5A32EA] transition-colors">Support</a>
                 </div>
               </div>
               <div>
                 <h5 className="footer-title text-lg font-bold mb-6">Contact Us</h5>
                 <div className="space-y-4">
-                  <p className="text-gray-600"><i className="fas fa-envelope mr-2"></i> info@cucekalumni.org</p>
-                  <p className="text-gray-600"><i className="fas fa-phone mr-2"></i> +1 (555) 123-4567</p>
-                  <p className="text-gray-600"><i className="fas fa-map-marker-alt mr-2"></i> CUCEK University, Main Campus</p>
-                </div>
-                <div className="mt-6 space-y-2">
-                  <a href="#" className="footer-link block text-gray-600 hover:text-[#5A32EA] transition-colors">Privacy Policy</a>
-                  <a href="#" className="footer-link block text-gray-600 hover:text-[#5A32EA] transition-colors">Terms of Service</a>
-                  <a href="#" className="footer-link block text-gray-600 hover:text-[#5A32EA] transition-colors">Cookie Policy</a>
+                  <a className="footer-link block text-gray-600"><i className="fas fa-envelope mr-2"></i> info@cucekalumni.org</a>
+                  <a className="footer-link block text-gray-600"><i className="fas fa-phone mr-2"></i> +1 (555) 123-4567</a>
+                  <a href="https://maps.app.goo.gl/EYDX7myXs4M9Nhg27" className="footer-link block text-gray-600"><i className="fas fa-map-marker-alt mr-2"></i> Cochin University College of Engineering Kuttanadu</a>
                 </div>
               </div>
             </div>

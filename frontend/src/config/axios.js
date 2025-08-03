@@ -11,10 +11,8 @@ const instance = axios.create({
 // Request interceptor
 instance.interceptors.request.use(
   async (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+    // JWT token is automatically sent via HTTP-only cookies
+    // No need for Authorization header
     return config;
   },
   (error) => {
@@ -27,7 +25,7 @@ instance.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('token');
+      // Clear user data on unauthorized response (token handled via HTTP-only cookies)
       localStorage.removeItem('user');
       // Do NOT redirect here. Let the app handle navigation.
     }

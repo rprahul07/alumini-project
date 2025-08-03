@@ -3,10 +3,6 @@ import Navbar from '../../components/Navbar';
 import ProfileCard from '../../components/ProfileCard';
 import { AcademicCapIcon, CalendarIcon, BookOpenIcon } from '@heroicons/react/24/outline';
 import { useAuth } from '../../contexts/AuthContext';
-import MentorshipRequests from '../../components/mentorship/MentorshipRequests';
-import Opportunities from '../../components/opportunities/Opportunities';
-import Events from '../../components/events/Events';
-import MyActivityCard from '../../components/MyActivityCard';
 
 const FacultyDashboard = () => {
   const { user } = useAuth();
@@ -41,7 +37,7 @@ const FacultyDashboard = () => {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen font-roboto bg-gradient-to-br from-purple-50 to-white pt-20">
+      <div className="min-h-screen font-roboto bg-gradient-to-br from-purple-50 to-white pt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col lg:flex-row gap-8 min-h-[600px] items-stretch">
             {/* Sidebar: Profile + Stats */}
@@ -88,15 +84,19 @@ const FacultyDashboard = () => {
                 </div>
               </div>
               {/* Activity Section - White Card */}
-              <div className="bg-white rounded-2xl shadow-lg flex-1 min-h-0 p-4 flex flex-col overflow-y-auto scrollbar-hide min-w-0 w-full h-[600px] min-h-[500px] max-h-[700px]">
-                <MyActivityCard
-                  features={[
-                    { key: 'mentorship', label: 'Mentorship', component: <MentorshipRequests /> },
-                    { key: 'opportunities', label: 'Opportunities', component: <Opportunities /> },
-                    { key: 'events', label: 'Events', component: <Events /> },
-                  ]}
-                  defaultTab="mentorship"
-                />
+              <div className="bg-white rounded-2xl shadow-lg flex-1 p-4 flex flex-col min-w-0 w-full h-[600px] max-h-[700px]">
+                {/* Activity Placeholder */}
+                <div className="flex flex-col items-center justify-center h-full text-center">
+                  <div className="bg-gray-100 rounded-full p-6 mb-4">
+                    <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                    </svg>
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-600 mb-2">Activity Dashboard</h3>
+                  <p className="text-gray-500 text-sm max-w-xs">
+                    Your activity dashboard will be available here soon. Track mentorships, events, and opportunities in one place.
+                  </p>
+                </div>
               </div>
             </div>
           </div>

@@ -48,7 +48,7 @@ const ActivityLogs = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
+    // Token handled via HTTP-only cookies, clear user data
     localStorage.removeItem('user');
     toast.success('Logged out successfully!');
     navigate('/login', { replace: true });

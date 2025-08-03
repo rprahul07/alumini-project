@@ -17,18 +17,17 @@ const AdminLogin = () => {
 
   // Check if user is already logged in
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    // Token handled via HTTP-only cookies, check user data
     const userStr = localStorage.getItem('user');
     
-    if (token && userStr) {
+    if (userStr) {
       try {
         const user = JSON.parse(userStr);
         if (user.role === 'admin' && location.pathname === '/admin/login') {
           navigate('/admin/dashboard', { replace: true });
         }
       } catch (error) {
-        // Clear invalid data
-        localStorage.removeItem('token');
+        // Clear invalid data (token handled via HTTP-only cookies)
         localStorage.removeItem('user');
         localStorage.removeItem('role');
       }

@@ -156,12 +156,13 @@ const ContactPage = () => {
     );
   }
 
+
   return (
     <>
       <Navbar />
       <div className="min-h-screen bg-gray-50">
         {/* Hero Section */}
-        <section className="bg-gradient-to-r from-indigo-100 to-white py-16 sm:py-20">
+        <section id="support" className="bg-gradient-to-r from-indigo-100 to-white py-16 sm:py-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h1 className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-indigo-800 to-indigo-600 bg-clip-text text-transparent mb-6">
               Get in Touch
@@ -400,7 +401,7 @@ const ContactPage = () => {
         </section>
 
         {/* FAQ Section */}
-        <section className="py-16 bg-white">
+        <section id="faq" className="py-16 bg-white">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>

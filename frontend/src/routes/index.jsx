@@ -20,27 +20,10 @@ import JobsPage from '../pages/JobsPage';
 import FaqPage from '../pages/FaqPage';
 
 
-// Protected route for a specific role with lazy auth checking
+// Protected route for a specific role
 function ProtectedRoute({ children, allowedRoles }) {
-  const { user, loading, checkAuth } = useAuth();
+  const { user, loading } = useAuth();
   const location = useLocation();
-  const [authChecked, setAuthChecked] = React.useState(false);
-
-  // If user is null but we haven't checked auth yet, and we have session indicators, check auth
-  React.useEffect(() => {
-    const hasSessionIndicators = () => {
-      const token = localStorage.getItem('token');
-      const storedRole = localStorage.getItem('userRole');
-      const selectedRole = localStorage.getItem('selectedRole');
-      return !!(token || storedRole || selectedRole);
-    };
-
-    if (!user && !authChecked && !loading && hasSessionIndicators()) {
-      console.log('Protected route accessed without user, checking auth...');
-      setAuthChecked(true);
-      checkAuth();
-    }
-  }, [user, authChecked, loading, checkAuth]);
 
   if (loading) return null; // Or a spinner
   if (!user) return <Navigate to="/auth" replace state={{ from: location }} />;

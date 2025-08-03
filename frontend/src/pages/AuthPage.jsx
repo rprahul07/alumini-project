@@ -18,26 +18,18 @@ const roleColors = {
   admin: 'bg-red-50 text-red-700',
 };
 
-const iconMap = {
-  fullName: <FiUser className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />,
-  email: <FiMail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />,
-  phoneNumber: <FiPhone className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />,
-  password: <FiLock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />,
-  confirmPassword: <FiLock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />,
-  currentSemester: <FiCalendar className="absolute left-3 top-[44px] -translate-y-1/2 text-gray-400" />,
-  rollNumber: <FiUser className="absolute left-3 top-[44px] -translate-y-1/2 text-gray-400" />,
-  graduationYear: <FiCalendar className="absolute left-3 top-[44px] -translate-y-1/2 text-gray-400" />,
-  currentJobTitle: <FiBriefcase className="absolute left-3 top-[44px] -translate-y-1/2 text-gray-400" />,
-  companyName: <FiAward className="absolute left-3 top-[45px] -translate-y-1/2 text-gray-400" />,
-  designation: <FiAward className="absolute left-3 top-[44px] -translate-y-1/2 text-gray-400" />,
-  department: <FiBriefcase className="absolute left-3 top-[44px] -translate-y-1/2 text-gray-400" />,
-};
-
 const AuthPage = () => {
   const navigate = useNavigate();
   const { user, selectedRole, login, register, loading, error, clearError } = useAuth();
   const [authType, setAuthType] = useState('login');
   const [showPassword, setShowPassword] = useState(false);
+  
+  // Forgot Password States
+  const [forgotStep, setForgotStep] = useState(1); // 1=email, 2=otp+password
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [otpTimer, setOtpTimer] = useState(0);
+  const [otpLoading, setOtpLoading] = useState(false); // Loading state for OTP operations
+  
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -50,7 +42,11 @@ const AuthPage = () => {
     currentJobTitle: '',
     companyName: '',
     graduationYear: '',
-    designation: ''
+    designation: '',
+    // Forgot Password fields
+    otp: '',
+    newPassword: '',
+    confirmNewPassword: ''
   });
   const [formError, setFormError] = useState('');
 
@@ -67,6 +63,16 @@ const AuthPage = () => {
       navigate('/role-selection', { replace: true });
     }
   }, [selectedRole, navigate]);
+
+  // OTP Timer Effect
+  useEffect(() => {
+    if (otpTimer > 0) {
+      const interval = setInterval(() => {
+        setOtpTimer(prev => prev - 1);
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [otpTimer]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -137,143 +143,172 @@ const handleSubmit = async (e) => {
       case 'student':
         return (
           <>
-            <div className="form-group relative">
-              <label className="label" htmlFor="department">Department</label>
-              <input
-                id="department"
-                name="department"
-                type="text"
-                required
-                value={formData.department}
-                onChange={handleInputChange}
-                className="input pl-10 text-sm rounded-md w-full py-2 px-3 border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
-                placeholder="Department"
-              />
-              {iconMap.department}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Department
+              </label>
+              <div className="relative">
+                <input
+                  name="department"
+                  type="text"
+                  required
+                  value={formData.department}
+                  onChange={handleInputChange}
+                  className="w-full pl-12 pr-4 py-3 bg-white/60 backdrop-blur border-2 border-indigo-200 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all"
+                  placeholder="Your department"
+                />
+                <FiBriefcase className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+              </div>
             </div>
-            <div className="form-group relative">
-              <label className="label" htmlFor="currentSemester">Current Semester</label>
-              <input
-                id="currentSemester"
-                name="currentSemester"
-                type="number"
-                min="1"
-                max="8"
-                required
-                value={formData.currentSemester}
-                onChange={handleInputChange}
-                className="input pl-10"
-                placeholder="Current Semester"
-              />
-              {iconMap.currentSemester}
-            </div>
-            <div className="form-group relative">
-              <label className="label" htmlFor="rollNumber">Roll Number</label>
-              <input
-                id="rollNumber"
-                name="rollNumber"
-                type="text"
-                required
-                value={formData.rollNumber}
-                onChange={handleInputChange}
-                className="input pl-10"
-                placeholder="Roll Number"
-              />
-              {iconMap.rollNumber}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Semester
+                </label>
+                <div className="relative">
+                  <input
+                    name="currentSemester"
+                    type="number"
+                    min="1"
+                    max="8"
+                    required
+                    value={formData.currentSemester}
+                    onChange={handleInputChange}
+                    className="w-full pl-12 pr-4 py-3 bg-white/60 backdrop-blur border-2 border-indigo-200 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all"
+                    placeholder="1-8"
+                  />
+                  <FiCalendar className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Roll Number
+                </label>
+                <div className="relative">
+                  <input
+                    name="rollNumber"
+                    type="text"
+                    required
+                    value={formData.rollNumber}
+                    onChange={handleInputChange}
+                    className="w-full pl-12 pr-4 py-3 bg-white/60 backdrop-blur border-2 border-indigo-200 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all"
+                    placeholder="Roll no."
+                  />
+                  <FiUser className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                </div>
+              </div>
             </div>
           </>
         );
       case 'alumni':
         return (
           <>
-            <div className="form-group relative">
-              <label className="label" htmlFor="department">Department</label>
-              <input
-                id="department"
-                name="department"
-                type="text"
-                required
-                value={formData.department}
-                onChange={handleInputChange}
-                className="input pl-10 text-sm rounded-md w-full py-2 px-3 border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
-                placeholder="Department"
-              />
-              {iconMap.department}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Department
+              </label>
+              <div className="relative">
+                <input
+                  name="department"
+                  type="text"
+                  required
+                  value={formData.department}
+                  onChange={handleInputChange}
+                  className="w-full pl-12 pr-4 py-3 bg-white/60 backdrop-blur border-2 border-indigo-200 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all"
+                  placeholder="Your department"
+                />
+                <FiBriefcase className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+              </div>
             </div>
-            <div className="form-group relative">
-              <label className="label" htmlFor="graduationYear">Graduation Year</label>
-              <input
-                id="graduationYear"
-                name="graduationYear"
-                type="text"
-                required
-                value={formData.graduationYear}
-                onChange={handleInputChange}
-                className="input pl-10"
-                placeholder="Graduation Year"
-              />
-              {iconMap.graduationYear}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Graduation Year
+              </label>
+              <div className="relative">
+                <input
+                  name="graduationYear"
+                  type="text"
+                  required
+                  value={formData.graduationYear}
+                  onChange={handleInputChange}
+                  className="w-full pl-12 pr-4 py-3 bg-white/60 backdrop-blur border-2 border-indigo-200 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all"
+                  placeholder="e.g. 2020"
+                />
+                <FiCalendar className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+              </div>
             </div>
-            <div className="form-group relative">
-              <label className="label" htmlFor="currentJobTitle">Current Job Title</label>
-              <input
-                id="currentJobTitle"
-                name="currentJobTitle"
-                type="text"
-                required
-                value={formData.currentJobTitle}
-                onChange={handleInputChange}
-                className="input pl-10"
-                placeholder="Current Job Title"
-              />
-              {iconMap.currentJobTitle}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Current Job Title
+              </label>
+              <div className="relative">
+                <input
+                  name="currentJobTitle"
+                  type="text"
+                  required
+                  value={formData.currentJobTitle}
+                  onChange={handleInputChange}
+                  className="w-full pl-12 pr-4 py-3 bg-white/60 backdrop-blur border-2 border-indigo-200 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all"
+                  placeholder="Your job title"
+                />
+                <FiBriefcase className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+              </div>
             </div>
-            <div className="form-group relative">
-              <label className="label" htmlFor="companyName">Company Name</label>
-              <input
-                id="companyName"
-                name="companyName"
-                type="text"
-                required
-                value={formData.companyName}
-                onChange={handleInputChange}
-                className="input pl-10"
-                placeholder="Company Name"
-              />
-              {iconMap.companyName}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Company Name
+              </label>
+              <div className="relative">
+                <input
+                  name="companyName"
+                  type="text"
+                  required
+                  value={formData.companyName}
+                  onChange={handleInputChange}
+                  className="w-full pl-12 pr-4 py-3 bg-white/60 backdrop-blur border-2 border-indigo-200 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all"
+                  placeholder="Company name"
+                />
+                <FiAward className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+              </div>
             </div>
           </>
         );
       case 'faculty':
         return (
           <>
-            <div className="form-group relative">
-              <label className="label" htmlFor="department">Department</label>
-              <input
-                id="department"
-                name="department"
-                type="text"
-                required
-                value={formData.department}
-                onChange={handleInputChange}
-                className="input pl-10 text-sm rounded-md w-full py-2 px-3 border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
-                placeholder="Department"
-              />
-              {iconMap.department}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Department
+              </label>
+              <div className="relative">
+                <input
+                  name="department"
+                  type="text"
+                  required
+                  value={formData.department}
+                  onChange={handleInputChange}
+                  className="w-full pl-12 pr-4 py-3 bg-white/60 backdrop-blur border-2 border-indigo-200 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all"
+                  placeholder="Your department"
+                />
+                <FiBriefcase className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+              </div>
             </div>
-            <div className="form-group relative">
-              <label className="label" htmlFor="designation">Designation</label>
-              <input
-                id="designation"
-                name="designation"
-                type="text"
-                required
-                value={formData.designation}
-                onChange={handleInputChange}
-                className="input pl-10"
-                placeholder="Designation"
-              />
-              {iconMap.designation}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Designation
+              </label>
+              <div className="relative">
+                <input
+                  name="designation"
+                  type="text"
+                  required
+                  value={formData.designation}
+                  onChange={handleInputChange}
+                  className="w-full pl-12 pr-4 py-3 bg-white/60 backdrop-blur border-2 border-indigo-200 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all"
+                  placeholder="Your designation"
+                />
+                <FiAward className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+              </div>
             </div>
           </>
         );
@@ -281,6 +316,86 @@ const handleSubmit = async (e) => {
         return null;
     }
   };
+
+  // Handler for Forgot Password Step 1: Send OTP
+  const handleForgotPasswordStep1 = async (e) => {
+    e.preventDefault();
+    setFormError('');
+    clearError();
+
+    const emailRegex = /^\S+@\S+\.\S+$/;
+    if (!emailRegex.test(forgotEmail)) {
+      setFormError('Please enter a valid email address');
+      return;
+    }
+
+    setOtpLoading(true);
+    try {
+      const { authAPI } = await import('../middleware/api');
+      await authAPI.forgotPassword(forgotEmail);
+      toast.success('OTP sent to your email!');
+      setForgotStep(2);
+      setOtpTimer(600); // 10 minutes countdown
+    } catch (err) {
+      setFormError(err.message || 'Failed to send OTP');
+      toast.error(err.message || 'Failed to send OTP');
+    } finally {
+      setOtpLoading(false);
+    }
+  };
+
+  // Handler for Forgot Password Step 2: Reset Password
+  const handleForgotPasswordStep2 = async (e) => {
+    e.preventDefault();
+    setFormError('');
+    clearError();
+    
+    if (!formData.otp || formData.otp.length !== 4) {
+      setFormError('Please enter a valid 4-digit OTP');
+      return;
+    }
+
+    if (!formData.newPassword || formData.newPassword.length < 6) {
+      setFormError('Password must be at least 6 characters long');
+      return;
+    }
+    
+    if (formData.newPassword !== formData.confirmNewPassword) {
+      setFormError('Passwords do not match');
+      return;
+    }
+    
+    try {
+      const { authAPI } = await import('../middleware/api');
+      await authAPI.resetPassword(forgotEmail, formData.otp, formData.newPassword);
+      toast.success('Password reset successful!');
+      
+      // Reset to login form
+      setAuthType('login');
+      setForgotStep(1);
+      setForgotEmail('');
+      setOtpTimer(0);
+      setFormData(prev => ({
+        ...prev,
+        otp: '',
+        newPassword: '',
+        confirmNewPassword: '',
+        email: forgotEmail, // Pre-fill email for login
+        password: ''
+      }));
+    } catch (err) {
+      setFormError(err.message || 'Failed to reset password');
+      toast.error(err.message || 'Failed to reset password');
+    }
+  };
+
+  // Format timer display
+  const formatTimer = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
   const validateLogin = () => {
   const emailRegex = /^\S+@\S+\.\S+$/;
 
@@ -296,148 +411,401 @@ const handleSubmit = async (e) => {
 };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 py-8 px-4">
-      <div className="max-w-md w-full space-y-6 p-6 bg-white rounded-xl shadow-lg border border-gray-100">
-        <div>
-          <h2 className="text-center text-2xl font-bold text-gray-900 mb-1">{authType === 'login' ? 'Sign in' : 'Register'} to your account</h2>
-          <p className="text-center text-gray-500 text-base mb-4">Welcome to the Alumni Portal</p>
-        </div>
-        <form className="space-y-4" onSubmit={handleSubmit}>
-          {authType === 'register' && (
-            <div className="relative">
-              <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="fullName">Full Name</label>
-              <div className="relative">
-                <input
-                  id="fullName"
-                  name="fullName"
-                  type="text"
-                  required
-                  value={formData.fullName}
-                  onChange={handleInputChange}
-                  className="h-12 pl-12 pr-4 w-full bg-gray-100 border border-gray-300 rounded-lg text-lg placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
-                  placeholder="Full Name"
-                />
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">{iconMap.fullName}</span>
-              </div>
-            </div>
-          )}
-          <div className="relative">
-            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="email">Email</label>
-            <div className="relative">
-              <input
-                id="email"
-                name="email"
-                type="email"
-                required
-                value={formData.email}
-                onChange={handleInputChange}
-                className="h-12 pl-12 pr-4 w-full bg-gray-100 border border-gray-300 rounded-lg text-lg placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
-                placeholder="Email"
-              />
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">{iconMap.email}</span>
-            </div>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-12 px-4">
+      <div className="w-full max-w-md">
+        {/* Main Card */}
+        <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8">
+          
+          {/* Header */}
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-800 mb-2">
+              {authType === 'login' && 'Welcome Back!'}
+              {authType === 'register' && 'Join Us Today'}
+              {authType === 'forgot' && (forgotStep === 1 ? 'Reset Password' : 'Verify OTP')}
+            </h1>
+            <p className="text-gray-600">
+              {authType === 'login' && 'Sign in to your account'}
+              {authType === 'register' && 'Create your account'}
+              {authType === 'forgot' && forgotStep === 1 && 'Enter your email to receive OTP'}
+              {authType === 'forgot' && forgotStep === 2 && 'Enter OTP and new password'}
+            </p>
           </div>
-          {authType === 'register' && (
-            <div className="relative">
-              <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="phoneNumber">Phone Number</label>
-              <div className="relative">
-                <input
-                  id="phoneNumber"
-                  name="phoneNumber"
-                  type="tel"
-                  required
-                  value={formData.phoneNumber}
-                  onChange={handleInputChange}
-                  className="h-12 pl-12 pr-4 w-full bg-gray-100 border border-gray-300 rounded-lg text-lg placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
-                  placeholder="Phone Number"
-                />
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">{iconMap.phoneNumber}</span>
-              </div>
-            </div>
-          )}
-          <div className="relative">
-            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="password">Password</label>
-            <div className="relative">
-              <input
-                id="password"
-                name="password"
-                type={showPassword ? 'text' : 'password'}
-                required
-                value={formData.password}
-                onChange={handleInputChange}
-                className="h-12 pl-12 pr-12 w-full bg-gray-100 border border-gray-300 rounded-lg text-lg placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
-                placeholder="Password"
-              />
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">{iconMap.password}</span>
+
+          {/* Auth Type Tabs */}
+          {(authType === 'login' || authType === 'register') && (
+            <div className="flex bg-gray-100 rounded-full p-1 mb-6">
               <button
-                type="button"
-                tabIndex={-1}
-                onClick={() => setShowPassword((show) => !show)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 focus:outline-none"
-                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                onClick={() => setAuthType('login')}
+                className={`flex-1 py-2 px-4 rounded-full text-sm font-medium transition-all ${
+                  authType === 'login'
+                    ? 'bg-white shadow-md text-indigo-600'
+                    : 'text-gray-600 hover:text-gray-800'
+                }`}
               >
-                {showPassword ? <FiEyeOff /> : <FiEye />}
+                Sign In
+              </button>
+              <button
+                onClick={() => setAuthType('register')}
+                className={`flex-1 py-2 px-4 rounded-full text-sm font-medium transition-all ${
+                  authType === 'register'
+                    ? 'bg-white shadow-md text-indigo-600'
+                    : 'text-gray-600 hover:text-gray-800'
+                }`}
+              >
+                Register
               </button>
             </div>
-          </div>
-          {authType === 'register' && (
-            <div className="relative">
-              <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="confirmPassword">Confirm Password</label>
-              <div className="relative">
-                <input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type={showPassword ? 'text' : 'password'}
-                  required
-                  value={formData.confirmPassword}
-                  onChange={handleInputChange}
-                  className="h-12 pl-12 pr-12 w-full bg-gray-100 border border-gray-300 rounded-lg text-lg placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
-                  placeholder="Confirm Password"
-                />
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">{iconMap.confirmPassword}</span>
+          )}
+
+          {/* FORGOT PASSWORD - STEP 1: EMAIL */}
+          {authType === 'forgot' && forgotStep === 1 && (
+            <form className="space-y-6" onSubmit={handleForgotPasswordStep1}>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Email Address
+                </label>
+                <div className="relative">
+                  <input
+                    type="email"
+                    required
+                    value={forgotEmail}
+                    onChange={(e) => setForgotEmail(e.target.value)}
+                    className="w-full pl-12 pr-4 py-3 bg-white/60 backdrop-blur border-2 border-indigo-200 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all"
+                    placeholder="Enter your email"
+                  />
+                  <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                </div>
+              </div>
+              
+              {formError && (
+                <div className="bg-red-50 border border-red-200 rounded-full px-4 py-2 text-red-600 text-sm text-center">
+                  {formError}
+                </div>
+              )}
+              
+              <button
+                type="submit"
+                disabled={otpLoading}
+                className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-full transition-all duration-200 shadow-lg hover:shadow-xl"
+              >
+                {otpLoading ? (
+                  <div className="flex items-center justify-center">
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                    Sending OTP...
+                  </div>
+                ) : (
+                  'Send OTP'
+                )}
+              </button>
+              
+              <div className="text-center">
                 <button
                   type="button"
-                  tabIndex={-1}
-                  onClick={() => setShowPassword((show) => !show)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 focus:outline-none"
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  onClick={() => {
+                    setAuthType('login');
+                    setFormError('');
+                    clearError();
+                  }}
+                  className="text-indigo-600 hover:text-indigo-800 font-medium text-sm transition-colors"
                 >
-                  {showPassword ? <FiEyeOff /> : <FiEye />}
+                  ← Back to Login
                 </button>
               </div>
-            </div>
+            </form>
           )}
-          {/* Role-specific fields */}
-          {authType === 'register' && (
-            <>
-              <div className="border-t border-gray-200 my-2"></div>
-              <div className="space-y-4">{renderRoleSpecificFields()}</div>
-            </>
+
+          {/* FORGOT PASSWORD - STEP 2: OTP + PASSWORD */}
+          {authType === 'forgot' && forgotStep === 2 && (
+            <form className="space-y-6" onSubmit={handleForgotPasswordStep2}>
+              <div className="text-center bg-indigo-50 rounded-2xl p-4 mb-6">
+                <p className="text-sm text-gray-600 mb-1">
+                  OTP sent to <span className="font-semibold text-indigo-600">{forgotEmail}</span>
+                </p>
+                {otpTimer > 0 && (
+                  <p className="text-sm text-indigo-600 font-medium">
+                    Expires in: {formatTimer(otpTimer)}
+                  </p>
+                )}
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Enter 4-digit OTP
+                </label>
+                <input
+                  name="otp"
+                  type="text"
+                  maxLength="4"
+                  pattern="[0-9]{4}"
+                  required
+                  value={formData.otp}
+                  onChange={handleInputChange}
+                  className="w-full py-3 px-4 bg-white/60 backdrop-blur border-2 border-indigo-200 rounded-full text-center text-lg tracking-widest focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all"
+                  placeholder="0000"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  New Password
+                </label>
+                <div className="relative">
+                  <input
+                    name="newPassword"
+                    type={showPassword ? 'text' : 'password'}
+                    required
+                    value={formData.newPassword}
+                    onChange={handleInputChange}
+                    className="w-full pl-12 pr-12 py-3 bg-white/60 backdrop-blur border-2 border-indigo-200 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all"
+                    placeholder="New password"
+                  />
+                  <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    {showPassword ? <FiEyeOff className="w-5 h-5" /> : <FiEye className="w-5 h-5" />}
+                  </button>
+                </div>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Confirm New Password
+                </label>
+                <div className="relative">
+                  <input
+                    name="confirmNewPassword"
+                    type={showPassword ? 'text' : 'password'}
+                    required
+                    value={formData.confirmNewPassword}
+                    onChange={handleInputChange}
+                    className="w-full pl-12 pr-12 py-3 bg-white/60 backdrop-blur border-2 border-indigo-200 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all"
+                    placeholder="Confirm new password"
+                  />
+                  <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    {showPassword ? <FiEyeOff className="w-5 h-5" /> : <FiEye className="w-5 h-5" />}
+                  </button>
+                </div>
+              </div>
+              
+              {formError && (
+                <div className="bg-red-50 border border-red-200 rounded-full px-4 py-2 text-red-600 text-sm text-center">
+                  {formError}
+                </div>
+              )}
+              
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-full transition-all duration-200 shadow-lg hover:shadow-xl"
+              >
+                {loading ? (
+                  <div className="flex items-center justify-center">
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                    Resetting Password...
+                  </div>
+                ) : (
+                  'Reset Password'
+                )}
+              </button>
+              
+              <div className="flex justify-center space-x-4 text-sm">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setForgotStep(1);
+                    setFormError('');
+                    clearError();
+                  }}
+                  className="text-gray-600 hover:text-gray-800 transition-colors"
+                >
+                  Change Email
+                </button>
+                {otpTimer === 0 && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleForgotPasswordStep1({ preventDefault: () => {} });
+                    }}
+                    disabled={otpLoading}
+                    className="text-indigo-600 hover:text-indigo-800 disabled:text-indigo-400 transition-colors"
+                  >
+                    {otpLoading ? 'Sending...' : 'Resend OTP'}
+                  </button>
+                )}
+              </div>
+            </form>
           )}
-          {/* Error message */}
-          {(formError || error) && (
-            <div className="text-red-600 mt-2 text-center text-sm font-medium animate-pulse">
-              {formError || error}
-            </div>
+
+          {/* LOGIN & REGISTER FORMS */}
+          {(authType === 'login' || authType === 'register') && (
+            <form className="space-y-6" onSubmit={handleSubmit}>
+              {authType === 'register' && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Full Name
+                  </label>
+                  <div className="relative">
+                    <input
+                      name="fullName"
+                      type="text"
+                      required
+                      value={formData.fullName}
+                      onChange={handleInputChange}
+                      className="w-full pl-12 pr-4 py-3 bg-white/60 backdrop-blur border-2 border-indigo-200 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all"
+                      placeholder="Enter your full name"
+                    />
+                    <FiUser className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  </div>
+                </div>
+              )}
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Email Address
+                </label>
+                <div className="relative">
+                  <input
+                    name="email"
+                    type="email"
+                    required
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    className="w-full pl-12 pr-4 py-3 bg-white/60 backdrop-blur border-2 border-indigo-200 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all"
+                    placeholder="Enter your email"
+                  />
+                  <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                </div>
+              </div>
+
+              {authType === 'register' && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Phone Number
+                  </label>
+                  <div className="relative">
+                    <input
+                      name="phoneNumber"
+                      type="tel"
+                      required
+                      value={formData.phoneNumber}
+                      onChange={handleInputChange}
+                      className="w-full pl-12 pr-4 py-3 bg-white/60 backdrop-blur border-2 border-indigo-200 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all"
+                      placeholder="Enter your phone number"
+                    />
+                    <FiPhone className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  </div>
+                </div>
+              )}
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Password
+                </label>
+                <div className="relative">
+                  <input
+                    name="password"
+                    type={showPassword ? 'text' : 'password'}
+                    required
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    className="w-full pl-12 pr-12 py-3 bg-white/60 backdrop-blur border-2 border-indigo-200 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all"
+                    placeholder="Enter your password"
+                  />
+                  <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    {showPassword ? <FiEyeOff className="w-5 h-5" /> : <FiEye className="w-5 h-5" />}
+                  </button>
+                </div>
+              </div>
+
+              {authType === 'register' && (
+                <>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Confirm Password
+                    </label>
+                    <div className="relative">
+                      <input
+                        name="confirmPassword"
+                        type={showPassword ? 'text' : 'password'}
+                        required
+                        value={formData.confirmPassword}
+                        onChange={handleInputChange}
+                        className="w-full pl-12 pr-12 py-3 bg-white/60 backdrop-blur border-2 border-indigo-200 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all"
+                        placeholder="Confirm your password"
+                      />
+                      <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      >
+                        {showPassword ? <FiEyeOff className="w-5 h-5" /> : <FiEye className="w-5 h-5" />}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Role-specific fields */}
+                  <div className="bg-gray-50 rounded-2xl p-4 space-y-4">
+                    <h3 className="text-sm font-medium text-gray-700 text-center">
+                      Role-Specific Information
+                    </h3>
+                    {renderRoleSpecificFields()}
+                  </div>
+                </>
+              )}
+              
+              {(formError || error) && (
+                <div className="bg-red-50 border border-red-200 rounded-full px-4 py-2 text-red-600 text-sm text-center">
+                  {formError || error}
+                </div>
+              )}
+              
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-full transition-all duration-200 shadow-lg hover:shadow-xl"
+              >
+                {loading ? (
+                  <div className="flex items-center justify-center">
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                    Please wait...
+                  </div>
+                ) : (
+                  authType === 'login' ? 'Sign In' : 'Create Account'
+                )}
+              </button>
+              
+              {authType === 'login' && (
+                <div className="text-center">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAuthType('forgot');
+                      setForgotStep(1);
+                      setFormError('');
+                      clearError();
+                    }}
+                    className="text-indigo-600 hover:text-indigo-800 font-medium text-sm transition-colors"
+                  >
+                    Forgot your password?
+                  </button>
+                </div>
+              )}
+            </form>
           )}
-          <button
-            type="submit"
-            className="rounded-full px-4 py-1.5 font-semibold bg-indigo-600 text-white shadow hover:bg-indigo-700 transition"
-            disabled={loading}
-          >
-            {loading ? 'Please wait...' : authType === 'login' ? 'Login' : 'Register'}
-          </button>
-        </form>
-        <div className="text-center mt-4">
-          <span className="text-gray-600 text-base">
-            {authType === 'login' ? "Don't have an account?" : 'Already have an account?'}{' '}
-          </span>
-          <button
-            onClick={() => { setAuthType(authType === 'login' ? 'register' : 'login'); setFormError(''); clearError(); }}
-            className="text-indigo-600 hover:underline font-semibold text-base focus:outline-none ml-1"
-          >
-            {authType === 'login' ? 'Register' : 'Login'}
-          </button>
         </div>
       </div>
     </div>

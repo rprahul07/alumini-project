@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FiHome, FiUsers, FiBell, FiBarChart2, FiBookOpen, FiSettings, FiUser, FiMoreVertical, FiMessageSquare, FiMail } from "react-icons/fi";
+import { FiHome, FiUsers, FiBell, FiBarChart2, FiBookOpen, FiSettings, FiUser, FiMoreVertical } from "react-icons/fi";
 import axios from '../../config/axios';
 import Modal from 'react-modal';
 
@@ -151,7 +151,7 @@ const AdminDashboard = () => {
   const handleUpdateAlumni = async (updatedData) => {
     try {
       // API call to update alumni data
-      await axios.patch(`/api/admin/alumni/${updatedData.id}`, updatedData);
+      await axios.patch(`/api/alumni/${updatedData.id}`, updatedData);
       fetchAlumni(); // Refresh the list
       return { success: true };
     } catch (error) {
@@ -213,7 +213,7 @@ const AdminDashboard = () => {
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
+                xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)"
               >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
               </svg>
@@ -259,18 +259,6 @@ const AdminDashboard = () => {
             isActive={activeItem === "Content Moderation"}
             onClick={() => setActiveItem("Content Moderation")}
           />
-          <SidebarItem
-            icon={<FiMessageSquare />}
-            text="Testimony"
-            isActive={activeItem === "Testimony"}
-            onClick={() => setActiveItem("Testimony")}
-          />
-          <SidebarItem
-            icon={<FiMail />}
-            text="Contact us"
-            isActive={activeItem === "Contact us"}
-            onClick={() => setActiveItem("Contact us")}
-          />
         </nav>
         <div className="p-4 border-t">
           <div className="text-lg font-semibold text-gray-800 mb-2">Settings</div>
@@ -289,7 +277,7 @@ const AdminDashboard = () => {
               <FiUser className="text-gray-600 text-xl" />
               <span className="text-gray-800 font-medium">Admin User</span>
               <svg
-                xmlns="http://www.w3.org/2000/svg"
+                xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)"
                 className="h-4 w-4 text-gray-600"
                 viewBox="0 0 20 20"
                 fill="currentColor"
@@ -362,24 +350,6 @@ const AdminDashboard = () => {
               onPageChange={setEventPage}
               fetchEvents={fetchEvents}
             />
-          )}
-          {activeItem === "Content Moderation" && (
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h2 className="text-xl font-semibold text-gray-800 mb-2">Content Moderation</h2>
-              <p className="text-gray-600">This section is for moderating content.</p>
-            </div>
-          )}
-          {activeItem === "Testimony" && (
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h2 className="text-xl font-semibold text-gray-800 mb-2">Testimony Management</h2>
-              <p className="text-gray-600">This section will handle alumni testimonials.</p>
-            </div>
-          )}
-          {activeItem === "Contact us" && (
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h2 className="text-xl font-semibold text-gray-800 mb-2">Contact Us Inquiries</h2>
-              <p className="text-gray-600">This section will display messages from the 'Contact Us' form.</p>
-            </div>
           )}
         </main>
       </div>
