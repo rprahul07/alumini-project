@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FiHome, FiUsers, FiBell, FiBarChart2, FiBookOpen, FiSettings, FiUser, FiMoreVertical } from "react-icons/fi";
+import { FiHome, FiUsers, FiBell, FiBarChart2, FiBookOpen, FiSettings, FiUser, FiMoreVertical, FiMessageSquare, FiMail } from "react-icons/fi";
 import axios from '../../config/axios';
 import Modal from 'react-modal';
 
@@ -13,6 +13,7 @@ const AdminDashboard = () => {
   const [alumni, setAlumni] = useState([]);
   const [faculty, setFaculty] = useState([]);
   const [events, setEvents] = useState([]);
+  const [announcements, setAnnouncements] = useState([]);
 
   const [studentPage, setStudentPage] = useState(1);
   const [studentTotalPages, setStudentTotalPages] = useState(1);
@@ -22,6 +23,8 @@ const AdminDashboard = () => {
   const [facultyTotalPages, setFacultyTotalPages] = useState(1);
   const [eventPage, setEventPage] = useState(1);
   const [eventTotalPages, setEventTotalPages] = useState(1);
+  const [announcementPage, setAnnouncementPage] = useState(1);
+  const [announcementTotalPages, setAnnouncementTotalPages] = useState(1);
   const limit = 10;
 
   const fetchStudents = async () => {
@@ -89,6 +92,17 @@ const AdminDashboard = () => {
     }
   };
 
+  const fetchAnnouncements = async () => {
+    try {
+      const response = await axios.get(`/api/announcements?page=${announcementPage}&limit=${limit}`);
+      const { announcements: fetchedAnnouncements, pagination } = response.data.data;
+      setAnnouncements(fetchedAnnouncements);
+      setAnnouncementTotalPages(pagination.totalPages);
+    } catch (error) {
+      console.error("Error fetching announcements:", error);
+    }
+  };
+
   const fetchEvents = async () => {
     try {
       const response = await axios.get(`/api/admin/event/all?page=${eventPage}&limit=${limit}`);
@@ -105,6 +119,9 @@ const AdminDashboard = () => {
         type: event.type,
         description: event.description,
         imageUrl: event.imageUrl,
+        maxCapacity: event.maxCapacity,
+        createdAt: new Date(event.createdAt).toLocaleDateString(),
+        updatedAt: new Date(event.updatedAt).toLocaleDateString(),
       }));
       setEvents(formattedEvents);
       setEventTotalPages(pagination.totalPages);
@@ -151,7 +168,7 @@ const AdminDashboard = () => {
   const handleUpdateAlumni = async (updatedData) => {
     try {
       // API call to update alumni data
-      await axios.patch(`/api/alumni/${updatedData.id}`, updatedData);
+      await axios.patch(`/api/admin/alumni/${updatedData.id}`, updatedData);
       fetchAlumni(); // Refresh the list
       return { success: true };
     } catch (error) {
@@ -180,9 +197,11 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     if (activeItem === "Announcements & Events") {
+      fetchAnnouncements();
       fetchEvents();
     }
-  }, [activeItem, eventPage]);
+  }, [activeItem, announcementPage, eventPage]);
+
 
   return (
     <div className="flex h-screen bg-gray-100 font-sans">
@@ -213,7 +232,7 @@ const AdminDashboard = () => {
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
-                xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)"
+                xmlns="http://www.w3.org/2000/svg"
               >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
               </svg>
@@ -259,6 +278,18 @@ const AdminDashboard = () => {
             isActive={activeItem === "Content Moderation"}
             onClick={() => setActiveItem("Content Moderation")}
           />
+          <SidebarItem
+            icon={<FiMessageSquare />}
+            text="Testimony"
+            isActive={activeItem === "Testimony"}
+            onClick={() => setActiveItem("Testimony")}
+          />
+          <SidebarItem
+            icon={<FiMail />}
+            text="Contact us"
+            isActive={activeItem === "Contact us"}
+            onClick={() => setActiveItem("Contact us")}
+          />
         </nav>
         <div className="p-4 border-t">
           <div className="text-lg font-semibold text-gray-800 mb-2">Settings</div>
@@ -277,7 +308,7 @@ const AdminDashboard = () => {
               <FiUser className="text-gray-600 text-xl" />
               <span className="text-gray-800 font-medium">Admin User</span>
               <svg
-                xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)"
+                xmlns="http://www.w3.org/2000/svg"
                 className="h-4 w-4 text-gray-600"
                 viewBox="0 0 20 20"
                 fill="currentColor"
@@ -344,12 +375,34 @@ const AdminDashboard = () => {
           )}
           {activeItem === "Announcements & Events" && (
             <AnnouncementsEventsSection
+              announcements={announcements}
+              announcementPage={announcementPage}
+              announcementTotalPages={announcementTotalPages}
+              onAnnouncementPageChange={setAnnouncementPage}
               events={events}
-              currentPage={eventPage}
-              totalPages={eventTotalPages}
-              onPageChange={setEventPage}
+              eventPage={eventPage}
+              eventTotalPages={eventTotalPages}
+              onEventPageChange={setEventPage}
               fetchEvents={fetchEvents}
             />
+          )}
+          {activeItem === "Content Moderation" && (
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <h2 className="text-xl font-semibold text-gray-800 mb-2">Content Moderation</h2>
+              <p className="text-gray-600">This section is for moderating content.</p>
+            </div>
+          )}
+          {activeItem === "Testimony" && (
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <h2 className="text-xl font-semibold text-gray-800 mb-2">Testimony Management</h2>
+              <p className="text-gray-600">This section will handle alumni testimonials.</p>
+            </div>
+          )}
+          {activeItem === "Contact us" && (
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <h2 className="text-xl font-semibold text-gray-800 mb-2">Contact Us Inquiries</h2>
+              <p className="text-gray-600">This section will display messages from the 'Contact Us' form.</p>
+            </div>
           )}
         </main>
       </div>
@@ -747,7 +800,191 @@ const DeleteUserConfirmationModal = ({ isOpen, onRequestClose, onConfirmDelete, 
   );
 };
 
-const AnnouncementsEventsSection = ({ events, currentPage, totalPages, onPageChange, fetchEvents }) => {
+const AnnouncementsEventsSection = ({
+  announcements,
+  announcementPage,
+  announcementTotalPages,
+  onAnnouncementPageChange,
+  events,
+  eventPage,
+  eventTotalPages,
+  onEventPageChange,
+  fetchEvents
+}) => {
+  return (
+    <div className="space-y-6">
+      {/* Announcements Section */}
+      <AnnouncementsTable
+        announcements={announcements}
+        currentPage={announcementPage}
+        totalPages={announcementTotalPages}
+        onPageChange={onAnnouncementPageChange}
+      />
+      {/* Events Section */}
+      <EventsTable
+        events={events}
+        currentPage={eventPage}
+        totalPages={eventTotalPages}
+        onPageChange={onEventPageChange}
+        fetchEvents={fetchEvents}
+      />
+    </div>
+  );
+};
+
+const AnnouncementsTable = ({ announcements, currentPage, totalPages, onPageChange }) => {
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
+  const [isCreating, setIsCreating] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleCreateClick = () => {
+    setIsCreateModalOpen(true);
+  };
+
+  const handleCreateAnnouncement = async (announcementData) => {
+    setIsCreating(true);
+    try {
+      await axios.post('/api/announcements/create', announcementData);
+      // Re-fetch announcements after creating
+      // This function needs to be passed down from the parent
+      // For now, let's just close the modal.
+      setIsCreateModalOpen(false);
+    } catch (error) {
+      console.error("Failed to create announcement:", error);
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
+  const handleEditClick = (announcement) => {
+    setSelectedAnnouncement(announcement);
+    setIsEditModalOpen(true);
+  };
+
+  const handleUpdateAnnouncement = async (updatedAnnouncement) => {
+    setIsLoading(true);
+    try {
+      await axios.put(`/api/announcements/${updatedAnnouncement.id}`, updatedAnnouncement);
+      setIsEditModalOpen(false);
+    } catch (error) {
+      console.error("Failed to update announcement:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDeleteClick = (announcement) => {
+    setSelectedAnnouncement(announcement);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!selectedAnnouncement) return;
+    setIsDeleting(true);
+    try {
+      await axios.delete(`/api/announcements/${selectedAnnouncement.id}`);
+      setIsDeleteModalOpen(false);
+    } catch (error) {
+      console.error("Failed to delete announcement:", error);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+
+  return (
+    <div className="bg-white p-6 rounded-lg shadow-md">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-semibold text-gray-800">Announcements</h2>
+        <button
+          onClick={handleCreateClick}
+          className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+        >
+          Create New Announcement
+        </button>
+      </div>
+      {announcements.length > 0 ? (
+        <>
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Content</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {announcements.map((announcement) => (
+                <tr key={announcement.id}>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{announcement.title}</td>
+                  <td className="px-6 py-4 text-sm text-gray-500 overflow-hidden text-ellipsis max-w-sm">{announcement.content}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <div className="flex items-center space-x-2">
+                      <button onClick={() => handleEditClick(announcement)} className="text-indigo-600 hover:text-indigo-900">Edit</button>
+                      <button onClick={() => handleDeleteClick(announcement)} className="text-red-600 hover:text-red-900">Delete</button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div className="flex justify-between items-center mt-4">
+            <button
+              onClick={() => onPageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="px-4 py-2 bg-indigo-600 text-white rounded-md disabled:opacity-50"
+            >
+              Previous
+            </button>
+            <span className="text-gray-700">
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              onClick={() => onPageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="px-4 py-2 bg-indigo-600 text-white rounded-md disabled:opacity-50"
+            >
+              Next
+            </button>
+          </div>
+        </>
+      ) : (
+        <p className="text-gray-600">No announcements available.</p>
+      )}
+      {/* Modals for Announcements */}
+      <CreateAnnouncementModal
+        isOpen={isCreateModalOpen}
+        onRequestClose={() => setIsCreateModalOpen(false)}
+        onCreateAnnouncement={handleCreateAnnouncement}
+        isLoading={isCreating}
+      />
+      {selectedAnnouncement && (
+        <EditAnnouncementModal
+          isOpen={isEditModalOpen}
+          onRequestClose={() => setIsEditModalOpen(false)}
+          announcement={selectedAnnouncement}
+          onUpdate={handleUpdateAnnouncement}
+          isLoading={isLoading}
+        />
+      )}
+      {selectedAnnouncement && (
+        <DeleteAnnouncementModal
+          isOpen={isDeleteModalOpen}
+          onRequestClose={() => setIsDeleteModalOpen(false)}
+          onConfirmDelete={handleConfirmDelete}
+          announcement={selectedAnnouncement}
+          isLoading={isDeleting}
+        />
+      )}
+    </div>
+  );
+};
+
+const EventsTable = ({ events, currentPage, totalPages, onPageChange, fetchEvents }) => {
   const [editingEvent, setEditingEvent] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [eventToDelete, setEventToDelete] = useState(null);
@@ -799,6 +1036,7 @@ const AnnouncementsEventsSection = ({ events, currentPage, totalPages, onPageCha
       formData.append('organizer', updatedEvent.organizer);
       formData.append('status', updatedEvent.status);
       formData.append('type', updatedEvent.type);
+      formData.append('maxCapacity', updatedEvent.maxCapacity);
       if (updatedEvent.photo) {
         formData.append('photo', updatedEvent.photo);
       } else {
@@ -833,6 +1071,7 @@ const AnnouncementsEventsSection = ({ events, currentPage, totalPages, onPageCha
       formData.append('location', eventData.location);
       formData.append('organizer', eventData.organizer);
       formData.append('type', eventData.type);
+      formData.append('maxCapacity', eventData.maxCapacity);
       formData.append('photo', eventData.photo); // The API expects 'photo' for file upload
 
       await axios.post('/api/admin/event/create', formData, {
@@ -849,11 +1088,10 @@ const AnnouncementsEventsSection = ({ events, currentPage, totalPages, onPageCha
     }
   };
 
-
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold text-gray-800">Announcements & Events</h2>
+        <h2 className="text-xl font-semibold text-gray-800">Events</h2>
         <button
           onClick={handleCreateClick}
           className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
@@ -870,6 +1108,7 @@ const AnnouncementsEventsSection = ({ events, currentPage, totalPages, onPageCha
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Capacity</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
@@ -885,7 +1124,8 @@ const AnnouncementsEventsSection = ({ events, currentPage, totalPages, onPageCha
                       {event.status}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{event.maxCapacity}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex items-center space-x-2">
                       <button
                         onClick={() => handleEditClick(event)}
@@ -1017,6 +1257,10 @@ const EditEventModal = ({ isOpen, onRequestClose, event, onUpdate, isLoading }) 
           <label className="block text-sm font-medium text-gray-700">Organizer</label>
           <input type="text" name="organizer" value={formState.organizer} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" required />
         </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Max Capacity</label>
+          <input type="number" name="maxCapacity" value={formState.maxCapacity} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" required />
+        </div>
         <div className="mt-6 flex justify-end space-x-3">
           <button
             type="button"
@@ -1073,7 +1317,7 @@ const DeleteConfirmationModal = ({ isOpen, onRequestClose, onConfirmDelete, even
 };
 
 const CreateEventModal = ({ isOpen, onRequestClose, onCreateEvent, isLoading }) => {
-  const [formState, setFormState] = useState({ name: '', date: '', time: '', type: '', description: '', location: '', organizer: '', photo: null, });
+  const [formState, setFormState] = useState({ name: '', date: '', time: '', type: '', description: '', location: '', organizer: '', photo: null, maxCapacity: '' });
   const handleChange = (e) => {
     const { name, value, files } = e.target;
     setFormState(prevState => ({ ...prevState, [name]: files ? files[0] : value }));
@@ -1120,6 +1364,10 @@ const CreateEventModal = ({ isOpen, onRequestClose, onCreateEvent, isLoading }) 
           <label className="block text-sm font-medium text-gray-700">Organizer</label>
           <input type="text" name="organizer" value={formState.organizer} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" required />
         </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Max Capacity</label>
+          <input type="number" name="maxCapacity" value={formState.maxCapacity} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" required />
+        </div>
         <div className="mt-6 flex justify-end space-x-3">
           <button type="button" onClick={onRequestClose} className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300" >
             Cancel
@@ -1129,6 +1377,98 @@ const CreateEventModal = ({ isOpen, onRequestClose, onCreateEvent, isLoading }) 
           </button>
         </div>
       </form>
+    </Modal>
+  );
+};
+const CreateAnnouncementModal = ({ isOpen, onRequestClose, onCreateAnnouncement, isLoading }) => {
+  const [formState, setFormState] = useState({ title: '', content: '' });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormState(prevState => ({ ...prevState, [name]: value }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onCreateAnnouncement(formState);
+  };
+
+  return (
+    <Modal isOpen={isOpen} onRequestClose={onRequestClose} className="bg-white rounded-lg shadow-xl p-8 max-w-lg mx-auto my-20 relative" overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center" contentLabel="Create New Announcement">
+      <h2 className="text-2xl font-bold mb-4">Create New Announcement</h2>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Title</label>
+          <input type="text" name="title" value={formState.title} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" required />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Content</label>
+          <textarea name="content" value={formState.content} onChange={handleChange} rows="5" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" required />
+        </div>
+        <div className="mt-6 flex justify-end space-x-3">
+          <button type="button" onClick={onRequestClose} className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300">
+            Cancel
+          </button>
+          <button type="submit" className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700">
+            {isLoading ? 'Creating...' : 'Create Announcement'}
+          </button>
+        </div>
+      </form>
+    </Modal>
+  );
+};
+const EditAnnouncementModal = ({ isOpen, onRequestClose, announcement, onUpdate, isLoading }) => {
+  const [formState, setFormState] = useState(announcement);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormState(prevState => ({ ...prevState, [name]: value }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onUpdate(formState);
+  };
+
+  return (
+    <Modal isOpen={isOpen} onRequestClose={onRequestClose} className="bg-white rounded-lg shadow-xl p-8 max-w-lg mx-auto my-20 relative" overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center" contentLabel="Edit Announcement">
+      <h2 className="text-2xl font-bold mb-4">Edit Announcement</h2>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Title</label>
+          <input type="text" name="title" value={formState.title} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" required />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Content</label>
+          <textarea name="content" value={formState.content} onChange={handleChange} rows="5" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" required />
+        </div>
+        <div className="mt-6 flex justify-end space-x-3">
+          <button type="button" onClick={onRequestClose} className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300">
+            Cancel
+          </button>
+          <button type="submit" className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700">
+            {isLoading ? 'Saving...' : 'Save Changes'}
+          </button>
+        </div>
+      </form>
+    </Modal>
+  );
+};
+const DeleteAnnouncementModal = ({ isOpen, onRequestClose, onConfirmDelete, announcement, isLoading }) => {
+  return (
+    <Modal isOpen={isOpen} onRequestClose={onRequestClose} className="bg-white rounded-lg shadow-xl p-8 max-w-sm mx-auto my-20 relative" overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center" contentLabel="Delete Confirmation">
+      <h2 className="text-xl font-bold mb-4">Confirm Deletion</h2>
+      <p className="text-gray-700">
+        Are you sure you want to delete the announcement <span className="font-semibold">{announcement?.title}</span>? This action cannot be undone.
+      </p>
+      <div className="mt-6 flex justify-end space-x-3">
+        <button type="button" onClick={onRequestClose} disabled={isLoading} className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 disabled:opacity-50">
+          Cancel
+        </button>
+        <button type="button" onClick={onConfirmDelete} disabled={isLoading} className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 disabled:opacity-50">
+          {isLoading ? 'Deleting...' : 'Delete'}
+        </button>
+      </div>
     </Modal>
   );
 };
