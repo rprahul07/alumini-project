@@ -95,9 +95,12 @@ export const handlePhotoUpload = async (
     await ensureContainer();
     const blockBlobClient = containerClient.getBlockBlobClient(blobName);
 
-    // Upload local temp file to Azure Blob Storage
-    await blockBlobClient.uploadFile(photoFile.path, {
-      blobHTTPHeaders: { blobContentType: photoFile.mimetype },
+    // Upload file buffer to Azure Blob Storage
+    await blockBlobClient.uploadData(photoFile.buffer, {
+      blobHTTPHeaders: { 
+        blobContentType: photoFile.mimetype,
+        blobCacheControl: 'public, max-age=31536000' // 1 year cache
+      },
     });
 
     // Remove local file

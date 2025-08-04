@@ -7,51 +7,42 @@ import {
   updateGallery,
   deleteGallery
 } from '../controllers/gallery/gallery_controller.js';
-
 import { protect } from '../middleware/jwt_middleware.js';  
-
+import { uploadPhotoMiddleware } from '../middleware/upload.middleware.js';
 
 const router = express.Router();
 
+// Protect all routes with JWT authentication
 router.use(protect);
 
-
-// Configure multer for file uploads
-const upload = multer({
-  storage: multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, 'uploads/');
-    },
-    filename: function (req, file, cb) {
-      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-      cb(null, 'gallery-' + uniqueSuffix + path.extname(file.originalname));
-    },
-  }),
-  fileFilter: (req, file, cb) => {
-    if (
-      file.mimetype === 'image/jpeg' ||
-      file.mimetype === 'image/png' ||
-      file.mimetype === 'image/jpg' ||
-      file.mimetype === 'image/webp'
-    ) {
-      cb(null, true);
-    } else {
-      cb(new Error('Only image files are allowed!'), false);
-    }
-  },
-  limits: {
-    fileSize: 10 * 1024 * 1024, // 10MB limit
-  },
-});
-
 // Create a new gallery item with photo upload
-router.post('/', upload.single('photo'), createGallery);
+router.post('/', 
+  (req, res, next) => {
+    uploadPhotoMiddleware(req, res, (err) => {
+      if (err) {
+        return res.status(400).json({ success: false, message: err.message });
+      }
+      next();
+    });
+  },
+  createGallery
+);
 
 // Get all gallery items
 router.get('/', getAllGallery);
 
 // Update a gallery item with optional photo upload
-router.put('/:id', upload.single('photo'), updateGallery);
+router.put('/:id', 
+  (req, res, next) => {
+    uploadPhotoMiddleware(req, res, (err) => {
+      if (err) {
+        return res.status(400).json({ success: false, message: err.message });
+      }
+      next();
+    });
+  },
+  updateGallery
+);
 
 // Delete a gallery item
 router.delete('/:id', deleteGallery);

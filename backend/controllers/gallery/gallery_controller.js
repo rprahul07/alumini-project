@@ -1,28 +1,28 @@
 import prisma from '../../lib/prisma.js';
 import { createResponse, handleError } from '../../lib/error.js';
 import { handlePhotoUpload } from '../../utils/handlePhotoUpload.utils.js';
+import { containerClient } from '../../utils/azureBlobConfig.js'; // ensure this exports containerClient
 
 export const createGallery = async (req, res) => {
   try {
     const { title, description, redirectionUrl } = req.body;
-    
-    // Handle photo upload
-    const imageUrl = await handlePhotoUpload(
-      req,
-      null,
-      'gallery'
-    );
 
+    // Check file presence
+    if (!req.files || !req.files.photo || !req.files.photo[0]) {
+      return res.status(400).json(createResponse(false, "No image file provided"));
+    }
+
+    const imageUrl = await handlePhotoUpload(req, null, 'gallery');
     if (!imageUrl) {
-      return res.status(400).json(createResponse(false, "Image upload failed"));
+      return res.status(400).json(createResponse(false, "Image upload failed. Please check the file format and try again."));
     }
 
     const gallery = await prisma.gallery.create({
-      data: { 
-        title, 
-        description, 
-        redirectionUrl, 
-        imageUrl 
+      data: {
+        title,
+        description,
+        redirectionUrl,
+        imageUrl
       },
     });
 
@@ -48,8 +48,7 @@ export const updateGallery = async (req, res) => {
   try {
     const { id } = req.params;
     const { title, description, redirectionUrl } = req.body;
-    
-    // Get existing gallery item
+
     const existingItem = await prisma.gallery.findUnique({
       where: { id: Number(id) }
     });
@@ -58,35 +57,34 @@ export const updateGallery = async (req, res) => {
       return res.status(404).json(createResponse(false, "Gallery item not found"));
     }
 
-    // Handle photo upload if new image is provided
     let imageUrl = existingItem.imageUrl;
+
     if (req.files?.photo?.[0]) {
-      // Delete old image if exists
+      // Delete old image from Azure Blob
       if (existingItem.imageUrl) {
         try {
           const url = new URL(existingItem.imageUrl);
           const blobName = url.pathname.split('/').pop();
           const blobClient = containerClient.getBlobClient(blobName);
           await blobClient.deleteIfExists();
-        } catch (error) {
-          console.error('Error deleting old image:', error);
+        } catch (err) {
+          console.error("Error deleting old image:", err);
         }
       }
-      
-      // Upload new image
+
       imageUrl = await handlePhotoUpload(req, null, 'gallery');
       if (!imageUrl) {
-        return res.status(400).json(createResponse(false, "Image upload failed"));
+        return res.status(400).json(createResponse(false, "New image upload failed"));
       }
     }
 
     const updated = await prisma.gallery.update({
       where: { id: Number(id) },
-      data: { 
-        title, 
-        description, 
-        redirectionUrl, 
-        imageUrl 
+      data: {
+        title,
+        description,
+        redirectionUrl,
+        imageUrl
       },
     });
 
@@ -101,7 +99,6 @@ export const deleteGallery = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Get the gallery item first to get the image URL
     const galleryItem = await prisma.gallery.findUnique({
       where: { id: Number(id) }
     });
@@ -110,7 +107,6 @@ export const deleteGallery = async (req, res) => {
       return res.status(404).json(createResponse(false, "Gallery item not found"));
     }
 
-    // Delete the image from blob storage if it exists
     if (galleryItem.imageUrl) {
       try {
         const url = new URL(galleryItem.imageUrl);
@@ -122,9 +118,7 @@ export const deleteGallery = async (req, res) => {
       }
     }
 
-    // Delete the gallery item from the database
     await prisma.gallery.delete({ where: { id: Number(id) } });
-    
     res.json(createResponse(true, "Gallery item deleted"));
   } catch (error) {
     console.error('Error in deleteGallery:', error);
