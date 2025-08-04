@@ -14,6 +14,7 @@ export const getAdminDashboardStats = async (req, res) => {
     const totalStudents = await prisma.user.count({ where: { role: 'student' } });
     const totalFaculty = await prisma.user.count({ where: { role: 'faculty' } });
     const totalAdmins = await prisma.user.count({ where: { role: 'admin' } });
+    const eventscount = await prisma.event.count();
 
     // Example: count posts, mentorships, etc. (add your own logic if you have those tables)
     // const totalPosts = await prisma.post.count();
@@ -27,6 +28,7 @@ export const getAdminDashboardStats = async (req, res) => {
         totalStudents,
         totalFaculty,
         totalAdmins,
+        eventscount,
         // totalPosts,
         // totalMentorships,
       }
