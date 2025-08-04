@@ -79,12 +79,17 @@ export const handlePhotoUpload = async (
     }
 
     const timestamp = Date.now();
-    const prefix =
-      photoType === "event" && eventId
-        ? `event-${eventId}-${userId}-`
-        : `user-${userId}-`;
-    const extension = path.extname(photoFile.originalname);
-    const blobName = `${prefix}${timestamp}${extension}`;
+    const extension = path.extname(photoFile.originalname).toLowerCase();
+    
+    // Generate blob name based on photo type
+    let blobName;
+    if (photoType === "event" && eventId) {
+      blobName = `events/event-${eventId}-${userId}-${timestamp}${extension}`;
+    } else if (photoType === "gallery") {
+      blobName = `gallery/gallery-${userId}-${timestamp}${extension}`;
+    } else {
+      blobName = `users/user-${userId}-${timestamp}${extension}`;
+    }
 
     // Prepare upload
     await ensureContainer();

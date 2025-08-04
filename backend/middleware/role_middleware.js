@@ -1,6 +1,6 @@
 import { AppError } from "../utils/response.utils.js";
 
-export const isAdmin = async (req, res, next) => {
+ export const isAdmin = async (req, res, next) => {
   try {
     // Check if user exists and has admin role
     if (!req.user || req.user.role !== 'admin') {
