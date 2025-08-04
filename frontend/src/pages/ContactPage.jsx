@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import Navbar from '../components/Navbar';
+import axios from '../config/axios';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
-    fullName: '',
+    name: '',
     email: '',
     subject: '',
-    message: '',
-    contactType: 'general'
+    message: ''
   });
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -47,10 +47,10 @@ const ContactPage = () => {
   const validateForm = () => {
     const newErrors = {};
 
-    if (!formData.fullName.trim()) {
-      newErrors.fullName = 'Full name is required';
-    } else if (!/^[A-Za-z\s]+$/.test(formData.fullName.trim())) {
-      newErrors.fullName = 'Name must only contain letters and spaces';
+    if (!formData.name.trim()) {
+      newErrors.name = 'Full name is required';
+    } else if (!/^[A-Za-z\s]+$/.test(formData.name.trim())) {
+      newErrors.name = 'Name must only contain letters and spaces';
     }
 
     if (!formData.email.trim()) {
@@ -104,21 +104,28 @@ const ContactPage = () => {
     setIsSubmitting(true);
 
     try {
-      // Simulate API call - replace with actual endpoint
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
-      setIsSubmitted(true);
-      setFormData({
-        fullName: '',
-        email: '',
-        subject: '',
-        message: '',
-        contactType: 'general'
+      const response = await axios.post('/api/contactus', {
+        name: formData.name,
+        email: formData.email,
+        subject: formData.subject,
+        message: formData.message
       });
-      setErrors({});
+
+      if (response.data.success) {
+        setIsSubmitted(true);
+        setFormData({
+          name: '',
+          email: '',
+          subject: '',
+          message: ''
+        });
+        setErrors({});
+      }
     } catch (error) {
       console.error('Error submitting form:', error);
-      setErrors({ submit: 'Failed to send message. Please try again.' });
+      setErrors({ 
+        submit: error.response?.data?.message || 'Failed to send message. Please try again.' 
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -184,56 +191,23 @@ const ContactPage = () => {
                   <h2 className="text-2xl font-bold text-gray-900 mb-6">Send us a Message</h2>
 
                   <form onSubmit={handleSubmit} className="space-y-6">
-                    {/* Contact Type Selection */}
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-3">
-                        What can we help you with?
-                      </label>
-                      <div className="grid grid-cols-2 gap-3">
-                        {[
-                          { value: 'general', label: 'General Inquiry', icon: 'fas fa-question-circle' },
-                          { value: 'technical', label: 'Technical Support', icon: 'fas fa-cog' },
-                          { value: 'account', label: 'Account Issues', icon: 'fas fa-user' },
-                          { value: 'feedback', label: 'Feedback', icon: 'fas fa-comment' }
-                        ].map((type) => (
-                          <label key={type.value} className="cursor-pointer">
-                            <input
-                              type="radio"
-                              name="contactType"
-                              value={type.value}
-                              checked={formData.contactType === type.value}
-                              onChange={handleInputChange}
-                              className="sr-only"
-                            />
-                            <div className={`p-3 border-2 rounded-xl text-center transition-all ${formData.contactType === type.value
-                                ? 'border-[#5A32EA] bg-[#5A32EA]/5 text-[#5A32EA]'
-                                : 'border-gray-200 hover:border-gray-300'
-                              }`}>
-                              <i className={`${type.icon} text-lg mb-1`}></i>
-                              <p className="text-sm font-medium">{type.label}</p>
-                            </div>
-                          </label>
-                        ))}
-                      </div>
-                    </div>
-
                     {/* Full Name */}
                     <div>
-                      <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-2">
+                      <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
                         Full Name *
                       </label>
                       <input
                         type="text"
-                        id="fullName"
-                        name="fullName"
-                        value={formData.fullName}
+                        id="name"
+                        name="name"
+                        value={formData.name}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#5A32EA] focus:border-transparent transition-all ${errors.fullName ? 'border-red-500' : 'border-gray-300'
+                        className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#5A32EA] focus:border-transparent transition-all ${errors.name ? 'border-red-500' : 'border-gray-300'
                           }`}
                         placeholder="Enter your full name"
                       />
-                      {errors.fullName && (
-                        <p className="mt-1 text-sm text-red-600">{errors.fullName}</p>
+                      {errors.name && (
+                        <p className="mt-1 text-sm text-red-600">{errors.name}</p>
                       )}
                     </div>
 
