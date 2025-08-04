@@ -1,0 +1,2193 @@
+{
+	"info": {
+		"_postman_id": "780533ce-f313-499b-b156-7192122b3590",
+		"name": "Alumini_project",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "45349146",
+		"_collection_link": "https://rahulrp-748957.postman.co/workspace/My-Workspace~b1a2a707-a6b1-4d85-84e9-2d1291d106ae/collection/45349146-780533ce-f313-499b-b156-7192122b3590?action=share&source=collection_link&creator=45349146"
+	},
+	"item": [
+		{
+			"name": "Student",
+			"item": [
+				{
+					"name": "GET by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5001/api/student/profile?userId=4",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"api",
+								"student",
+								"profile"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "4"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH by ID",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"fullName\": \"Rahul R P\",\r\n  \"email\": \"rahul@student.com\",\r\n  \"phoneNumber\": \"9876543210\",\r\n  \"department\": \"CSE\",\r\n  \"currentSemester\": 6,\r\n  \"rollNumber\": \"CUSAT2027CSE001\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5001/api/student/profile?userId=4",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"api",
+								"student",
+								"profile"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "4"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete by ID",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5001/api/student/profile?userId=4",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"api",
+								"student",
+								"profile"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "4"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Student_self_profile",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"fullName\": \"Rahul R P\",\r\n  \"email\": \"rahul.student@example.com\",\r\n  \"password\": \"StrongP@ssw0rd\",\r\n  \"confirmPassword\": \"StrongP@ssw0rd\",\r\n  \"phoneNumber\": \"+919876543210\",\r\n  \"department\": \"Computer Science\",\r\n  \"role\": \"student\",\r\n  \"currentSemester\": 4,\r\n  \"rollNumber\": \"CS2027001\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5001/api/student/profile/get/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"api",
+								"student",
+								"profile",
+								"get",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update_self",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"rp@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5001/api/student/profile/update/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"api",
+								"student",
+								"profile",
+								"update",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "check_alumniByTier Copy",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTIsInJvbGUiOiJhbHVtbmkiLCJpYXQiOjE3NTE0NDE2NzcsImV4cCI6MTc1MjczNzY3N30.nVBFgee0obwdU1pH1KBx4tPEWbSp-IC1_4O8zpEpBhI",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5001/api/support/check_tier/alumni/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"api",
+								"support",
+								"check_tier",
+								"alumni",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Master_Auth",
+			"item": [
+				{
+					"name": "Signup_student",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"fullName\": \"alex K\",\r\n  \"email\": \"alexs@student.com\",\r\n  \"password\": \"S#c8@Lm2wY!A\",\r\n  \"confirmPassword\": \"S#c8@Lm2wY!A\",\r\n  \"phoneNumber\": \"9123456780\",\r\n  \"role\": \"student\",\r\n  \"department\": \"CSE\",\r\n  \"rollNumber\": \"CSE2021A045\",\r\n  \"currentSemester\": 6\r\n}\r\n\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5001/api/auth/signup/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"api",
+								"auth",
+								"signup",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Signup_student Copy",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"fullName\": \"Rahul R P\",\r\n  \"email\": \"rahul@student.com\",\r\n  \"password\": \"G!t7@Lp3xZ#V\",\r\n  \"confirmPassword\": \"G!t7@Lp3xZ#V\",\r\n  \"phoneNumber\": \"9876543210\",\r\n  \"role\":\"alumni\",\r\n  \"department\": \"CSE\",\r\n  \"graduationYear\": \"2023\",\r\n  \"course\": \"B.Tech Computer Science\",\r\n  \"currentJobTitle\": \"Software Engineer\",\r\n  \"companyName\": \"Google\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5001/api/auth/signup/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"api",
+								"auth",
+								"signup",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \r\n  \"email\": \"rahul@student.com\",\r\n  \"password\": \"G!t7@Lp3xZ#v\",\r\n \r\n  \"role\": \"student\"\r\n\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5001/api/auth/login/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"api",
+								"auth",
+								"login",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Signup_alumni",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"fullName\": \"Ram\",\r\n  \"email\": \"ram@student.com\",\r\n  \"password\": \"G!t7@Lp3xZ#V\",\r\n  \"confirmPassword\": \"G!t7@Lp3xZ#V\",\r\n  \"phoneNumber\": \"9876543210\",\r\n  \"role\":\"alumni\",\r\n  \"department\": \"CSE\",\r\n  \"graduationYear\": \"2023\",\r\n  \"course\": \"B.Tech Computer Science\",\r\n  \"currentJobTitle\": \"Software Engineer\",\r\n  \"companyName\": \"Google\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5001/api/auth/signup/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"api",
+								"auth",
+								"signup",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Signup_faculty",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"fullName\": \"Dr. Rahul R P\",\r\n  \"email\": \"rahul.faculty@example.com\",\r\n  \"password\": \"G!t7@Lp3xZ#V\",\r\n  \"confirmPassword\": \"G!t7@Lp3xZ#V\",\r\n  \"phoneNumber\": \"9876543210\",\r\n  \"department\": \"Computer Science\",\r\n  \"designation\": \"Assistant Professor\",\r\n  \"role\": \"faculty\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5001/api/auth/signup/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"api",
+								"auth",
+								"signup",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "forgotpassword",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTIsInJvbGUiOiJhbHVtbmkiLCJpYXQiOjE3NTE0NDE2NzcsImV4cCI6MTc1MjczNzY3N30.nVBFgee0obwdU1pH1KBx4tPEWbSp-IC1_4O8zpEpBhI",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"rprahulofficial07@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5001/api/auth/forgot-password/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"api",
+								"auth",
+								"forgot-password",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "verify otp",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTIsInJvbGUiOiJhbHVtbmkiLCJpYXQiOjE3NTE0NDE2NzcsImV4cCI6MTc1MjczNzY3N30.nVBFgee0obwdU1pH1KBx4tPEWbSp-IC1_4O8zpEpBhI",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"rprahulofficial07@gmail.com\",\r\n    \"otp\":\"6018\",\r\n    \"newPassword\":\"Rahul@123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5001/api/auth/verify-otp/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"api",
+								"auth",
+								"verify-otp",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Alumni",
+			"item": [
+				{
+					"name": "Get by ID",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"fullName\": \"Rahul R P\",\r\n  \"email\": \"rahul@student.com\",\r\n  \"password\": \"securePassword123\",\r\n  \"phoneNumber\": \"9876543210\",\r\n  \"department\": \"CSE\",\r\n  \"graduationYear\": \"2023\",\r\n  \"course\": \"B.Tech Computer Science\",\r\n  \"currentJobTitle\": \"Software Engineer\",\r\n  \"companyName\": \"Google\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5001/api/alumni/profile/?userId=5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"api",
+								"alumni",
+								"profile",
+								""
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Patch by ID",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \r\n  \"graduationYear\": \"255023\",\r\n  \"course\": \"B.Tech Compute5gfvcr Science\",\r\n  \"currentJobTitle\": \"Softwvbcare Engineer\",\r\n  \"companyName\": \"Govcogle\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5001/api/alumni/profile/?userId=5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"api",
+								"alumni",
+								"profile",
+								""
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete by ID",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5001/api/alumni/profile/?userId=5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"api",
+								"alumni",
+								"profile",
+								""
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Alumni_self_update",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Faculty",
+			"item": [
+				{
+					"name": "Get id Faculty",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5001/api/faculty/profile/?userId=7",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"api",
+								"faculty",
+								"profile",
+								""
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "7"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Patch id Faculty",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"phoneNumber\": \"9876543210\",\r\n  \"department\": \"Computer Science\",\r\n  \"designation\": \"Assistant Professor\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5001/api/faculty/profile/?userId=7",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"api",
+								"faculty",
+								"profile",
+								""
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "7"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete id Faculty",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt}}",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"phoneNumber\": \"9876543210\",\r\n  \"department\": \"Computer Science\",\r\n  \"designation\": \"Assistant Professor\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5001/api/faculty/profile/?userId=7",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"api",
+								"faculty",
+								"profile",
+								""
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "7"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "Create Event",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Tech Talk 2025\",\r\n  \"date\": \"2025-07-20\",\r\n  \"time\": \"14:00\",\r\n  \"type\": \"Seminar\",\r\n  \"description\": \"A tech seminar on AI trends for alumni and students.\",\r\n  \"location\": \"Auditorium Hall, CUSAT\",\r\n  \"organizer\": \"Department of Computer Science\",\r\n  \"imageUrl\": \"https://example.com/event-images/techtalk2025.jpg\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5001/api/admin/event/create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"api",
+								"admin",
+								"event",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Event by id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5001/api/admin/event/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"api",
+								"admin",
+								"event",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit event by id",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Tech Symposium 2025\",\r\n  \"date\": \"2025-08-10\",\r\n  \"time\": \"11:30\",\r\n  \"type\": \"Conference\",\r\n  \"description\": \"Annual alumni-led symposium on emerging tech trends.\",\r\n  \"location\": \"Main Hall, CUSAT\",\r\n  \"organizer\": \"Alumni Association\",\r\n  \"imageUrl\": \"https://example.com/images/tech-symposium.jpg\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5001/api/admin/event/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"api",
+								"admin",
+								"event",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Approve event by id",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5001/api/admin/event/47",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"api",
+								"admin",
+								"event",
+								"47"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Event By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5001/api/admin/event/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"api",
+								"admin",
+								"event",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Event",
+			"item": [
+				{
+					"name": "Student",
+					"item": [
+						{
+							"name": "Search Event",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:5001/api/student/event/search?search=technical&department=IT&sortBy=date&sortOrder=desc",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5001",
+									"path": [
+										"api",
+										"student",
+										"event",
+										"search"
+									],
+									"query": [
+										{
+											"key": "search",
+											"value": "technical"
+										},
+										{
+											"key": "department",
+											"value": "IT"
+										},
+										{
+											"key": "sortBy",
+											"value": "date"
+										},
+										{
+											"key": "sortOrder",
+											"value": "desc"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get all event",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:5001/api/student/event/all?page=1&limit=5",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5001",
+									"path": [
+										"api",
+										"student",
+										"event",
+										"all"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "limit",
+											"value": "5"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get event by id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:5001/api/student/event/47",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5001",
+									"path": [
+										"api",
+										"student",
+										"event",
+										"47"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Register for events",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:5001/api/student/event/47",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5001",
+									"path": [
+										"api",
+										"student",
+										"event",
+										"47"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Alumni",
+					"item": [
+						{
+							"name": "Get event by id",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"name\": \"Tech Symposium 2025\",\r\n  \"date\": \"2025-08-10\",\r\n  \"time\": \"11:30\",\r\n  \"type\": \"Conference\",\r\n  \"description\": \"Annual alumni-led symposium on emerging tech trends.\",\r\n  \"location\": \"Main Hall, CUSAT\",\r\n  \"organizer\": \"Alumni Association\",\r\n  \"imageUrl\": \"https://example.com/images/tech-symposium.jpg\"\r\n}\r\n"
+								},
+								"url": {
+									"raw": "http://localhost:5001/api/alumni/event/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5001",
+									"path": [
+										"api",
+										"alumni",
+										"event",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete event by id",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:5001/api/alumni/event/4",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5001",
+									"path": [
+										"api",
+										"alumni",
+										"event",
+										"4"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Edit event",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"name\": \"Tech Symposium 2025\",\r\n  \"date\": \"2025-08-10\",\r\n  \"time\": \"11:30\",\r\n  \"type\": \"Conference\",\r\n  \"description\": \"Annual alumni-led symposium on emerging tech trends.\",\r\n  \"location\": \"Main Hall, CUSAT\",\r\n  \"organizer\": \"Alumni Association\",\r\n  \"imageUrl\": \"https://example.com/images/tech-symposium.jpg\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:5001/api/alumni/event/4",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5001",
+									"path": [
+										"api",
+										"alumni",
+										"event",
+										"4"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create event",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{jwt}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "",
+										"value": "",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "photo",
+											"type": "file",
+											"src": "/C:/Users/noels/Downloads/download.jpeg"
+										},
+										{
+											"key": "name",
+											"value": "Tech Talk 2025",
+											"type": "text"
+										},
+										{
+											"key": "date",
+											"value": "2025-07-20",
+											"type": "text"
+										},
+										{
+											"key": "time",
+											"value": "14:00",
+											"type": "text"
+										},
+										{
+											"key": "type",
+											"value": "Seminar",
+											"type": "text"
+										},
+										{
+											"key": "description",
+											"value": "A tech seminar on AI trends for alumni and students.",
+											"type": "text"
+										},
+										{
+											"key": "location",
+											"value": "Auditorium Hall, CUSAT",
+											"type": "text"
+										},
+										{
+											"key": "organizer",
+											"value": "Department of Computer Science",
+											"type": "text"
+										},
+										{
+											"key": "",
+											"value": "",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:5001/api/alumni/event/create",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5001",
+									"path": [
+										"api",
+										"alumni",
+										"event",
+										"create"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search Event",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:5001/api/alumni/event/search?search=technical&department=IT&sortBy=date&sortOrder=desc",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5001",
+									"path": [
+										"api",
+										"alumni",
+										"event",
+										"search"
+									],
+									"query": [
+										{
+											"key": "search",
+											"value": "technical"
+										},
+										{
+											"key": "department",
+											"value": "IT"
+										},
+										{
+											"key": "sortBy",
+											"value": "date"
+										},
+										{
+											"key": "sortOrder",
+											"value": "desc"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get all event",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer ",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:5001/api/alumni/event/all?page=1&limit=5",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5001",
+									"path": [
+										"api",
+										"alumni",
+										"event",
+										"all"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "limit",
+											"value": "5"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search Event",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:5001/api/alumni/event/search?search=technical&department=IT&sortBy=date&sortOrder=desc",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5001",
+									"path": [
+										"api",
+										"alumni",
+										"event",
+										"search"
+									],
+									"query": [
+										{
+											"key": "search",
+											"value": "technical"
+										},
+										{
+											"key": "department",
+											"value": "IT"
+										},
+										{
+											"key": "sortBy",
+											"value": "date"
+										},
+										{
+											"key": "sortOrder",
+											"value": "desc"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Register for events",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:5001/api/alumni/event/47",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5001",
+									"path": [
+										"api",
+										"alumni",
+										"event",
+										"47"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get my events",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:5001/api/alumni/event/my?page=1&limit=10&status=approved",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5001",
+									"path": [
+										"api",
+										"alumni",
+										"event",
+										"my"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "limit",
+											"value": "10"
+										},
+										{
+											"key": "status",
+											"value": "approved"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Admin",
+					"item": [
+						{
+							"name": "Get all events",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:5001/api/admin/event/all?page=1&limit=5",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5001",
+									"path": [
+										"api",
+										"admin",
+										"event",
+										"all"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "limit",
+											"value": "5"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get event by id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:5001/api/admin/event/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5001",
+									"path": [
+										"api",
+										"admin",
+										"event",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete event by id",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:5001/api/admin/event/4",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5001",
+									"path": [
+										"api",
+										"admin",
+										"event",
+										"4"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Edit event",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"name\": \"Tech Symposium 2025\",\r\n  \"date\": \"2025-08-10\",\r\n  \"time\": \"11:30\",\r\n  \"type\": \"Conference\",\r\n  \"description\": \"Annual alumni-led symposium on emerging tech trends.\",\r\n  \"location\": \"Main Hall, CUSAT\",\r\n  \"organizer\": \"Alumni Association\",\r\n  \"imageUrl\": \"https://example.com/images/tech-symposium.jpg\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:5001/api/admin/event/4",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5001",
+									"path": [
+										"api",
+										"admin",
+										"event",
+										"4"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create event Copy",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{jwt}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "",
+										"value": "",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "photo",
+											"type": "file",
+											"src": "/C:/Users/noels/Downloads/download.jpeg"
+										},
+										{
+											"key": "name",
+											"value": "Tech Talk 2025",
+											"type": "text"
+										},
+										{
+											"key": "date",
+											"value": "2025-07-20",
+											"type": "text"
+										},
+										{
+											"key": "time",
+											"value": "14:00",
+											"type": "text"
+										},
+										{
+											"key": "type",
+											"value": "Seminar",
+											"type": "text"
+										},
+										{
+											"key": "description",
+											"value": "A tech seminar on AI trends for alumni and students.",
+											"type": "text"
+										},
+										{
+											"key": "location",
+											"value": "Auditorium Hall, CUSAT",
+											"type": "text"
+										},
+										{
+											"key": "organizer",
+											"value": "Department of Computer Science",
+											"type": "text"
+										},
+										{
+											"key": "",
+											"value": "",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:5001/api/admin/event/create",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5001",
+									"path": [
+										"api",
+										"admin",
+										"event",
+										"create"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get event registers users",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:5001/api/admin/event/users/47?page=1&limit=20",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5001",
+									"path": [
+										"api",
+										"admin",
+										"event",
+										"users",
+										"47"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "limit",
+											"value": "20"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "support_request",
+			"item": [
+				{
+					"name": "Student",
+					"item": [
+						{
+							"name": "create_support",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:5001/api/support/create/",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5001",
+									"path": [
+										"api",
+										"support",
+										"create",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "self_applied",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTIsInJvbGUiOiJhbHVtbmkiLCJpYXQiOjE3NTE0NDE2NzcsImV4cCI6MTc1MjczNzY3N30.nVBFgee0obwdU1pH1KBx4tPEWbSp-IC1_4O8zpEpBhI",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:5001/api/support/self/applied/",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5001",
+									"path": [
+										"api",
+										"support",
+										"self",
+										"applied",
+										""
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Admin",
+					"item": [
+						{
+							"name": "get supports",
+							"request": {
+								"method": "GET",
+								"header": []
+							},
+							"response": []
+						},
+						{
+							"name": "get_all",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTIsInJvbGUiOiJhbHVtbmkiLCJpYXQiOjE3NTE0NDE2NzcsImV4cCI6MTc1MjczNzY3N30.nVBFgee0obwdU1pH1KBx4tPEWbSp-IC1_4O8zpEpBhI",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:5001/api/support/admin/all",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5001",
+									"path": [
+										"api",
+										"support",
+										"admin",
+										"all"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Alumni",
+					"item": [
+						{
+							"name": "create_support Copy",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:5001/api/support/create/",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5001",
+									"path": [
+										"api",
+										"support",
+										"create",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "accept_support",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTIsInJvbGUiOiJhbHVtbmkiLCJpYXQiOjE3NTE0NDE2NzcsImV4cCI6MTc1MjczNzY3N30.nVBFgee0obwdU1pH1KBx4tPEWbSp-IC1_4O8zpEpBhI",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": " {\r\n  \"alumniMsg\": \"Happy to help! Let’s talk.\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:5001/api/support/accept/22",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5001",
+									"path": [
+										"api",
+										"support",
+										"accept",
+										"22"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "reject_support",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTIsInJvbGUiOiJhbHVtbmkiLCJpYXQiOjE3NTE0NDE2NzcsImV4cCI6MTc1MjczNzY3N30.nVBFgee0obwdU1pH1KBx4tPEWbSp-IC1_4O8zpEpBhI",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:5001/api/support/reject/20",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5001",
+									"path": [
+										"api",
+										"support",
+										"reject",
+										"20"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "self_applied",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTIsInJvbGUiOiJhbHVtbmkiLCJpYXQiOjE3NTE0NDE2NzcsImV4cCI6MTc1MjczNzY3N30.nVBFgee0obwdU1pH1KBx4tPEWbSp-IC1_4O8zpEpBhI",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:5001/api/support/self/applied/",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5001",
+									"path": [
+										"api",
+										"support",
+										"self",
+										"applied",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "self_get_request for mentor",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTIsInJvbGUiOiJhbHVtbmkiLCJpYXQiOjE3NTE0NDE2NzcsImV4cCI6MTc1MjczNzY3N30.nVBFgee0obwdU1pH1KBx4tPEWbSp-IC1_4O8zpEpBhI",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:5001/api/support/self/received",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5001",
+									"path": [
+										"api",
+										"support",
+										"self",
+										"received"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "check_alumniByTier",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTIsInJvbGUiOiJhbHVtbmkiLCJpYXQiOjE3NTE0NDE2NzcsImV4cCI6MTc1MjczNzY3N30.nVBFgee0obwdU1pH1KBx4tPEWbSp-IC1_4O8zpEpBhI",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:5001/api/support/check_tier/alumni/",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5001",
+									"path": [
+										"api",
+										"support",
+										"check_tier",
+										"alumni",
+										""
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Job By Rahul",
+			"item": [
+				{
+					"name": "Pending Jobs for Alumni",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzUyMTY3NTI0LCJleHAiOjE3NTM0NjM1MjR9.CuEOaRgKAqMNVjDdHFJGD9AWSv39kYixE8cudlSlUI0",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5001/api/job/admin/pending/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"api",
+								"job",
+								"admin",
+								"pending",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AlumniSelfcreated Jobs",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sZSI6ImFsdW1uaSIsImlhdCI6MTc1MjEyOTY0MiwiZXhwIjoxNzUzNDI1NjQyfQ.HXqogzPj0wzz2DQ6aseUUab-77f6IWIEjVRo-Q_7w2w",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5001/api/job/alumni/created/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"api",
+								"job",
+								"alumni",
+								"created",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AdminAll jobs",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzUyMTY3NTI0LCJleHAiOjE3NTM0NjM1MjR9.CuEOaRgKAqMNVjDdHFJGD9AWSv39kYixE8cudlSlUI0",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5001/api/job/admin/all/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"api",
+								"job",
+								"admin",
+								"all",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getRegisteredUsers",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sZSI6ImFsdW1uaSIsImlhdCI6MTc1MjEyOTY0MiwiZXhwIjoxNzUzNDI1NjQyfQ.HXqogzPj0wzz2DQ6aseUUab-77f6IWIEjVRo-Q_7w2w",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"jobId\":1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5001/api/job/get/registrations/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"api",
+								"job",
+								"get",
+								"registrations",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sZSI6ImFsdW1uaSIsImlhdCI6MTc1MjEyOTY0MiwiZXhwIjoxNzUzNDI1NjQyfQ.HXqogzPj0wzz2DQ6aseUUab-77f6IWIEjVRo-Q_7w2w",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5001/api/job/selfapplied/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"api",
+								"job",
+								"selfapplied",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
