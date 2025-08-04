@@ -1,3 +1,4 @@
+import AdminContactMessages from '../../components/admin/AdminContactMessages';
 import React, { useState, useEffect } from "react";
 import {
   FiUsers,
@@ -460,6 +461,15 @@ const Sidebar = ({ onNavigate, onEventSectionChange, activeView, eventSection })
                     ))}
                   </ul>
                 )}
+              </li>
+              <li className="mb-3">
+                <button
+                  onClick={() => onNavigate("contact-messages")}
+                  className="w-full text-left flex items-center space-x-3 p-3 text-gray-700 rounded-xl hover:bg-indigo-50 hover:text-indigo-700 transition-colors duration-200 group"
+                >
+                  <FiBell className="h-6 w-6 text-gray-500 group-hover:text-indigo-600" />
+                  <span className="font-medium">Contact Messages</span>
+                </button>
               </li>
               <li className="mb-3">
                 <button
@@ -1393,7 +1403,7 @@ const AdminDashboard = () => {
             {/* --- End Statistics Cards (Redesigned) --- */}
 
             {/* Admin My Activity Card - White Card */}
-            <div className="bg-white rounded-2xl shadow-lg flex-1 min-h-0 p-4 flex flex-col overflow-y-auto scrollbar-hide min-w-0 w-full h-[600px] min-h-[500px] max-h-[700px]">
+            <div className="bg-white rounded-2xl shadow-lg flex-1 p-4 flex flex-col overflow-y-auto scrollbar-hide min-w-0 w-full h-[600px] max-h-[700px]">
             <MyActivityCard
               features={[
                 {
@@ -1450,6 +1460,8 @@ const AdminDashboard = () => {
         return (
           <AlumniEventSubmissions sectionDefault={eventSection} />
         ); 
+      case "contact-messages":
+        return <AdminContactMessages />;
       case "settings":
         return (
           <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
