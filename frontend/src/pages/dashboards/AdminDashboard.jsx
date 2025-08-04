@@ -1650,7 +1650,7 @@ const EventsTable = ({ events, currentPage, totalPages, onPageChange, fetchEvent
         if (!eventToDelete) return;
         setIsDeleting(true);
         try {
-            await axios.delete(`/api/admin/event/delete/${eventToDelete.id}`);
+            await axios.delete(`/api/admin/event/${eventToDelete.id}`);
             fetchEvents();
             setIsDeleteModalOpen(false);
             setEventToDelete(null);
@@ -1665,7 +1665,7 @@ const EventsTable = ({ events, currentPage, totalPages, onPageChange, fetchEvent
         if (!eventToApprove) return;
         setIsApproving(true);
         try {
-            await axios.post(`/api/admin/event/approve/${eventToApprove.id}`);
+            await axios.post(`/api/admin/event/${eventToApprove.id}`);
             fetchEvents();
             setIsApproveModalOpen(false);
             setEventToApprove(null);
@@ -1695,7 +1695,7 @@ const EventsTable = ({ events, currentPage, totalPages, onPageChange, fetchEvent
             } else {
                 formData.append('imageUrl', updatedEvent.imageUrl);
             }
-            await axios.put(`/api/admin/event/update/${editingEvent.id}`, formData, {
+            await axios.patch(`/api/admin/event/${editingEvent.id}`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -1783,6 +1783,9 @@ const EventsTable = ({ events, currentPage, totalPages, onPageChange, fetchEvent
                                                         Approve
                                                     </button>
                                                 )}
+                                                <button onClick={() => handleApproveClick(event)} className="text-green-600 hover:text-green-900">
+                                                        Approve
+                                                </button>
                                                 <button onClick={() => handleEditClick(event)} className="text-indigo-600 hover:text-indigo-900">
                                                     Edit
                                                 </button>
