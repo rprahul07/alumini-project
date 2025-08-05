@@ -1,6 +1,7 @@
 import AdminContactMessages from '../../components/admin/AdminContactMessages';
 import AdminTestimonials from '../../components/admin/AdminTestimonials';
 import AdminGallery from '../../components/admin/AdminGallery';
+import AdminAnnouncements from './AdminAnnouncements';
 import React, { useState, useEffect } from "react";
 import {
   FiUsers,
@@ -316,6 +317,7 @@ const Sidebar = ({ onNavigate, onEventSectionChange, activeView, eventSection })
   // Main menu items
   const mainMenuItems = [
     { title: "Dashboard", icon: FiHome, view: "dashboard" },
+    { title: "Announcements", icon: FiBell, view: "announcements" },
     { title: "Gallery", icon: FiImage, view: "gallery" },
   ];
 
@@ -751,66 +753,6 @@ const UserVerificationTable = ({ users, onVerify, onReject }) => {
   );
 };
 
-// --- Announcements and Events Section Component ---
-const AnnouncementsSection = ({ announcements, onCreate }) => {
-  return (
-    <div className="bg-white rounded-2xl shadow-lg p-8">
-      <div className="flex flex-col sm:flex-row justify-between items-center mb-6 space-y-4 sm:space-y-0">
-        <h2 className="text-2xl font-bold text-gray-900">
-          Announcements & Events
-        </h2>
-        <button
-          onClick={onCreate}
-          className="bg-indigo-600 text-white px-6 py-2.5 rounded-xl hover:bg-indigo-700 transition-colors duration-200 font-medium flex items-center space-x-2 shadow-md hover:shadow-lg"
-        >
-          <FiPlus className="h-5 w-5" />
-          <span>Create New</span>
-        </button>
-      </div>
-
-      <div className="space-y-4">
-        {announcements.length > 0 ? (
-          announcements.map((announcement) => (
-            <div
-              key={announcement.id}
-              className="bg-gray-50 p-5 rounded-xl border border-gray-200 flex items-start space-x-4"
-            >
-              <div className="flex-shrink-0">
-                <FiBell className="h-8 w-8 text-indigo-500" />
-              </div>
-              <div className="flex-grow">
-                <h3 className="text-lg font-semibold text-gray-900">
-                  {announcement.title}
-                </h3>
-                <p className="text-gray-600 mt-1 text-sm">
-                  {announcement.content}
-                </p>
-                <div className="flex items-center text-gray-500 text-xs mt-2 space-x-3">
-                  <span>{announcement.date}</span>
-                  <span>|</span>
-                  <span>{announcement.type}</span>
-                </div>
-              </div>
-              <div className="flex-shrink-0 flex space-x-2">
-                <button className="text-gray-500 hover:text-gray-700 px-2 py-1 rounded-md text-sm">
-                  Edit
-                </button>
-                <button className="text-red-500 hover:text-red-700 px-2 py-1 rounded-md text-sm">
-                  Delete
-                </button>
-              </div>
-            </div>
-          ))
-        ) : (
-          <div className="text-center py-10 text-gray-500">
-            No announcements or events yet. Click "Create New" to add one!
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
-
 // --- UserTableDisplay Component (for Student, Alumni, Faculty) ---
 const UserTableDisplay = ({ userType, users, onUpdateUser, onDeleteUser }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -1083,34 +1025,6 @@ const AdminDashboard = () => {
     },
   ]);
 
-  // Dummy data for Announcements & Events (still part of dashboard overview)
-  const [announcements, setAnnouncements] = useState([
-    {
-      id: "a1",
-      title: "Community Guidelines Update",
-      content:
-        "Our community guidelines have been updated. Please review the new terms.",
-      date: "2024-05-15",
-      type: "Announcement",
-    },
-    {
-      id: "a2",
-      title: "Webinar: Mastering Mentorship",
-      content:
-        "Join our free webinar on effective mentorship strategies on June 20th.",
-      date: "2024-06-20",
-      type: "Event",
-    },
-    {
-      id: "a3",
-      title: "Platform Maintenance Notice",
-      content:
-        "Scheduled maintenance will occur on June 10th from 2 AM to 4 AM UTC.",
-      date: "2024-06-10",
-      type: "Announcement",
-    },
-  ]);
-
   const [jobs, setJobs] = useState([]);
   const [jobsLoading, setJobsLoading] = useState(false);
   const [jobsError, setJobsError] = useState(null);
@@ -1225,16 +1139,6 @@ const AdminDashboard = () => {
         user.id === id ? { ...user, status: "Rejected" } : user
       )
     );
-  };
-
-  const handleCreateAnnouncement = () => {
-    setInputTitle('Create New Announcement/Event');
-    setInputLabel('Announcement/Event Details');
-    setInputValue('');
-    setInputCallback(() => (val) => {
-      toast.info(`Announcement/Event created: ${val}`);
-    });
-    setInputModalOpen(true);
   };
 
   // Only re-fetch the affected list after update/delete
@@ -1476,6 +1380,8 @@ const AdminDashboard = () => {
         ); 
       case "contact-messages":
         return <AdminContactMessages />;
+      case "announcements":
+        return <AdminAnnouncements />;
       case "testimonials":
         return <AdminTestimonials />;
       case "gallery":

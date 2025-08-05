@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { testimonialsAPI } from "../services/testimonialsService";
 import { dashboardAPI } from "../services/dashboardService";
+import { announcementAPI } from "../services/announcementService";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import thirikeImg from '../assets/Thirike.jpg';
 import Navbar from '../components/Navbar';
@@ -86,6 +87,8 @@ const HomePage = () => {
   });
   const [testimonials, setTestimonials] = useState([]);
   const [testimonialsLoading, setTestimonialsLoading] = useState(true);
+  const [announcements, setAnnouncements] = useState([]);
+  const [announcementsLoading, setAnnouncementsLoading] = useState(true);
 
   // Animate stats when in view
   useEffect(() => {
@@ -129,7 +132,7 @@ const HomePage = () => {
     return () => window.removeEventListener("scroll", onScroll);
   }, [stats]);
 
-  // Fetch testimonials and dashboard stats
+  // Fetch testimonials, dashboard stats, and announcements
   useEffect(() => {
     const fetchTestimonials = async () => {
       try {
@@ -174,8 +177,26 @@ const HomePage = () => {
       }
     };
 
+    const fetchAnnouncements = async () => {
+      try {
+        const result = await announcementAPI.getAllAnnouncements();
+        if (result.success && result.data.length > 0) {
+          // Take only the first 3 announcements for homepage display
+          setAnnouncements(result.data.slice(0, 3));
+        } else {
+          setAnnouncements([]);
+        }
+      } catch (error) {
+        console.error('Failed to fetch announcements:', error);
+        setAnnouncements([]);
+      } finally {
+        setAnnouncementsLoading(false);
+      }
+    };
+
     fetchTestimonials();
     fetchDashboardStats();
+    fetchAnnouncements();
   }, []);
 
   // Image error handler
@@ -267,6 +288,79 @@ const HomePage = () => {
     </div>
   </div>
 </section>
+
+{/* Announcements Section - Compact Design */}
+{!announcementsLoading && announcements.length > 0 && (
+<section className="py-16 bg-white relative overflow-hidden">
+  <div className="container mx-auto px-6 lg:px-20">
+    {/* Header */}
+    <div className="text-center mb-12">
+      <div className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-indigo-50 text-indigo-800 mb-4 shadow-sm">
+        <i className="fas fa-bullhorn mr-2 text-indigo-600"></i>
+        Latest Updates
+      </div>
+      <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+        Important <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Announcements</span>
+      </h2>
+      <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+        Stay informed with the latest news from our community
+      </p>
+    </div>
+    
+    {/* Announcements Grid - More Compact */}
+    <div className="max-w-6xl mx-auto">
+      <div className="space-y-4">
+        {announcements.map((announcement, index) => (
+          <div
+            key={announcement.id}
+            className="group bg-white border border-gray-200 rounded-xl hover:border-indigo-300 hover:shadow-lg transition-all duration-300 overflow-hidden"
+          >
+            <div className="p-6">
+              <div className="flex items-start gap-4">
+                {/* Icon */}
+                <div className="flex-shrink-0 mt-1">
+                  <div className="w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center shadow-md group-hover:shadow-lg transition-all duration-300">
+                    <i className="fas fa-bell text-white text-sm"></i>
+                  </div>
+                </div>
+                
+                {/* Content */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-indigo-600 transition-colors duration-300">
+                        {announcement.title}
+                      </h3>
+                      <p className="text-gray-600 text-sm leading-relaxed overflow-hidden" style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
+                        {announcement.content}
+                      </p>
+                    </div>
+                    
+                    {/* Date Badge */}
+                    <div className="flex-shrink-0">
+                      <div className="bg-gray-50 px-3 py-1 rounded-lg border">
+                        <span className="text-xs font-medium text-gray-600">
+                          {new Date(announcement.createdAt).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric'
+                          })}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Bottom accent line */}
+            <div className="h-1 bg-gradient-to-r from-indigo-500 to-purple-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+)}
 
 
         {/* Features Section */}

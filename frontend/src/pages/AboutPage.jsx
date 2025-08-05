@@ -578,10 +578,10 @@ const AboutPage = () => {
                           e.target.src = 'https://images.unsplash.com/photo-1562774053-701939374585?w=800&h=600&fit=crop';
                         }}
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
                       <div className="absolute bottom-4 left-4 right-4 text-white">
-                        <h3 className="text-lg md:text-xl font-bold mb-1">{image.title}</h3>
-                        <p className="text-sm text-gray-200">{image.description}</p>
+                        <h3 className="text-lg md:text-xl font-bold mb-1 text-white drop-shadow-lg">{image.title}</h3>
+                        <p className="text-sm text-gray-100 drop-shadow-md">{image.description}</p>
                       </div>
                     </div>
                   ))}
