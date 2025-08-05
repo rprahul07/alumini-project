@@ -125,3 +125,48 @@ export const deleteTestimonial = async (req, res) => {
     handleError(error, req, res);
   }
 };
+
+// Public: Get testimonials (no auth required)
+export const getPublicTestimonials = async (req, res) => {
+  try {
+    const testimonials = await prisma.Testimonial.findMany({
+      include: { 
+        user: {
+          include: {
+            alumni: true
+          }
+        }
+      },
+      where: {
+        user: {
+          alumni: {
+            isNot: null // Only get testimonials from alumni
+          }
+        }
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    // Return safe data for public consumption
+    const publicTestimonials = testimonials.map(t => ({
+      id: t.id,
+      content: t.content,
+      createdAt: t.createdAt,
+      user: {
+        fullName: t.user.fullName,
+        photoUrl: t.user.photoUrl,
+        department: t.user.department,
+        alumni: {
+          graduationYear: t.user.alumni.graduationYear,
+          course: t.user.alumni.course,
+          currentJobTitle: t.user.alumni.currentJobTitle,
+          companyName: t.user.alumni.companyName
+        }
+      }
+    }));
+
+    res.status(200).json(createResponse(true, "Public testimonials fetched", publicTestimonials));
+  } catch (error) {
+    handleError(error, req, res);
+  }
+};

@@ -1,4 +1,5 @@
 import AdminContactMessages from '../../components/admin/AdminContactMessages';
+import AdminTestimonials from '../../components/admin/AdminTestimonials';
 import React, { useState, useEffect } from "react";
 import {
   FiUsers,
@@ -15,6 +16,7 @@ import {
   FiUser,
   FiMenu,
   FiX,
+  FiMessageSquare,
 } from "react-icons/fi";
 import apiService from "../../middleware/api";
 import { useNavigate } from "react-router-dom";
@@ -469,6 +471,15 @@ const Sidebar = ({ onNavigate, onEventSectionChange, activeView, eventSection })
                 >
                   <FiBell className="h-6 w-6 text-gray-500 group-hover:text-indigo-600" />
                   <span className="font-medium">Contact Messages</span>
+                </button>
+              </li>
+              <li className="mb-3">
+                <button
+                  onClick={() => onNavigate("testimonials")}
+                  className={`w-full text-left flex items-center space-x-3 p-3 text-gray-700 rounded-xl hover:bg-indigo-50 hover:text-indigo-700 transition-colors duration-200 group ${activeView === "testimonials" ? 'bg-indigo-100' : ''}`}
+                >
+                  <FiMessageSquare className="h-6 w-6 text-gray-500 group-hover:text-indigo-600" />
+                  <span className="font-medium">Testimonials</span>
                 </button>
               </li>
               <li className="mb-3">
@@ -1462,6 +1473,8 @@ const AdminDashboard = () => {
         ); 
       case "contact-messages":
         return <AdminContactMessages />;
+      case "testimonials":
+        return <AdminTestimonials />;
       case "settings":
         return (
           <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">

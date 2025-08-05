@@ -18,6 +18,7 @@ import ContactPage from '../pages/ContactPage';
 import StudentsPage from '../pages/StudentsPage';
 import JobsPage from '../pages/JobsPage';
 import FaqPage from '../pages/FaqPage';
+import TestimonialsPage from '../pages/TestimonialsPage';
 
 
 // Protected route for a specific role
@@ -43,6 +44,7 @@ const AppRoutes = () => {
       <Route path="/events" element={<EventsPage />} />
       <Route path="/unauthorized" element={<UnauthorizedPage />} />
       <Route path="/about" element={<AboutPage />} />
+      <Route path="/testimonials" element={<TestimonialsPage />} />
       <Route path="/alumni" element={<ProtectedRoute><AlumniPage /></ProtectedRoute>} />
       <Route path="/contact" element={<ContactPage />} />
       <Route path="/faq" element={<FaqPage />} />

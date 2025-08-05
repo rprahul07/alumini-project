@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import { testimonialsAPI } from "../services/testimonialsService";
+import { dashboardAPI } from "../services/dashboardService";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import thirikeImg from '../assets/Thirike.jpg';
 import Navbar from '../components/Navbar';
@@ -60,37 +62,6 @@ const featuresData = [
   },
 ];
 
-const testimonials = [
-  {
-    name: "Sarah Johnson",
-    position: "Marketing Director, TechCorp",
-    content:
-      "CUCEK Alumni Connect has been instrumental in my career growth. I've connected with industry leaders and found my current job through the network.",
-    image: defaultImages.alumni1,
-  },
-  {
-    name: "Michael Chen",
-    position: "Software Engineer, Innovate Inc.",
-    content:
-      "The networking events and mentorship programs have been invaluable. I've gained insights that have directly impacted my professional development.",
-    image: defaultImages.alumni2,
-  },
-  {
-    name: "Emily Rodriguez",
-    position: "Business Analyst, Global Solutions",
-    content:
-      "As a recent graduate, this platform has been my gateway to the professional world. The resources and connections have been truly transformative.",
-    image: defaultImages.alumni3,
-  },
-  {
-    name: "David Wilson",
-    position: "Product Manager, Future Tech",
-    content:
-      "The alumni network has connected me with mentors who have guided me through challenging career transitions. It's more than just a platform - it's a community.",
-    image: defaultImages.alumni4,
-  },
-];
-
 const filters = [
   "All Features",
   "Networking",
@@ -99,18 +70,22 @@ const filters = [
   "Resources",
 ];
 
-const staticStats = {
-  alumniMembers: 15000,
-  activeUsers: 5000,
-  eventsHosted: 350,
-};
-
 const HomePage = () => {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
   const [activeFilter, setActiveFilter] = useState("All Features");
-  const [stats, setStats] = useState(staticStats);
-  const [animatedStats, setAnimatedStats] = useState(staticStats);
+  const [stats, setStats] = useState({
+    alumniMembers: 0,
+    activeUsers: 0,
+    eventsHosted: 0,
+  });
+  const [animatedStats, setAnimatedStats] = useState({
+    alumniMembers: 0,
+    activeUsers: 0,
+    eventsHosted: 0,
+  });
+  const [testimonials, setTestimonials] = useState([]);
+  const [testimonialsLoading, setTestimonialsLoading] = useState(true);
 
   // Animate stats when in view
   useEffect(() => {
@@ -153,6 +128,55 @@ const HomePage = () => {
     onScroll();
     return () => window.removeEventListener("scroll", onScroll);
   }, [stats]);
+
+  // Fetch testimonials and dashboard stats
+  useEffect(() => {
+    const fetchTestimonials = async () => {
+      try {
+        const result = await testimonialsAPI.getPublic();
+        if (result.success && result.data.length > 0) {
+          // Sort testimonials by creation date (latest first) and take the first 4
+          const sortedTestimonials = result.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+          
+          // Transform API testimonials to match HomePage format
+          const transformedTestimonials = sortedTestimonials.slice(0, 4).map(testimonial => ({
+            name: testimonial.user?.fullName || 'Alumni',
+            position: `${testimonial.user?.alumni?.currentJobTitle || 'Professional'}, ${testimonial.user?.alumni?.companyName || 'Company'}`,
+            content: testimonial.content,
+            image: testimonial.user?.photoUrl || defaultImages.alumni1
+          }));
+          setTestimonials(transformedTestimonials);
+        } else {
+          // No testimonials available
+          setTestimonials([]);
+        }
+      } catch (error) {
+        console.error('Failed to fetch testimonials:', error);
+        // No testimonials on error
+        setTestimonials([]);
+      } finally {
+        setTestimonialsLoading(false);
+      }
+    };
+
+    const fetchDashboardStats = async () => {
+      try {
+        const result = await dashboardAPI.getStats();
+        if (result.success) {
+          setStats({
+            alumniMembers: result.data.totalAlumni || 0,
+            activeUsers: result.data.totalUsers || 0,
+            eventsHosted: result.data.eventscount || 0,
+          });
+        }
+      } catch (error) {
+        console.error('Failed to fetch dashboard stats:', error);
+      }
+    };
+
+    fetchTestimonials();
+    fetchDashboardStats();
+  }, []);
 
   // Image error handler
   const handleImageError = (e, fallbackSrc) => {
@@ -293,42 +317,73 @@ const HomePage = () => {
         {/* Testimonials Section */}
         <section className="section py-10 lg:px-20 sm:py-10" id="testimonials">
           <div className="container mx-auto px-4">
-            <h2 className="section-title text-3xl md:text-4xl font-bold mb-12 relative inline-block">
-              What Alumni Say
-              <span className="absolute left-0 -bottom-3 w-16 h-1 bg-[#5A32EA] rounded"></span>
-            </h2>
-            <div className="row grid grid-cols-1 md:grid-cols-2 gap-8">
-              {testimonials.map((t, idx) => (
-                <div
-                  key={idx}
-                  className="testimonial-card bg-white rounded-2xl p-8 mb-4 shadow-lg"
-                >
-                  <div className="testimonial-header flex items-center mb-6">
-                    <img
-                      src={t.image}
-                      alt={t.name}
-                      className="testimonial-avatar w-16 h-16 rounded-full object-cover mr-4"
-                      onError={(e) => handleImageError(e, defaultImages.alumni1)}
-                      loading="lazy"
-                    />
-                    <div>
-                      <h5 className="testimonial-author font-semibold mb-0">
-                        {t.name}
-                      </h5>
-                      <p className="testimonial-position text-gray-500 text-sm">
-                        {t.position}
-                      </p>
-                    </div>
+            <div className="flex flex-col sm:flex-row justify-between items-center mb-12">
+              <div>
+                <h2 className="section-title text-3xl md:text-4xl font-bold relative inline-block">
+                  What Alumni Say
+                  <span className="absolute left-0 -bottom-3 w-16 h-1 bg-[#5A32EA] rounded"></span>
+                </h2>
+              </div>
+              
+              {/* View All Testimonials Button */}
+              <div className="mt-4 sm:mt-0">
+                {testimonialsLoading ? (
+                  <div className="flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#5A32EA]"></div>
+                    <span className="ml-3 text-gray-600">Loading testimonials...</span>
                   </div>
-                  <p className="testimonial-content italic text-gray-600 mb-6">
-                    "{t.content}"
-                  </p>
-                  <span className="status-badge status-active bg-green-100 text-green-600 text-xs px-4 py-2 rounded-full">
-                    Active Member
-                  </span>
-                </div>
-              ))}
+                ) : (
+                  <button
+                    onClick={() => navigate('/testimonials')}
+                    className="inline-flex items-center px-8 py-4 bg-[#5A32EA] text-white font-semibold rounded-full hover:bg-[#4827b8] transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+                  >
+                    <i className="fas fa-comments mr-2"></i>
+                    <span>View All Testimonials</span>
+                    <i className="fas fa-arrow-right ml-2"></i>
+                  </button>
+                )}
+              </div>
             </div>
+            
+            {testimonialsLoading ? (
+              <div className="text-center py-12">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#5A32EA] mx-auto"></div>
+                <p className="text-gray-600 mt-4">Loading testimonials...</p>
+              </div>
+            ) : (
+              <div className="row grid grid-cols-1 md:grid-cols-2 gap-8">
+                {testimonials.map((t, idx) => (
+                  <div
+                    key={idx}
+                    className="testimonial-card bg-white rounded-2xl p-8 mb-4 shadow-lg"
+                  >
+                    <div className="testimonial-header flex items-center mb-6">
+                      <img
+                        src={t.image}
+                        alt={t.name}
+                        className="testimonial-avatar w-16 h-16 rounded-full object-cover mr-4"
+                        onError={(e) => handleImageError(e, defaultImages.alumni1)}
+                        loading="lazy"
+                      />
+                      <div>
+                        <h5 className="testimonial-author font-semibold mb-0">
+                          {t.name}
+                        </h5>
+                        <p className="testimonial-position text-gray-500 text-sm">
+                          {t.position}
+                        </p>
+                      </div>
+                    </div>
+                    <p className="testimonial-content italic text-gray-600 mb-6">
+                      "{t.content}"
+                    </p>
+                    <span className="status-badge status-active bg-green-100 text-green-600 text-xs px-4 py-2 rounded-full">
+                      Active Member
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </section>
 
