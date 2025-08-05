@@ -192,6 +192,31 @@ export const AuthProvider = ({ children }) => {
   // Get user role from state or localStorage
   const role = user?.role || localStorage.getItem(USER_ROLE_KEY) || selectedRole || null;
 
+  // Helper function to check if user is admin
+  const isAdmin = () => {
+    // Debug logging to see what roles we have
+    console.log('Debug - Role check:', {
+      userRole: user?.role,
+      localStorageRole: localStorage.getItem(USER_ROLE_KEY),
+      selectedRole: selectedRole,
+      computedRole: role
+    });
+    
+    // Check multiple possible role formats (case insensitive)
+    const userRole = user?.role?.toLowerCase();
+    const computedRole = role?.toLowerCase();
+    
+    return userRole === 'admin' || 
+           computedRole === 'admin' || 
+           userRole === 'ADMIN' || 
+           computedRole === 'ADMIN';
+  };
+
+  // Helper function to check if user can access gallery management
+  const canManageGallery = () => {
+    return isAdmin(); // Only admins can manage gallery
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -206,6 +231,8 @@ export const AuthProvider = ({ children }) => {
         register,
         clearError: () => setError(null),
         setUser,
+        isAdmin,
+        canManageGallery,
       }}
     >
       {children}

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import { testimonialsAPI } from '../services/testimonialsService';
 import { dashboardAPI } from '../services/dashboardService';
+import { galleryAPI } from '../services/galleryService';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { useNavigate, Link } from 'react-router-dom';
 
@@ -13,6 +14,8 @@ const AboutPage = () => {
   const [currentTestimonialIndex, setCurrentTestimonialIndex] = useState(0);
   const [testimonials, setTestimonials] = useState([]);
   const [testimonialsLoading, setTestimonialsLoading] = useState(true);
+  const [galleryImages, setGalleryImages] = useState([]);
+  const [galleryLoading, setGalleryLoading] = useState(true);
   const [stats, setStats] = useState({
     alumniCount: 0,
     activeUsers: 0,
@@ -131,8 +134,49 @@ const AboutPage = () => {
       }
     };
 
+    const fetchGallery = async () => {
+      try {
+        const result = await galleryAPI.getGallery();
+        if (result.success && result.data.length > 0) {
+          // Transform API gallery to match AboutPage format
+          const transformedGallery = result.data.map((item) => ({
+            id: item.id,
+            title: item.title,
+            description: item.description || '',
+            image: item.imageUrl,
+            redirectionUrl: item.redirectionUrl
+          }));
+          setGalleryImages(transformedGallery);
+        } else {
+          // Fallback to a default image if no gallery items
+          setGalleryImages([
+            {
+              id: 1,
+              title: 'CUCEK Campus',
+              description: 'Beautiful campus of Cochin University College of Engineering Kuttanad',
+              image: 'https://images.unsplash.com/photo-1562774053-701939374585?w=800&h=600&fit=crop'
+            }
+          ]);
+        }
+      } catch (error) {
+        console.error('Failed to fetch gallery:', error);
+        // Fallback to default image on error
+        setGalleryImages([
+          {
+            id: 1,
+            title: 'CUCEK Campus',
+            description: 'Beautiful campus of Cochin University College of Engineering Kuttanad',
+            image: 'https://images.unsplash.com/photo-1562774053-701939374585?w=800&h=600&fit=crop'
+          }
+        ]);
+      } finally {
+        setGalleryLoading(false);
+      }
+    };
+
     fetchTestimonials();
     fetchDashboardStats();
+    fetchGallery();
   }, []);
 
   // Alumni success stories data with more dynamic content
@@ -191,66 +235,6 @@ const AboutPage = () => {
     { name: 'Amazon', logo: 'fab fa-amazon', color: 'text-orange-500' },
     { name: 'Meta', logo: 'fab fa-meta', color: 'text-blue-700' },
     { name: 'IBM', logo: 'fas fa-cube', color: 'text-blue-800' }
-  ];
-
-  // Gallery images for campus life and events
-  const galleryImages = [
-    {
-      id: 1,
-      title: 'Modern Campus Life',
-      description: 'State-of-the-art facilities and vibrant student community',
-      image: 'https://images.unsplash.com/photo-1562774053-701939374585?w=800&h=600&fit=crop',
-      category: 'Campus'
-    },
-    {
-      id: 2,
-      title: 'Research Excellence',
-      description: 'Cutting-edge laboratories and research facilities',
-      image: 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=800&h=600&fit=crop',
-      category: 'Research'
-    },
-    {
-      id: 3,
-      title: 'Alumni Networking Events',
-      description: 'Global alumni meetups and professional networking',
-      image: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800&h=600&fit=crop',
-      category: 'Events'
-    },
-    {
-      id: 4,
-      title: 'Innovation Labs',
-      description: 'Students working on breakthrough technologies',
-      image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&h=600&fit=crop',
-      category: 'Innovation'
-    },
-    {
-      id: 5,
-      title: 'Graduation Ceremonies',
-      description: 'Celebrating achievements and new beginnings',
-      image: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&h=600&fit=crop',
-      category: 'Celebrations'
-    },
-    {
-      id: 6,
-      title: 'Technical Competitions',
-      description: 'Students showcasing their engineering prowess',
-      image: 'https://images.unsplash.com/photo-1517180102446-f3ece451e9d8?w=800&h=600&fit=crop',
-      category: 'Competitions'
-    },
-    {
-      id: 7,
-      title: 'Industry Partnerships',
-      description: 'Collaborations with leading tech companies',
-      image: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=800&h=600&fit=crop',
-      category: 'Industry'
-    },
-    {
-      id: 8,
-      title: 'Cultural Events',
-      description: 'Celebrating diversity and creativity',
-      image: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&h=600&fit=crop',
-      category: 'Culture'
-    }
   ];
 
   // University achievements and milestones
@@ -548,19 +532,38 @@ const AboutPage = () => {
         </section>
 
         {/* Interactive Gallery Section */}
-        <section className="py-20 bg-gradient-to-br from-indigo-50 to-purple-50 overflow-hidden">
+        <section className="py-16 bg-gradient-to-br from-indigo-50 to-purple-50 overflow-hidden">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-gray-900 mb-4 flex items-center justify-center">
-                <i className="fas fa-images mr-4 text-[#5A32EA]"></i>
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold text-gray-900 mb-3 flex items-center justify-center">
+                <i className="fas fa-images mr-3 text-[#5A32EA]"></i>
                 Campus Life Gallery
               </h2>
-              <p className="text-xl text-gray-600">Experience the vibrant life at CUCEK through our visual journey</p>
+              <p className="text-lg text-gray-600">Experience the vibrant life at CUCEK through our visual journey</p>
             </div>
             
             <div className="relative">
+              {galleryLoading ? (
+                /* Loading State */
+                <div className="relative h-64 md:h-80 rounded-2xl overflow-hidden shadow-xl bg-gray-200 animate-pulse flex items-center justify-center">
+                  <div className="text-center">
+                    <div className="inline-block w-6 h-6 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mb-3"></div>
+                    <p className="text-gray-600">Loading gallery...</p>
+                  </div>
+                </div>
+              ) : galleryImages.length === 0 ? (
+                /* Empty State */
+                <div className="relative h-64 md:h-80 rounded-2xl overflow-hidden shadow-xl bg-gray-100 flex items-center justify-center">
+                  <div className="text-center">
+                    <i className="fas fa-images text-4xl text-gray-400 mb-3"></i>
+                    <p className="text-lg text-gray-600">No gallery images available</p>
+                  </div>
+                </div>
+              ) : (
+                /* Gallery Content */
+                <>
               {/* Main Gallery Display */}
-              <div className="relative h-96 md:h-[500px] rounded-3xl overflow-hidden shadow-2xl">
+              <div className="relative h-64 md:h-80 rounded-2xl overflow-hidden shadow-xl">
                 <div 
                   className="flex transition-transform duration-700 ease-in-out h-full"
                   style={{ transform: `translateX(-${currentGalleryIndex * 100}%)` }}
@@ -576,12 +579,9 @@ const AboutPage = () => {
                         }}
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                      <div className="absolute bottom-8 left-8 right-8 text-white">
-                        <div className="inline-block px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-sm font-medium mb-4">
-                          {image.category}
-                        </div>
-                        <h3 className="text-2xl md:text-3xl font-bold mb-2">{image.title}</h3>
-                        <p className="text-lg text-gray-200">{image.description}</p>
+                      <div className="absolute bottom-4 left-4 right-4 text-white">
+                        <h3 className="text-lg md:text-xl font-bold mb-1">{image.title}</h3>
+                        <p className="text-sm text-gray-200">{image.description}</p>
                       </div>
                     </div>
                   ))}
@@ -590,28 +590,28 @@ const AboutPage = () => {
                 {/* Navigation Arrows */}
                 <button
                   onClick={() => setCurrentGalleryIndex((prev) => (prev - 1 + galleryImages.length) % galleryImages.length)}
-                  className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-[#5A32EA]/20 backdrop-blur-md text-white p-3 rounded-full hover:bg-[#5A32EA]/40 transition-all duration-300 group"
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 bg-[#5A32EA]/20 backdrop-blur-md text-white p-2 rounded-full hover:bg-[#5A32EA]/40 transition-all duration-300 group"
                 >
-                  <i className="fas fa-chevron-left group-hover:scale-110 transition-transform duration-300"></i>
+                  <i className="fas fa-chevron-left group-hover:scale-110 transition-transform duration-300 text-sm"></i>
                 </button>
                 <button
                   onClick={() => setCurrentGalleryIndex((prev) => (prev + 1) % galleryImages.length)}
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-[#5A32EA]/20 backdrop-blur-md text-white p-3 rounded-full hover:bg-[#5A32EA]/40 transition-all duration-300 group"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-[#5A32EA]/20 backdrop-blur-md text-white p-2 rounded-full hover:bg-[#5A32EA]/40 transition-all duration-300 group"
                 >
-                  <i className="fas fa-chevron-right group-hover:scale-110 transition-transform duration-300"></i>
+                  <i className="fas fa-chevron-right group-hover:scale-110 transition-transform duration-300 text-sm"></i>
                 </button>
               </div>
               
               {/* Thumbnail Navigation */}
-              <div className="flex justify-center mt-8 space-x-2 overflow-x-auto pb-4">
+              <div className="flex justify-center mt-6 mb-4 space-x-2 overflow-x-auto pb-6 px-4">
                 {galleryImages.map((image, index) => (
                   <button
                     key={image.id}
                     onClick={() => setCurrentGalleryIndex(index)}
-                    className={`flex-shrink-0 w-20 h-16 rounded-lg overflow-hidden transition-all duration-300 ${
+                    className={`flex-shrink-0 w-16 h-12 rounded-lg overflow-hidden transition-all duration-300 relative ${
                       index === currentGalleryIndex 
-                        ? 'ring-4 ring-[#5A32EA] ring-opacity-60 scale-110' 
-                        : 'opacity-70 hover:opacity-100 hover:scale-105'
+                        ? 'ring-3 ring-[#5A32EA] ring-opacity-60 scale-105 z-10 mx-1' 
+                        : 'opacity-70 hover:opacity-100 hover:scale-100 mx-0.5'
                     }`}
                   >
                     <img
@@ -626,23 +626,6 @@ const AboutPage = () => {
                 ))}
               </div>
               
-              {/* Category Filter Pills */}
-              <div className="flex flex-wrap justify-center gap-3 mt-8">
-                {[...new Set(galleryImages.map(img => img.category))].map((category, index) => (
-                  <button
-                    key={category}
-                    onClick={() => {
-                      const categoryIndex = galleryImages.findIndex(img => img.category === category);
-                      setCurrentGalleryIndex(categoryIndex);
-                    }}
-                    className="px-4 py-2 bg-[#5A32EA]/10 text-[#5A32EA] rounded-full font-medium hover:bg-[#5A32EA]/20 transition-all duration-300 hover:scale-105 flex items-center"
-                  >
-                    <i className="fas fa-tag mr-2"></i>
-                    {category}
-                  </button>
-                ))}
-              </div>
-              
               {/* Progress Indicators */}
               <div className="flex justify-center mt-6 space-x-2">
                 {galleryImages.map((_, index) => (
@@ -651,12 +634,14 @@ const AboutPage = () => {
                     onClick={() => setCurrentGalleryIndex(index)}
                     className={`transition-all duration-300 ${
                       index === currentGalleryIndex 
-                        ? 'w-8 h-3 bg-[#5A32EA] rounded-full' 
-                        : 'w-3 h-3 bg-gray-300 rounded-full hover:bg-gray-400'
+                        ? 'w-6 h-2 bg-[#5A32EA] rounded-full' 
+                        : 'w-2 h-2 bg-gray-300 rounded-full hover:bg-gray-400'
                     }`}
                   />
                 ))}
               </div>
+              </>
+              )}
             </div>
           </div>
         </section>

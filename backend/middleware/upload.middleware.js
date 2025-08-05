@@ -2,7 +2,7 @@ import multer from "multer";
 
 // File filter function
 const fileFilter = (req, file, cb) => {
-  const allowedTypes = [
+  const allowedImageTypes = [
     "image/jpeg",
     "image/jpg",
     "image/png",
@@ -10,7 +10,7 @@ const fileFilter = (req, file, cb) => {
     "image/webp",
   ];
   
-  if (allowedTypes.includes(file.mimetype)) {
+  if (allowedImageTypes.includes(file.mimetype)) {
     cb(null, true);
   } else {
     cb(new Error("Only image files are allowed (JPEG, PNG, GIF, WebP)"), false);
@@ -24,7 +24,7 @@ export const uploadPhotoMiddleware = multer({
   storage: storage,
   fileFilter: fileFilter,
   limits: { 
-    fileSize: 10 * 1024 * 1024, // 10MB limit
+    fileSize: 10 * 1024 * 1024, // 10MB limit for images only
     files: 1 // Limit to 1 file per request
   }
 }).fields([

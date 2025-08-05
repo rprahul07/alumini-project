@@ -1,5 +1,6 @@
 import AdminContactMessages from '../../components/admin/AdminContactMessages';
 import AdminTestimonials from '../../components/admin/AdminTestimonials';
+import AdminGallery from '../../components/admin/AdminGallery';
 import React, { useState, useEffect } from "react";
 import {
   FiUsers,
@@ -17,6 +18,7 @@ import {
   FiMenu,
   FiX,
   FiMessageSquare,
+  FiImage,
 } from "react-icons/fi";
 import apiService from "../../middleware/api";
 import { useNavigate } from "react-router-dom";
@@ -314,6 +316,7 @@ const Sidebar = ({ onNavigate, onEventSectionChange, activeView, eventSection })
   // Main menu items
   const mainMenuItems = [
     { title: "Dashboard", icon: FiHome, view: "dashboard" },
+    { title: "Gallery", icon: FiImage, view: "gallery" },
   ];
 
   // User Management submenu items
@@ -1475,6 +1478,8 @@ const AdminDashboard = () => {
         return <AdminContactMessages />;
       case "testimonials":
         return <AdminTestimonials />;
+      case "gallery":
+        return <AdminGallery />;
       case "settings":
         return (
           <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">

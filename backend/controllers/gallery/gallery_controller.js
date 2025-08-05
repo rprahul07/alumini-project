@@ -5,23 +5,34 @@ import { containerClient } from '../../utils/azureBlobConfig.js'; // ensure this
 
 export const createGallery = async (req, res) => {
   try {
-    const { title, description, redirectionUrl } = req.body;
+    const { title, description } = req.body;
+    console.log('Create gallery request received:', { title, description });
 
     // Check file presence
     if (!req.files || !req.files.photo || !req.files.photo[0]) {
+      console.error('No image file found in request');
       return res.status(400).json(createResponse(false, "No image file provided"));
     }
 
+    const file = req.files.photo[0];
+    console.log('File details:', { 
+      originalname: file.originalname, 
+      mimetype: file.mimetype, 
+      size: file.size 
+    });
+
     const imageUrl = await handlePhotoUpload(req, null, 'gallery');
     if (!imageUrl) {
+      console.error('Image upload failed');
       return res.status(400).json(createResponse(false, "Image upload failed. Please check the file format and try again."));
     }
+
+    console.log('Image uploaded successfully:', imageUrl);
 
     const gallery = await prisma.gallery.create({
       data: {
         title,
         description,
-        redirectionUrl,
         imageUrl
       },
     });
@@ -47,7 +58,7 @@ export const getAllGallery = async (req, res) => {
 export const updateGallery = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, redirectionUrl } = req.body;
+    const { title, description } = req.body;
 
     const existingItem = await prisma.gallery.findUnique({
       where: { id: Number(id) }
@@ -59,7 +70,8 @@ export const updateGallery = async (req, res) => {
 
     let imageUrl = existingItem.imageUrl;
 
-    if (req.files?.photo?.[0]) {
+    // Check for file upload - support both 'image' and 'photo' field names
+    if (req.files && (req.files.image?.[0] || req.files.photo?.[0])) {
       // Delete old image from Azure Blob
       if (existingItem.imageUrl) {
         try {
@@ -83,7 +95,6 @@ export const updateGallery = async (req, res) => {
       data: {
         title,
         description,
-        redirectionUrl,
         imageUrl
       },
     });
