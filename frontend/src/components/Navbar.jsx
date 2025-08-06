@@ -368,14 +368,38 @@ const Navbar = ({ isHome = false }) => {
             to="/" 
             className="flex items-center space-x-3 logo-float group"
           >
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 transform group-hover:scale-105">
-              <i className="fas fa-graduation-cap text-white text-lg"></i>
+            {/* Modern Logo Container with Custom Design */}
+            <div className="relative">
+              <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#5A32EA] via-indigo-600 to-purple-600 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 transform group-hover:scale-105 border border-white/20">
+                {/* Simple Academic Icon */}
+                <div className="relative">
+                  <i className="fas fa-graduation-cap text-white text-lg"></i>
+                </div>
+              </div>
+              {/* Subtle glow effect */}
+              <div className="absolute inset-0 w-11 h-11 rounded-2xl bg-gradient-to-br from-[#5A32EA] to-purple-600 opacity-0 group-hover:opacity-20 transition-opacity duration-300 blur-sm"></div>
             </div>
+            
+            {/* Enhanced Brand Typography */}
             <div className="hidden sm:block">
-              <span className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">
-                CUCEK
+              <div className="flex flex-col">
+                <span className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#5A32EA] to-indigo-700 group-hover:from-[#4B28D4] group-hover:to-purple-700 transition-all duration-300">
+                  Alumni Connect
+                </span>
+                <div className="flex items-center space-x-1 -mt-1">
+                  <span className="text-xs font-medium text-gray-500 group-hover:text-[#5A32EA] transition-colors duration-300">
+                    CUCEK Network
+                  </span>
+                  <div className="w-1 h-1 bg-[#5A32EA] rounded-full opacity-60"></div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Mobile Logo with Modern Touch */}
+            <div className="block sm:hidden">
+              <span className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#5A32EA] to-indigo-600">
+                Alumni
               </span>
-              <div className="text-sm text-gray-600 -mt-1">Alumni Connect</div>
             </div>
           </Link>
 

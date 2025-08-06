@@ -713,6 +713,7 @@ export const getAlumniSelf = async (req, res) => {
   try {
     const userId = req.user.id;
 
+    // Get user profile data
     const user = await prisma.user.findUnique({
       where: { id: userId },
       select: {
@@ -752,10 +753,48 @@ export const getAlumniSelf = async (req, res) => {
       });
     }
 
+    // ✅ Get dashboard statistics for this alumni
+    const [eventsCreated, eventsRegistered, jobsPosted, mentorshipRequests, bookmarksReceived] = await Promise.all([
+      // Events created by this alumni
+      prisma.event.count({
+        where: { userId: userId }
+      }),
+      // Events registered by this alumni  
+      prisma.event_registrations.count({
+        where: { registered_user_id: userId }
+      }),
+      // Jobs posted by this alumni
+      prisma.job.count({
+        where: { userId: userId }
+      }),
+      // Mentorship requests received
+      prisma.supportRequest.count({
+        where: { alumniId: userId }
+      }),
+      // Students who bookmarked this alumni
+      prisma.bookmark.count({
+        where: { 
+          alumni: {
+            userId: userId
+          }
+        }
+      })
+    ]);
+
     return res.status(200).json({
       success: true,
       message: "Alumni profile fetched successfully",
-      data: user,
+      data: {
+        ...user,
+        // ✅ Include dashboard stats in the response
+        dashboardStats: {
+          eventsCreated,
+          eventsRegistered,
+          jobsPosted,
+          mentorshipRequests,
+          bookmarksReceived
+        }
+      },
     });
   } catch (error) {
     console.error("Error fetching alumni profile:", error);
