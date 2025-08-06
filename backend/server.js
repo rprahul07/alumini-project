@@ -16,6 +16,7 @@ import support_router from "./routes/support_requests/support_request_routes.js"
 import jobRouter from "./routes/job_routes.js";
 import bookmarkRouter from "./routes/bookmark_routes.js";
 import testimonialRouter from "./routes/testimonial_routes.js";
+import spotlightRouter from "./routes/spotlight_routes.js"
 
 // Load environment variables
 dotenv.config();
@@ -91,6 +92,7 @@ app.use("/api/testimonial", testimonialRouter);
 app.use("/api/announcements", announcementRouter);
 app.use("/api/gallery", galleryRouter);
 app.use("/api/contactus", contactusRouter);
+app.use("/api/spotlight", spotlightRouter);
 
 // Error handler for Prisma errors
 app.use((err, req, res, next) => {
