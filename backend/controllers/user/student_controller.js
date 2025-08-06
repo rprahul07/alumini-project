@@ -779,6 +779,26 @@ export const getMyStudentProfile = async (req, res) => {
       });
     }
 
+    // ✅ Get dashboard statistics for this student
+    const [eventsRegistered, jobsApplied, mentorshipRequestsSent, alumniBookmarked] = await Promise.all([
+      // Events registered by this student
+      prisma.event_registrations.count({
+        where: { registered_user_id: userId }
+      }),
+      // Jobs applied by this student
+      prisma.jobRegistration.count({
+        where: { userId: userId }
+      }),
+      // Mentorship requests sent
+      prisma.supportRequest.count({
+        where: { support_requester: userId }
+      }),
+      // Alumni bookmarked by this student
+      prisma.bookmark.count({
+        where: { userId: userId }
+      })
+    ]);
+
     // Format the response to include all necessary fields
     const profileData = {
       id: user.id,
@@ -801,6 +821,13 @@ export const getMyStudentProfile = async (req, res) => {
             graduationYear: user.student.graduationYear,
           }
         : null,
+      // ✅ Include dashboard stats in the response
+      dashboardStats: {
+        eventsRegistered,
+        jobsApplied,
+        mentorshipRequestsSent,
+        alumniBookmarked
+      }
     };
 
     

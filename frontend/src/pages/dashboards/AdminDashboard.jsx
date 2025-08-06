@@ -3,6 +3,7 @@ import AdminTestimonials from '../../components/admin/AdminTestimonials';
 import AdminGallery from '../../components/admin/AdminGallery';
 import AdminAnnouncements from './AdminAnnouncements';
 import React, { useState, useEffect } from "react";
+import { useAuth } from "../../contexts/AuthContext"; // ✅ Added AuthContext
 import {
   FiUsers,
   FiBook,
@@ -253,42 +254,19 @@ const AdminOpportunities = () => {
 // --- ProtectedRoute Component ---
 const ProtectedRoute = ({ children }) => {
   const navigate = useNavigate();
-  const [isAuthorized, setIsAuthorized] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const { user, loading } = useAuth(); // ✅ Use AuthContext
+  const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
-    const checkAuth = () => {
-      const token = localStorage.getItem("token");
-      const userData = localStorage.getItem("user");
-
-      if (!token || !userData) {
-        navigate("/admin/login", { replace: true });
-        return;
-      }
-
-      try {
-        const user = JSON.parse(userData);
-        if (user.role === "admin") {
-          setIsAuthorized(true);
-        } else {
-          localStorage.removeItem("token");
-          localStorage.removeItem("user");
-          navigate("/admin/login", { replace: true });
-        }
-      } catch (error) {
-        console.error("Error parsing user data:", error);
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
+    if (!loading) { // ✅ Wait for AuthContext to finish loading
+      if (!user || user.role !== 'admin') {
         navigate("/admin/login", { replace: true });
       }
+      setIsChecking(false);
+    }
+  }, [user, loading, navigate]);
 
-      setIsLoading(false);
-    };
-
-    checkAuth();
-  }, [navigate]);
-
-  if (isLoading) {
+  if (loading || isChecking) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
         <div className="text-center">
@@ -301,8 +279,8 @@ const ProtectedRoute = ({ children }) => {
     );
   }
 
-  if (!isAuthorized) {
-    return null;
+  if (!user || user.role !== 'admin') {
+    return null; // Navigate will redirect
   }
 
   return children;
@@ -956,8 +934,7 @@ const UserTableDisplay = ({ userType, users, onUpdateUser, onDeleteUser }) => {
 
 // --- AdminDashboard Component ---
 const AdminDashboard = () => {
-  const userData = localStorage.getItem("user");
-  const user = userData ? JSON.parse(userData) : null;
+  const { user, isAdmin } = useAuth(); // ✅ Use AuthContext instead of localStorage
   const [activeView, setActiveView] = useState("dashboard");
   const [eventSection, setEventSection] = useState("alumni");
   const [dashboardStats, setDashboardStats] = useState(null);
