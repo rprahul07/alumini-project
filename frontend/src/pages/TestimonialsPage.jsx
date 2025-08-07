@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { testimonialsAPI } from '../services/testimonialsService';
 import { dashboardAPI } from '../services/dashboardService';
-import Navbar from '../components/Navbar';
 import TestimonialSearch from '../components/TestimonialSearch';
 import TestimonialFilterButton from '../components/TestimonialFilterButton';
 import TestimonialActiveFilters from '../components/TestimonialActiveFilters';
@@ -143,11 +142,10 @@ const TestimonialsPage = () => {
 
   return (
     <>
-      <Navbar />
-      <div className="min-h-screen bg-gray-50 pt-16">
-        
-        {/* Hero Section */}
-        <section className="relative py-16 sm:py-20 overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-purple-50">
+      <div className="min-h-screen bg-gray-50">
+      
+      {/* Hero Section */}
+      <section className="relative py-16 sm:py-20 overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-purple-50">
           <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/5 to-purple-600/5"></div>
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center">

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Navbar from '../components/Navbar';
 import axios from '../config/axios';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
@@ -136,12 +135,10 @@ const ContactPage = () => {
     setExpandedFaq(expandedFaq === index ? null : index);
   };
 
-  if (isSubmitted) {
-    return (
-      <>
-        <Navbar />
-        <div className="min-h-screen bg-gray-50">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {isSubmitted ? (
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
             <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
                 <i className="fas fa-check text-green-600 text-2xl"></i>
@@ -158,16 +155,8 @@ const ContactPage = () => {
               </button>
             </div>
           </div>
-        </div>
-      </>
-    );
-  }
-
-
-  return (
-    <>
-      <Navbar />
-      <div className="min-h-screen bg-gray-50">
+      ) : (
+        <>
         {/* Hero Section */}
         <section id="support" className="bg-gradient-to-r from-indigo-100 to-white py-16 sm:py-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -405,8 +394,9 @@ const ContactPage = () => {
             </div>
           </div>
         </section>
-      </div>
-    </>
+        </>
+      )}
+    </div>
   );
 };
 

@@ -45,7 +45,7 @@ const StatCard = ({ title, value, Icon, color = 'blue', progress, progressText }
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-xl p-6 transform transition duration-500 hover:scale-105 hover:shadow-2xl animate-fade-in-up">
+    <div className="bg-white rounded-2xl shadow-xl p-6 transform transition duration-500 hover:scale-105 hover:shadow-2xl animate-in fade-in">
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm font-medium text-gray-500 mb-1">{title}</p>
@@ -87,10 +87,3 @@ StatCard.propTypes = {
 };
 
 export default StatCard;
-
-// Add fade-in-up animation
-// In your global CSS (e.g., index.css), add:
-// @keyframes fade-in-up { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
-// .animate-fade-in-up { animation: fade-in-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) both; } 
- 
- 

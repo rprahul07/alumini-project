@@ -1,6 +1,7 @@
 import React from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import MainLayout from '../layouts/MainLayout';
 import HomePage from '../pages/HomePage';
 import AuthPage from '../pages/AuthPage';
 import RoleSelection from '../pages/RoleSelection';
@@ -37,35 +38,46 @@ function ProtectedRoute({ children, allowedRoles }) {
 const AppRoutes = () => {
   return (
     <Routes>
-      {/* Public Routes */}
-      <Route path="/" element={<HomePage />} />
+      {/* Auth routes without navbar */}
       <Route path="/role-selection" element={<RoleSelection />} />
       <Route path="/auth" element={<AuthPage />} />
-      <Route path="/events" element={<EventsPage />} />
       <Route path="/unauthorized" element={<UnauthorizedPage />} />
-      <Route path="/about" element={<AboutPage />} />
-      <Route path="/testimonials" element={<TestimonialsPage />} />
-      <Route path="/alumni" element={<ProtectedRoute><AlumniPage /></ProtectedRoute>} />
-      <Route path="/contact" element={<ContactPage />} />
-      <Route path="/faq" element={<FaqPage />} />
-      <Route
-        path="/students"
-        element={
-          <ProtectedRoute allowedRoles={['faculty', 'alumni', 'admin']}>
-            <StudentsPage />
-          </ProtectedRoute>
-        }
-        
-      />
-
-      <Route
-        path="/jobs"
-        element={
-          <ProtectedRoute>
-            <JobsPage />
-          </ProtectedRoute>
-        }
-      />
+      
+      {/* HomePage with special styling */}
+      <Route path="/" element={<HomePage />} />
+      
+      {/* Routes with MainLayout (includes Navbar) */}
+      <Route path="/" element={<MainLayout />}>
+        <Route path="events" element={<EventsPage />} />
+        <Route path="about" element={<AboutPage />} />
+        <Route path="testimonials" element={<TestimonialsPage />} />
+        <Route path="contact" element={<ContactPage />} />
+        <Route path="faq" element={<FaqPage />} />
+        <Route 
+          path="alumni" 
+          element={
+            <ProtectedRoute>
+              <AlumniPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route
+          path="students"
+          element={
+            <ProtectedRoute allowedRoles={['faculty', 'alumni', 'admin']}>
+              <StudentsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="jobs"
+          element={
+            <ProtectedRoute>
+              <JobsPage />
+            </ProtectedRoute>
+          }
+        />
+      </Route>
 
       {/* Student Dashboard */}
       <Route

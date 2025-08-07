@@ -3,125 +3,14 @@ import { NavLink, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
-// Navbar Animation Styles
-const navbarAnimationStyles = `
-  @keyframes slideDown {
-    0% { transform: translateY(-100%); opacity: 0; }
-    100% { transform: translateY(0); opacity: 1; }
-  }
-  
-  @keyframes fadeIn {
-    0% { opacity: 0; transform: scale(0.95); }
-    100% { opacity: 1; transform: scale(1); }
-  }
-
-  @keyframes logoFloat {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-2px); }
-  }
-
-  .nav-slide-down {
-    animation: slideDown 0.3s ease-out;
-  }
-
-  .dropdown-fade-in {
-    animation: fadeIn 0.2s ease-out;
-  }
-
-  .logo-float:hover {
-    animation: logoFloat 0.6s ease-in-out;
-  }
-
-  .nav-link-hover {
-    position: relative;
-    overflow: hidden;
-  }
-
-  .nav-link-hover::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-    transition: left 0.5s;
-  }
-
-  .nav-link-hover:hover::before {
-    left: 100%;
-  }
-
-  .nav-link-active {
-    position: relative;
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(99, 102, 241, 0.3);
-    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.2);
-  }
-
-  .nav-link-active::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 20px;
-    height: 3px;
-    background: linear-gradient(90deg, #6366f1, #8b5cf6);
-    border-radius: 2px;
-    animation: activeIndicator 0.3s ease-out;
-  }
-
-  @keyframes activeIndicator {
-    0% { width: 0; opacity: 0; }
-    100% { width: 20px; opacity: 1; }
-  }
-
-  .glassmorphism-nav {
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 8px 32px rgba(99, 102, 241, 0.1);
-  }
-
-  .mobile-menu-glassmorphism {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-  }
-
-  .profile-dropdown-glassmorphism {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 20px 40px rgba(99, 102, 241, 0.15);
-  }
-`;
-
-// Inject navbar styles
-if (typeof document !== 'undefined') {
-  const existingNavbarStyles = document.querySelector('#navbar-styles');
-  if (!existingNavbarStyles) {
-    const styleSheet = document.createElement("style");
-    styleSheet.id = "navbar-styles";
-    styleSheet.innerText = navbarAnimationStyles;
-    document.head.appendChild(styleSheet);
-  }
-}
-
 const navLinks = [
-  { title: 'Home', path: '/', icon: 'fas fa-home' },
-  { title: 'Events', path: '/events', icon: 'fas fa-calendar-alt' },
-  { title: 'Jobs', path: '/jobs', auth: true, icon: 'fas fa-briefcase' },
-  { title: 'About Us', path: '/about', icon: 'fas fa-info-circle' },
-  { title: 'Alumni', path: '/alumni', auth: true, icon: 'fas fa-graduation-cap' },
-  { title: 'Students', path: '/students', auth: true, hideForStudent: true, icon: 'fas fa-user-graduate' },
-  { title: 'Contact', path: '/contact', icon: 'fas fa-envelope' },
+  { title: 'Home', path: '/' },
+  { title: 'Events', path: '/events' },
+  { title: 'Jobs', path: '/jobs', auth: true },
+  { title: 'About Us', path: '/about' },
+  { title: 'Alumni', path: '/alumni', auth: true },
+  { title: 'Students', path: '/students', auth: true, hideForStudent: true },
+  { title: 'Contact', path: '/contact' },
 ];
 
 const dashboardRoutes = [
@@ -198,38 +87,24 @@ const getProfileImageUrl = (user) => {
 // Profile Image Component
 const ProfileImage = ({ user, size = "w-9 h-9", textSize = "text-sm" }) => {
   const [imageError, setImageError] = React.useState(false);
-  const [imageLoading, setImageLoading] = React.useState(false);
-  const [currentImageUrl, setCurrentImageUrl] = React.useState(null);
+  const [imageLoaded, setImageLoaded] = React.useState(false);
   const profileImageUrl = getProfileImageUrl(user);
   
   const handleImageError = () => {
     setImageError(true);
-    setImageLoading(false);
+    setImageLoaded(true);
   };
 
   const handleImageLoad = () => {
-    setImageLoading(false);
+    setImageLoaded(true);
     setImageError(false);
   };
 
-  // Only reset states when the actual image URL changes (not on every re-render)
-  React.useEffect(() => {
-    if (profileImageUrl !== currentImageUrl) {
-      setCurrentImageUrl(profileImageUrl);
-      if (profileImageUrl) {
-        setImageError(false);
-        setImageLoading(true);
-      } else {
-        setImageError(true);
-        setImageLoading(false);
-      }
-    }
-  }, [profileImageUrl, currentImageUrl]);
-
+  // Always render the container with fixed dimensions to prevent layout shift
   if (!profileImageUrl || imageError) {
     // Fallback to initials
     return (
-      <div className={`${size} rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center shadow-md`}>
+      <div className={`${size} rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center shadow-md flex-shrink-0`}>
         <span className={`text-white font-semibold ${textSize}`}>
           {getUserInitials(user)}
         </span>
@@ -238,8 +113,9 @@ const ProfileImage = ({ user, size = "w-9 h-9", textSize = "text-sm" }) => {
   }
 
   return (
-    <div className={`${size} rounded-full overflow-hidden shadow-md relative bg-gradient-to-r from-indigo-500 to-purple-500`}>
-      {imageLoading && (
+    <div className={`${size} rounded-full overflow-hidden shadow-md relative bg-gradient-to-r from-indigo-500 to-purple-500 flex-shrink-0`}>
+      {/* Show initials while image is loading to prevent layout shift */}
+      {!imageLoaded && (
         <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-r from-indigo-500 to-purple-500">
           <span className={`text-white font-semibold ${textSize}`}>
             {getUserInitials(user)}
@@ -249,7 +125,7 @@ const ProfileImage = ({ user, size = "w-9 h-9", textSize = "text-sm" }) => {
       <img
         src={profileImageUrl}
         alt={`${getUserDisplayName(user)}'s profile`}
-        className={`w-full h-full object-cover transition-opacity duration-300 ${imageLoading ? 'opacity-0' : 'opacity-100'}`}
+        className={`w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
         onError={handleImageError}
         onLoad={handleImageLoad}
         loading="lazy"
@@ -266,6 +142,9 @@ const Navbar = ({ isHome = false }) => {
   const navigate = useNavigate();
   const avatarRef = useRef(null);
   const location = useLocation();
+
+  // Auto-detect if on home page
+  const isHomePage = isHome || location.pathname === '/';
 
   // Handle scroll effect
   useEffect(() => {
@@ -315,7 +194,7 @@ const Navbar = ({ isHome = false }) => {
 
   // Profile Dropdown Component
   const ProfileDropdown = () => (
-    <div className="profile-dropdown-glassmorphism absolute right-0 mt-3 w-64 rounded-2xl shadow-2xl border border-white/20 py-2 z-50 dropdown-fade-in">
+    <div className="absolute right-0 mt-3 w-64 rounded-2xl shadow-2xl border border-white/20 py-2 z-50 bg-white/95 backdrop-blur-xl animate-in fade-in duration-200">
       <div className="px-4 py-3 border-b border-gray-100">
         <div className="flex items-center space-x-3">
           <ProfileImage user={user} size="w-10 h-10" textSize="text-sm" />
@@ -355,8 +234,8 @@ const Navbar = ({ isHome = false }) => {
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled || !isHome 
-          ? 'glassmorphism-nav shadow-xl' 
+        scrolled || !isHomePage 
+          ? 'bg-white/85 backdrop-blur-xl border border-white/20 shadow-xl' 
           : 'bg-transparent'
       }`}
       style={{ height: '64px' }}
@@ -366,20 +245,8 @@ const Navbar = ({ isHome = false }) => {
           {/* Logo Section */}
           <Link 
             to="/" 
-            className="flex items-center space-x-3 logo-float group"
+            className="flex items-center space-x-3 group hover:animate-pulse"
           >
-            {/* Modern Logo Container with Custom Design */}
-            <div className="relative">
-              <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#5A32EA] via-indigo-600 to-purple-600 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 transform group-hover:scale-105 border border-white/20">
-                {/* Simple Academic Icon */}
-                <div className="relative">
-                  <i className="fas fa-graduation-cap text-white text-lg"></i>
-                </div>
-              </div>
-              {/* Subtle glow effect */}
-              <div className="absolute inset-0 w-11 h-11 rounded-2xl bg-gradient-to-br from-[#5A32EA] to-purple-600 opacity-0 group-hover:opacity-20 transition-opacity duration-300 blur-sm"></div>
-            </div>
-            
             {/* Enhanced Brand Typography */}
             <div className="hidden sm:block">
               <div className="flex flex-col">
@@ -414,15 +281,14 @@ const Navbar = ({ isHome = false }) => {
                     key={link.title}
                     to={link.path}
                     className={({ isActive }) =>
-                      `nav-link-hover relative px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 transform hover:scale-105 ${
+                      `relative px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 transform hover:scale-105 overflow-hidden ${
                         isActive && !isDashboardRoute
-                          ? 'nav-link-active text-indigo-700 font-semibold'
+                          ? 'bg-white/90 backdrop-blur-sm border border-indigo-300/30 shadow-lg text-indigo-700 font-semibold'
                           : 'text-gray-700 hover:bg-white/60 hover:shadow-md hover:text-indigo-600'
                       }`
                     }
                     end={link.path === '/'}
                   >
-                    <i className={`${link.icon} mr-2`}></i>
                     {link.title}
                   </NavLink>
                 );
@@ -467,7 +333,7 @@ const Navbar = ({ isHome = false }) => {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="lg:hidden mobile-menu-glassmorphism mx-4 mt-2 rounded-2xl shadow-2xl border border-white/30 nav-slide-down">
+        <div className="lg:hidden bg-white/95 backdrop-blur-xl mx-4 mt-2 rounded-2xl shadow-2xl border border-white/30 animate-in slide-in-from-top duration-300">
           <div className="py-4">
             {navLinks
               .filter(link => (!link.auth || user) && !(link.hideForStudent && user?.role === 'student'))
@@ -487,7 +353,6 @@ const Navbar = ({ isHome = false }) => {
                     end={link.path === '/'}
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    <i className={`${link.icon} mr-3 w-4`}></i>
                     {link.title}
                   </NavLink>
                 );

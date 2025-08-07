@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { ToastContainer } from 'react-toastify';
-import Navbar from '../components/Navbar';
 import JobGrid from '../components/opportunities/JobGrid';
 import JobSearch from '../components/opportunities/JobSearch';
 import FilterButton from '../components/opportunities/FilterButton';
@@ -126,8 +125,7 @@ const JobsPage = () => {
 
   return (
     <>
-      <Navbar />
-      <div className="min-h-screen bg-gray-50 pt-16">
+      <div className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           {/* Search and Filters */}
           <div className="mb-6 flex flex-row gap-2 items-center w-full">
@@ -185,6 +183,8 @@ const JobsPage = () => {
           </div>
         </div>
       </div>
+      
+      {/* Modals and Toast Container */}
       <JobDetailsModal
         job={selectedJob}
         open={showModal}
@@ -202,7 +202,6 @@ const JobsPage = () => {
         }}
       />
       
-      {/* Toast Container for Alerts */}
       <ToastContainer 
         position="top-right" 
         autoClose={4000} 

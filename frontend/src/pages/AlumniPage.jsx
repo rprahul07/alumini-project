@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import Navbar from '../components/Navbar';
 import AlumniSearch from '../components/AlumniSearch';
 import AlumniFilterButton from '../components/AlumniFilterButton';
 import AlumniActiveFilters from '../components/AlumniActiveFilters';
@@ -264,8 +263,7 @@ const AlumniPage = () => {
 
   return (
     <>
-      <Navbar />
-      <div className="min-h-screen bg-gray-50 pt-20">
+      <div className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           {/* Search and Filters */}
           <div className="mb-6 flex flex-row gap-2 items-center w-full">

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import Navbar from '../components/Navbar';
 import { testimonialsAPI } from '../services/testimonialsService';
 import { dashboardAPI } from '../services/dashboardService';
 import { galleryAPI } from '../services/galleryService';
@@ -311,21 +310,19 @@ const AboutPage = () => {
 
   return (
     <>
-      <Navbar />
-      <div className="min-h-screen bg-white pt-20">
-        {/* Dynamic Hero Section with Floating Elements */}
-        <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-r from-indigo-200 to-white">
+      <div className="min-h-screen bg-white">
+      {/* Dynamic Hero Section with Floating Elements */}
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-r from-indigo-200 to-white">
           {/* Animated Background Elements */}
           <div className="absolute inset-0">
-            <div className="absolute top-20 left-10 w-72 h-72 bg-indigo-400 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob"></div>
-            <div className="absolute top-40 right-10 w-72 h-72 bg-purple-400 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-2000"></div>
-            <div className="absolute -bottom-8 left-20 w-72 h-72 bg-blue-400 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-4000"></div>
+            <div className="absolute top-20 left-10 w-72 h-72 bg-indigo-400 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse"></div>
+            <div className="absolute top-40 right-10 w-72 h-72 bg-purple-400 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse" style={{ animationDelay: '2s' }}></div>
+            <div className="absolute -bottom-8 left-20 w-72 h-72 bg-blue-400 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse" style={{ animationDelay: '4s' }}></div>
           </div>
           
           <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
             <div className="mb-8">
               <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-white/80 backdrop-blur-sm text-indigo-800 mb-6 shadow-lg">
-                <i className="fas fa-graduation-cap mr-2 text-indigo-600"></i>
                 Est. 1999 • Excellence in Engineering
               </span>
             </div>
@@ -450,7 +447,7 @@ const AboutPage = () => {
             {/* Tab Content */}
             <div className="max-w-4xl mx-auto">
               {activeTab === 'mission' && (
-                <div className="text-center space-y-6 animate-fade-in">
+                <div className="text-center space-y-6 animate-in fade-in duration-500">
                   <div className="w-20 h-20 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-6">
                     <i className="fas fa-bullseye text-white text-2xl"></i>
                   </div>
@@ -464,7 +461,7 @@ const AboutPage = () => {
               )}
 
               {activeTab === 'vision' && (
-                <div className="text-center space-y-6 animate-fade-in">
+                <div className="text-center space-y-6 animate-in fade-in duration-500">
                   <div className="w-20 h-20 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-6">
                     <i className="fas fa-eye text-white text-2xl"></i>
                   </div>
@@ -478,7 +475,7 @@ const AboutPage = () => {
               )}
 
               {activeTab === 'values' && (
-                <div className="text-center space-y-6 animate-fade-in">
+                <div className="text-center space-y-6 animate-in fade-in duration-500">
                   <div className="w-20 h-20 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-6">
                     <i className="fas fa-heart text-white text-2xl"></i>
                   </div>
@@ -702,10 +699,10 @@ const AboutPage = () => {
                 ))}
               </div>
               </>
-              )}
-            </div>
+            )}
           </div>
-        </section>
+        </div>
+      </section>
 
         {/* Alumni Testimonials Section */}
         <section className="py-16 sm:py-20 bg-white">
@@ -1067,30 +1064,6 @@ const AboutPage = () => {
           </div>
         </section>
       </div>
-      
-      <style jsx>{`
-        @keyframes blob {
-          0% { transform: translate(0px, 0px) scale(1); }
-          33% { transform: translate(30px, -50px) scale(1.1); }
-          66% { transform: translate(-20px, 20px) scale(0.9); }
-          100% { transform: translate(0px, 0px) scale(1); }
-        }
-        .animate-blob { animation: blob 7s infinite; }
-        .animation-delay-2000 { animation-delay: 2s; }
-        .animation-delay-4000 { animation-delay: 4s; }
-        .animate-fade-in { animation: fadeIn 0.5s ease-in-out; }
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .scrollbar-hide {
-          -ms-overflow-style: none;  /* Internet Explorer 10+ */
-          scrollbar-width: none;  /* Firefox */
-        }
-        .scrollbar-hide::-webkit-scrollbar {
-          display: none;  /* Safari and Chrome */
-        }
-      `}</style>
     </>
   );
 };

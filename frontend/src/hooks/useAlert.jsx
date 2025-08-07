@@ -39,16 +39,4 @@ const useAlert = (initialState = null) => {
   };
 };
 
-export default useAlert;
-
-// Add this to your global CSS (e.g., index.css or tailwind.css):
-// .animate-fade-in-up {
-//   @apply opacity-0 translate-y-4;
-//   animation: fadeInUp 0.5s forwards;
-// }
-// @keyframes fadeInUp {
-//   to {
-//     opacity: 1;
-//     transform: translateY(0);
-//   }
-// } 
+export default useAlert; 
