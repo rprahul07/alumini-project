@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import { 
   XMarkIcon, 
   EnvelopeIcon, 
@@ -44,7 +45,7 @@ const ApplicantDetailsModal = ({ open, onClose, applicant }) => {
     photoUrl: data.photoUrl
   });
 
-  return (
+  const modalContent = (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-1 sm:p-2 z-50">
       <div className="bg-white rounded-2xl w-full max-w-sm sm:max-w-md md:max-w-lg max-h-[80vh] overflow-y-auto scrollbar-hide p-3" style={{ scrollbarWidth: 'none' }}>
         {/* Header */}
@@ -318,6 +319,8 @@ const ApplicantDetailsModal = ({ open, onClose, applicant }) => {
       </div>
     </div>
   );
+
+  return ReactDOM.createPortal(modalContent, document.body);
 };
 
 export default ApplicantDetailsModal; 

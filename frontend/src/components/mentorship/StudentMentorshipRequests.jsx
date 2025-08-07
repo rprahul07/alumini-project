@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import ReactDOM from 'react-dom';
 import axios from '../../config/axios';
 import { AcademicCapIcon, UserIcon, PhoneIcon, GlobeAltIcon } from '@heroicons/react/24/outline';
 import ConfirmDialog from '../ConfirmDialog';
@@ -267,7 +268,7 @@ const StudentMentorshipRequests = () => {
           </tbody>
         </table>
       </div>
-      {showModal && selectedRequest && (
+      {showModal && selectedRequest && ReactDOM.createPortal(
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-1 sm:p-2 z-50">
           <div className="bg-white rounded-2xl w-full max-w-sm sm:max-w-md md:max-w-lg max-h-[80vh] overflow-y-auto scrollbar-hide p-3" style={{ scrollbarWidth: 'none' }}>
             <div className="flex items-center justify-between mb-2">
@@ -351,8 +352,7 @@ const StudentMentorshipRequests = () => {
               </div>
             </div>
           </div>
-        </div>
-      )}
+        </div>, document.body)}
       <ConfirmDialog
         open={confirmOpen}
         title="Delete Request"

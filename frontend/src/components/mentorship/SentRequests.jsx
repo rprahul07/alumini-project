@@ -257,7 +257,7 @@ const SentRequests = ({ requests, loading, error, setRequests, showAlert }) => {
         </tbody>
       </table>
       {/* Modal for sent request details */}
-      {showSentRequestModal && selectedSentRequestForModal && (
+      {showSentRequestModal && selectedSentRequestForModal && ReactDOM.createPortal(
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-1 sm:p-2 z-50">
           <div className="bg-white rounded-2xl w-full max-w-sm sm:max-w-md md:max-w-lg max-h-[80vh] overflow-y-auto scrollbar-hide p-3" style={{ scrollbarWidth: 'none' }}>
             {/* Header */}
@@ -371,8 +371,7 @@ const SentRequests = ({ requests, loading, error, setRequests, showAlert }) => {
               </div>
             </div>
           </div>
-        </div>
-      )}
+        </div>, document.body)}
       <ConfirmDialog
         open={confirmOpen}
         title="Delete Request"

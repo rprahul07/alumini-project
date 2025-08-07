@@ -267,7 +267,7 @@ const ReceivedRequests = ({ requests, loading, error, setRequests, showAlert }) 
         </div>
       </div>
       {/* View Profile Modal */}
-      {showProfileModal && selectedRequest && (
+      {showProfileModal && selectedRequest && ReactDOM.createPortal(
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-1 sm:p-2 z-50">
           <div className="bg-white rounded-2xl w-full max-w-sm sm:max-w-md md:max-w-lg max-h-[80vh] overflow-y-auto scrollbar-hide p-3 relative" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             <div className="flex items-center justify-between mb-2">
@@ -361,10 +361,9 @@ const ReceivedRequests = ({ requests, loading, error, setRequests, showAlert }) 
               </div>
             </div>
           </div>
-        </div>
-      )}
+        </div>, document.body)}
       {/* Accept Modal */}
-      {showAccept && selectedRequest && (
+      {showAccept && selectedRequest && ReactDOM.createPortal(
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black bg-opacity-50 p-2 sm:p-4">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm sm:max-w-md max-h-[80vh] overflow-y-auto scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             {/* Header */}
@@ -479,8 +478,7 @@ const ReceivedRequests = ({ requests, loading, error, setRequests, showAlert }) 
               </div>
             </div>
           </div>
-        </div>
-      )}
+        </div>, document.body)}
       <ConfirmDialog
         open={confirmOpen}
         title="Confirm Action"

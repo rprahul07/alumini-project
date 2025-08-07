@@ -10,6 +10,7 @@ import {
   EnvelopeIcon,
   AcademicCapIcon
 } from '@heroicons/react/24/outline';
+import ReactDOM from 'react-dom';
 
 const CreateJobModal = ({ onClose, onSuccess, showAlert, editMode = false, jobToEdit = null }) => {
   const [companyName, setCompanyName] = useState('');
@@ -148,7 +149,9 @@ const CreateJobModal = ({ onClose, onSuccess, showAlert, editMode = false, jobTo
     }
   };
 
-  return (
+  if (!onClose) return null;
+
+  const modalContent = (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-1 sm:p-2 z-50">
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm sm:max-w-md md:max-w-lg max-h-[85vh] overflow-y-auto scrollbar-hide">
         {/* Header */}
@@ -431,6 +434,8 @@ const CreateJobModal = ({ onClose, onSuccess, showAlert, editMode = false, jobTo
       </div>
     </div>
   );
+
+  return ReactDOM.createPortal(modalContent, document.body);
 };
 
 export default CreateJobModal; 

@@ -5,6 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { toast } from 'react-toastify';
 import ConfirmDialog from './ConfirmDialog';
 import { EVENT_TYPES } from '../constants/eventTypes';
+import ReactDOM from 'react-dom';
 
 const CreateEventModal = ({ isOpen, onClose, onEventCreated, isMobileModal, editMode = false, eventToEdit = null }) => {
   const { user } = useAuth();
@@ -219,7 +220,7 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated, isMobileModal, edit
     onClose();
   };
 
-  return (
+  const modalContent = (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-1 sm:p-2 z-50">
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm sm:max-w-md md:max-w-lg max-h-[85vh] overflow-y-auto scrollbar-hide">
         {/* Header */}
@@ -439,6 +440,8 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated, isMobileModal, edit
       />
     </div>
   );
+
+  return ReactDOM.createPortal(modalContent, document.body);
 };
 
 export default CreateEventModal; 

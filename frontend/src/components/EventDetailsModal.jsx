@@ -4,6 +4,7 @@ import axios from '../config/axios';
 import { toast } from 'react-toastify';
 import ConfirmDialog from './ConfirmDialog';
 import { useAuth } from '../contexts/AuthContext';
+import ReactDOM from 'react-dom';
 
 const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
   // Use auth context as primary source, fallback to prop for backward compatibility
@@ -128,7 +129,7 @@ const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
             ? 'bg-green-500 text-white cursor-not-allowed'
             : 'bg-indigo-600 text-white hover:bg-indigo-700';
 
-  return (
+  const modalContent = (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-1 sm:p-2 z-50">
       <div className="bg-white rounded-2xl w-full max-w-sm sm:max-w-md md:max-w-lg max-h-[80vh] overflow-y-auto scrollbar-hide p-3" style={{ scrollbarWidth: 'none' }}>
         {/* Header */}
@@ -238,6 +239,9 @@ const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
       />
     </div>
   );
+
+  return ReactDOM.createPortal(modalContent, document.body);
 };
 
 export default EventDetailsModal; 
+    

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ReactDOM from 'react-dom';
 
 const TIERS = [
   {
@@ -60,7 +61,7 @@ const MentorshipRequestModal = ({ open, onClose, alumni, onSend, onResult, accep
     }
   };
 
-  return (
+  const modalContent = (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
       <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-md relative">
         <button
@@ -140,6 +141,8 @@ const MentorshipRequestModal = ({ open, onClose, alumni, onSend, onResult, accep
       </div>
     </div>
   );
+
+  return ReactDOM.createPortal(modalContent, document.body);
 };
 
 export default MentorshipRequestModal; 

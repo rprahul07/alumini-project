@@ -537,172 +537,160 @@ const AboutPage = () => {
         </section>
 
         {/* Interactive Gallery Section */}
-        <section className="py-16 sm:py-20 bg-gradient-to-br from-indigo-50 to-purple-50 overflow-hidden relative">
+        <section className="py-8 sm:py-10 bg-gradient-to-br from-indigo-50 to-purple-50 overflow-hidden relative"> {/* Reduced padding */}
           {/* Background Decoration */}
           <div className="absolute inset-0">
-            <div className="absolute top-10 left-10 w-32 h-32 bg-gradient-to-r from-[#5A32EA]/10 to-purple-300/20 rounded-full blur-3xl animate-pulse"></div>
-            <div className="absolute bottom-20 right-20 w-40 h-40 bg-gradient-to-r from-indigo-200/30 to-[#5A32EA]/10 rounded-full blur-3xl animate-pulse"></div>
+            <div className="absolute top-10 left-10 w-24 h-24 bg-gradient-to-r from-[#5A32EA]/10 to-purple-300/20 rounded-full blur-2xl animate-pulse"></div> {/* Smaller */}
+            <div className="absolute bottom-20 right-20 w-28 h-28 bg-gradient-to-r from-indigo-200/30 to-[#5A32EA]/10 rounded-full blur-2xl animate-pulse"></div> {/* Smaller */}
           </div>
-          
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            {/* Gallery Header - Consistent with Project Style */}
-            <div className="text-center mb-12">
+          <div className="max-w-5xl mx-auto px-2 sm:px-4 lg:px-6 relative z-10"> {/* Narrower container */}
+            <div className="text-center mb-6"> {/* Less margin */}
               <div className="flex flex-col items-center">
-                {/* Main Icon with Consistent Design */}
-                <div className="relative mb-6">
-                  <div className="w-16 h-16 bg-gradient-to-r from-[#5A32EA] to-indigo-600 rounded-2xl flex items-center justify-center shadow-xl transform hover:scale-105 transition-all duration-300">
-                    <i className="fas fa-images text-white text-2xl"></i>
+                <div className="relative mb-4"> {/* Less margin */}
+                  <div className="w-10 h-10 bg-gradient-to-r from-[#5A32EA] to-indigo-600 rounded-2xl flex items-center justify-center shadow-xl transform hover:scale-105 transition-all duration-300">
+                    <i className="fas fa-images text-white text-lg"></i> {/* Smaller icon */}
                   </div>
-                  <div className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full flex items-center justify-center shadow-lg">
+                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full flex items-center justify-center shadow-lg">
                     <i className="fas fa-heart text-white text-xs"></i>
                   </div>
-                  <div className="absolute -bottom-1 -left-1 w-5 h-5 bg-gradient-to-r from-green-400 to-emerald-400 rounded-full flex items-center justify-center shadow-lg">
+                  <div className="absolute -bottom-1 -left-1 w-3 h-3 bg-gradient-to-r from-green-400 to-emerald-400 rounded-full flex items-center justify-center shadow-lg">
                     <i className="fas fa-star text-white text-xs"></i>
                   </div>
                 </div>
-                
-                {/* Title Section - Matching Project Typography */}
-                <h2 className="text-3xl font-bold text-gray-900 mb-4 flex items-center justify-center">
-                  <i className="fas fa-camera-retro mr-3 text-[#5A32EA]"></i>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2 flex items-center justify-center"> {/* Smaller title */}
+                  <i className="fas fa-camera-retro mr-2 text-[#5A32EA]"></i>
                   Campus Life Gallery
                 </h2>
-                
-                {/* Divider Line */}
-                <div className="w-16 h-1 bg-gradient-to-r from-[#5A32EA] to-purple-600 rounded-full mb-4"></div>
-                
-                {/* Description - Consistent with Other Sections */}
-                <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed mb-6">
+                <div className="w-10 h-1 bg-gradient-to-r from-[#5A32EA] to-purple-600 rounded-full mb-2"></div> {/* Thinner divider */}
+                <p className="text-base text-gray-600 max-w-2xl mx-auto leading-relaxed mb-3"> {/* Smaller text */}
                   Experience the vibrant moments that define our community through a visual journey of 
                   <span className="font-semibold text-[#5A32EA]"> innovation, excellence, and shared memories</span>
                 </p>
-                
-                {/* Category Tags - Matching Project Button Style */}
-                <div className="flex flex-wrap items-center justify-center gap-4">
-                  <div className="flex items-center space-x-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-2xl shadow-sm border border-white/40 hover:shadow-md transition-all duration-300">
-                    <i className="fas fa-graduation-cap text-[#5A32EA] text-sm"></i>
-                    <span className="text-sm font-medium text-gray-700">Campus Life</span>
+                {/* Category Tags - Smaller */}
+                <div className="flex flex-wrap items-center justify-center gap-2">
+                  <div className="flex items-center space-x-1 bg-white/80 backdrop-blur-sm px-2 py-1 rounded-xl shadow-sm border border-white/40 hover:shadow-md transition-all duration-300">
+                    <i className="fas fa-graduation-cap text-[#5A32EA] text-xs"></i>
+                    <span className="text-xs font-medium text-gray-700">Campus Life</span>
                   </div>
-                  <div className="flex items-center space-x-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-2xl shadow-sm border border-white/40 hover:shadow-md transition-all duration-300">
-                    <i className="fas fa-users text-purple-500 text-sm"></i>
-                    <span className="text-sm font-medium text-gray-700">Events</span>
+                  <div className="flex items-center space-x-1 bg-white/80 backdrop-blur-sm px-2 py-1 rounded-xl shadow-sm border border-white/40 hover:shadow-md transition-all duration-300">
+                    <i className="fas fa-users text-purple-500 text-xs"></i>
+                    <span className="text-xs font-medium text-gray-700">Events</span>
                   </div>
-                  <div className="flex items-center space-x-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-2xl shadow-sm border border-white/40 hover:shadow-md transition-all duration-300">
-                    <i className="fas fa-trophy text-amber-500 text-sm"></i>
-                    <span className="text-sm font-medium text-gray-700">Achievements</span>
+                  <div className="flex items-center space-x-1 bg-white/80 backdrop-blur-sm px-2 py-1 rounded-xl shadow-sm border border-white/40 hover:shadow-md transition-all duration-300">
+                    <i className="fas fa-trophy text-amber-500 text-xs"></i>
+                    <span className="text-xs font-medium text-gray-700">Achievements</span>
                   </div>
-                  <div className="flex items-center space-x-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-2xl shadow-sm border border-white/40 hover:shadow-md transition-all duration-300">
-                    <i className="fas fa-lightbulb text-green-500 text-sm"></i>
-                    <span className="text-sm font-medium text-gray-700">Innovation</span>
+                  <div className="flex items-center space-x-1 bg-white/80 backdrop-blur-sm px-2 py-1 rounded-xl shadow-sm border border-white/40 hover:shadow-md transition-all duration-300">
+                    <i className="fas fa-lightbulb text-green-500 text-xs"></i>
+                    <span className="text-xs font-medium text-gray-700">Innovation</span>
                   </div>
                 </div>
               </div>
             </div>
-            
             <div className="relative">
               {galleryLoading ? (
-                /* Loading State */
-                <div className="relative h-48 md:h-64 rounded-2xl overflow-hidden shadow-xl bg-gray-200 animate-pulse flex items-center justify-center">
+                <div className="relative h-32 md:h-40 rounded-xl overflow-hidden shadow-xl bg-gray-200 animate-pulse flex items-center justify-center"> {/* Less height */}
                   <div className="text-center">
-                    <div className="inline-block w-5 h-5 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mb-2"></div>
-                    <p className="text-gray-600 text-sm">Loading gallery...</p>
+                    <div className="inline-block w-4 h-4 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mb-2"></div>
+                    <p className="text-gray-600 text-xs">Loading gallery...</p>
                   </div>
                 </div>
               ) : galleryImages.length === 0 ? (
-                /* Empty State */
-                <div className="relative h-48 md:h-64 rounded-2xl overflow-hidden shadow-xl bg-gray-100 flex items-center justify-center">
+                <div className="relative h-32 md:h-40 rounded-xl overflow-hidden shadow-xl bg-gray-100 flex items-center justify-center"> {/* Less height */}
                   <div className="text-center">
-                    <i className="fas fa-images text-3xl text-gray-400 mb-2"></i>
-                    <p className="text-base text-gray-600">No gallery images available</p>
+                    <i className="fas fa-images text-xl text-gray-400 mb-2"></i>
+                    <p className="text-sm text-gray-600">No gallery images available</p>
                   </div>
                 </div>
               ) : (
-                /* Gallery Content */
                 <>
-              {/* Main Gallery Display */}
-              <div className="relative rounded-2xl overflow-hidden shadow-xl bg-gray-900">
-                <div 
-                  className="flex transition-transform duration-700 ease-in-out"
-                  style={{ transform: `translateX(-${currentGalleryIndex * 100}%)` }}
+            
+                {/* Main Gallery Display */}
+                <div
+                  className="relative rounded-xl overflow-hidden shadow-xl bg-gray-900 max-h-80 mx-auto"
+                  style={{ height: '20rem', width: '100%', maxWidth: '1200px' }} // Increased maxWidth for more breadth
                 >
-                  {galleryImages.map((image, index) => (
-                    <div key={image.id} className="w-full flex-shrink-0 relative">
-                      <div className="relative w-full" style={{ paddingBottom: '56.25%' }}> {/* 16:9 aspect ratio */}
-                        <img
-                          src={image.image}
-                          alt={image.title}
-                          className="absolute inset-0 w-full h-full object-cover"
-                          onError={(e) => {
-                            e.target.src = 'https://images.unsplash.com/photo-1562774053-701939374585?w=800&h=600&fit=crop';
-                          }}
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-                        <div className="absolute bottom-4 left-4 right-4 text-white">
-                          <h3 className="text-lg md:text-xl font-bold mb-1 text-white drop-shadow-lg">{image.title}</h3>
-                          <p className="text-sm text-gray-100 drop-shadow-md">{image.description}</p>
+                  <div 
+                    className="flex transition-transform duration-700 ease-in-out"
+                    style={{ transform: `translateX(-${currentGalleryIndex * 100}%)` }}
+                  >
+                    {galleryImages.map((image, index) => (
+                      <div key={image.id} className="w-full flex-shrink-0 relative">
+                        <div className="relative w-full h-80" style={{ paddingBottom: '0' }}>
+                          <img
+                            src={image.image}
+                            alt={image.title}
+                            className="absolute inset-0 w-full h-full object-cover rounded-xl"
+                            onError={(e) => {
+                              e.target.src = 'https://images.unsplash.com/photo-1562774053-701939374585?w=800&h=600&fit=crop';
+                            }}
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent rounded-xl"></div>
+                          <div className="absolute bottom-2 left-2 right-2 text-white">
+                            <h3 className="text-base font-bold mb-1 text-white drop-shadow-lg">{image.title}</h3>
+                            <p className="text-xs text-gray-100 drop-shadow-md">{image.description}</p>
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    ))}
+                  </div>
+                  {/* Navigation Arrows */}
+                  <button
+                    onClick={() => setCurrentGalleryIndex((prev) => (prev - 1 + galleryImages.length) % galleryImages.length)}
+                    className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-[#5A32EA]/20 backdrop-blur-md text-white p-1 rounded-full hover:bg-[#5A32EA]/40 transition-all duration-300 group"
+                  >
+                    <i className="fas fa-chevron-left group-hover:scale-110 transition-transform duration-300 text-xs"></i>
+                  </button>
+                  <button
+                    onClick={() => setCurrentGalleryIndex((prev) => (prev + 1) % galleryImages.length)}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-[#5A32EA]/20 backdrop-blur-md text-white p-1 rounded-full hover:bg-[#5A32EA]/40 transition-all duration-300 group"
+                  >
+                    <i className="fas fa-chevron-right group-hover:scale-110 transition-transform duration-300 text-xs"></i>
+                  </button>
+                </div>
+
+                {/* Thumbnail Navigation - smaller */}
+                <div className="flex justify-center mt-2 mb-2 space-x-1 overflow-x-auto pb-2 px-2">
+                  {galleryImages.map((image, index) => (
+                    <button
+                      key={image.id}
+                      onClick={() => setCurrentGalleryIndex(index)}
+                      className={`flex-shrink-0 w-10 h-7 rounded-lg overflow-hidden transition-all duration-300 relative ${
+                        index === currentGalleryIndex 
+                          ? 'ring-2 ring-[#5A32EA] ring-opacity-60 scale-105 z-10 mx-0.5' 
+                          : 'opacity-70 hover:opacity-100 hover:scale-100 mx-0.5'
+                      }`}
+                    >
+                      <img
+                        src={image.image}
+                        alt={image.title}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.src = 'https://images.unsplash.com/photo-1562774053-701939374585?w=800&h=600&fit=crop';
+                        }}
+                      />
+                    </button>
                   ))}
                 </div>
-                
-                {/* Navigation Arrows */}
-                <button
-                  onClick={() => setCurrentGalleryIndex((prev) => (prev - 1 + galleryImages.length) % galleryImages.length)}
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 bg-[#5A32EA]/20 backdrop-blur-md text-white p-2 rounded-full hover:bg-[#5A32EA]/40 transition-all duration-300 group"
-                >
-                  <i className="fas fa-chevron-left group-hover:scale-110 transition-transform duration-300 text-sm"></i>
-                </button>
-                <button
-                  onClick={() => setCurrentGalleryIndex((prev) => (prev + 1) % galleryImages.length)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-[#5A32EA]/20 backdrop-blur-md text-white p-2 rounded-full hover:bg-[#5A32EA]/40 transition-all duration-300 group"
-                >
-                  <i className="fas fa-chevron-right group-hover:scale-110 transition-transform duration-300 text-sm"></i>
-                </button>
-              </div>
-              
-              {/* Thumbnail Navigation */}
-              <div className="flex justify-center mt-6 mb-4 space-x-2 overflow-x-auto pb-6 px-4">
-                {galleryImages.map((image, index) => (
-                  <button
-                    key={image.id}
-                    onClick={() => setCurrentGalleryIndex(index)}
-                    className={`flex-shrink-0 w-16 h-12 rounded-lg overflow-hidden transition-all duration-300 relative ${
-                      index === currentGalleryIndex 
-                        ? 'ring-3 ring-[#5A32EA] ring-opacity-60 scale-105 z-10 mx-1' 
-                        : 'opacity-70 hover:opacity-100 hover:scale-100 mx-0.5'
-                    }`}
-                  >
-                    <img
-                      src={image.image}
-                      alt={image.title}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        e.target.src = 'https://images.unsplash.com/photo-1562774053-701939374585?w=800&h=600&fit=crop';
-                      }}
+                {/* Progress Indicators - smaller */}
+                <div className="flex justify-center mt-2 space-x-1">
+                  {galleryImages.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentGalleryIndex(index)}
+                      className={`transition-all duration-300 ${
+                        index === currentGalleryIndex 
+                          ? 'w-4 h-1.5 bg-[#5A32EA] rounded-full' 
+                          : 'w-1.5 h-1.5 bg-gray-300 rounded-full hover:bg-gray-400'
+                      }`}
                     />
-                  </button>
-                ))}
-              </div>
-              
-              {/* Progress Indicators */}
-              <div className="flex justify-center mt-6 space-x-2">
-                {galleryImages.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentGalleryIndex(index)}
-                    className={`transition-all duration-300 ${
-                      index === currentGalleryIndex 
-                        ? 'w-6 h-2 bg-[#5A32EA] rounded-full' 
-                        : 'w-2 h-2 bg-gray-300 rounded-full hover:bg-gray-400'
-                    }`}
-                  />
-                ))}
-              </div>
-              </>
-            )}
+                  ))}
+                </div>
+                </>
+              )}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
         {/* Alumni Testimonials Section */}
         <section className="py-16 sm:py-20 bg-white">
@@ -856,30 +844,29 @@ const AboutPage = () => {
         </section>
 
         {/* Featured Alumni Carousel */}
-        <section className="py-16 sm:py-20 bg-gradient-to-br from-indigo-50 to-purple-50 overflow-hidden">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-gray-900 mb-4 flex items-center justify-center">
-                <i className="fas fa-medal mr-3 text-[#5A32EA]"></i>
+        <section className="py-8 sm:py-10 bg-gradient-to-br from-indigo-50 to-purple-50 overflow-hidden"> {/* Reduced padding */}
+          <div className="max-w-5xl mx-auto px-2 sm:px-4 lg:px-6"> {/* Narrower container */}
+            <div className="text-center mb-6"> {/* Less margin */}
+              <h2 className="text-2xl font-bold text-gray-900 mb-2 flex items-center justify-center"> {/* Smaller title */}
+                <i className="fas fa-medal mr-2 text-[#5A32EA]"></i>
                 Alumni Spotlight
               </h2>
-              <p className="text-lg text-gray-600">Meet the changemakers from our community</p>
+              <p className="text-base text-gray-600">Meet the changemakers from our community</p>
             </div>
-            
             <div className="relative">
               {spotlightsLoading ? (
-                <div className="flex items-center justify-center py-12">
+                <div className="flex items-center justify-center py-8">
                   <div className="text-center">
-                    <div className="inline-block w-6 h-6 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mb-3"></div>
-                    <p className="text-gray-600 text-sm">Loading spotlights...</p>
+                    <div className="inline-block w-4 h-4 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mb-2"></div>
+                    <p className="text-gray-600 text-xs">Loading spotlights...</p>
                   </div>
                 </div>
               ) : successStories.length === 0 ? (
-                <div className="flex items-center justify-center py-16">
+                <div className="flex items-center justify-center py-10">
                   <div className="text-center">
-                    <i className="fas fa-medal text-5xl text-gray-400 mb-4"></i>
-                    <h3 className="text-xl font-bold text-gray-900 mb-3">No Alumni Spotlights Yet</h3>
-                    <p className="text-base text-gray-600 max-w-md mx-auto">
+                    <i className="fas fa-medal text-3xl text-gray-400 mb-2"></i>
+                    <h3 className="text-lg font-bold text-gray-900 mb-2">No Alumni Spotlights Yet</h3>
+                    <p className="text-sm text-gray-600 max-w-md mx-auto">
                       We're working on featuring amazing stories from our alumni community. 
                       Check back soon!
                     </p>
@@ -887,61 +874,59 @@ const AboutPage = () => {
                 </div>
               ) : (
                 <>
-                  <div className="overflow-hidden rounded-3xl shadow-2xl">
+                  <div className="overflow-hidden rounded-2xl shadow-xl">
                     <div 
                       className="flex transition-transform duration-500 ease-in-out"
                       style={{ transform: `translateX(-${currentStoryIndex * 100}%)` }}
                     >
                       {successStories.map((story, index) => (
-                    <div key={index} className="w-full flex-shrink-0">
-                      <div className="bg-[#5A32EA] p-1 rounded-3xl">
-                        <div className="bg-white rounded-3xl p-6 md:p-8">
-                          <div className="flex flex-col md:flex-row items-center gap-6">
-                            <div className="flex-shrink-0">
-                              <img
-                                src={story.image}
-                                alt={story.name}
-                                className="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover shadow-xl border-4 border-white"
-                                onError={(e) => {
-                                  e.target.src = 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop';
-                                }}
-                              />
-                            </div>
-                            <div className="flex-1 text-center md:text-left">
-                              <h3 className="text-2xl font-bold text-gray-900 mb-2">{story.name}</h3>
-                              <div className="text-base font-semibold text-gray-700 mb-1">{story.position}</div>
-                              <div className="text-[#5A32EA] font-medium mb-2">{story.company}</div>
-                              <div className="flex items-center justify-center md:justify-start text-gray-500 mb-3">
-                                <i className="fas fa-graduation-cap mr-2 text-[#5A32EA]"></i>
-                                <span className="text-sm">Class of {story.batch} • {story.department}</span>
-                              </div>
-                              <p className="text-base text-gray-700 mb-3 leading-relaxed">{story.achievement}</p>
-                              <div className="inline-flex items-center px-3 py-1 bg-indigo-50 rounded-full text-sm font-medium text-[#5A32EA] border border-indigo-200">
-                                <i className="fas fa-chart-line mr-2"></i>
-                                {story.impact}
+                        <div key={index} className="w-full flex-shrink-0">
+                          <div className="bg-[#5A32EA] p-1 rounded-2xl">
+                            <div className="bg-white rounded-2xl p-4 md:p-6">
+                              <div className="flex flex-col md:flex-row items-center gap-4"> {/* Less gap */}
+                                <div className="flex-shrink-0">
+                                  <img
+                                    src={story.image}
+                                    alt={story.name}
+                                    className="w-20 h-20 md:w-28 md:h-28 rounded-full object-cover shadow-lg border-2 border-white" /* Smaller image */
+                                    onError={(e) => {
+                                      e.target.src = 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop';
+                                    }}
+                                  />
+                                </div>
+                                <div className="flex-1 text-center md:text-left">
+                                  <h3 className="text-lg font-bold text-gray-900 mb-1">{story.name}</h3>
+                                  <div className="text-sm font-semibold text-gray-700 mb-0.5">{story.position}</div>
+                                  <div className="text-[#5A32EA] font-medium mb-1">{story.company}</div>
+                                  <div className="flex items-center justify-center md:justify-start text-gray-500 mb-1">
+                                    <i className="fas fa-graduation-cap mr-1 text-[#5A32EA]"></i>
+                                    <span className="text-xs">Class of {story.batch} • {story.department}</span>
+                                  </div>
+                                  <p className="text-xs text-gray-700 mb-1 leading-relaxed">{story.achievement}</p>
+                                  <div className="inline-flex items-center px-2 py-0.5 bg-indigo-50 rounded-full text-xs font-medium text-[#5A32EA] border border-indigo-200">
+                                    <i className="fas fa-chart-line mr-1"></i>
+                                    {story.impact}
+                                  </div>
+                                </div>
                               </div>
                             </div>
                           </div>
                         </div>
-                      </div>
+                      ))}
                     </div>
-                  ))}
-
-                </div>
-              </div>
-              
-              {/* Carousel Navigation */}
-              <div className="flex justify-center mt-8 space-x-2">
-                {successStories.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentStoryIndex(index)}
-                    className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                      index === currentStoryIndex ? 'bg-[#5A32EA] w-8' : 'bg-gray-300'
-                    }`}
-                  />
-                ))}
-              </div>
+                  </div>
+                  {/* Carousel Navigation - smaller */}
+                  <div className="flex justify-center mt-4 space-x-1">
+                    {successStories.map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setCurrentStoryIndex(index)}
+                        className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                          index === currentStoryIndex ? 'bg-[#5A32EA] w-6' : 'bg-gray-300'
+                        }`}
+                      />
+                    ))}
+                  </div>
                 </>
               )}
             </div>
