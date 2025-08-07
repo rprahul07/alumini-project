@@ -1,6 +1,7 @@
 import AdminContactMessages from '../../components/admin/AdminContactMessages';
 import AdminTestimonials from '../../components/admin/AdminTestimonials';
 import AdminGallery from '../../components/admin/AdminGallery';
+import AdminSpotlight from '../../components/admin/AdminSpotlight';
 import AdminAnnouncements from './AdminAnnouncements';
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../contexts/AuthContext"; // ✅ Added AuthContext
@@ -21,6 +22,7 @@ import {
   FiX,
   FiMessageSquare,
   FiImage,
+  FiStar,
 } from "react-icons/fi";
 import apiService from "../../middleware/api";
 import { useNavigate } from "react-router-dom";
@@ -296,6 +298,7 @@ const Sidebar = ({ onNavigate, onEventSectionChange, activeView, eventSection })
   const mainMenuItems = [
     { title: "Dashboard", icon: FiHome, view: "dashboard" },
     { title: "Announcements", icon: FiBell, view: "announcements" },
+    { title: "Spotlight", icon: FiStar, view: "spotlight" },
     { title: "Gallery", icon: FiImage, view: "gallery" },
   ];
 
@@ -1359,6 +1362,8 @@ const AdminDashboard = () => {
         return <AdminContactMessages />;
       case "announcements":
         return <AdminAnnouncements />;
+      case "spotlight":
+        return <AdminSpotlight />;
       case "testimonials":
         return <AdminTestimonials />;
       case "gallery":

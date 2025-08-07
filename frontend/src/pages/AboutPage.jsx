@@ -3,6 +3,7 @@ import Navbar from '../components/Navbar';
 import { testimonialsAPI } from '../services/testimonialsService';
 import { dashboardAPI } from '../services/dashboardService';
 import { galleryAPI } from '../services/galleryService';
+import { spotlightAPI } from '../services/spotlightService';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { useNavigate, Link } from 'react-router-dom';
 
@@ -16,6 +17,8 @@ const AboutPage = () => {
   const [testimonialsLoading, setTestimonialsLoading] = useState(true);
   const [galleryImages, setGalleryImages] = useState([]);
   const [galleryLoading, setGalleryLoading] = useState(true);
+  const [spotlights, setSpotlights] = useState([]);
+  const [spotlightsLoading, setSpotlightsLoading] = useState(true);
   const [stats, setStats] = useState({
     alumniCount: 0,
     activeUsers: 0,
@@ -56,21 +59,28 @@ const AboutPage = () => {
     return () => clearInterval(interval);
   }, [stats]);
 
+  // Use only dynamic spotlights data
+  const successStories = spotlights;
+
   // Auto-rotate success stories
   useEffect(() => {
+    if (successStories.length === 0) return; // Don't start rotation if no stories
+    
     const interval = setInterval(() => {
       setCurrentStoryIndex((prev) => (prev + 1) % successStories.length);
     }, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [successStories.length]); // Add dependency on successStories.length
 
   // Auto-rotate gallery
   useEffect(() => {
+    if (galleryImages.length === 0) return; // Don't start rotation if no images
+    
     const interval = setInterval(() => {
       setCurrentGalleryIndex((prev) => (prev + 1) % galleryImages.length);
     }, 4000);
     return () => clearInterval(interval);
-  }, []);
+  }, [galleryImages.length]); // Add dependency on galleryImages.length
 
   // Auto-rotate testimonials
   useEffect(() => {
@@ -174,58 +184,56 @@ const AboutPage = () => {
       }
     };
 
+    const fetchSpotlights = async () => {
+      try {
+        const result = await spotlightAPI.getAllSpotlights();
+        if (result.success && result.data.length > 0) {
+          // Transform API spotlights to match AboutPage successStories format
+          const transformedSpotlights = result.data.map((spotlight) => ({
+            id: spotlight.id,
+            name: spotlight.user?.fullName || 'Alumni',
+            batch: spotlight.user?.alumni?.graduationYear || '2020',
+            department: spotlight.user?.department || 'Engineering',
+            position: spotlight.user?.alumni?.currentJobTitle || 'Professional',
+            company: spotlight.user?.alumni?.companyName || 'Leading Company',
+            image: spotlight.user?.photoUrl || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop',
+            achievement: spotlight.title,
+            impact: spotlight.description || 'Making a significant impact',
+            color: 'from-purple-500 to-pink-500',
+            redirectionUrl: spotlight.redirectionUrl
+          }));
+          setSpotlights(transformedSpotlights);
+          
+          // Update success stories count with actual spotlights count
+          setStats(prevStats => ({
+            ...prevStats,
+            successStories: result.data.length
+          }));
+        } else {
+          // No spotlights available - set empty array
+          setSpotlights([]);
+        }
+      } catch (error) {
+        console.error('Failed to fetch spotlights:', error);
+        // Set empty array on error
+        setSpotlights([]);
+      } finally {
+        setSpotlightsLoading(false);
+      }
+    };
+
     fetchTestimonials();
     fetchDashboardStats();
     fetchGallery();
+    fetchSpotlights();
   }, []);
 
-  // Alumni success stories data with more dynamic content
-  const successStories = [
-    {
-      name: 'Dr. Sarah Chen',
-      batch: '2015',
-      department: 'Computer Science',
-      position: 'AI Research Director',
-      company: 'Google DeepMind',
-      image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop',
-      achievement: 'Led breakthrough research in quantum computing algorithms',
-      impact: '50+ research papers, 3 patents',
-      color: 'from-purple-500 to-pink-500'
-    },
-    {
-      name: 'Arjun Mehta',
-      batch: '2012',
-      department: 'Mechanical Engineering',
-      position: 'Founder & CEO',
-      company: 'GreenTech Innovations',
-      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop',
-      achievement: 'Built sustainable energy solutions for 200+ cities',
-      impact: '$2B+ in clean energy investments',
-      color: 'from-green-500 to-teal-500'
-    },
-    {
-      name: 'Priya Sharma',
-      batch: '2018',
-      department: 'Biomedical Engineering',
-      position: 'Chief Medical Officer',
-      company: 'MedTech Solutions',
-      image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop',
-      achievement: 'Developed life-saving medical devices for rural healthcare',
-      impact: '1M+ lives impacted globally',
-      color: 'from-blue-500 to-cyan-500'
-    },
-    {
-      name: 'Ravi Kumar',
-      batch: '2010',
-      department: 'Electronics',
-      position: 'Space Systems Engineer',
-      company: 'ISRO',
-      image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop',
-      achievement: 'Key contributor to Mars Orbiter Mission success',
-      impact: 'Advanced India\'s space exploration capabilities',
-      color: 'from-orange-500 to-red-500'
+  // Reset story index when successStories changes to prevent blank slides
+  useEffect(() => {
+    if (successStories.length > 0 && currentStoryIndex >= successStories.length) {
+      setCurrentStoryIndex(0);
     }
-  ];
+  }, [successStories, currentStoryIndex]);
 
   // Company logos for credibility
   const partnerCompanies = [
@@ -322,13 +330,13 @@ const AboutPage = () => {
               </span>
             </div>
             
-            <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-6 leading-tight">
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
               Where 
               <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent"> Innovation </span>
               Meets Legacy
             </h1>
             
-            <p className="text-xl md:text-2xl text-gray-700 max-w-4xl mx-auto mb-12 leading-relaxed">
+            <p className="text-lg md:text-xl text-gray-700 max-w-3xl mx-auto mb-12 leading-relaxed">
               Join a network of 15,000+ brilliant minds who are shaping the future across technology, 
               research, entrepreneurship, and beyond.
             </p>
@@ -354,30 +362,30 @@ const AboutPage = () => {
             </div>
 
             {/* Floating Stats Cards */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-16">
-              <div className="bg-white/90 backdrop-blur-lg rounded-2xl p-4 text-center border border-white/40 shadow-lg hover:shadow-xl transition-all duration-300">
-                <div className="text-2xl md:text-3xl font-bold text-[#5A32EA] mb-1">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-12">
+              <div className="bg-white/90 backdrop-blur-lg rounded-xl p-3 text-center border border-white/40 shadow-lg hover:shadow-xl transition-all duration-300">
+                <div className="text-xl md:text-2xl font-bold text-[#5A32EA] mb-1">
                   {animatedStats.alumniCount.toLocaleString()}+
                 </div>
-                <div className="text-gray-600 text-sm font-medium">Alumni</div>
+                <div className="text-gray-600 text-xs font-medium">Alumni</div>
               </div>
-              <div className="bg-white/90 backdrop-blur-lg rounded-2xl p-4 text-center border border-white/40 shadow-lg hover:shadow-xl transition-all duration-300">
-                <div className="text-2xl md:text-3xl font-bold text-[#5A32EA] mb-1">
+              <div className="bg-white/90 backdrop-blur-lg rounded-xl p-3 text-center border border-white/40 shadow-lg hover:shadow-xl transition-all duration-300">
+                <div className="text-xl md:text-2xl font-bold text-[#5A32EA] mb-1">
                   {animatedStats.countries}+
                 </div>
-                <div className="text-gray-600 text-sm font-medium">Countries</div>
+                <div className="text-gray-600 text-xs font-medium">Countries</div>
               </div>
-              <div className="bg-white/90 backdrop-blur-lg rounded-2xl p-4 text-center border border-white/40 shadow-lg hover:shadow-xl transition-all duration-300">
-                <div className="text-2xl md:text-3xl font-bold text-[#5A32EA] mb-1">
+              <div className="bg-white/90 backdrop-blur-lg rounded-xl p-3 text-center border border-white/40 shadow-lg hover:shadow-xl transition-all duration-300">
+                <div className="text-xl md:text-2xl font-bold text-[#5A32EA] mb-1">
                   {animatedStats.successStories}+
                 </div>
-                <div className="text-gray-600 text-sm font-medium">Success Stories</div>
+                <div className="text-gray-600 text-xs font-medium">Success Stories</div>
               </div>
-              <div className="bg-white/90 backdrop-blur-lg rounded-2xl p-4 text-center border border-white/40 shadow-lg hover:shadow-xl transition-all duration-300">
-                <div className="text-2xl md:text-3xl font-bold text-[#5A32EA] mb-1">
+              <div className="bg-white/90 backdrop-blur-lg rounded-xl p-3 text-center border border-white/40 shadow-lg hover:shadow-xl transition-all duration-300">
+                <div className="text-xl md:text-2xl font-bold text-[#5A32EA] mb-1">
                   {animatedStats.activeUsers.toLocaleString()}+
                 </div>
-                <div className="text-gray-600 text-sm font-medium">Active Users</div>
+                <div className="text-gray-600 text-xs font-medium">Active Users</div>
               </div>
             </div>
           </div>
@@ -391,10 +399,10 @@ const AboutPage = () => {
         </section>
 
         {/* Company Partners Section */}
-        <section className="py-16 bg-gradient-to-r from-indigo-50 to-purple-50">
+        <section className="py-12 bg-gradient-to-r from-indigo-50 to-purple-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <h3 className="text-2xl font-bold text-gray-900 mb-4 flex items-center justify-center">
+            <div className="text-center mb-8">
+              <h3 className="text-xl font-bold text-gray-900 mb-3 flex items-center justify-center">
                 <i className="fas fa-building mr-3 text-[#5A32EA]"></i>
                 Our alumni work at leading organizations worldwide
               </h3>
@@ -411,11 +419,11 @@ const AboutPage = () => {
         </section>
 
         {/* Interactive Mission/Vision/Values Section */}
-        <section className="py-20 bg-white">
+        <section className="py-16 sm:py-20 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-gray-900 mb-4">Our Foundation</h2>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">Our Foundation</h2>
+              <p className="text-lg text-gray-600 max-w-3xl mx-auto">
                 Built on principles that have guided us for over five decades
               </p>
             </div>
@@ -446,8 +454,8 @@ const AboutPage = () => {
                   <div className="w-20 h-20 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-6">
                     <i className="fas fa-bullseye text-white text-2xl"></i>
                   </div>
-                  <h3 className="text-3xl font-bold text-gray-900">Our Mission</h3>
-                  <p className="text-lg text-gray-600 leading-relaxed">
+                  <h3 className="text-2xl font-bold text-gray-900">Our Mission</h3>
+                  <p className="text-base text-gray-600 leading-relaxed">
                     To create a vibrant ecosystem where CUCEK graduates connect, collaborate, and contribute 
                     to technological advancement and societal progress while maintaining lifelong bonds with 
                     their alma mater.
@@ -460,8 +468,8 @@ const AboutPage = () => {
                   <div className="w-20 h-20 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-6">
                     <i className="fas fa-eye text-white text-2xl"></i>
                   </div>
-                  <h3 className="text-3xl font-bold text-gray-900">Our Vision</h3>
-                  <p className="text-lg text-gray-600 leading-relaxed">
+                  <h3 className="text-2xl font-bold text-gray-900">Our Vision</h3>
+                  <p className="text-base text-gray-600 leading-relaxed">
                     To be the world's premier engineering alumni network, fostering innovation, 
                     entrepreneurship, and leadership that addresses global challenges and creates 
                     a sustainable future for humanity.
@@ -474,7 +482,7 @@ const AboutPage = () => {
                   <div className="w-20 h-20 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-6">
                     <i className="fas fa-heart text-white text-2xl"></i>
                   </div>
-                  <h3 className="text-3xl font-bold text-gray-900">Our Values</h3>
+                  <h3 className="text-2xl font-bold text-gray-900">Our Values</h3>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
                     <div className="p-4">
                       <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mx-auto mb-3">
@@ -505,14 +513,14 @@ const AboutPage = () => {
         </section>
 
         {/* Achievements Grid */}
-        <section className="py-20 bg-white">
+        <section className="py-16 sm:py-20 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-gray-900 mb-4 flex items-center justify-center">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold text-gray-900 mb-4 flex items-center justify-center">
                 <i className="fas fa-star mr-4 text-[#5A32EA]"></i>
                 Why Choose CUCEK?
               </h2>
-              <p className="text-xl text-gray-600">Discover what makes our community exceptional</p>
+              <p className="text-lg text-gray-600">Discover what makes our community exceptional</p>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -532,7 +540,7 @@ const AboutPage = () => {
         </section>
 
         {/* Interactive Gallery Section */}
-        <section className="py-20 bg-gradient-to-br from-indigo-50 to-purple-50 overflow-hidden relative">
+        <section className="py-16 sm:py-20 bg-gradient-to-br from-indigo-50 to-purple-50 overflow-hidden relative">
           {/* Background Decoration */}
           <div className="absolute inset-0">
             <div className="absolute top-10 left-10 w-32 h-32 bg-gradient-to-r from-[#5A32EA]/10 to-purple-300/20 rounded-full blur-3xl animate-pulse"></div>
@@ -541,32 +549,32 @@ const AboutPage = () => {
           
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             {/* Gallery Header - Consistent with Project Style */}
-            <div className="text-center mb-16">
+            <div className="text-center mb-12">
               <div className="flex flex-col items-center">
                 {/* Main Icon with Consistent Design */}
-                <div className="relative mb-8">
-                  <div className="w-20 h-20 bg-gradient-to-r from-[#5A32EA] to-indigo-600 rounded-2xl flex items-center justify-center shadow-xl transform hover:scale-105 transition-all duration-300">
-                    <i className="fas fa-images text-white text-3xl"></i>
+                <div className="relative mb-6">
+                  <div className="w-16 h-16 bg-gradient-to-r from-[#5A32EA] to-indigo-600 rounded-2xl flex items-center justify-center shadow-xl transform hover:scale-105 transition-all duration-300">
+                    <i className="fas fa-images text-white text-2xl"></i>
                   </div>
-                  <div className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full flex items-center justify-center shadow-lg">
+                  <div className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full flex items-center justify-center shadow-lg">
                     <i className="fas fa-heart text-white text-xs"></i>
                   </div>
-                  <div className="absolute -bottom-1 -left-1 w-6 h-6 bg-gradient-to-r from-green-400 to-emerald-400 rounded-full flex items-center justify-center shadow-lg">
+                  <div className="absolute -bottom-1 -left-1 w-5 h-5 bg-gradient-to-r from-green-400 to-emerald-400 rounded-full flex items-center justify-center shadow-lg">
                     <i className="fas fa-star text-white text-xs"></i>
                   </div>
                 </div>
                 
                 {/* Title Section - Matching Project Typography */}
-                <h2 className="text-4xl font-bold text-gray-900 mb-4 flex items-center justify-center">
-                  <i className="fas fa-camera-retro mr-4 text-[#5A32EA]"></i>
+                <h2 className="text-3xl font-bold text-gray-900 mb-4 flex items-center justify-center">
+                  <i className="fas fa-camera-retro mr-3 text-[#5A32EA]"></i>
                   Campus Life Gallery
                 </h2>
                 
                 {/* Divider Line */}
-                <div className="w-24 h-1 bg-gradient-to-r from-[#5A32EA] to-purple-600 rounded-full mb-6"></div>
+                <div className="w-16 h-1 bg-gradient-to-r from-[#5A32EA] to-purple-600 rounded-full mb-4"></div>
                 
                 {/* Description - Consistent with Other Sections */}
-                <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed mb-8">
+                <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed mb-6">
                   Experience the vibrant moments that define our community through a visual journey of 
                   <span className="font-semibold text-[#5A32EA]"> innovation, excellence, and shared memories</span>
                 </p>
@@ -596,18 +604,18 @@ const AboutPage = () => {
             <div className="relative">
               {galleryLoading ? (
                 /* Loading State */
-                <div className="relative h-64 md:h-80 rounded-2xl overflow-hidden shadow-xl bg-gray-200 animate-pulse flex items-center justify-center">
+                <div className="relative h-48 md:h-64 rounded-2xl overflow-hidden shadow-xl bg-gray-200 animate-pulse flex items-center justify-center">
                   <div className="text-center">
-                    <div className="inline-block w-6 h-6 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mb-3"></div>
-                    <p className="text-gray-600">Loading gallery...</p>
+                    <div className="inline-block w-5 h-5 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mb-2"></div>
+                    <p className="text-gray-600 text-sm">Loading gallery...</p>
                   </div>
                 </div>
               ) : galleryImages.length === 0 ? (
                 /* Empty State */
-                <div className="relative h-64 md:h-80 rounded-2xl overflow-hidden shadow-xl bg-gray-100 flex items-center justify-center">
+                <div className="relative h-48 md:h-64 rounded-2xl overflow-hidden shadow-xl bg-gray-100 flex items-center justify-center">
                   <div className="text-center">
-                    <i className="fas fa-images text-4xl text-gray-400 mb-3"></i>
-                    <p className="text-lg text-gray-600">No gallery images available</p>
+                    <i className="fas fa-images text-3xl text-gray-400 mb-2"></i>
+                    <p className="text-base text-gray-600">No gallery images available</p>
                   </div>
                 </div>
               ) : (
@@ -700,14 +708,14 @@ const AboutPage = () => {
         </section>
 
         {/* Alumni Testimonials Section */}
-        <section className="py-20 bg-white">
+        <section className="py-16 sm:py-20 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-gray-900 mb-4 flex items-center justify-center">
-                <i className="fas fa-quote-left mr-4 text-[#5A32EA]"></i>
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold text-gray-900 mb-4 flex items-center justify-center">
+                <i className="fas fa-quote-left mr-3 text-[#5A32EA]"></i>
                 What Our Alumni Say
               </h2>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              <p className="text-lg text-gray-600 max-w-3xl mx-auto">
                 Hear from graduates who are making their mark across the globe
               </p>
             </div>
@@ -722,45 +730,45 @@ const AboutPage = () => {
                   {testimonials.map((testimonial, index) => (
                     <div key={testimonial.id} className="w-full flex-shrink-0 px-4">
                       <div className="max-w-4xl mx-auto">
-                        <div className="bg-gradient-to-br from-white to-indigo-50 rounded-3xl shadow-2xl p-6 md:p-12 relative overflow-hidden min-h-[400px] md:min-h-[450px] border border-indigo-100">
+                        <div className="bg-gradient-to-br from-white to-indigo-50 rounded-2xl shadow-lg p-6 md:p-8 relative overflow-hidden min-h-[350px] md:min-h-[400px] border border-indigo-100">
                           {/* Decorative Elements */}
-                          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#5A32EA]/10 to-purple-200/20 rounded-full -translate-y-16 translate-x-16"></div>
-                          <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-blue-100/30 to-[#5A32EA]/10 rounded-full translate-y-12 -translate-x-12"></div>
+                          <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-[#5A32EA]/10 to-purple-200/20 rounded-full -translate-y-12 translate-x-12"></div>
+                          <div className="absolute bottom-0 left-0 w-20 h-20 bg-gradient-to-tr from-blue-100/30 to-[#5A32EA]/10 rounded-full translate-y-10 -translate-x-10"></div>
                           
                           <div className="relative z-10">
                             {/* Quote Icon */}
-                            <div className="flex justify-center mb-8">
-                              <div className="w-16 h-16 bg-[#5A32EA] rounded-full flex items-center justify-center shadow-lg">
-                                <i className="fas fa-quote-left text-white text-2xl"></i>
+                            <div className="flex justify-center mb-6">
+                              <div className="w-12 h-12 bg-[#5A32EA] rounded-full flex items-center justify-center shadow-lg">
+                                <i className="fas fa-quote-left text-white text-lg"></i>
                               </div>
                             </div>
                             
                             {/* Testimonial Quote */}
-                            <div className="mb-8 max-h-32 overflow-y-auto scrollbar-hide">
-                              <blockquote className="text-base md:text-lg text-gray-700 text-center leading-relaxed italic max-w-3xl mx-auto break-words">
+                            <div className="mb-6 max-h-24 overflow-y-auto scrollbar-hide">
+                              <blockquote className="text-sm md:text-base text-gray-700 text-center leading-relaxed italic max-w-3xl mx-auto break-words">
                                 "{testimonial.quote}"
                               </blockquote>
                             </div>
                             
                             {/* Alumni Info - Centered */}
-                            <div className="flex flex-col items-center justify-center text-center space-y-4">
+                            <div className="flex flex-col items-center justify-center text-center space-y-3">
                               <img
                                 src={testimonial.image}
                                 alt={testimonial.name}
-                                className="w-20 h-20 rounded-full object-cover border-4 border-[#5A32EA]/20 shadow-lg"
+                                className="w-16 h-16 rounded-full object-cover border-4 border-[#5A32EA]/20 shadow-lg"
                                 onError={(e) => {
                                   e.target.src = 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop';
                                 }}
                               />
-                              <div className="space-y-2">
-                                <h4 className="text-lg md:text-xl font-bold text-gray-900">{testimonial.name}</h4>
-                                <p className="text-[#5A32EA] font-semibold text-sm md:text-base">{testimonial.position}</p>
-                                <p className="text-gray-600 text-sm md:text-base">{testimonial.company}</p>
-                                <div className="flex items-center justify-center text-xs md:text-sm text-gray-500 space-x-1">
+                              <div className="space-y-1">
+                                <h4 className="text-base md:text-lg font-bold text-gray-900">{testimonial.name}</h4>
+                                <p className="text-[#5A32EA] font-semibold text-sm">{testimonial.position}</p>
+                                <p className="text-gray-600 text-sm">{testimonial.company}</p>
+                                <div className="flex items-center justify-center text-xs text-gray-500 space-x-1">
                                   <i className="fas fa-graduation-cap text-[#5A32EA]"></i>
                                   <span>Class of {testimonial.batch} • {testimonial.department}</span>
                                 </div>
-                                <div className="flex items-center justify-center text-xs md:text-sm text-gray-500 space-x-1">
+                                <div className="flex items-center justify-center text-xs text-gray-500 space-x-1">
                                   <i className="fas fa-map-marker-alt text-[#5A32EA]"></i>
                                   <span>{testimonial.location}</span>
                                 </div>
@@ -824,74 +832,94 @@ const AboutPage = () => {
             </div>
             
             {/* Quick Stats from Testimonials */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
               <div className="text-center">
-                <div className="w-16 h-16 bg-gradient-to-r from-[#5A32EA] to-blue-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-                  <i className="fas fa-thumbs-up text-white text-2xl"></i>
+                <div className="w-12 h-12 bg-gradient-to-r from-[#5A32EA] to-blue-500 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg">
+                  <i className="fas fa-thumbs-up text-white text-lg"></i>
                 </div>
-                <h4 className="text-2xl font-bold text-gray-900 mb-2">98%</h4>
-                <p className="text-gray-600 font-medium">Alumni Satisfaction Rate</p>
+                <h4 className="text-xl font-bold text-gray-900 mb-1">98%</h4>
+                <p className="text-gray-600 font-medium text-sm">Alumni Satisfaction Rate</p>
               </div>
               <div className="text-center">
-                <div className="w-16 h-16 bg-gradient-to-r from-[#5A32EA] to-purple-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-                  <i className="fas fa-user-graduate text-white text-2xl"></i>
+                <div className="w-12 h-12 bg-gradient-to-r from-[#5A32EA] to-purple-500 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg">
+                  <i className="fas fa-user-graduate text-white text-lg"></i>
                 </div>
-                <h4 className="text-2xl font-bold text-gray-900 mb-2">87%</h4>
-                <p className="text-gray-600 font-medium">Actively Mentor Current Students</p>
+                <h4 className="text-xl font-bold text-gray-900 mb-1">87%</h4>
+                <p className="text-gray-600 font-medium text-sm">Actively Mentor Current Students</p>
               </div>
               <div className="text-center">
-                <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-[#5A32EA] rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-                  <i className="fas fa-heart text-white text-2xl"></i>
+                <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-[#5A32EA] rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg">
+                  <i className="fas fa-heart text-white text-lg"></i>
                 </div>
-                <h4 className="text-2xl font-bold text-gray-900 mb-2">94%</h4>
-                <p className="text-gray-600 font-medium">Would Recommend CUCEK</p>
+                <h4 className="text-xl font-bold text-gray-900 mb-1">94%</h4>
+                <p className="text-gray-600 font-medium text-sm">Would Recommend CUCEK</p>
               </div>
             </div>
           </div>
         </section>
 
         {/* Featured Alumni Carousel */}
-        <section className="py-20 bg-gradient-to-br from-indigo-50 to-purple-50 overflow-hidden">
+        <section className="py-16 sm:py-20 bg-gradient-to-br from-indigo-50 to-purple-50 overflow-hidden">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-gray-900 mb-4 flex items-center justify-center">
-                <i className="fas fa-medal mr-4 text-[#5A32EA]"></i>
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold text-gray-900 mb-4 flex items-center justify-center">
+                <i className="fas fa-medal mr-3 text-[#5A32EA]"></i>
                 Alumni Spotlight
               </h2>
-              <p className="text-xl text-gray-600">Meet the changemakers from our community</p>
+              <p className="text-lg text-gray-600">Meet the changemakers from our community</p>
             </div>
             
             <div className="relative">
-              <div className="overflow-hidden rounded-3xl shadow-2xl">
-                <div 
-                  className="flex transition-transform duration-500 ease-in-out"
-                  style={{ transform: `translateX(-${currentStoryIndex * 100}%)` }}
-                >
-                  {successStories.map((story, index) => (
+              {spotlightsLoading ? (
+                <div className="flex items-center justify-center py-12">
+                  <div className="text-center">
+                    <div className="inline-block w-6 h-6 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mb-3"></div>
+                    <p className="text-gray-600 text-sm">Loading spotlights...</p>
+                  </div>
+                </div>
+              ) : successStories.length === 0 ? (
+                <div className="flex items-center justify-center py-16">
+                  <div className="text-center">
+                    <i className="fas fa-medal text-5xl text-gray-400 mb-4"></i>
+                    <h3 className="text-xl font-bold text-gray-900 mb-3">No Alumni Spotlights Yet</h3>
+                    <p className="text-base text-gray-600 max-w-md mx-auto">
+                      We're working on featuring amazing stories from our alumni community. 
+                      Check back soon!
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div className="overflow-hidden rounded-3xl shadow-2xl">
+                    <div 
+                      className="flex transition-transform duration-500 ease-in-out"
+                      style={{ transform: `translateX(-${currentStoryIndex * 100}%)` }}
+                    >
+                      {successStories.map((story, index) => (
                     <div key={index} className="w-full flex-shrink-0">
                       <div className="bg-[#5A32EA] p-1 rounded-3xl">
-                        <div className="bg-white rounded-3xl p-8 md:p-12">
-                          <div className="flex flex-col md:flex-row items-center gap-8">
+                        <div className="bg-white rounded-3xl p-6 md:p-8">
+                          <div className="flex flex-col md:flex-row items-center gap-6">
                             <div className="flex-shrink-0">
                               <img
                                 src={story.image}
                                 alt={story.name}
-                                className="w-48 h-48 rounded-full object-cover shadow-xl border-4 border-white"
+                                className="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover shadow-xl border-4 border-white"
                                 onError={(e) => {
                                   e.target.src = 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop';
                                 }}
                               />
                             </div>
                             <div className="flex-1 text-center md:text-left">
-                              <h3 className="text-3xl font-bold text-gray-900 mb-2">{story.name}</h3>
-                              <div className="text-lg font-semibold text-gray-700 mb-1">{story.position}</div>
+                              <h3 className="text-2xl font-bold text-gray-900 mb-2">{story.name}</h3>
+                              <div className="text-base font-semibold text-gray-700 mb-1">{story.position}</div>
                               <div className="text-[#5A32EA] font-medium mb-2">{story.company}</div>
-                              <div className="flex items-center justify-center md:justify-start text-gray-500 mb-4">
+                              <div className="flex items-center justify-center md:justify-start text-gray-500 mb-3">
                                 <i className="fas fa-graduation-cap mr-2 text-[#5A32EA]"></i>
-                                <span>Class of {story.batch} • {story.department}</span>
+                                <span className="text-sm">Class of {story.batch} • {story.department}</span>
                               </div>
-                              <p className="text-lg text-gray-700 mb-4 leading-relaxed">{story.achievement}</p>
-                              <div className="inline-flex items-center px-4 py-2 bg-indigo-50 rounded-full text-sm font-medium text-[#5A32EA] border border-indigo-200">
+                              <p className="text-base text-gray-700 mb-3 leading-relaxed">{story.achievement}</p>
+                              <div className="inline-flex items-center px-3 py-1 bg-indigo-50 rounded-full text-sm font-medium text-[#5A32EA] border border-indigo-200">
                                 <i className="fas fa-chart-line mr-2"></i>
                                 {story.impact}
                               </div>
@@ -917,12 +945,14 @@ const AboutPage = () => {
                   />
                 ))}
               </div>
+                </>
+              )}
             </div>
           </div>
         </section>
 
         {/* Interactive Timeline */}
-        <section className="py-20 bg-gradient-to-br from-slate-50 via-indigo-50 to-purple-50 text-gray-900 relative overflow-hidden">
+        <section className="py-16 sm:py-20 bg-gradient-to-br from-slate-50 via-indigo-50 to-purple-50 text-gray-900 relative overflow-hidden">
           {/* Decorative Background Elements */}
           <div className="absolute inset-0">
             <div className="absolute top-20 left-10 w-64 h-64 bg-gradient-to-r from-[#5A32EA]/10 to-purple-200/20 rounded-full blur-3xl"></div>
@@ -930,38 +960,38 @@ const AboutPage = () => {
           </div>
           
           <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold mb-4 flex items-center justify-center">
-                <i className="fas fa-history mr-4 text-[#5A32EA]"></i>
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold mb-4 flex items-center justify-center">
+                <i className="fas fa-history mr-3 text-[#5A32EA]"></i>
                 Our Legacy
               </h2>
-              <p className="text-xl text-gray-600">Three decades of excellence and innovation</p>
+              <p className="text-lg text-gray-600">Three decades of excellence and innovation</p>
             </div>
             
             <div className="relative">
               {/* Enhanced Timeline Line with Gradient */}
               <div className="absolute left-1/2 transform -translate-x-0.5 h-full w-1 bg-gradient-to-b from-[#5A32EA] via-indigo-400 to-purple-400 rounded-full shadow-sm"></div>
 
-              <div className="space-y-16">
+              <div className="space-y-12">
                 {timelineMilestones.map((milestone, index) => (
                   <div key={index} className="relative group">
                     <div className={`flex items-center ${index % 2 === 0 ? 'justify-start' : 'justify-end'}`}>
                       <div className={`w-1/2 ${index % 2 === 0 ? 'pr-8' : 'pl-8'}`}>
-                        <div className="bg-white/95 backdrop-blur-xl rounded-3xl p-8 border border-indigo-100 hover:border-[#5A32EA]/30 transition-all duration-500 shadow-xl hover:shadow-2xl group-hover:scale-105 transform">
+                        <div className="bg-white/95 backdrop-blur-xl rounded-2xl p-6 border border-indigo-100 hover:border-[#5A32EA]/30 transition-all duration-500 shadow-lg hover:shadow-xl group-hover:scale-105 transform">
                           {/* Gradient Border Effect */}
-                          <div className="absolute inset-0 bg-gradient-to-r from-[#5A32EA]/5 via-indigo-100/20 to-purple-100/10 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                          <div className="absolute inset-0 bg-gradient-to-r from-[#5A32EA]/5 via-indigo-100/20 to-purple-100/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                           
                           <div className="relative z-10">
-                            <div className="flex items-center mb-4">
-                              <div className="w-12 h-12 bg-gradient-to-r from-[#5A32EA] to-indigo-600 rounded-2xl flex items-center justify-center mr-4 shadow-lg group-hover:shadow-xl transition-all duration-300">
-                                <i className="fas fa-calendar-alt text-white text-lg"></i>
+                            <div className="flex items-center mb-3">
+                              <div className="w-10 h-10 bg-gradient-to-r from-[#5A32EA] to-indigo-600 rounded-xl flex items-center justify-center mr-3 shadow-lg group-hover:shadow-xl transition-all duration-300">
+                                <i className="fas fa-calendar-alt text-white text-sm"></i>
                               </div>
-                              <div className="text-3xl font-bold bg-gradient-to-r from-[#5A32EA] to-indigo-600 bg-clip-text text-transparent">
+                              <div className="text-2xl font-bold bg-gradient-to-r from-[#5A32EA] to-indigo-600 bg-clip-text text-transparent">
                                 {milestone.year}
                               </div>
                             </div>
-                            <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-[#5A32EA] transition-colors duration-300">{milestone.title}</h3>
-                            <p className="text-gray-600 leading-relaxed">{milestone.description}</p>
+                            <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-[#5A32EA] transition-colors duration-300">{milestone.title}</h3>
+                            <p className="text-sm text-gray-600 leading-relaxed">{milestone.description}</p>
                           </div>
                         </div>
                       </div>
@@ -969,8 +999,8 @@ const AboutPage = () => {
                       {/* Enhanced Timeline Dots with Pulse Effect */}
                       <div className="absolute left-1/2 transform -translate-x-1/2 z-20">
                         <div className="relative">
-                          <div className="w-8 h-8 bg-gradient-to-r from-[#5A32EA] to-indigo-600 rounded-full border-4 border-white shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-125"></div>
-                          <div className="absolute inset-0 w-8 h-8 bg-gradient-to-r from-[#5A32EA] to-indigo-600 rounded-full animate-ping opacity-20 group-hover:opacity-40"></div>
+                          <div className="w-6 h-6 bg-gradient-to-r from-[#5A32EA] to-indigo-600 rounded-full border-3 border-white shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-125"></div>
+                          <div className="absolute inset-0 w-6 h-6 bg-gradient-to-r from-[#5A32EA] to-indigo-600 rounded-full animate-ping opacity-20 group-hover:opacity-40"></div>
                         </div>
                       </div>
                     </div>
@@ -982,20 +1012,20 @@ const AboutPage = () => {
         </section>
 
         {/* Call to Action with Modern Design */}
-        <section className="py-20 bg-[#5A32EA] relative overflow-hidden">
+        <section className="py-16 sm:py-20 bg-[#5A32EA] relative overflow-hidden">
           <div className="absolute inset-0 bg-black/10"></div>
           <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <div className="max-w-4xl mx-auto">
-              <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 flex items-center justify-center">
-                <i className="fas fa-rocket mr-4"></i>
+              <h2 className="text-3xl md:text-4xl font-bold text-white mb-6 flex items-center justify-center">
+                <i className="fas fa-rocket mr-3"></i>
                 Ready to Shape the Future?
               </h2>
-              <p className="text-xl text-indigo-100 mb-10 leading-relaxed">
+              <p className="text-lg text-indigo-100 mb-8 leading-relaxed">
                 Join our global community of innovators, entrepreneurs, and leaders who are 
                 making a real impact in their fields and beyond.
               </p>
               
-              <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                 <button
                   onClick={() => navigate('/role-selection')}
                   className="group relative px-10 py-4 bg-white text-[#5A32EA] rounded-2xl font-bold text-lg overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl"
@@ -1016,21 +1046,21 @@ const AboutPage = () => {
                 </button>
               </div>
               
-              <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 text-indigo-100">
+              <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6 text-indigo-100">
                 <div className="flex flex-col items-center">
-                  <i className="fas fa-globe-americas text-3xl mb-3"></i>
-                  <h4 className="font-semibold">Global Network</h4>
-                  <p className="text-sm">Connect worldwide</p>
+                  <i className="fas fa-globe-americas text-2xl mb-2"></i>
+                  <h4 className="font-semibold text-sm">Global Network</h4>
+                  <p className="text-xs">Connect worldwide</p>
                 </div>
                 <div className="flex flex-col items-center">
-                  <i className="fas fa-lightbulb text-3xl mb-3"></i>
-                  <h4 className="font-semibold">Innovation Hub</h4>
-                  <p className="text-sm">Drive technology forward</p>
+                  <i className="fas fa-lightbulb text-2xl mb-2"></i>
+                  <h4 className="font-semibold text-sm">Innovation Hub</h4>
+                  <p className="text-xs">Drive technology forward</p>
                 </div>
                 <div className="flex flex-col items-center">
-                  <i className="fas fa-handshake text-3xl mb-3"></i>
-                  <h4 className="font-semibold">Lifelong Community</h4>
-                  <p className="text-sm">Support and growth</p>
+                  <i className="fas fa-handshake text-2xl mb-2"></i>
+                  <h4 className="font-semibold text-sm">Lifelong Community</h4>
+                  <p className="text-xs">Support and growth</p>
                 </div>
               </div>
             </div>

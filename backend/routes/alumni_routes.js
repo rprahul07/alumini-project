@@ -36,6 +36,7 @@ import { resumableMulter } from "../middleware/resumableMulter.middleware.js";
 import {
   searchAlumniProfilesController,
   searchStudentsController,
+  searchAlumniForSpotlight,
 } from "../controllers/user/user_controller.js";
 
 const router = express.Router();
@@ -48,6 +49,7 @@ router.patch("/profile/update", uploadPhotoMiddleware, updateAlumniSelf);
 router.post("/upload/resume", resumableMulter, resumableUploadMiddleware);
 router.delete("/profile/delete-photo", deleteProfilePicture);
 router.get("/searchalumni", searchAlumniProfilesController);
+router.get("/search-for-spotlight", searchAlumniForSpotlight);
 router.get("/searchstudent", searchStudentsController);
 
 router.get("/event/all", getAllEvents);

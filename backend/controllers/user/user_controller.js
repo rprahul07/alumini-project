@@ -451,6 +451,97 @@ export const searchAlumniProfilesController = async (req, res) => {
   }
 };
 
+// 🔐 Admin - Search alumni for spotlight creation
+export const searchAlumniForSpotlight = async (req, res) => {
+  try {
+    const { search, limit = 10 } = req.query;
+
+    const limitInt = parseInt(limit) || 10;
+    if (limitInt < 1 || limitInt > 50) {
+      return res.status(400).json({
+        success: false,
+        message: "Limit must be between 1 and 50.",
+        error: "Invalid limit",
+      });
+    }
+
+    // Build where clause for search
+    let whereClause = {};
+    
+    if (search && search.trim()) {
+      whereClause.OR = [
+        {
+          user: {
+            fullName: {
+              contains: search.trim(),
+              mode: "insensitive",
+            },
+          },
+        },
+        {
+          companyName: {
+            contains: search.trim(),
+            mode: "insensitive",
+          },
+        },
+      ];
+    }
+
+    const alumni = await prisma.alumni.findMany({
+      where: whereClause,
+      select: {
+        id: true,
+        graduationYear: true,
+        currentJobTitle: true,
+        companyName: true,
+        user: {
+          select: {
+            id: true,
+            fullName: true,
+            photoUrl: true,
+            department: true,
+          },
+        },
+      },
+      orderBy: [
+        {
+          graduationYear: "desc",
+        },
+        {
+          user: {
+            fullName: "asc",
+          },
+        },
+      ],
+      take: limitInt,
+    });
+
+    const transformedAlumni = alumni.map((alumnus) => ({
+      userId: alumnus.user.id,
+      alumniId: alumnus.id,
+      name: alumnus.user.fullName,
+      photoUrl: alumnus.user.photoUrl,
+      department: alumnus.user.department,
+      graduationYear: alumnus.graduationYear,
+      currentJobTitle: alumnus.currentJobTitle,
+      companyName: alumnus.companyName,
+    }));
+
+    return res.status(200).json({
+      success: true,
+      message: `Found ${transformedAlumni.length} alumni`,
+      data: transformedAlumni,
+    });
+  } catch (error) {
+    console.error("Error in searchAlumniForSpotlight:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
+
 export const signup = async (req, res) => {
   try {
     // console.log('Registration request received:', {
