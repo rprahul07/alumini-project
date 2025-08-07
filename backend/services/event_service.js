@@ -60,6 +60,11 @@ export const createEventForUser = async (userId, userRole, eventData) => {
     }
     const parsedMaxCapacity = parseInt(maxCapacity);
     // Create the event
+    // If admin, force status to 'approved'
+    let eventStatus = undefined;
+    if (userRole === 'admin') {
+      eventStatus = 'approved';
+    }
     const newEvent = await prisma.event.create({
       data: {
         userId,
@@ -72,6 +77,7 @@ export const createEventForUser = async (userId, userRole, eventData) => {
         organizer: organizer.trim(),
         imageUrl: imageUrl ? imageUrl.trim() : null,
         maxCapacity: parsedMaxCapacity || null,
+        ...(eventStatus && { status: eventStatus }),
       },
       include: {
         user: {

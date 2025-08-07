@@ -28,7 +28,8 @@ import apiService from "../../middleware/api";
 import { useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
 import Navbar from "../../components/Navbar";
-import AlumniEventSubmissions from "../../components/AlumniEventSubmissions";
+// import AlumniEventSubmissions from "../../components/AlumniEventSubmissions"; // Removed event management
+import AdminEventsPage from '../../components/AdminEventsPage';
 import JobCard from '../../components/opportunities/JobCard';
 import JobDetailsModal from '../../components/opportunities/JobDetailsModal';
 import axios from '../../config/axios';
@@ -289,17 +290,18 @@ const ProtectedRoute = ({ children }) => {
 };
 
 // --- Sidebar Component ---
-const Sidebar = ({ onNavigate, onEventSectionChange, activeView, eventSection }) => {
+const Sidebar = ({ onNavigate, activeView }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isUserManagementExpanded, setIsUserManagementExpanded] =
     useState(false);
-  const [isEventManagementExpanded, setIsEventManagementExpanded] = useState(false);
+  // const [isEventManagementExpanded, setIsEventManagementExpanded] = useState(false); // Removed event management
   // Main menu items
   const mainMenuItems = [
     { title: "Dashboard", icon: FiHome, view: "dashboard" },
     { title: "Announcements", icon: FiBell, view: "announcements" },
     { title: "Spotlight", icon: FiStar, view: "spotlight" },
     { title: "Gallery", icon: FiImage, view: "gallery" },
+    { title: "Event Management", icon: FiBarChart2, view: "event-management" },
   ];
 
   // User Management submenu items
@@ -309,17 +311,10 @@ const Sidebar = ({ onNavigate, onEventSectionChange, activeView, eventSection })
     { title: "Faculty", icon: FiUser, view: "faculty" },
   ];
 
-  const eventManagementItems = [
-    { title: "Alumni Events", icon: FiBriefcase, view: "event-management", section: "alumni" },
-    { title: "Faculty Events", icon: FiUser, view: "event-management", section: "faculty" },
-    { title: "Admin Events", icon: FiShield, view: "event-management", section: "admin" },
-  ];
+  // const eventManagementItems = [...] // Removed event management
 
-  const handleNavigationClick = (view, section) => {
+  const handleNavigationClick = (view) => {
     onNavigate(view);
-    if (view === "event-management" && section) {
-      onEventSectionChange(section);
-    }
     setIsOpen(false);
   };
 
@@ -410,46 +405,7 @@ const Sidebar = ({ onNavigate, onEventSectionChange, activeView, eventSection })
                   </ul>
                 )}
               </li>
-              {/* Event Management Dropdown */}
-              <li className="mb-3">
-                <button
-                  onClick={() => setIsEventManagementExpanded(!isEventManagementExpanded)}
-                  className="w-full text-left flex items-center justify-between space-x-3 p-3 text-gray-700 rounded-xl hover:bg-indigo-50 hover:text-indigo-700 transition-colors duration-200 group"
-                >
-                  <div className="flex items-center space-x-3">
-                    <FiBell className="h-6 w-6 text-gray-500 group-hover:text-indigo-600" />
-                    <span className="font-medium">Event Management</span>
-                  </div>
-                  <svg
-                    className={`h-5 w-5 transition-transform duration-200 ${isEventManagementExpanded ? "rotate-90" : ""}`}
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </button>
-                {isEventManagementExpanded && (
-                  <ul className="ml-8 mt-2 space-y-2">
-                    {eventManagementItems.map((item) => (
-                      <li key={item.title}>
-                        <button
-                          onClick={() => handleNavigationClick(item.view, item.section)}
-                          className={`w-full text-left flex items-center space-x-3 p-2 text-gray-600 rounded-lg hover:bg-indigo-100 hover:text-indigo-800 transition-colors duration-200 ${(activeView === item.view && eventSection === item.section) ? 'bg-indigo-100' : ''}`}
-                        >
-                          <item.icon className="h-5 w-5 text-gray-400" />
-                          <span className="text-sm">{item.title}</span>
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </li>
+              {/* Event Management Dropdown removed */}
               <li className="mb-3">
                 <button
                   onClick={() => onNavigate("contact-messages")}
@@ -939,7 +895,7 @@ const UserTableDisplay = ({ userType, users, onUpdateUser, onDeleteUser }) => {
 const AdminDashboard = () => {
   const { user, isAdmin } = useAuth(); // ✅ Use AuthContext instead of localStorage
   const [activeView, setActiveView] = useState("dashboard");
-  const [eventSection, setEventSection] = useState("alumni");
+  // const [eventSection, setEventSection] = useState("alumni"); // Removed event management
   const [dashboardStats, setDashboardStats] = useState(null);
   const [adminProfile, setAdminProfile] = useState(null);
   const [dashboardLoading, setDashboardLoading] = useState(true); // Only for initial dashboard fetch
@@ -1355,9 +1311,7 @@ const AdminDashboard = () => {
           )
         );
       case "event-management":
-        return (
-          <AlumniEventSubmissions sectionDefault={eventSection} />
-        ); 
+        return <AdminEventsPage />;
       case "contact-messages":
         return <AdminContactMessages />;
       case "announcements":
@@ -1398,9 +1352,7 @@ const AdminDashboard = () => {
             <aside className="lg:col-span-1 space-y-4" aria-label="Sidebar and profile section">
               <Sidebar
                 onNavigate={setActiveView}
-                onEventSectionChange={setEventSection}
                 activeView={activeView}
-                eventSection={eventSection}
               />
             </aside>
             <main className="lg:col-span-3 space-y-5 py-8">

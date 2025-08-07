@@ -21,6 +21,7 @@ export const createEventForAdmin = async (req, res) => {
   const eventData = {
     ...req.body,
     imageUrl: null,
+    status: 'approved', // Directly approve events created by admin
   };
 
   const result = await createEventForUser(userId, userRole, eventData);
