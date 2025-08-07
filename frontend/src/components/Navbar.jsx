@@ -194,7 +194,7 @@ const Navbar = ({ isHome = false }) => {
 
   // Profile Dropdown Component
   const ProfileDropdown = () => (
-    <div className="absolute right-0 mt-3 w-64 rounded-2xl shadow-2xl border border-white/20 py-2 z-50 bg-white/95 backdrop-blur-xl animate-in fade-in duration-200">
+    <div className="absolute right-0 mt-3 w-64 max-w-[calc(100vw-2rem)] sm:max-w-xs rounded-2xl shadow-2xl border border-white/20 py-2 z-50 bg-white/95 backdrop-blur-xl animate-in fade-in duration-200 overflow-hidden dropdown-menu">
       <div className="px-4 py-3 border-b border-gray-100">
         <div className="flex items-center space-x-3">
           <ProfileImage user={user} size="w-10 h-10" textSize="text-sm" />
@@ -203,7 +203,7 @@ const Navbar = ({ isHome = false }) => {
               {getUserDisplayName(user)}
             </p>
             <div className="flex items-center mt-1">
-              <p className="text-xs text-gray-500 capitalize">
+              <p className="text-xs text-gray-500 capitalize truncate">
                 {role} 
               </p>
             </div>
@@ -214,19 +214,19 @@ const Navbar = ({ isHome = false }) => {
       {!isDashboard && (
         <button
           onClick={() => { setDropdownOpen(false); handleDashboardRedirect(); }}
-          className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 hover:text-indigo-700 rounded-xl mx-2 transition-all duration-200"
+          className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 hover:text-indigo-700 transition-all duration-200"
         >
-          <i className="fas fa-tachometer-alt text-indigo-500"></i>
-          Dashboard
+          <i className="fas fa-tachometer-alt text-indigo-500 flex-shrink-0"></i>
+          <span className="truncate">Dashboard</span>
         </button>
       )}
       
       <button
         onClick={handleLogout}
-        className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-red-50 hover:to-pink-50 hover:text-red-700 rounded-xl mx-2 transition-all duration-200"
+        className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-red-50 hover:to-pink-50 hover:text-red-700 transition-all duration-200"
       >
-        <i className="fas fa-sign-out-alt text-red-500"></i>
-        Logout
+        <i className="fas fa-sign-out-alt text-red-500 flex-shrink-0"></i>
+        <span className="truncate">Logout</span>
       </button>
     </div>
   );
@@ -298,7 +298,7 @@ const Navbar = ({ isHome = false }) => {
           {/* User Actions */}
           <div className="flex items-center space-x-4">
             {user ? (
-              <div className="relative" ref={avatarRef}>
+              <div className="relative dropdown-container" ref={avatarRef}>
                 <button
                   onClick={() => setDropdownOpen(!dropdownOpen)}
                   className="flex items-center space-x-3 p-2 rounded-2xl bg-white/60 backdrop-blur-sm border border-white/20 hover:bg-white/80 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
