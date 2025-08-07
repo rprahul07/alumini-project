@@ -305,11 +305,11 @@ const AlumniPage = () => {
           {/* Alumni Grid */}
           <div className="mt-8">
             {loading ? (
-              <div className="flex justify-center items-center py-20">
+              <div className="flex justify-center items-center py-16">
                 <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-indigo-600"></div>
               </div>
             ) : error ? (
-              <div className="flex flex-col items-center py-20">
+              <div className="flex flex-col items-center py-16">
                 <div className="text-red-600 text-lg font-semibold mb-4">{error}</div>
                 <button
                   onClick={fetchAlumni}
@@ -319,11 +319,11 @@ const AlumniPage = () => {
                 </button>
               </div>
             ) : alumni.length === 0 ? (
-              <div className="text-center text-gray-500 py-20 text-lg font-medium">
+              <div className="text-center text-gray-500 py-16 text-lg font-medium">
                 No alumni found. Try adjusting your filters or search.
               </div>
             ) : filteredAlumni.length === 0 ? (
-              <div className="text-center text-gray-500 py-20 text-lg font-medium">
+              <div className="text-center text-gray-500 py-16 text-lg font-medium">
                 No bookmarked alumni found. Bookmark some alumni to see them here.
               </div>
             ) : (

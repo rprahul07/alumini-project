@@ -147,7 +147,7 @@ const TestimonialsPage = () => {
       <div className="min-h-screen bg-gray-50 pt-16">
         
         {/* Hero Section */}
-        <section className="relative py-20 overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-purple-50">
+        <section className="relative py-16 sm:py-20 overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-purple-50">
           <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/5 to-purple-600/5"></div>
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center">
@@ -155,7 +155,7 @@ const TestimonialsPage = () => {
                 <StarIcon className="h-4 w-4 mr-2" />
                 Success Stories from Our Alumni
               </div>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
+              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
                 Alumni{' '}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">
                   Testimonials
@@ -227,7 +227,7 @@ const TestimonialsPage = () => {
           {/* Testimonials Content */}
           <div className="mt-8">
             {loading ? (
-              <div className="flex justify-center items-center py-20">
+              <div className="flex justify-center items-center py-16">
                 <div className="relative inline-block">
                   <div className="animate-spin rounded-full h-16 w-16 border-4 border-indigo-200 border-t-indigo-600 mx-auto"></div>
                   <div className="absolute inset-0 flex items-center justify-center">
@@ -236,7 +236,7 @@ const TestimonialsPage = () => {
                 </div>
               </div>
             ) : filteredAndSortedTestimonials.length === 0 ? (
-              <div className="text-center py-20">
+              <div className="text-center py-16">
                 <div className="w-24 h-24 bg-gradient-to-r from-indigo-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
                   <StarIcon className="h-8 w-8 text-indigo-500" />
                 </div>
@@ -377,11 +377,11 @@ const TestimonialsPage = () => {
         </div>
 
         {/* Call to Action */}
-        <section className="py-20 relative overflow-hidden">
+        <section className="py-16 sm:py-20 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-800"></div>
           <div className="absolute inset-0 bg-black/10"></div>
           <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6">
+            <h2 className="text-3xl font-bold text-white mb-6">
               Share Your Success Story
             </h2>
             <p className="text-lg sm:text-xl text-indigo-100 mb-10 leading-relaxed max-w-2xl mx-auto">

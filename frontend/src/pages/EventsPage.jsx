@@ -134,8 +134,6 @@ const EventsPage = () => {
     <>
       <Navbar />
       <div className="min-h-screen bg-gray-50 pt-16">
-
-
         {/* Main Content */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           {/* Search and Filters */}
@@ -167,11 +165,11 @@ const EventsPage = () => {
           {/* Events Grid */}
           <div className="mt-8">
             {authLoading || loading ? (
-              <div className="flex justify-center items-center py-20">
+              <div className="flex justify-center items-center py-16">
                 <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-indigo-600"></div>
               </div>
             ) : error ? (
-              <div className="flex flex-col items-center py-20">
+              <div className="flex flex-col items-center py-16">
                 <div className="text-red-600 text-lg font-semibold mb-4">{error}</div>
                 <button 
                   onClick={fetchEvents}
@@ -181,7 +179,7 @@ const EventsPage = () => {
                 </button>
               </div>
             ) : events.length === 0 ? (
-              <div className="text-center text-gray-500 py-20 text-lg font-medium">
+              <div className="text-center text-gray-500 py-16 text-lg font-medium">
                 No events found. Try adjusting your filters or search.
               </div>
             ) : (

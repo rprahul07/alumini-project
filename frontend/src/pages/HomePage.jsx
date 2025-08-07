@@ -219,13 +219,13 @@ const HomePage = () => {
       <div className="bg-gradient-to-r from-indigo-200 to-white">
         {/* Hero Section */}
 <section
-  className="hero-section p-10 pb-24 lg:px-20 md:pt-20 pt-20 bg-white relative"
+  className="hero-section p-6 pb-16 lg:px-20 md:pt-16 pt-16 bg-white relative"
   id="home"
 >
   <div className="container mx-auto">
     <div className="flex flex-col lg:flex-row items-center">
       <div className="lg:w-full text-center lg:text-left">
-        <h1 className="hero-title text-3xl md:text-4xl lg:text-6xl font-extrabold bg-gradient-to-r from-indigo-800 to-indigo-600 bg-clip-text text-transparent leading-tight mb-4">
+        <h1 className="hero-title text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-indigo-800 to-indigo-600 bg-clip-text text-transparent leading-tight mb-4">
           Connect with CUCEK Alumni Worldwide
         </h1>
         <p className="hero-subtitle text-base md:text-lg text-gray-600 mb-6 max-w-xl">
@@ -255,35 +255,26 @@ const HomePage = () => {
 </section>
 
 {/* Stats Section */}
-<section className="section py-10 lg:pt-5 lg:px-10 stats-section -mt-16 z-20 relative">
+<section className="section py-16 sm:py-20 lg:pt-5 lg:px-10 stats-section -mt-16 z-20 relative">
   <div className="container mx-auto px-6">
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div className="stat-card bg-white rounded-xl p-6 text-center shadow-xl relative overflow-hidden hover:shadow-2xl transition-shadow">
-        <div className="absolute top-0 left-0 w-full h-1 bg-[#5A32EA]"></div>
-        <div className="stat-number text-4xl font-bold text-black mb-2">
-          {animatedStats.alumniMembers.toLocaleString()}
+    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+      <div className="bg-white/90 backdrop-blur-lg rounded-xl p-3 text-center border border-white/40 shadow-lg hover:shadow-xl transition-all duration-300">
+        <div className="text-xl md:text-2xl font-bold text-[#5A32EA] mb-1">
+          {animatedStats.alumniMembers.toLocaleString()}+
         </div>
-        <div className="stat-label text-sm text-gray-600 uppercase tracking-wider">
-          Alumni Members
-        </div>
+        <div className="text-gray-600 text-xs font-medium">Alumni</div>
       </div>
-      <div className="stat-card bg-white rounded-xl p-6 text-center shadow-xl relative overflow-hidden hover:shadow-2xl transition-shadow">
-        <div className="absolute top-0 left-0 w-full h-1 bg-[#5A32EA]"></div>
-        <div className="stat-number text-4xl font-bold text-black mb-2">
-          {animatedStats.activeUsers.toLocaleString()}
+      <div className="bg-white/90 backdrop-blur-lg rounded-xl p-3 text-center border border-white/40 shadow-lg hover:shadow-xl transition-all duration-300">
+        <div className="text-xl md:text-2xl font-bold text-[#5A32EA] mb-1">
+          {animatedStats.activeUsers.toLocaleString()}+
         </div>
-        <div className="stat-label text-sm text-gray-600 uppercase tracking-wider">
-          Active Users
-        </div>
+        <div className="text-gray-600 text-xs font-medium">Active Users</div>
       </div>
-      <div className="stat-card bg-white rounded-xl p-6 text-center shadow-xl relative overflow-hidden hover:shadow-2xl transition-shadow">
-        <div className="absolute top-0 left-0 w-full h-1 bg-[#5A32EA]"></div>
-        <div className="stat-number text-4xl font-bold text-black mb-2">
-          {animatedStats.eventsHosted.toLocaleString()}
+      <div className="bg-white/90 backdrop-blur-lg rounded-xl p-3 text-center border border-white/40 shadow-lg hover:shadow-xl transition-all duration-300">
+        <div className="text-xl md:text-2xl font-bold text-[#5A32EA] mb-1">
+          {animatedStats.eventsHosted.toLocaleString()}+
         </div>
-        <div className="stat-label text-sm text-gray-600 uppercase tracking-wider">
-          Events Hosted
-        </div>
+        <div className="text-gray-600 text-xs font-medium">Events Hosted</div>
       </div>
     </div>
   </div>
@@ -299,7 +290,7 @@ const HomePage = () => {
         <i className="fas fa-bullhorn mr-2 text-indigo-600"></i>
         Latest Updates
       </div>
-      <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+      <h2 className="text-3xl font-bold text-gray-900 mb-4">
         Important <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Announcements</span>
       </h2>
       <p className="text-lg text-gray-600 max-w-2xl mx-auto">
@@ -364,7 +355,7 @@ const HomePage = () => {
 
 
         {/* Features Section */}
-        <section className="feature-section py-10 lg:px-20 sm:py-10" id="features">
+        <section className="feature-section py-16 sm:py-20 lg:px-20" id="features">
           <div className="container mx-auto px-6">
             <h2 className="section-title text-2xl md:text-3xl font-bold mb-8 relative inline-block">
               Why Join CUCEK Alumni Connect
@@ -409,11 +400,11 @@ const HomePage = () => {
         </section>
 
         {/* Testimonials Section */}
-        <section className="section py-10 lg:px-20 sm:py-10" id="testimonials">
+        <section className="section py-16 sm:py-20 lg:px-20" id="testimonials">
           <div className="container mx-auto px-4">
             <div className="flex flex-col sm:flex-row justify-between items-center mb-12">
               <div>
-                <h2 className="section-title text-3xl md:text-4xl font-bold relative inline-block">
+                <h2 className="section-title text-3xl font-bold relative inline-block">
                   What Alumni Say
                   <span className="absolute left-0 -bottom-3 w-16 h-1 bg-[#5A32EA] rounded"></span>
                 </h2>
@@ -449,7 +440,7 @@ const HomePage = () => {
                 {testimonials.map((t, idx) => (
                   <div
                     key={idx}
-                    className="testimonial-card bg-white rounded-2xl p-8 mb-4 shadow-lg"
+                    className="testimonial-card bg-white rounded-2xl p-6 mb-4 shadow-lg"
                   >
                     <div className="testimonial-header flex items-center mb-6">
                       <img
@@ -482,11 +473,11 @@ const HomePage = () => {
         </section>
 
         {/* About Section */}
-        <section className="section py-10 lg:px-20 sm:p-10" id="about">
+        <section className="section py-16 sm:py-20 lg:px-20" id="about">
           <div className="container mx-auto px-4">
             <div className="flex flex-col lg:flex-row items-center gap-16">
               <div className="lg:w-1/2">
-                <h2 className="section-title text-3xl md:text-4xl font-bold mb-8 relative">
+                <h2 className="section-title text-3xl font-bold mb-8 relative">
                   About CUCEK Alumni Connect
                   <span className="absolute left-0 -bottom-3 w-16 h-1 bg-[#5A32EA] rounded"></span>
                 </h2>
