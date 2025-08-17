@@ -1,202 +1,128 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import EventGrid from '../components/EventGrid';
-import EventSearch from '../components/EventSearch';
-import EventFilterButton from '../components/EventFilterButton';
-import EventActiveFilters from '../components/EventActiveFilters';
-import EventPagination from '../components/EventPagination';
+import React from 'react';
+import EventCard from '../components/EventCard';
+import { motion } from 'framer-motion';
 
-import axios from '../config/axios';
+// Placeholder data - later this will come from an API
+const eventsData = [
+  {
+    title: 'Annual Alumni Gala',
+    date: 'October 25, 2025',
+    description: 'Join us for a night of celebration, networking, and reminiscing at our biggest event of the year.',
+    imageUrl: 'https://images.unsplash.com/photo-1511578314322-379afb476865?w=800',
+    status: 'Upcoming'
+  },
+  {
+    title: 'Webinar: The Future of AI',
+    date: 'November 12, 2025',
+    description: 'A deep dive into the latest trends in Artificial Intelligence with industry expert and alumnus, Dr. Jane Foster.',
+    imageUrl: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800',
+    status: 'Upcoming'
+  },
+  {
+    title: 'Homecoming Weekend 2025',
+    date: 'December 5-7, 2025',
+    description: 'Come back to campus for a weekend full of fun, football, and reconnecting with old friends.',
+    imageUrl: 'https://images.unsplash.com/photo-1527529482837-4698179dc6ce?w=800',
+    status: 'Upcoming'
+  },
+  {
+    title: 'East Coast Alumni Meetup',
+    date: 'January 15, 2026',
+    description: 'Alumni in the New York area are invited for a casual evening of networking and drinks.',
+    imageUrl: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=800',
+    status: 'Upcoming'
+  },
+  {
+    title: 'Class of 2015: 10-Year Reunion',
+    date: 'September 20, 2025',
+    description: 'Can you believe it\'s been 10 years? Let\'s celebrate this milestone together!',
+    imageUrl: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800',
+    status: 'Upcoming'
+  },
+  {
+    title: 'Founders & Innovators Summit',
+    date: 'July 22, 2025',
+    description: 'A showcase of startups and businesses founded by our talented alumni. A day of pitches and networking.',
+    imageUrl: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=800',
+    status: 'Past'
+  }
+];
 
 const EventsPage = () => {
-  const { user, loading: authLoading } = useAuth();
-  const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedEventType, setSelectedEventType] = useState('');
-  const [sortBy, setSortBy] = useState('date');
-  const [sortOrder, setSortOrder] = useState('desc');
-  const [timeFilter, setTimeFilter] = useState('all');
-
-  // Fetch events from API
-  const fetchEvents = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      // Build query parameters
-      const params = new URLSearchParams({
-        page: currentPage,
-        limit: 12, // Show 12 events per page
-        search: searchTerm,
-        type: selectedEventType,
-        sortBy: sortBy,
-        sortOrder: sortOrder,
-        timeFilter: timeFilter,
-      });
-
-      let endpoint;
-      const role = user?.role?.toLowerCase();
-      if (user && role) {
-        endpoint = (searchTerm || selectedEventType || sortBy !== 'createdAt' || sortOrder !== 'desc' || timeFilter !== 'all')
-          ? `/api/${role}/event/search?${params}`
-          : `/api/${role}/event/all?${params}`;
-      } else {
-        endpoint = (searchTerm || selectedEventType || sortBy !== 'createdAt' || sortOrder !== 'desc' || timeFilter !== 'all')
-          ? `/api/public/event/search?${params}`
-          : `/api/public/event/all?${params}`;
-      }
-      // Debug log
-      console.log('Fetching events for role:', role, 'endpoint:', endpoint);
-
-      const response = await axios.get(endpoint);
-
-      if (response.data.success) {
-        console.log('Fetched events:', response.data.data.events);
-        setEvents(response.data.data.events);
-        setTotalPages(response.data.data.pagination.totalPages);
-      } else {
-        setError(response.data.message || 'Failed to fetch events');
-      }
-    } catch (err) {
-      console.error('Error fetching events:', err);
-      
-      if (err.response?.status === 401) {
-        setError('Please log in to view events');
-      } else if (err.response?.status === 403) {
-        setError('Access denied. You do not have permission to view events.');
-      } else {
-        setError('Network error. Please try again.');
-      }
-    } finally {
-      setLoading(false);
-    }
+  // Animation variants for staggering children
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
   };
 
-  // Fetch events when component mounts or filters change
-  useEffect(() => {
-    if (!authLoading) {
-      fetchEvents();
-    }
-  }, [authLoading, currentPage, searchTerm, selectedEventType, sortBy, sortOrder, timeFilter]);
-
-  // Handle search
-  const handleSearchChange = (term) => {
-    setSearchTerm(term);
-    setCurrentPage(1); // Reset to first page when searching
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: { y: 0, opacity: 1 },
   };
 
-  // Handle filter changes
-  const handleFilterChange = (filterType, value) => {
-    if (filterType === 'eventType') {
-      setSelectedEventType(value);
-    }
-    setCurrentPage(1); // Reset to first page when filtering
-  };
-
-  // Handle sort changes
-  const handleSortChange = (sortByValue, sortOrderValue) => {
-    setSortBy(sortByValue);
-    setSortOrder(sortOrderValue);
-    setCurrentPage(1); // Reset to first page when sorting
-  };
-
-  // Handle page change
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-  };
-
-  // Handle clear search
-  const handleClearSearch = () => {
-    setSearchTerm('');
-    setCurrentPage(1);
-  };
-
-  // Handle clear filter
-  const handleClearFilter = (filterType) => {
-    if (filterType === 'eventType') {
-      setSelectedEventType('');
-    }
-    setCurrentPage(1);
-  };
-
-  // Handle time filter change
-  const handleTimeFilterChange = (filter) => {
-    setTimeFilter(filter);
-    setCurrentPage(1);
-  };
 
   return (
-    <>
-      <div className="min-h-screen bg-gray-50">
-        {/* Main Content */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          {/* Search and Filters */}
-          <div className="mb-6 flex flex-row gap-2 items-center w-full">
-            <EventSearch
-              searchTerm={searchTerm}
-              onSearchChange={handleSearchChange}
-              isLoading={loading}
-            />
-            <EventFilterButton
-              selectedEventType={selectedEventType}
-              sortBy={sortBy}
-              sortOrder={sortOrder}
-              onFilterChange={handleFilterChange}
-              onSortChange={handleSortChange}
-              timeFilter={timeFilter}
-              onTimeFilterChange={handleTimeFilterChange}
-            />
-          </div>
+    <div className="bg-gray-100 min-h-screen">
+      {/* Page Header */}
+      <div className="pt-24 pb-12 bg-white">
+        <div className="max-w-7xl mx-auto px-4 text-center">
+          <h1 className="text-4xl md:text-5xl font-extrabold text-gray-800">Events & Reunions</h1>
+          <p className="mt-4 text-lg text-gray-600">Reconnect, learn, and celebrate with the alumni community.</p>
+        </div>
+      </div>
 
-          {/* Active Filters */}
-          <EventActiveFilters
-            searchTerm={searchTerm}
-            selectedEventType={selectedEventType}
-            onClearSearch={handleClearSearch}
-            onClearFilter={handleClearFilter}
-          />
-
-          {/* Events Grid */}
-          <div className="mt-8">
-            {authLoading || loading ? (
-              <div className="flex justify-center items-center py-16">
-                <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-indigo-600"></div>
-              </div>
-            ) : error ? (
-              <div className="flex flex-col items-center py-16">
-                <div className="text-red-600 text-lg font-semibold mb-4">{error}</div>
-                <button 
-                  onClick={fetchEvents}
-                  className="rounded-full px-4 py-1.5 font-semibold bg-indigo-600 text-white shadow hover:bg-indigo-700 transition"
-                >
-                  Retry
-                </button>
-              </div>
-            ) : events.length === 0 ? (
-              <div className="text-center text-gray-500 py-16 text-lg font-medium">
-                No events found. Try adjusting your filters or search.
-              </div>
-            ) : (
-              <>
-                <EventGrid events={events} user={user} onEventUpdate={fetchEvents} />
-                <div className="mt-10">
-                  <EventPagination 
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={handlePageChange}
-                  />
-                </div>
-              </>
-            )}
+      {/* Search and Filter Bar */}
+      <div className="sticky top-16 bg-white bg-opacity-80 backdrop-blur-md z-40 shadow-sm py-4">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex flex-col md:flex-row gap-4">
+            <input
+              type="text"
+              placeholder="Search for an event..."
+              className="flex-grow p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
+            />
+            <select className="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600">
+              <option>All Categories</option>
+              <option>Reunions</option>
+              <option>Webinars</option>
+              <option>Networking</option>
+              <option>On-Campus</option>
+            </select>
+            <select className="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600">
+              <option>Upcoming Events</option>
+              <option>Past Events</option>
+            </select>
           </div>
         </div>
       </div>
-    </>
+
+      {/* Events Grid */}
+      <main className="max-w-7xl mx-auto p-4 md:p-8">
+        <motion.div 
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          {eventsData.map((event, index) => (
+            <motion.div key={index} variants={itemVariants}>
+              <EventCard
+                title={event.title}
+                date={event.date}
+                description={event.description}
+                imageUrl={event.imageUrl}
+                status={event.status}
+              />
+            </motion.div>
+          ))}
+        </motion.div>
+      </main>
+    </div>
   );
 };
 
-export default EventsPage; 
+export default EventsPage;
