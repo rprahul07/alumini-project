@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { bookmarkAPI } from '../services/bookmarkService';
-import { useAuth } from './AuthContext';
 
 // Create BookmarkContext
 const BookmarkContext = createContext();
@@ -14,8 +13,7 @@ export function useBookmarks() {
   return context;
 }
 
-export const BookmarkProvider = ({ children }) => {
-  const { user } = useAuth();
+export const BookmarkProvider = ({ children, user }) => {
   const [bookmarkedAlumni, setBookmarkedAlumni] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
