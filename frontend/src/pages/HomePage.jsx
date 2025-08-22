@@ -7,6 +7,9 @@ import { announcementAPI } from "../services/announcementService";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import thirikeImg from '../assets/Thirike.jpg';
 import Navbar from '../components/Navbar';
+import OptimizedImage from '../components/OptimizedImage';
+import AccessibleBadge from '../components/AccessibleBadge';
+import SEOHead from '../components/SEOHead';
 
 // Default images in case the remote images fail to load
 const defaultImages = {
@@ -199,6 +202,7 @@ const HomePage = () => {
 
   return (
     <div>
+      <SEOHead />
       <Navbar isHome />
       <div className="min-h-screen bg-gray-50">
         {/* Hero Section */}
@@ -224,12 +228,13 @@ const HomePage = () => {
                 )}
               </div>
               <div>
-                <img
+                <OptimizedImage
                   src={thirikeImg}
                   alt="CUCEK Alumni Network"
                   className="w-full rounded-2xl shadow-2xl"
-                  onError={(e) => handleImageError(e, defaultImages.hero)}
-                  loading="lazy"
+                  fallbackSrc={defaultImages.hero}
+                  priority={true}
+                  sizes="(max-width: 768px) 100vw, 50vw"
                 />
               </div>
             </div>
@@ -241,19 +246,19 @@ const HomePage = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="text-center">
-                <div className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 mb-2">
+                <div className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 mb-2 min-h-[2.5rem] flex items-center justify-center">
                   {animatedStats.alumniMembers.toLocaleString()}+
                 </div>
                 <div className="text-gray-600 font-medium">Alumni Members</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 mb-2">
+                <div className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 mb-2 min-h-[2.5rem] flex items-center justify-center">
                   {animatedStats.activeUsers.toLocaleString()}+
                 </div>
                 <div className="text-gray-600 font-medium">Active Users</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 mb-2">
+                <div className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 mb-2 min-h-[2.5rem] flex items-center justify-center">
                   {animatedStats.eventsHosted.toLocaleString()}+
                 </div>
                 <div className="text-gray-600 font-medium">Events Hosted</div>
@@ -421,9 +426,9 @@ const HomePage = () => {
                         loading="lazy"
                       />
                       <div>
-                        <h5 className="font-semibold text-gray-900">
+                        <h3 className="font-semibold text-gray-900">
                           {testimonial.name}
-                        </h5>
+                        </h3>
                         <p className="text-gray-500 text-sm">
                           {testimonial.position}
                         </p>
@@ -432,9 +437,9 @@ const HomePage = () => {
                     <p className="text-gray-600 italic mb-6">
                       "{testimonial.content}"
                     </p>
-                    <span className="inline-block bg-green-100 text-green-600 text-xs px-3 py-1 rounded-full font-medium">
+                    <AccessibleBadge variant="active">
                       Active Member
-                    </span>
+                    </AccessibleBadge>
                   </div>
                 ))}
               </div>
@@ -505,9 +510,9 @@ const HomePage = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               <div>
-                <h4 className="text-xl font-bold mb-6">
+                <h3 className="text-xl font-bold mb-6">
                   CUCEK Alumni Connect
-                </h4>
+                </h3>
                 <p className="text-gray-300 mb-6 leading-relaxed">
                   Connecting CUCEK graduates worldwide to foster professional growth, meaningful relationships, and lifelong learning.
                 </p>
@@ -527,7 +532,7 @@ const HomePage = () => {
                 </div>
               </div>
               <div>
-                <h5 className="text-lg font-semibold mb-6">Quick Links</h5>
+                <h3 className="text-lg font-semibold mb-6">Quick Links</h3>
                 <div className="space-y-3">
                   <a href="#" className="block text-gray-300 hover:text-white transition-colors duration-300">Home</a>
                   <a href="#" className="block text-gray-300 hover:text-white transition-colors duration-300">Features</a>
@@ -537,7 +542,7 @@ const HomePage = () => {
                 </div>
               </div>
               <div>
-                <h5 className="text-lg font-semibold mb-6">Resources</h5>
+                <h3 className="text-lg font-semibold mb-6">Resources</h3>
                 <div className="space-y-3">
                   <a onClick={() => navigate('/events')} className="block text-gray-300 hover:text-white transition-colors duration-300 cursor-pointer">Events</a>
                   <a onClick={() => navigate('/contact')} className="block text-gray-300 hover:text-white transition-colors duration-300 cursor-pointer">FAQ</a>
@@ -545,7 +550,7 @@ const HomePage = () => {
                 </div>
               </div>
               <div>
-                <h5 className="text-lg font-semibold mb-6">Contact Us</h5>
+                <h3 className="text-lg font-semibold mb-6">Contact Us</h3>
                 <div className="space-y-3">
                   <div className="flex items-center text-gray-300">
                     <i className="fas fa-envelope mr-3"></i>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { AcademicCapIcon } from '@heroicons/react/24/outline';
+import OptimizedImage from './OptimizedImage';
 import StudentDetailsModal from './StudentDetailsModal';
 
 const StudentCard = ({ student }) => {
@@ -41,11 +42,12 @@ const StudentCard = ({ student }) => {
         {/* Image at the top */}
         <div className="relative h-28 bg-gray-200 flex-shrink-0 w-full rounded-t-2xl">
           {photoUrl ? (
-            <img
+            <OptimizedImage
               src={photoUrl}
               alt={name}
               className="w-full h-full object-cover rounded-t-2xl"
-              loading="lazy"
+              sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+              priority={false}
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-100 to-indigo-200 rounded-t-2xl">

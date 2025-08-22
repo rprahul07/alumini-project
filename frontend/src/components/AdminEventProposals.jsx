@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import OptimizedImage from './OptimizedImage';
 import axios from '../config/axios';
 import { 
   ClipboardDocumentListIcon, 
@@ -243,11 +244,12 @@ const AdminEventProposals = () => {
                               <div className="flex items-center">
                                 <div className="flex-shrink-0 h-10 w-10">
                                   {event.imageUrl ? (
-                                    <img 
+                                    <OptimizedImage 
                                       className="h-10 w-10 rounded-lg object-cover" 
                                       src={event.imageUrl} 
                                       alt={event.name}
-                                      loading="lazy"
+                                      sizes="40px"
+                                      priority={false}
                                     />
                                   ) : (
                                     <div className="h-10 w-10 rounded-lg bg-gray-200 flex items-center justify-center">
@@ -365,20 +367,21 @@ const AdminEventProposals = () => {
               </button>
             </div>
 
-            {/* Event Image */}
-            <div className="relative h-64 bg-gray-200">
-              {selectedEvent.imageUrl ? (
-                <img 
-                  src={selectedEvent.imageUrl} 
-                  alt={selectedEvent.name}
-                  className="w-full h-full object-cover"
-                  loading="lazy"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-100 to-indigo-200">
-                  <PhotoIcon className="h-20 w-20 text-indigo-400" />
-                </div>
-              )}
+                         {/* Event Image */}
+             <div className="relative h-64 bg-gray-200">
+               {selectedEvent.imageUrl ? (
+                 <OptimizedImage 
+                   src={selectedEvent.imageUrl} 
+                   alt={selectedEvent.name}
+                   className="w-full h-full object-cover"
+                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                   priority={false}
+                 />
+               ) : (
+                 <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-100 to-indigo-200">
+                   <PhotoIcon className="h-20 w-20 text-indigo-400" />
+                 </div>
+               )}
               
               {/* Status Badge */}
               <div className="absolute top-4 right-4">
@@ -432,19 +435,20 @@ const AdminEventProposals = () => {
               <div className="border-t pt-6">
                 <h4 className="text-lg font-semibold text-gray-900 mb-3">Event Creator</h4>
                 <div className="bg-gray-50 rounded-lg p-4">
-                  <div className="flex items-center">
-                    {selectedEvent.createdBy.photoUrl ? (
-                      <img 
-                        className="h-10 w-10 rounded-full object-cover" 
-                        src={selectedEvent.createdBy.photoUrl} 
-                        alt={selectedEvent.createdBy.fullName}
-                        loading="lazy"
-                      />
-                    ) : (
-                      <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
-                        <UserIcon className="h-5 w-5 text-gray-500" />
-                      </div>
-                    )}
+                                     <div className="flex items-center">
+                     {selectedEvent.createdBy.photoUrl ? (
+                       <OptimizedImage 
+                         className="h-10 w-10 rounded-full object-cover" 
+                         src={selectedEvent.createdBy.photoUrl} 
+                         alt={selectedEvent.createdBy.fullName}
+                         sizes="40px"
+                         priority={false}
+                       />
+                     ) : (
+                       <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
+                         <UserIcon className="h-5 w-5 text-gray-500" />
+                       </div>
+                     )}
                     <div className="ml-3">
                       <div className="text-sm font-medium text-gray-900">{selectedEvent.createdBy.fullName}</div>
                       <div className="text-sm text-gray-500">{selectedEvent.createdBy.email}</div>

@@ -1,0 +1,23 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://43.204.96.201:3000/sitemap.xml
+
+# Disallow admin areas
+Disallow: /admin/
+Disallow: /api/
+
+# Allow important pages
+Allow: /
+Allow: /about
+Allow: /events
+Allow: /alumni
+Allow: /students
+Allow: /jobs
+Allow: /contact
+Allow: /faq
+Allow: /testimonials
+
+# Crawl delay
+Crawl-delay: 1

@@ -1,4 +1,6 @@
+import React from 'react';
 import { Mail, Linkedin, Heart } from 'lucide-react';
+import OptimizedImage from './OptimizedImage';
 
 const AlumniCard = ({
   alumni,
@@ -107,10 +109,12 @@ const AlumniCard = ({
       {/* Image at the top */}
       <div className="relative h-28 bg-gray-200 flex-shrink-0 w-full rounded-t-2xl">
         {photoUrl ? (
-          <img
+          <OptimizedImage
             src={photoUrl || '/default-avatar.png'}
             alt={fullName}
             className="w-full h-full object-cover rounded-t-2xl"
+            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+            priority={false}
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-100 to-indigo-200 rounded-t-2xl">

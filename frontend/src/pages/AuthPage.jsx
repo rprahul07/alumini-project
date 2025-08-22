@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { FiUser, FiMail, FiPhone, FiLock, FiEye, FiEyeOff, FiBriefcase, FiCalendar, FiAward } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import { useAuth } from '../contexts/AuthContext';
+import { authAPI } from '../middleware/api';
 
 const roleLabels = {
   student: 'Student',
@@ -331,7 +332,6 @@ const handleSubmit = async (e) => {
 
     setOtpLoading(true);
     try {
-      const { authAPI } = await import('../middleware/api');
       await authAPI.forgotPassword(forgotEmail);
       toast.success('OTP sent to your email!');
       setForgotStep(2);
@@ -366,7 +366,6 @@ const handleSubmit = async (e) => {
     }
     
     try {
-      const { authAPI } = await import('../middleware/api');
       await authAPI.resetPassword(forgotEmail, formData.otp, formData.newPassword);
       toast.success('Password reset successful!');
       

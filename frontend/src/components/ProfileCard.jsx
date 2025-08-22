@@ -2,6 +2,7 @@ import React from 'react';
 import { FiEdit2, FiLinkedin, FiTwitter, FiGithub } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import OptimizedImage from './OptimizedImage';
 
 const ProfileCard = ({ compact = false }) => {
   const { user, loading } = useAuth();
@@ -82,10 +83,12 @@ const ProfileCard = ({ compact = false }) => {
     <div className="bg-white shadow-md rounded-2xl p-6 max-w-xs w-full flex flex-col items-center mx-auto">
       {/* Photo with edit button */}
       <div className="relative">
-        <img
+        <OptimizedImage
           src={user.photoUrl || 'https://via.placeholder.com/150/EEEEEE/888888?text=No+Photo'}
           alt={user.fullName || 'User'}
           className="w-24 h-24 rounded-full object-cover border-2 border-indigo-200 shadow mb-3"
+          sizes="96px"
+          priority={true}
         />
         <button
           onClick={() => navigate('/profile/edit')}

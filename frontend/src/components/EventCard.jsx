@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { CalendarIcon, ClockIcon, MapPinIcon, UserGroupIcon, UsersIcon } from '@heroicons/react/24/outline';
 import EventDetailsModal from './EventDetailsModal';
 import EventRegistrationsModal from './EventRegistrationsModal';
+import OptimizedImage from './OptimizedImage';
 import axios from '../config/axios';
 import { toast } from 'react-toastify';
 import ConfirmDialog from './ConfirmDialog';
@@ -126,11 +127,12 @@ const EventCard = ({ event, user, onEventUpdate, showEdit, showDelete, onEdit, o
         {/* Event Image */}
         <div className={`relative ${sm ? 'h-16' : 'h-28'} bg-gray-200 flex-shrink-0 w-full rounded-2xl`}>
           {event.imageUrl ? (
-            <img 
+            <OptimizedImage 
               src={event.imageUrl} 
               alt={event.name}
               className="w-full h-full object-cover rounded-2xl"
-              loading="lazy"
+              sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+              priority={false}
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-100 to-indigo-200 rounded-2xl">
