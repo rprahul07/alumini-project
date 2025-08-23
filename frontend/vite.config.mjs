@@ -42,6 +42,9 @@ export default defineConfig(({ command, mode }) => {
     build: {
       target: 'es2015',
       minify: 'terser',
+      // CSS optimization
+      cssCodeSplit: true,
+      cssMinify: isProd,
       terserOptions: {
         compress: {
           drop_console: true,
@@ -55,27 +58,40 @@ export default defineConfig(({ command, mode }) => {
       rollupOptions: {
         output: {
           manualChunks: (id) => {
-            // Vendor chunks
+            // Vendor chunks with better separation
             if (id.includes('node_modules')) {
+              // Core React libraries
               if (id.includes('react') || id.includes('react-dom')) {
-                return 'vendor';
+                return 'react-core';
               }
+              // Routing
               if (id.includes('react-router-dom')) {
                 return 'router';
               }
-              if (id.includes('@heroicons') || id.includes('lucide-react')) {
-                return 'ui';
+              // UI libraries
+              if (id.includes('@heroicons')) {
+                return 'heroicons';
               }
+              if (id.includes('lucide-react')) {
+                return 'lucide';
+              }
+              if (id.includes('react-icons')) {
+                return 'react-icons';
+              }
+              // Utilities
               if (id.includes('axios') || id.includes('react-hot-toast') || id.includes('react-toastify')) {
                 return 'utils';
               }
-              // Other node_modules go to vendor
+              // Other vendor libraries
               return 'vendor';
             }
             
-            // Local chunks
+            // Application chunks with better organization
             if (id.includes('/pages/')) {
               return 'pages';
+            }
+            if (id.includes('/dashboards/')) {
+              return 'dashboards';
             }
             if (id.includes('/components/')) {
               return 'components';
@@ -85,6 +101,12 @@ export default defineConfig(({ command, mode }) => {
             }
             if (id.includes('/services/')) {
               return 'services';
+            }
+            if (id.includes('/utils/')) {
+              return 'utils';
+            }
+            if (id.includes('/hooks/')) {
+              return 'hooks';
             }
           },
           chunkFileNames: 'assets/js/[name]-[hash].js',

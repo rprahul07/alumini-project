@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { NavLink, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import "@fortawesome/fontawesome-free/css/all.min.css";
+// FontAwesome removed for performance optimization
 
 const navLinks = [
   { title: 'Home', path: '/' },
@@ -66,8 +66,8 @@ const getProfileImageUrl = (user) => {
       return imagePath;
     }
     
-    // If it's a relative path, construct the backend URL
-    const backendUrl = 'http://localhost:5000'; // Adjust this to your backend URL
+    // If it's a relative path, construct the backend URL using environment variable
+    const backendUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001'; // ✅ BEST PRACTICE
     let fullUrl;
     
     if (imagePath.startsWith('/')) {
@@ -216,7 +216,9 @@ const Navbar = ({ isHome = false }) => {
           onClick={() => { setDropdownOpen(false); handleDashboardRedirect(); }}
           className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 hover:text-indigo-700 transition-all duration-200"
         >
-          <i className="fas fa-tachometer-alt text-indigo-500 flex-shrink-0"></i>
+                           <svg className="w-4 h-4 text-indigo-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                 </svg>
           <span className="truncate">Dashboard</span>
         </button>
       )}
@@ -225,7 +227,9 @@ const Navbar = ({ isHome = false }) => {
         onClick={handleLogout}
         className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-red-50 hover:to-pink-50 hover:text-red-700 transition-all duration-200"
       >
-        <i className="fas fa-sign-out-alt text-red-500 flex-shrink-0"></i>
+                 <svg className="w-4 h-4 text-red-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+         </svg>
         <span className="truncate">Logout</span>
       </button>
     </div>
@@ -307,7 +311,9 @@ const Navbar = ({ isHome = false }) => {
                   <span className="hidden sm:block text-sm font-medium text-gray-700">
                     Hi, {getUserDisplayName(user)}
                   </span>
-                  <i className={`fas fa-chevron-down text-xs text-gray-500 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`}></i>
+                                     <svg className={`w-3 h-3 text-gray-500 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                   </svg>
                 </button>
                 {dropdownOpen && <ProfileDropdown />}
               </div>
@@ -325,7 +331,15 @@ const Navbar = ({ isHome = false }) => {
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="lg:hidden p-2 rounded-xl bg-white/60 backdrop-blur-sm border border-white/20 hover:bg-white/80 transition-all duration-300 shadow-lg"
             >
-              <i className={`fas ${isMenuOpen ? 'fa-times' : 'fa-bars'} text-gray-700`}></i>
+                             {isMenuOpen ? (
+                 <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                 </svg>
+               ) : (
+                 <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                 </svg>
+               )}
             </button>
           </div>
         </div>
@@ -366,7 +380,9 @@ const Navbar = ({ isHome = false }) => {
                   onClick={() => { setIsMenuOpen(false); handleDashboardRedirect(); }}
                   className="w-full flex items-center px-6 py-3 text-sm font-medium text-gray-700 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 hover:text-indigo-700 mx-4 rounded-xl transition-all duration-200"
                 >
-                  <i className="fas fa-tachometer-alt mr-3 text-indigo-500"></i>
+                  <svg className="w-4 h-4 mr-3 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+               </svg>
                   Dashboard
                 </button>
               )}
@@ -374,7 +390,9 @@ const Navbar = ({ isHome = false }) => {
                 onClick={handleLogout}
                 className="w-full flex items-center px-6 py-3 text-sm font-medium text-gray-700 hover:bg-gradient-to-r hover:from-red-50 hover:to-pink-50 hover:text-red-700 mx-4 rounded-xl transition-all duration-200"
               >
-                <i className="fas fa-sign-out-alt mr-3 text-red-500"></i>
+                                 <svg className="w-4 h-4 mr-3 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                 </svg>
                 Logout
               </button>
             </div>

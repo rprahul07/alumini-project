@@ -1,21 +1,44 @@
-// Service Worker for CUCEK Alumni Portal
-const CACHE_NAME = 'cucek-alumni-v1';
-const STATIC_CACHE = 'static-v1';
-const DYNAMIC_CACHE = 'dynamic-v1';
+// Service Worker for CUCEK Alumni Portal - Enhanced Performance
+const CACHE_VERSION = 'v2.0';
+const STATIC_CACHE = `static-${CACHE_VERSION}`;
+const DYNAMIC_CACHE = `dynamic-${CACHE_VERSION}`;
+const API_CACHE = `api-${CACHE_VERSION}`;
 
-// Files to cache immediately
+// Files to cache immediately (critical path)
 const STATIC_FILES = [
   '/',
   '/index.html',
-  '/src/main.jsx',
-  '/src/App.jsx',
-  '/src/index.css',
-  '/src/assets/Thirike.jpg',
-  '/webfonts/fa-solid-900.woff2',
-  '/webfonts/fa-brands-400.woff2'
+  '/Thirike.webp', // Updated to WebP
+  '/manifest.json'
 ];
 
-// Install event - cache static files
+// Runtime caching strategies
+const RUNTIME_CACHES = [
+  {
+    urlPattern: /\.(js|css|woff2|webp|png|jpg|jpeg|svg)$/,
+    handler: 'CacheFirst',
+    options: {
+      cacheName: STATIC_CACHE,
+      expiration: {
+        maxEntries: 100,
+        maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+      },
+    },
+  },
+  {
+    urlPattern: /^https:\/\/alumniblob\.blob\.core\.windows\.net/,
+    handler: 'CacheFirst',
+    options: {
+      cacheName: 'images',
+      expiration: {
+        maxEntries: 200,
+        maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
+      },
+    },
+  },
+];
+
+// Install event - cache static files with background sync
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(STATIC_CACHE)
@@ -25,6 +48,13 @@ self.addEventListener('install', (event) => {
       })
       .catch(error => {
         console.log('Cache install failed:', error);
+      })
+      .then(() => {
+        // Preload critical resources
+        return Promise.all([
+          caches.open(DYNAMIC_CACHE),
+          caches.open(API_CACHE)
+        ]);
       })
   );
   self.skipWaiting();

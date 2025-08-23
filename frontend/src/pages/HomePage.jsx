@@ -5,7 +5,6 @@ import { testimonialsAPI } from "../services/testimonialsService";
 import { dashboardAPI } from "../services/dashboardService";
 import { announcementAPI } from "../services/announcementService";
 import "@fortawesome/fontawesome-free/css/all.min.css";
-import thirikeImg from '../assets/Thirike.jpg';
 import Navbar from '../components/Navbar';
 import OptimizedImage from '../components/OptimizedImage';
 import AccessibleBadge from '../components/AccessibleBadge';
@@ -227,15 +226,22 @@ const HomePage = () => {
                   </button>
                 )}
               </div>
-              <div>
-                <OptimizedImage
-                  src={thirikeImg}
-                  alt="CUCEK Alumni Network"
-                  className="w-full rounded-2xl shadow-2xl"
-                  fallbackSrc={defaultImages.hero}
-                  priority={true}
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                />
+              <div className="relative">
+                {/* Soft glow backdrop */}
+                <div className="absolute -inset-4 rounded-[28px] bg-gradient-to-r from-indigo-500 to-purple-600 opacity-20 blur-2xl" aria-hidden="true"></div>
+                {/* Gradient frame */}
+                <div className="relative bg-gradient-to-r p-1 rounded-[24px] shadow-2xl">
+                  <div className="rounded-[22px] overflow-hidden bg-white">
+                    <OptimizedImage
+                      src={"/Thirike.webp"}
+                      alt="CUCEK Alumni Network"
+                      className="block w-full h-auto"
+                      fallbackSrc={defaultImages.hero}
+                      loading="eager"
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>

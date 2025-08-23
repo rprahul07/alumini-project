@@ -5,7 +5,7 @@ const SEOHead = ({
   title = 'CUCEK Alumni Connect - Connect with Alumni Worldwide',
   description = 'Join our growing network of successful CUCEK graduates. Build meaningful connections, share experiences, and explore opportunities together.',
   keywords = 'CUCEK, alumni, network, graduates, professional, connections, career, opportunities',
-  image = '/src/assets/Thirike.jpg',
+  image = '/Thirike.webp',
   url = window.location.href,
   type = 'website'
 }) => {
@@ -38,14 +38,24 @@ const SEOHead = ({
       {/* Canonical URL */}
       <link rel="canonical" href={url} />
       
-      {/* Preconnect to external domains */}
+      {/* Resource Hints for Performance */}
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+      <link rel="preconnect" href="https://alumniblob.blob.core.windows.net" />
       
-              {/* DNS Prefetch */}
-        <link rel="dns-prefetch" href={import.meta.env.VITE_API_BASE_URL || '//localhost:5001'} />
-        <link rel="dns-prefetch" href="//alumniblob.blob.core.windows.net" />
+      {/* DNS Prefetch */}
+      <link rel="dns-prefetch" href={import.meta.env.VITE_API_BASE_URL || '//localhost:5001'} />
+      <link rel="dns-prefetch" href="//alumniblob.blob.core.windows.net" />
+      
+      {/* Preload Critical Resources */}
+      <link rel="preload" href="/Thirike.webp" as="image" type="image/webp" />
+      <link rel="preload" href="/src/index.css" as="style" />
+      
+      {/* Prefetch Non-Critical Resources */}
+      <link rel="prefetch" href="/src/components/dashboards/AdminDashboard.jsx" />
+      <link rel="prefetch" href="/src/components/dashboards/AlumniDashboard.jsx" />
+      <link rel="prefetch" href="/src/components/dashboards/StudentDashboard.jsx" />
     </Helmet>
   );
 };
