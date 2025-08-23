@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { NavLink, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import OptimizedImage from './OptimizedImage';
 // FontAwesome removed for performance optimization
 
 const navLinks = [
@@ -86,22 +87,10 @@ const getProfileImageUrl = (user) => {
 
 // Profile Image Component
 const ProfileImage = ({ user, size = "w-9 h-9", textSize = "text-sm" }) => {
-  const [imageError, setImageError] = React.useState(false);
-  const [imageLoaded, setImageLoaded] = React.useState(false);
   const profileImageUrl = getProfileImageUrl(user);
   
-  const handleImageError = () => {
-    setImageError(true);
-    setImageLoaded(true);
-  };
-
-  const handleImageLoad = () => {
-    setImageLoaded(true);
-    setImageError(false);
-  };
-
   // Always render the container with fixed dimensions to prevent layout shift
-  if (!profileImageUrl || imageError) {
+  if (!profileImageUrl) {
     // Fallback to initials
     return (
       <div className={`${size} rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center shadow-md flex-shrink-0`}>
@@ -114,21 +103,14 @@ const ProfileImage = ({ user, size = "w-9 h-9", textSize = "text-sm" }) => {
 
   return (
     <div className={`${size} rounded-full overflow-hidden shadow-md relative bg-gradient-to-r from-indigo-500 to-purple-500 flex-shrink-0`}>
-      {/* Show initials while image is loading to prevent layout shift */}
-      {!imageLoaded && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-r from-indigo-500 to-purple-500">
-          <span className={`text-white font-semibold ${textSize}`}>
-            {getUserInitials(user)}
-          </span>
-        </div>
-      )}
-      <img
+      <OptimizedImage
         src={profileImageUrl}
         alt={`${getUserDisplayName(user)}'s profile`}
-        className={`w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
-        onError={handleImageError}
-        onLoad={handleImageLoad}
+        wrapperClassName="w-full h-full"
+        className="w-full h-full object-cover"
+        sizes="36px"
         loading="lazy"
+        fallbackSrc={null}
       />
     </div>
   );

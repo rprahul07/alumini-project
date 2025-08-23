@@ -4,7 +4,6 @@ import { useAuth } from "../contexts/AuthContext";
 import { testimonialsAPI } from "../services/testimonialsService";
 import { dashboardAPI } from "../services/dashboardService";
 import { announcementAPI } from "../services/announcementService";
-import "@fortawesome/fontawesome-free/css/all.min.css";
 import Navbar from '../components/Navbar';
 import OptimizedImage from '../components/OptimizedImage';
 import AccessibleBadge from '../components/AccessibleBadge';
@@ -239,6 +238,8 @@ const HomePage = () => {
                       fallbackSrc={defaultImages.hero}
                       loading="eager"
                       sizes="(max-width: 768px) 100vw, 50vw"
+                      width={1200}
+                      height={800}
                     />
                   </div>
                 </div>

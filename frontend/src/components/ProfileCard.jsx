@@ -83,13 +83,17 @@ const ProfileCard = ({ compact = false }) => {
     <div className="bg-white shadow-md rounded-2xl p-6 max-w-xs w-full flex flex-col items-center mx-auto">
       {/* Photo with edit button */}
       <div className="relative">
-        <OptimizedImage
-          src={user.photoUrl || 'https://via.placeholder.com/150/EEEEEE/888888?text=No+Photo'}
-          alt={user.fullName || 'User'}
-          className="w-24 h-24 rounded-full object-cover border-2 border-indigo-200 shadow mb-3"
-          sizes="96px"
-          priority={true}
-        />
+        <div className="relative w-24 h-24 mb-3">
+          <OptimizedImage
+            src={user.photoUrl || 'https://via.placeholder.com/150/EEEEEE/888888?text=No+Photo'}
+            alt={user.fullName || 'User'}
+            wrapperClassName="w-24 h-24 rounded-full overflow-hidden border-2 border-indigo-200 shadow"
+            className="w-full h-full object-cover"
+            sizes="96px"
+            loading="eager"
+            fallbackSrc="https://via.placeholder.com/150/EEEEEE/888888?text=No+Photo"
+          />
+        </div>
         <button
           onClick={() => navigate('/profile/edit')}
           className="absolute bottom-1 right-1 bg-indigo-600 text-white p-1.5 rounded-full shadow-lg cursor-pointer hover:bg-indigo-700 transition-colors border-2 border-white"

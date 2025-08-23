@@ -4,10 +4,13 @@ const OptimizedImage = ({
   src, 
   alt, 
   className = '', 
+  wrapperClassName = '',
   fallbackSrc = null,
   webpSrc = null,
   loading = 'lazy',
   sizes = '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw',
+  width = undefined,
+  height = undefined,
   ...props 
 }) => {
   const [imageSrc, setImageSrc] = useState(src);
@@ -49,7 +52,7 @@ const OptimizedImage = ({
   }
 
   return (
-    <div className={`relative ${className}`} {...props}>
+    <div className={`relative w-full h-full ${wrapperClassName}`}>
       <picture>
         {/* WebP format for modern browsers */}
         {webpSrc && (
@@ -60,10 +63,12 @@ const OptimizedImage = ({
         <img
           src={imageSrc}
           alt={alt}
-          className={`block w-full h-auto transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
+          className={`block transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'} ${className}`}
           loading={loading}
           sizes={sizes}
           decoding="async"
+          width={width}
+          height={height}
           onLoad={handleLoad}
           onError={handleError}
         />
