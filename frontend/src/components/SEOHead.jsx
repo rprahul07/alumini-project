@@ -43,9 +43,9 @@ const SEOHead = ({
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       <link rel="preconnect" href="https://cdn.jsdelivr.net" />
       
-      {/* DNS Prefetch */}
-      <link rel="dns-prefetch" href="//43.204.96.201" />
-      <link rel="dns-prefetch" href="//alumniblob.blob.core.windows.net" />
+              {/* DNS Prefetch */}
+        <link rel="dns-prefetch" href={import.meta.env.VITE_API_BASE_URL || '//localhost:5001'} />
+        <link rel="dns-prefetch" href="//alumniblob.blob.core.windows.net" />
     </Helmet>
   );
 };
