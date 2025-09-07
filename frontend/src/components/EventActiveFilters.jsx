@@ -12,13 +12,13 @@ const EventActiveFilters = ({
   if (!hasActiveFilters) return null;
 
   return (
-    <div className="flex flex-wrap gap-2 mb-4">
+    <div className="flex flex-wrap gap-3">
       {searchTerm && (
-        <div className="flex items-center gap-2 px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm">
+        <div className="flex items-center gap-3 px-4 py-2 bg-accent-100 text-accent-700 rounded-full text-sm font-semibold shadow-lg animate-fade-in">
           <span>Search: "{searchTerm}"</span>
           <button
             onClick={onClearSearch}
-            className="text-indigo-600 hover:text-indigo-800 transition-colors"
+            className="text-accent-600 hover:text-accent-800 transition-colors p-1 rounded-full hover:bg-accent-200"
           >
             <XMarkIcon className="h-4 w-4" />
           </button>
@@ -26,11 +26,11 @@ const EventActiveFilters = ({
       )}
       
       {selectedEventType && (
-        <div className="flex items-center gap-2 px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm">
+        <div className="flex items-center gap-3 px-4 py-2 bg-accent-100 text-accent-700 rounded-full text-sm font-semibold shadow-lg animate-fade-in">
           <span>Type: {selectedEventType}</span>
           <button
             onClick={() => onClearFilter('eventType')}
-            className="text-indigo-600 hover:text-indigo-800 transition-colors"
+            className="text-accent-600 hover:text-accent-800 transition-colors p-1 rounded-full hover:bg-accent-200"
           >
             <XMarkIcon className="h-4 w-4" />
           </button>

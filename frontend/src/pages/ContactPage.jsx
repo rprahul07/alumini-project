@@ -136,12 +136,12 @@ const ContactPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-gray-50">
       {isSubmitted ? (
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
             <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <i className="fas fa-check text-green-600 text-2xl"></i>
+              <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i className="fas fa-check text-primary-600 text-2xl"></i>
               </div>
               <h1 className="text-3xl font-bold text-gray-900 mb-4">Message Sent Successfully!</h1>
               <p className="text-lg text-gray-600 mb-8">
@@ -149,7 +149,7 @@ const ContactPage = () => {
               </p>
               <button
                 onClick={() => setIsSubmitted(false)}
-                className="bg-[#5A32EA] text-white px-8 py-3 rounded-xl font-semibold hover:bg-[#4827b8] transition-all shadow-lg hover:shadow-xl"
+                className="bg-primary text-white px-8 py-3 rounded-xl font-semibold hover:bg-primary-700 transition-all shadow-lg hover:shadow-xl"
               >
                 Send Another Message
               </button>
@@ -158,9 +158,9 @@ const ContactPage = () => {
       ) : (
         <>
         {/* Hero Section */}
-        <section id="support" className="bg-gradient-to-r from-indigo-100 to-white py-16 sm:py-20">
+        <section id="support" className="bg-gradient-to-r from-primary-100 to-white py-16 sm:py-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h1 className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-indigo-800 to-indigo-600 bg-clip-text text-transparent mb-6">
+            <h1 className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-primary-800 to-primary-600 bg-clip-text text-transparent mb-6 animate-fade-in">
               Get in Touch
             </h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
@@ -191,7 +191,7 @@ const ContactPage = () => {
                         name="name"
                         value={formData.name}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#5A32EA] focus:border-transparent transition-all ${errors.name ? 'border-red-500' : 'border-gray-300'
+                        className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all ${errors.name ? 'border-red-500' : 'border-gray-300'
                           }`}
                         placeholder="Enter your full name"
                       />
@@ -211,7 +211,7 @@ const ContactPage = () => {
                         name="email"
                         value={formData.email}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#5A32EA] focus:border-transparent transition-all ${errors.email ? 'border-red-500' : 'border-gray-300'
+                        className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all ${errors.email ? 'border-red-500' : 'border-gray-300'
                           }`}
                         placeholder="Enter your email address"
                       />
@@ -231,7 +231,7 @@ const ContactPage = () => {
                         name="subject"
                         value={formData.subject}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#5A32EA] focus:border-transparent transition-all ${errors.subject ? 'border-red-500' : 'border-gray-300'
+                        className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all ${errors.subject ? 'border-red-500' : 'border-gray-300'
                           }`}
                         placeholder="What's this about?"
                       />
@@ -251,7 +251,7 @@ const ContactPage = () => {
                         rows="6"
                         value={formData.message}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#5A32EA] focus:border-transparent transition-all resize-none ${errors.message ? 'border-red-500' : 'border-gray-300'
+                        className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none ${errors.message ? 'border-red-500' : 'border-gray-300'
                           }`}
                         placeholder="How can we help you? Please provide as much detail as possible..."
                       />
@@ -265,7 +265,7 @@ const ContactPage = () => {
                       <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="w-full bg-[#5A32EA] text-white py-3 px-6 rounded-xl font-semibold hover:bg-[#4827b8] transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full bg-primary text-white py-3 px-6 rounded-xl font-semibold hover:bg-primary-700 transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {isSubmitting ? (
                           <span className="flex items-center justify-center">
@@ -299,13 +299,13 @@ const ContactPage = () => {
                   <div className="space-y-6">
                     {/* Email Support */}
                     <div className="flex items-start space-x-4">
-                      <div className="w-12 h-12 bg-[#5A32EA]/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                        <i className="fas fa-envelope text-[#5A32EA] text-lg"></i>
+                      <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <i className="fas fa-envelope text-primary text-lg"></i>
                       </div>
                       <div>
                         <h4 className="font-semibold text-gray-900">Email Support</h4>
                         <p className="text-gray-600">alumni@cucek.ac.in</p>
-                        <span className="inline-block bg-green-100 text-green-800 text-xs px-3 py-1 rounded-full mt-2">
+                        <span className="inline-block bg-accent-100 text-accent-800 text-xs px-3 py-1 rounded-full mt-2">
                           24/7 Support
                         </span>
                       </div>
@@ -313,13 +313,13 @@ const ContactPage = () => {
 
                     {/* Phone Support */}
                     <div className="flex items-start space-x-4">
-                      <div className="w-12 h-12 bg-[#5A32EA]/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                        <i className="fas fa-phone text-[#5A32EA] text-lg"></i>
+                      <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <i className="fas fa-phone text-primary text-lg"></i>
                       </div>
                       <div>
                         <h4 className="font-semibold text-gray-900">Phone Support</h4>
                         <p className="text-gray-600">+91 484 286 2173</p>
-                        <span className="inline-block bg-blue-100 text-blue-800 text-xs px-3 py-1 rounded-full mt-2">
+                        <span className="inline-block bg-secondary-100 text-secondary-800 text-xs px-3 py-1 rounded-full mt-2">
                           Mon-Fri 9AM-6PM
                         </span>
                       </div>
@@ -327,8 +327,8 @@ const ContactPage = () => {
 
                     {/* Office Location */}
                     <div className="flex items-start space-x-4">
-                      <div className="w-12 h-12 bg-[#5A32EA]/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                        <i className="fas fa-map-marker-alt text-[#5A32EA] text-lg"></i>
+                      <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <i className="fas fa-map-marker-alt text-primary text-lg"></i>
                       </div>
                       <div>
                         <h4 className="font-semibold text-gray-900">Campus Address</h4>
@@ -345,15 +345,15 @@ const ContactPage = () => {
                 </div>
 
                 {/* Response Time Card */}
-                <div className="bg-gradient-to-r from-[#5A32EA] to-indigo-600 rounded-2xl shadow-lg p-6 text-white">
+                <div className="bg-gradient-to-r from-primary to-secondary rounded-2xl shadow-lg p-6 text-white">
                   <div className="flex items-center mb-4">
                     <i className="fas fa-clock text-2xl mr-3"></i>
                     <h3 className="text-xl font-bold">Response Time</h3>
                   </div>
-                  <p className="text-indigo-100 mb-4">
+                  <p className="text-white/80 mb-4">
                     We typically respond to all inquiries within 24-48 hours during business days.
                   </p>
-                  <div className="flex items-center text-sm text-indigo-200">
+                  <div className="flex items-center text-sm text-white/70">
                     <i className="fas fa-info-circle mr-2"></i>
                     For urgent matters, please call our phone support line
                   </div>

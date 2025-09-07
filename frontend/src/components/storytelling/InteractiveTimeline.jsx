@@ -83,20 +83,20 @@ const InteractiveTimeline = () => {
   };
 
   return (
-    <div className="relative w-full max-w-3xl mx-auto">
+    <div className="relative w-full max-w-2xl mx-auto">
       {/* Timeline Header */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="text-center mb-8"
+        className="text-center mb-4"
       >
-        <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
-          <span className="text-2xl sm:text-3xl mr-2">🌿</span>
-          CUCEK Alumni Journey Timeline
+        <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-1">
+          <span className="text-xl sm:text-2xl mr-2">🌿</span>
+          Alumni Journey
         </h3>
-        <p className="text-sm sm:text-base text-gray-600 italic">
-          A natural progression of growth, success, and homecoming
+        <p className="text-xs sm:text-sm text-gray-600 italic">
+          Growth, success, and homecoming
         </p>
       </motion.div>
 
@@ -104,7 +104,7 @@ const InteractiveTimeline = () => {
             <div className="relative">
 
         {/* Timeline Items */}
-        <div className="space-y-3">
+        <div className="space-y-2">
           {timelineData.map((milestone, index) => (
             <motion.div
               key={milestone.id}
@@ -121,30 +121,30 @@ const InteractiveTimeline = () => {
                   activeMilestone === index ? 'transform scale-105' : ''
                 }`}
                 animate={{
-                  scale: activeMilestone === index ? 1.05 : 1,
-                  x: activeMilestone === index ? 8 : 0
+                  scale: activeMilestone === index ? 1.03 : 1,
+                  x: activeMilestone === index ? 4 : 0
                 }}
                 transition={{ duration: 0.3 }}
               >
                 <div 
                   onClick={() => handleMilestoneClick(index)}
-                  className={`bg-white/95 backdrop-blur-sm rounded-2xl p-5 sm:p-7 shadow-xl border-2 transition-all duration-300 cursor-pointer hover:scale-105 ${
+                  className={`bg-white/95 backdrop-blur-sm rounded-xl p-3 sm:p-4 shadow-lg border-2 transition-all duration-300 cursor-pointer hover:scale-105 ${
                     activeMilestone === index 
-                      ? 'border-green-300 shadow-2xl bg-gradient-to-br from-white to-green-50/30' 
-                      : 'border-gray-200 hover:border-green-200 hover:shadow-lg'
+                      ? 'border-green-300 shadow-xl bg-gradient-to-br from-white to-green-50/30' 
+                      : 'border-gray-200 hover:border-green-200 hover:shadow-md'
                   }`}
                 >
                                           {/* Header */}
-                        <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center">
-                            <span className="text-2xl sm:text-3xl mr-3">{milestone.icon}</span>
+                            <span className="text-lg sm:text-xl mr-2">{milestone.icon}</span>
                             <div>
-                              <h4 className="text-base sm:text-lg font-bold text-gray-900 mb-1">
+                              <h4 className="text-sm sm:text-base font-bold text-gray-900 mb-0.5">
                                 <span className="bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
                                   {milestone.title}
                                 </span>
                               </h4>
-                              <p className="text-xs sm:text-sm text-green-600 font-semibold">
+                              <p className="text-xs text-green-600 font-semibold">
                                 {milestone.year}
                               </p>
                             </div>
@@ -154,13 +154,13 @@ const InteractiveTimeline = () => {
                         initial={{ scale: 0, rotate: -180 }}
                         animate={{ scale: 1, rotate: 0 }}
                         transition={{ duration: 0.5 }}
-                        className="w-3 h-3 bg-gradient-to-r from-green-500 to-blue-500 rounded-full shadow-lg"
+                        className="w-2 h-2 bg-gradient-to-r from-green-500 to-blue-500 rounded-full shadow-md"
                       />
                     )}
                   </div>
 
                   {/* Description */}
-                  <p className="text-sm sm:text-base text-gray-700 leading-relaxed font-medium italic">
+                  <p className="text-xs sm:text-sm text-gray-700 leading-relaxed font-medium italic">
                     {milestone.description}
                   </p>
                   
@@ -170,10 +170,10 @@ const InteractiveTimeline = () => {
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ duration: 0.5, delay: 0.2 }}
-                      className="mt-4 flex items-center text-xs text-green-600"
+                      className="mt-2 flex items-center text-xs text-green-600"
                     >
-                      <div className="w-2 h-2 bg-gradient-to-r from-green-400 to-blue-400 rounded-full mr-2"></div>
-                      <span className="font-medium">Growing Together</span>
+                      <div className="w-1.5 h-1.5 bg-gradient-to-r from-green-400 to-blue-400 rounded-full mr-1.5"></div>
+                      <span className="font-medium text-xs">Growing Together</span>
                     </motion.div>
                   )}
                 </div>
@@ -188,16 +188,16 @@ const InteractiveTimeline = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.8 }}
-              className="flex justify-center items-center mt-6"
+              className="flex justify-center items-center mt-4"
             >
-              <div className="flex space-x-2 bg-white/80 backdrop-blur-sm rounded-full p-2 shadow-lg">
+              <div className="flex space-x-1.5 bg-white/80 backdrop-blur-sm rounded-full p-1.5 shadow-md">
                 {timelineData.map((_, index) => (
                   <motion.button
                     key={index}
                     onClick={() => handleMilestoneClick(index)}
-                    className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
                       activeMilestone === index
-                        ? 'bg-gradient-to-r from-green-500 to-blue-500 scale-125 shadow-md'
+                        ? 'bg-gradient-to-r from-green-500 to-blue-500 scale-125 shadow-sm'
                         : 'bg-gray-300 hover:bg-green-300 hover:scale-110'
                     }`}
                     whileHover={{ scale: 1.1 }}

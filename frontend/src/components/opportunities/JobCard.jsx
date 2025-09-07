@@ -57,7 +57,7 @@ const JobCard = ({ job, user, isApplied, onClick, onApply, onJobDeleted }) => {
     } else {
       return {
         text: "Apply",
-        className: "mt-2 px-4 py-1.5 bg-indigo-600 text-white rounded-full font-semibold shadow hover:bg-indigo-700 transition",
+        className: "mt-2 px-4 py-1.5 bg-primary text-white rounded-full font-semibold shadow hover:bg-primary-700 transition",
         disabled: false
       };
     }
@@ -102,7 +102,7 @@ const JobCard = ({ job, user, isApplied, onClick, onApply, onJobDeleted }) => {
       {/* Job Type Badge */}
       <span
         className={`absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-semibold shadow-sm
-          ${job.type === 'internship' ? 'bg-green-100 text-green-700' : 'bg-indigo-100 text-indigo-700'}`}
+          ${job.type === 'internship' ? 'bg-accent-100 text-accent-700' : 'bg-primary-100 text-primary-700'}`}
       >
         {job.type === 'internship' ? 'Internship' : 'Job'}
       </span>

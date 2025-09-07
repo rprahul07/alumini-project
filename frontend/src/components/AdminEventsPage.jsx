@@ -165,7 +165,7 @@ const AdminEventsPage = () => {
         <h2 className="text-2xl font-bold text-gray-900">Admin Events</h2>
         <button
           onClick={handleCreate}
-          className="flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-600 text-white font-semibold shadow hover:bg-indigo-700 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 rounded-full bg-primary text-white font-semibold shadow hover:bg-primary-700 transition-colors"
         >
           <FiPlus className="h-5 w-5" />
           Create Event
@@ -178,13 +178,13 @@ const AdminEventsPage = () => {
           <input
             type="text"
             placeholder="Search by name..."
-            className="pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent w-48"
+            className="pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent w-48"
             value={search}
             onChange={e => setSearch(e.target.value)}
           />
         </div>
         <select
-          className="px-3 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="px-3 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary"
           value={filterType}
           onChange={e => setFilterType(e.target.value)}
         >
@@ -193,7 +193,7 @@ const AdminEventsPage = () => {
           ))}
         </select>
         <select
-          className="px-3 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="px-3 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary"
           value={filterStatus}
           onChange={e => setFilterStatus(e.target.value)}
         >
@@ -203,7 +203,7 @@ const AdminEventsPage = () => {
         </select>
         <input
           type="date"
-          className="px-3 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="px-3 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary"
           value={filterDate}
           onChange={e => setFilterDate(e.target.value)}
         />
@@ -243,21 +243,21 @@ const AdminEventsPage = () => {
                       <button
                         title="View Details"
                         onClick={() => handleViewDetails(event)}
-                        className="p-2 rounded-full hover:bg-indigo-50 text-indigo-600"
+                        className="p-2 rounded-full hover:bg-secondary-50 text-secondary"
                       >
                         <FiEye className="h-5 w-5" />
                       </button>
                       <button
                         title="View Registered Users"
                         onClick={() => handleViewRegistrations(event)}
-                        className="p-2 rounded-full hover:bg-indigo-50 text-blue-600"
+                        className="p-2 rounded-full hover:bg-secondary-50 text-blue-600"
                       >
                         <FiUsers className="h-5 w-5" />
                       </button>
                       <button
                         title="Edit"
                         onClick={() => handleEdit(event)}
-                        className="p-2 rounded-full hover:bg-indigo-50 text-green-600"
+                        className="p-2 rounded-full hover:bg-accent-50 text-accent"
                       >
                         <FiEdit2 className="h-5 w-5" />
                       </button>

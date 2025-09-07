@@ -244,8 +244,8 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated, isMobileModal, edit
           {/* Basic Information Section */}
           <div className="space-y-4">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                <CalendarIcon className="h-4 w-4 text-blue-600" />
+              <div className="w-8 h-8 bg-secondary-100 rounded-full flex items-center justify-center">
+                <CalendarIcon className="h-4 w-4 text-secondary-600" />
               </div>
               <h3 className="font-semibold text-gray-900">Basic Information</h3>
             </div>
@@ -257,7 +257,7 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated, isMobileModal, edit
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  className={`block w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition-colors ${errors.name ? 'border-red-500' : 'border-gray-300'}`}
+                  className={`block w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary focus:outline-none transition-colors ${errors.name ? 'border-red-500' : 'border-gray-300'}`}
                   required
                 />
                 {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
@@ -270,7 +270,7 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated, isMobileModal, edit
                   value={formData.date}
                   onChange={handleInputChange}
                   min={today}
-                  className={`block w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition-colors ${errors.date ? 'border-red-500' : 'border-gray-300'}`}
+                  className={`block w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary focus:outline-none transition-colors ${errors.date ? 'border-red-500' : 'border-gray-300'}`}
                   required
                 />
                 {errors.date && <p className="mt-1 text-sm text-red-600">{errors.date}</p>}
@@ -282,7 +282,7 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated, isMobileModal, edit
                   name="time"
                   value={formData.time}
                   onChange={handleInputChange}
-                  className={`block w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition-colors ${errors.time ? 'border-red-500' : 'border-gray-300'}`}
+                  className={`block w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary focus:outline-none transition-colors ${errors.time ? 'border-red-500' : 'border-gray-300'}`}
                   required
                 />
                 {errors.time && <p className="mt-1 text-sm text-red-600">{errors.time}</p>}
@@ -293,7 +293,7 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated, isMobileModal, edit
                   name="type"
                   value={formData.type}
                   onChange={handleInputChange}
-                  className={`block w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition-colors ${errors.type ? 'border-red-500' : 'border-gray-300'}`}
+                  className={`block w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary focus:outline-none transition-colors ${errors.type ? 'border-red-500' : 'border-gray-300'}`}
                   required
                 >
                   {EVENT_TYPES.filter(t => t.value !== '').map((type) => (
@@ -310,7 +310,7 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated, isMobileModal, edit
                   name="location"
                   value={formData.location}
                   onChange={handleInputChange}
-                  className={`block w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition-colors ${errors.location ? 'border-red-500' : 'border-gray-300'}`}
+                  className={`block w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary focus:outline-none transition-colors ${errors.location ? 'border-red-500' : 'border-gray-300'}`}
                   required
                 >
                   {locations.map((location) => (
@@ -328,7 +328,7 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated, isMobileModal, edit
                   name="organizer"
                   value={formData.organizer}
                   onChange={handleInputChange}
-                  className={`block w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition-colors ${errors.organizer ? 'border-red-500' : 'border-gray-300'}`}
+                  className={`block w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary focus:outline-none transition-colors ${errors.organizer ? 'border-red-500' : 'border-gray-300'}`}
                   required
                   placeholder="Enter organizer name"
                   maxLength={100}
@@ -342,7 +342,7 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated, isMobileModal, edit
                   name="maxCapacity"
                   value={formData.maxCapacity}
                   onChange={handleInputChange}
-                  className={`block w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition-colors ${errors.maxCapacity ? 'border-red-500' : 'border-gray-300'}`}
+                  className={`block w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary focus:outline-none transition-colors ${errors.maxCapacity ? 'border-red-500' : 'border-gray-300'}`}
                   placeholder="Enter max capacity"
                   min="1"
                   max="1000"
@@ -357,7 +357,7 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated, isMobileModal, edit
                 value={formData.description}
                 onChange={handleInputChange}
                 rows={3}
-                className="block w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition-colors"
+                className="block w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary focus:outline-none transition-colors"
                 placeholder="Enter event description"
                 maxLength={500}
               />
@@ -377,7 +377,7 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated, isMobileModal, edit
                   <div className="flex text-xs text-gray-600">
                     <label
                       htmlFor="imageFile"
-                      className="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"
+                      className="relative cursor-pointer bg-white rounded-md font-medium text-primary hover:text-primary-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-primary"
                     >
                       <span>Upload a file</span>
                       <input
@@ -416,7 +416,7 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated, isMobileModal, edit
             </button>
             <button
               type="submit"
-              className="rounded-full px-4 py-1.5 font-semibold bg-indigo-600 text-white hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2"
+              className="rounded-full px-4 py-1.5 font-semibold bg-primary text-white hover:bg-primary-700 transition-colors flex items-center justify-center gap-2"
               disabled={isSubmitting}
             >
               {isSubmitting ? (

@@ -155,7 +155,7 @@ const handleSubmit = async (e) => {
                   required
                   value={formData.department}
                   onChange={handleInputChange}
-                  className="w-full pl-12 pr-4 py-3 bg-white/60 backdrop-blur border-2 border-indigo-200 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all"
+                  className="w-full pl-12 pr-4 py-3 bg-white/60 backdrop-blur border-2 border-primary-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-primary-400 transition-all"
                   placeholder="Your department"
                 />
                 <FiBriefcase className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -175,7 +175,7 @@ const handleSubmit = async (e) => {
                     required
                     value={formData.currentSemester}
                     onChange={handleInputChange}
-                    className="w-full pl-12 pr-4 py-3 bg-white/60 backdrop-blur border-2 border-indigo-200 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all"
+                    className="w-full pl-12 pr-4 py-3 bg-white/60 backdrop-blur border-2 border-primary-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-primary-400 transition-all"
                     placeholder="1-8"
                   />
                   <FiCalendar className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -192,7 +192,7 @@ const handleSubmit = async (e) => {
                     required
                     value={formData.rollNumber}
                     onChange={handleInputChange}
-                    className="w-full pl-12 pr-4 py-3 bg-white/60 backdrop-blur border-2 border-indigo-200 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all"
+                    className="w-full pl-12 pr-4 py-3 bg-white/60 backdrop-blur border-2 border-primary-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-primary-400 transition-all"
                     placeholder="Roll no."
                   />
                   <FiUser className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -215,7 +215,7 @@ const handleSubmit = async (e) => {
                   required
                   value={formData.department}
                   onChange={handleInputChange}
-                  className="w-full pl-12 pr-4 py-3 bg-white/60 backdrop-blur border-2 border-indigo-200 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all"
+                  className="w-full pl-12 pr-4 py-3 bg-white/60 backdrop-blur border-2 border-primary-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-primary-400 transition-all"
                   placeholder="Your department"
                 />
                 <FiBriefcase className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -232,7 +232,7 @@ const handleSubmit = async (e) => {
                   required
                   value={formData.graduationYear}
                   onChange={handleInputChange}
-                  className="w-full pl-12 pr-4 py-3 bg-white/60 backdrop-blur border-2 border-indigo-200 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all"
+                  className="w-full pl-12 pr-4 py-3 bg-white/60 backdrop-blur border-2 border-primary-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-primary-400 transition-all"
                   placeholder="e.g. 2020"
                 />
                 <FiCalendar className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -249,7 +249,7 @@ const handleSubmit = async (e) => {
                   required
                   value={formData.currentJobTitle}
                   onChange={handleInputChange}
-                  className="w-full pl-12 pr-4 py-3 bg-white/60 backdrop-blur border-2 border-indigo-200 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all"
+                  className="w-full pl-12 pr-4 py-3 bg-white/60 backdrop-blur border-2 border-primary-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-primary-400 transition-all"
                   placeholder="Your job title"
                 />
                 <FiBriefcase className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -266,7 +266,7 @@ const handleSubmit = async (e) => {
                   required
                   value={formData.companyName}
                   onChange={handleInputChange}
-                  className="w-full pl-12 pr-4 py-3 bg-white/60 backdrop-blur border-2 border-indigo-200 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all"
+                  className="w-full pl-12 pr-4 py-3 bg-white/60 backdrop-blur border-2 border-primary-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-primary-400 transition-all"
                   placeholder="Company name"
                 />
                 <FiAward className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -288,7 +288,7 @@ const handleSubmit = async (e) => {
                   required
                   value={formData.department}
                   onChange={handleInputChange}
-                  className="w-full pl-12 pr-4 py-3 bg-white/60 backdrop-blur border-2 border-indigo-200 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all"
+                  className="w-full pl-12 pr-4 py-3 bg-white/60 backdrop-blur border-2 border-primary-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-primary-400 transition-all"
                   placeholder="Your department"
                 />
                 <FiBriefcase className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -305,7 +305,7 @@ const handleSubmit = async (e) => {
                   required
                   value={formData.designation}
                   onChange={handleInputChange}
-                  className="w-full pl-12 pr-4 py-3 bg-white/60 backdrop-blur border-2 border-indigo-200 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all"
+                  className="w-full pl-12 pr-4 py-3 bg-white/60 backdrop-blur border-2 border-primary-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-primary-400 transition-all"
                   placeholder="Your designation"
                 />
                 <FiAward className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -410,7 +410,7 @@ const handleSubmit = async (e) => {
 };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-12 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-white to-gray-50 py-12 px-4">
       <div className="w-full max-w-md">
         {/* Main Card */}
         <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8">
@@ -437,7 +437,7 @@ const handleSubmit = async (e) => {
                 onClick={() => setAuthType('login')}
                 className={`flex-1 py-2 px-4 rounded-full text-sm font-medium transition-all ${
                   authType === 'login'
-                    ? 'bg-white shadow-md text-indigo-600'
+                    ? 'bg-white shadow-md text-primary-600'
                     : 'text-gray-600 hover:text-gray-800'
                 }`}
               >
@@ -447,7 +447,7 @@ const handleSubmit = async (e) => {
                 onClick={() => setAuthType('register')}
                 className={`flex-1 py-2 px-4 rounded-full text-sm font-medium transition-all ${
                   authType === 'register'
-                    ? 'bg-white shadow-md text-indigo-600'
+                    ? 'bg-white shadow-md text-primary-600'
                     : 'text-gray-600 hover:text-gray-800'
                 }`}
               >
@@ -469,7 +469,7 @@ const handleSubmit = async (e) => {
                     required
                     value={forgotEmail}
                     onChange={(e) => setForgotEmail(e.target.value)}
-                    className="w-full pl-12 pr-4 py-3 bg-white/60 backdrop-blur border-2 border-indigo-200 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all"
+                    className="w-full pl-12 pr-4 py-3 bg-white/60 backdrop-blur border-2 border-primary-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-primary-400 transition-all"
                     placeholder="Enter your email"
                   />
                   <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -485,7 +485,7 @@ const handleSubmit = async (e) => {
               <button
                 type="submit"
                 disabled={otpLoading}
-                className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-full transition-all duration-200 shadow-lg hover:shadow-xl"
+                className="w-full bg-primary hover:bg-primary-700 disabled:bg-primary-400 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-full transition-all duration-200 shadow-lg hover:shadow-xl"
               >
                 {otpLoading ? (
                   <div className="flex items-center justify-center">
@@ -505,7 +505,7 @@ const handleSubmit = async (e) => {
                     setFormError('');
                     clearError();
                   }}
-                  className="text-indigo-600 hover:text-indigo-800 font-medium text-sm transition-colors"
+                  className="text-primary-600 hover:text-primary-800 font-medium text-sm transition-colors"
                 >
                   ← Back to Login
                 </button>
@@ -516,12 +516,12 @@ const handleSubmit = async (e) => {
           {/* FORGOT PASSWORD - STEP 2: OTP + PASSWORD */}
           {authType === 'forgot' && forgotStep === 2 && (
             <form className="space-y-6" onSubmit={handleForgotPasswordStep2}>
-              <div className="text-center bg-indigo-50 rounded-2xl p-4 mb-6">
+              <div className="text-center bg-primary-50 rounded-2xl p-4 mb-6">
                 <p className="text-sm text-gray-600 mb-1">
-                  OTP sent to <span className="font-semibold text-indigo-600">{forgotEmail}</span>
+                  OTP sent to <span className="font-semibold text-primary-600">{forgotEmail}</span>
                 </p>
                 {otpTimer > 0 && (
-                  <p className="text-sm text-indigo-600 font-medium">
+                  <p className="text-sm text-primary-600 font-medium">
                     Expires in: {formatTimer(otpTimer)}
                   </p>
                 )}
@@ -539,7 +539,7 @@ const handleSubmit = async (e) => {
                   required
                   value={formData.otp}
                   onChange={handleInputChange}
-                  className="w-full py-3 px-4 bg-white/60 backdrop-blur border-2 border-indigo-200 rounded-full text-center text-lg tracking-widest focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all"
+                  className="w-full py-3 px-4 bg-white/60 backdrop-blur border-2 border-primary-200 rounded-full text-center text-lg tracking-widest focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-primary-400 transition-all"
                   placeholder="0000"
                 />
               </div>
@@ -555,7 +555,7 @@ const handleSubmit = async (e) => {
                     required
                     value={formData.newPassword}
                     onChange={handleInputChange}
-                    className="w-full pl-12 pr-12 py-3 bg-white/60 backdrop-blur border-2 border-indigo-200 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all"
+                    className="w-full pl-12 pr-12 py-3 bg-white/60 backdrop-blur border-2 border-primary-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-primary-400 transition-all"
                     placeholder="New password"
                   />
                   <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -580,7 +580,7 @@ const handleSubmit = async (e) => {
                     required
                     value={formData.confirmNewPassword}
                     onChange={handleInputChange}
-                    className="w-full pl-12 pr-12 py-3 bg-white/60 backdrop-blur border-2 border-indigo-200 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all"
+                    className="w-full pl-12 pr-12 py-3 bg-white/60 backdrop-blur border-2 border-primary-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-primary-400 transition-all"
                     placeholder="Confirm new password"
                   />
                   <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -603,7 +603,7 @@ const handleSubmit = async (e) => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-full transition-all duration-200 shadow-lg hover:shadow-xl"
+                className="w-full bg-primary hover:bg-primary-700 disabled:bg-primary-400 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-full transition-all duration-200 shadow-lg hover:shadow-xl"
               >
                 {loading ? (
                   <div className="flex items-center justify-center">
@@ -634,7 +634,7 @@ const handleSubmit = async (e) => {
                       handleForgotPasswordStep1({ preventDefault: () => {} });
                     }}
                     disabled={otpLoading}
-                    className="text-indigo-600 hover:text-indigo-800 disabled:text-indigo-400 transition-colors"
+                    className="text-primary-600 hover:text-primary-800 disabled:text-primary-400 transition-colors"
                   >
                     {otpLoading ? 'Sending...' : 'Resend OTP'}
                   </button>
@@ -658,7 +658,7 @@ const handleSubmit = async (e) => {
                       required
                       value={formData.fullName}
                       onChange={handleInputChange}
-                      className="w-full pl-12 pr-4 py-3 bg-white/60 backdrop-blur border-2 border-indigo-200 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all"
+                      className="w-full pl-12 pr-4 py-3 bg-white/60 backdrop-blur border-2 border-primary-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-primary-400 transition-all"
                       placeholder="Enter your full name"
                     />
                     <FiUser className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -677,7 +677,7 @@ const handleSubmit = async (e) => {
                     required
                     value={formData.email}
                     onChange={handleInputChange}
-                    className="w-full pl-12 pr-4 py-3 bg-white/60 backdrop-blur border-2 border-indigo-200 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all"
+                    className="w-full pl-12 pr-4 py-3 bg-white/60 backdrop-blur border-2 border-primary-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-primary-400 transition-all"
                     placeholder="Enter your email"
                   />
                   <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -696,7 +696,7 @@ const handleSubmit = async (e) => {
                       required
                       value={formData.phoneNumber}
                       onChange={handleInputChange}
-                      className="w-full pl-12 pr-4 py-3 bg-white/60 backdrop-blur border-2 border-indigo-200 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all"
+                      className="w-full pl-12 pr-4 py-3 bg-white/60 backdrop-blur border-2 border-primary-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-primary-400 transition-all"
                       placeholder="Enter your phone number"
                     />
                     <FiPhone className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -715,7 +715,7 @@ const handleSubmit = async (e) => {
                     required
                     value={formData.password}
                     onChange={handleInputChange}
-                    className="w-full pl-12 pr-12 py-3 bg-white/60 backdrop-blur border-2 border-indigo-200 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all"
+                    className="w-full pl-12 pr-12 py-3 bg-white/60 backdrop-blur border-2 border-primary-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-primary-400 transition-all"
                     placeholder="Enter your password"
                   />
                   <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -742,7 +742,7 @@ const handleSubmit = async (e) => {
                         required
                         value={formData.confirmPassword}
                         onChange={handleInputChange}
-                        className="w-full pl-12 pr-12 py-3 bg-white/60 backdrop-blur border-2 border-indigo-200 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all"
+                        className="w-full pl-12 pr-12 py-3 bg-white/60 backdrop-blur border-2 border-primary-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-primary-400 transition-all"
                         placeholder="Confirm your password"
                       />
                       <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -775,7 +775,7 @@ const handleSubmit = async (e) => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-full transition-all duration-200 shadow-lg hover:shadow-xl"
+                className="w-full bg-primary hover:bg-primary-700 disabled:bg-primary-400 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-full transition-all duration-200 shadow-lg hover:shadow-xl"
               >
                 {loading ? (
                   <div className="flex items-center justify-center">
@@ -797,7 +797,7 @@ const handleSubmit = async (e) => {
                       setFormError('');
                       clearError();
                     }}
-                    className="text-indigo-600 hover:text-indigo-800 font-medium text-sm transition-colors"
+                    className="text-primary-600 hover:text-primary-800 font-medium text-sm transition-colors"
                   >
                     Forgot your password?
                   </button>

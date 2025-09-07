@@ -1,23 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { testimonialsAPI } from '../services/testimonialsService';
 import { dashboardAPI } from '../services/dashboardService';
-import { galleryAPI } from '../services/galleryService';
-import { spotlightAPI } from '../services/spotlightService';
+import VideoPlayer from '../components/VideoPlayer';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { useNavigate, Link } from 'react-router-dom';
 
 const AboutPage = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('mission');
-  const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
-  const [currentGalleryIndex, setCurrentGalleryIndex] = useState(0);
   const [currentTestimonialIndex, setCurrentTestimonialIndex] = useState(0);
   const [testimonials, setTestimonials] = useState([]);
   const [testimonialsLoading, setTestimonialsLoading] = useState(true);
-  const [galleryImages, setGalleryImages] = useState([]);
-  const [galleryLoading, setGalleryLoading] = useState(true);
-  const [spotlights, setSpotlights] = useState([]);
-  const [spotlightsLoading, setSpotlightsLoading] = useState(true);
   const [stats, setStats] = useState({
     alumniCount: 0,
     activeUsers: 0,
@@ -58,28 +51,7 @@ const AboutPage = () => {
     return () => clearInterval(interval);
   }, [stats]);
 
-  // Use only dynamic spotlights data
-  const successStories = spotlights;
 
-  // Auto-rotate success stories
-  useEffect(() => {
-    if (successStories.length === 0) return; // Don't start rotation if no stories
-    
-    const interval = setInterval(() => {
-      setCurrentStoryIndex((prev) => (prev + 1) % successStories.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [successStories.length]); // Add dependency on successStories.length
-
-  // Auto-rotate gallery
-  useEffect(() => {
-    if (galleryImages.length === 0) return; // Don't start rotation if no images
-    
-    const interval = setInterval(() => {
-      setCurrentGalleryIndex((prev) => (prev + 1) % galleryImages.length);
-    }, 4000);
-    return () => clearInterval(interval);
-  }, [galleryImages.length]); // Add dependency on galleryImages.length
 
   // Auto-rotate testimonials
   useEffect(() => {
@@ -143,96 +115,12 @@ const AboutPage = () => {
       }
     };
 
-    const fetchGallery = async () => {
-      try {
-        const result = await galleryAPI.getGallery();
-        if (result.success && result.data.length > 0) {
-          // Transform API gallery to match AboutPage format
-          const transformedGallery = result.data.map((item) => ({
-            id: item.id,
-            title: item.title,
-            description: item.description || '',
-            image: item.imageUrl,
-            redirectionUrl: item.redirectionUrl
-          }));
-          setGalleryImages(transformedGallery);
-        } else {
-          // Fallback to a default image if no gallery items
-          setGalleryImages([
-            {
-              id: 1,
-              title: 'CUCEK Campus',
-              description: 'Beautiful campus of Cochin University College of Engineering Kuttanad',
-              image: 'https://images.unsplash.com/photo-1562774053-701939374585?w=800&h=600&fit=crop'
-            }
-          ]);
-        }
-      } catch (error) {
-        console.error('Failed to fetch gallery:', error);
-        // Fallback to default image on error
-        setGalleryImages([
-          {
-            id: 1,
-            title: 'CUCEK Campus',
-            description: 'Beautiful campus of Cochin University College of Engineering Kuttanad',
-            image: 'https://images.unsplash.com/photo-1562774053-701939374585?w=800&h=600&fit=crop'
-          }
-        ]);
-      } finally {
-        setGalleryLoading(false);
-      }
-    };
 
-    const fetchSpotlights = async () => {
-      try {
-        const result = await spotlightAPI.getAllSpotlights();
-        if (result.success && result.data.length > 0) {
-          // Transform API spotlights to match AboutPage successStories format
-          const transformedSpotlights = result.data.map((spotlight) => ({
-            id: spotlight.id,
-            name: spotlight.user?.fullName || 'Alumni',
-            batch: spotlight.user?.alumni?.graduationYear || '2020',
-            department: spotlight.user?.department || 'Engineering',
-            position: spotlight.user?.alumni?.currentJobTitle || 'Professional',
-            company: spotlight.user?.alumni?.companyName || 'Leading Company',
-            image: spotlight.user?.photoUrl || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop',
-            achievement: spotlight.title,
-            impact: spotlight.description || 'Making a significant impact',
-            color: 'from-purple-500 to-pink-500',
-            redirectionUrl: spotlight.redirectionUrl
-          }));
-          setSpotlights(transformedSpotlights);
-          
-          // Update success stories count with actual spotlights count
-          setStats(prevStats => ({
-            ...prevStats,
-            successStories: result.data.length
-          }));
-        } else {
-          // No spotlights available - set empty array
-          setSpotlights([]);
-        }
-      } catch (error) {
-        console.error('Failed to fetch spotlights:', error);
-        // Set empty array on error
-        setSpotlights([]);
-      } finally {
-        setSpotlightsLoading(false);
-      }
-    };
 
     fetchTestimonials();
     fetchDashboardStats();
-    fetchGallery();
-    fetchSpotlights();
   }, []);
 
-  // Reset story index when successStories changes to prevent blank slides
-  useEffect(() => {
-    if (successStories.length > 0 && currentStoryIndex >= successStories.length) {
-      setCurrentStoryIndex(0);
-    }
-  }, [successStories, currentStoryIndex]);
 
   // Company logos for credibility
   const partnerCompanies = [
@@ -310,97 +198,85 @@ const AboutPage = () => {
 
   return (
     <>
-      <div className="min-h-screen bg-white">
-      {/* Dynamic Hero Section with Floating Elements */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-r from-indigo-200 to-white">
-          {/* Animated Background Elements */}
-          <div className="absolute inset-0">
-            <div className="absolute top-20 left-10 w-72 h-72 bg-indigo-400 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse"></div>
-            <div className="absolute top-40 right-10 w-72 h-72 bg-purple-400 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse" style={{ animationDelay: '2s' }}></div>
-            <div className="absolute -bottom-8 left-20 w-72 h-72 bg-blue-400 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse" style={{ animationDelay: '4s' }}></div>
-          </div>
-          
-          <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
-            <div className="mb-8">
-              <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-white/80 backdrop-blur-sm text-indigo-800 mb-6 shadow-lg">
-                Est. 1999 • Excellence in Engineering
-              </span>
-            </div>
-            
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-              Where 
-              <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent"> Innovation </span>
-              Meets Legacy
-            </h1>
-            
-            <p className="text-lg md:text-xl text-gray-700 max-w-3xl mx-auto mb-12 leading-relaxed">
-              Join a network of 15,000+ brilliant minds who are shaping the future across technology, 
-              research, entrepreneurship, and beyond.
-            </p>
-            
-            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-              <button
-                onClick={() => navigate('/role-selection')}
-                className="group relative px-8 py-4 bg-[#5A32EA] text-white rounded-2xl font-semibold overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:bg-[#4827b8]"
-              >
-                <span className="relative z-10 flex items-center">
-                  <i className="fas fa-users mr-2"></i>
-                  Join Our Community
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-gray-50">
+        {/* Hero Section */}
+        <section className="bg-gradient-to-r from-primary-600 via-primary-700 to-secondary-600 text-white py-16 sm:py-20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center">
+              <div className="mb-8 animate-fade-in">
+                <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-white/90 backdrop-blur-sm text-primary-700 shadow-lg">
+                  Est. 1999 • Excellence in Engineering
                 </span>
-              </button>
+              </div>
               
-              <button
-                onClick={() => navigate('/events')}
-                className="px-8 py-4 border-2 border-[#5A32EA] text-[#5A32EA] rounded-2xl font-semibold hover:bg-[#5A32EA] hover:text-white transition-all duration-300 flex items-center"
-              >
-                <i className="fas fa-calendar-alt mr-2"></i>
-                Explore Events
-              </button>
-            </div>
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+                Where 
+                <span className="bg-gradient-to-r from-accent-400 to-white bg-clip-text text-transparent"> Innovation </span>
+                Meets Legacy
+              </h1>
+              
+              <p className="text-lg sm:text-xl lg:text-2xl text-white/90 mb-8 max-w-3xl mx-auto animate-fade-in" style={{ animationDelay: '0.4s' }}>
+                Join a network of 15,000+ brilliant minds who are shaping the future across technology, 
+                research, entrepreneurship, and beyond.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-6 justify-center items-center animate-fade-in" style={{ animationDelay: '0.6s' }}>
+                <button
+                  onClick={() => navigate('/role-selection')}
+                  className="group relative px-8 py-4 bg-white text-primary-600 rounded-2xl font-semibold overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:bg-accent-50"
+                >
+                  <span className="relative z-10 flex items-center">
+                    <i className="fas fa-users mr-2"></i>
+                    Join Our Community
+                  </span>
+                </button>
+                
+                <button
+                  onClick={() => navigate('/events')}
+                  className="px-8 py-4 border-2 border-white text-white rounded-2xl font-semibold hover:bg-white hover:text-primary-600 transition-all duration-300 flex items-center"
+                >
+                  <i className="fas fa-calendar-alt mr-2"></i>
+                  Explore Events
+                </button>
+              </div>
 
-            {/* Floating Stats Cards */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-12">
-              <div className="bg-white/90 backdrop-blur-lg rounded-xl p-3 text-center border border-white/40 shadow-lg hover:shadow-xl transition-all duration-300">
-                <div className="text-xl md:text-2xl font-bold text-[#5A32EA] mb-1">
-                  {animatedStats.alumniCount.toLocaleString()}+
+              {/* Stats Cards */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12 animate-fade-in" style={{ animationDelay: '0.8s' }}>
+                <div className="bg-white/90 backdrop-blur-lg rounded-xl p-4 text-center border border-white/40 shadow-lg hover:shadow-xl transition-all duration-300">
+                  <div className="text-2xl font-bold text-primary-600 mb-1">
+                    {animatedStats.alumniCount.toLocaleString()}+
+                  </div>
+                  <div className="text-gray-600 text-sm font-medium">Alumni</div>
                 </div>
-                <div className="text-gray-600 text-xs font-medium">Alumni</div>
-              </div>
-              <div className="bg-white/90 backdrop-blur-lg rounded-xl p-3 text-center border border-white/40 shadow-lg hover:shadow-xl transition-all duration-300">
-                <div className="text-xl md:text-2xl font-bold text-[#5A32EA] mb-1">
-                  {animatedStats.countries}+
+                <div className="bg-white/90 backdrop-blur-lg rounded-xl p-4 text-center border border-white/40 shadow-lg hover:shadow-xl transition-all duration-300">
+                  <div className="text-2xl font-bold text-primary-600 mb-1">
+                    {animatedStats.countries}+
+                  </div>
+                  <div className="text-gray-600 text-sm font-medium">Countries</div>
                 </div>
-                <div className="text-gray-600 text-xs font-medium">Countries</div>
-              </div>
-              <div className="bg-white/90 backdrop-blur-lg rounded-xl p-3 text-center border border-white/40 shadow-lg hover:shadow-xl transition-all duration-300">
-                <div className="text-xl md:text-2xl font-bold text-[#5A32EA] mb-1">
-                  {animatedStats.successStories}+
+                <div className="bg-white/90 backdrop-blur-lg rounded-xl p-4 text-center border border-white/40 shadow-lg hover:shadow-xl transition-all duration-300">
+                  <div className="text-2xl font-bold text-primary-600 mb-1">
+                    {animatedStats.successStories}+
+                  </div>
+                  <div className="text-gray-600 text-sm font-medium">Success Stories</div>
                 </div>
-                <div className="text-gray-600 text-xs font-medium">Success Stories</div>
-              </div>
-              <div className="bg-white/90 backdrop-blur-lg rounded-xl p-3 text-center border border-white/40 shadow-lg hover:shadow-xl transition-all duration-300">
-                <div className="text-xl md:text-2xl font-bold text-[#5A32EA] mb-1">
-                  {animatedStats.activeUsers.toLocaleString()}+
+                <div className="bg-white/90 backdrop-blur-lg rounded-xl p-4 text-center border border-white/40 shadow-lg hover:shadow-xl transition-all duration-300">
+                  <div className="text-2xl font-bold text-primary-600 mb-1">
+                    {animatedStats.activeUsers.toLocaleString()}+
+                  </div>
+                  <div className="text-gray-600 text-sm font-medium">Active Users</div>
                 </div>
-                <div className="text-gray-600 text-xs font-medium">Active Users</div>
               </div>
-            </div>
-          </div>
-          
-          {/* Scroll Indicator */}
-          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce z-20">
-            <div className="w-6 h-10 border-2 border-indigo-400 rounded-full flex justify-center">
-              <div className="w-1 h-3 bg-indigo-400 rounded-full mt-2 animate-pulse"></div>
             </div>
           </div>
         </section>
 
         {/* Company Partners Section */}
-        <section className="py-12 bg-gradient-to-r from-indigo-50 to-purple-50">
+        <section className="py-12 bg-gradient-to-r from-primary-50 to-secondary-50 animate-slide-up">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-8">
               <h3 className="text-xl font-bold text-gray-900 mb-3 flex items-center justify-center">
-                <i className="fas fa-building mr-3 text-[#5A32EA]"></i>
+                <i className="fas fa-building mr-3 text-primary"></i>
                 Our alumni work at leading organizations worldwide
               </h3>
             </div>
@@ -416,7 +292,7 @@ const AboutPage = () => {
         </section>
 
         {/* Interactive Mission/Vision/Values Section */}
-        <section className="py-16 sm:py-20 bg-white">
+        <section className="py-16 sm:py-20 bg-white animate-slide-up">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold text-gray-900 mb-4">Our Foundation</h2>
@@ -434,7 +310,7 @@ const AboutPage = () => {
                     onClick={() => setActiveTab(tab)}
                     className={`px-8 py-3 rounded-xl font-semibold capitalize transition-all duration-300 ${
                       activeTab === tab
-                        ? 'bg-[#5A32EA] text-white shadow-lg'
+                        ? 'bg-primary text-white shadow-lg'
                         : 'text-gray-600 hover:text-gray-900'
                     }`}
                   >
@@ -448,7 +324,7 @@ const AboutPage = () => {
             <div className="max-w-4xl mx-auto">
               {activeTab === 'mission' && (
                 <div className="text-center space-y-6 animate-in fade-in duration-500">
-                  <div className="w-20 h-20 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <div className="w-20 h-20 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full flex items-center justify-center mx-auto mb-6">
                     <i className="fas fa-bullseye text-white text-2xl"></i>
                   </div>
                   <h3 className="text-2xl font-bold text-gray-900">Our Mission</h3>
@@ -462,7 +338,7 @@ const AboutPage = () => {
 
               {activeTab === 'vision' && (
                 <div className="text-center space-y-6 animate-in fade-in duration-500">
-                  <div className="w-20 h-20 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <div className="w-20 h-20 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full flex items-center justify-center mx-auto mb-6">
                     <i className="fas fa-eye text-white text-2xl"></i>
                   </div>
                   <h3 className="text-2xl font-bold text-gray-900">Our Vision</h3>
@@ -476,28 +352,28 @@ const AboutPage = () => {
 
               {activeTab === 'values' && (
                 <div className="text-center space-y-6 animate-in fade-in duration-500">
-                  <div className="w-20 h-20 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <div className="w-20 h-20 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full flex items-center justify-center mx-auto mb-6">
                     <i className="fas fa-heart text-white text-2xl"></i>
                   </div>
                   <h3 className="text-2xl font-bold text-gray-900">Our Values</h3>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
                     <div className="p-4">
-                      <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                        <i className="fas fa-lightbulb text-indigo-600"></i>
+                      <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                        <i className="fas fa-lightbulb text-primary-600"></i>
                       </div>
                       <h4 className="font-semibold text-gray-900">Innovation</h4>
                       <p className="text-sm text-gray-600">Pushing boundaries and creating solutions</p>
                     </div>
                     <div className="p-4">
-                      <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                        <i className="fas fa-handshake text-indigo-600"></i>
+                      <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                        <i className="fas fa-handshake text-primary-600"></i>
                       </div>
                       <h4 className="font-semibold text-gray-900">Collaboration</h4>
                       <p className="text-sm text-gray-600">Building bridges across disciplines</p>
                     </div>
                     <div className="p-4">
-                      <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                        <i className="fas fa-star text-indigo-600"></i>
+                      <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                        <i className="fas fa-star text-primary-600"></i>
                       </div>
                       <h4 className="font-semibold text-gray-900">Excellence</h4>
                       <p className="text-sm text-gray-600">Striving for the highest standards</p>
@@ -509,492 +385,303 @@ const AboutPage = () => {
           </div>
         </section>
 
-        {/* Achievements Grid */}
-        <section className="py-16 sm:py-20 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-gray-900 mb-4 flex items-center justify-center">
-                <i className="fas fa-star mr-4 text-[#5A32EA]"></i>
+        {/* Why Choose CUCEK - Enhanced Section */}
+        <section className="py-20 sm:py-24 bg-gradient-to-br from-slate-50 via-white to-gray-50 relative overflow-hidden animate-slide-up">
+          {/* Background Elements */}
+          <div className="absolute inset-0">
+            <div className="absolute top-20 left-20 w-72 h-72 bg-gradient-to-r from-primary/5 to-secondary/5 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-20 right-20 w-96 h-96 bg-gradient-to-r from-secondary/5 to-accent/5 rounded-full blur-3xl"></div>
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gradient-to-r from-primary/3 to-secondary/3 rounded-full blur-3xl"></div>
+          </div>
+          
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            {/* Section Header */}
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center px-6 py-3 rounded-full text-sm font-medium bg-primary/10 text-primary-700 border border-primary/20 mb-6">
+                <span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
                 Why Choose CUCEK?
+              </div>
+              <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
+                Excellence in Every
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-secondary-600"> Dimension</span>
               </h2>
-              <p className="text-lg text-gray-600">Discover what makes our community exceptional</p>
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                Discover the unique advantages that make CUCEK the premier choice for engineering education and career success
+              </p>
             </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {achievements.map((achievement, index) => (
-                <div key={index} className="group">
-                  <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 hover:border-[#5A32EA]/30 aspect-square flex flex-col items-center justify-center text-center">
-                    <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-4 bg-gradient-to-r ${achievement.color} shadow-md group-hover:shadow-xl group-hover:scale-110 transition-all duration-300`}>
-                      <i className={`${achievement.icon} text-white text-2xl`}></i>
+
+            {/* Main Features Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
+              {/* Feature 1 - Large Card */}
+              <div className="lg:col-span-1 group">
+                <div className="relative bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100 overflow-hidden">
+                  {/* Background Pattern */}
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primary/10 to-secondary/10 rounded-full -translate-y-16 translate-x-16"></div>
+                  <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-accent/10 to-primary/10 rounded-full translate-y-12 -translate-x-12"></div>
+                  
+                  <div className="relative z-10">
+                    <div className="w-16 h-16 bg-gradient-to-r from-primary to-secondary rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
+                      <i className="fas fa-award text-white text-2xl"></i>
                     </div>
-                    <h3 className="text-lg font-bold text-gray-900 mb-3 group-hover:text-[#5A32EA] transition-colors duration-300 leading-tight">{achievement.title}</h3>
-                    <p className="text-gray-600 leading-relaxed text-sm">{achievement.description}</p>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-primary transition-colors duration-300">
+                      One of the Top Engineering Colleges in Kerala
+                    </h3>
+                    <p className="text-gray-600 leading-relaxed mb-6">
+                      Constituent college of CUSAT with NBA-accredited programs and research center status since 2017. 
+                      Our rigorous academic standards and industry-aligned curriculum ensure you're prepared for real-world challenges.
+                    </p>
+                    <div className="flex items-center text-primary font-semibold">
+                      <span>Learn More</span>
+                      <i className="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform duration-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Feature 2 - Large Card */}
+              <div className="lg:col-span-1 group">
+                <div className="relative bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100 overflow-hidden">
+                  {/* Background Pattern */}
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-secondary/10 to-accent/10 rounded-full -translate-y-16 translate-x-16"></div>
+                  <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-primary/10 to-secondary/10 rounded-full translate-y-12 -translate-x-12"></div>
+                  
+                  <div className="relative z-10">
+                    <div className="w-16 h-16 bg-gradient-to-r from-secondary to-accent rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
+                      <i className="fas fa-globe-americas text-white text-2xl"></i>
+                    </div>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-secondary transition-colors duration-300">
+                      Global Recognition & Alumni Network
+                    </h3>
+                    <p className="text-gray-600 leading-relaxed mb-6">
+                      CUCEK alumni are placed in global companies across 85+ countries. Our strong international reputation 
+                      opens doors to opportunities worldwide and connects you with a powerful professional network.
+                    </p>
+                    <div className="flex items-center text-secondary font-semibold">
+                      <span>Explore Network</span>
+                      <i className="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform duration-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Additional Features Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {achievements.slice(2).map((achievement, index) => (
+                <div key={index} className="group">
+                  <div className="relative bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 overflow-hidden">
+                    {/* Background Pattern */}
+                    <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-primary/5 to-secondary/5 rounded-full -translate-y-8 translate-x-8"></div>
+                    
+                    <div className="relative z-10">
+                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 bg-gradient-to-r ${achievement.color} shadow-md group-hover:shadow-xl group-hover:scale-110 transition-all duration-300`}>
+                        <i className={`${achievement.icon} text-white text-lg`}></i>
+                      </div>
+                      <h3 className="text-lg font-bold text-gray-900 mb-3 group-hover:text-primary transition-colors duration-300 leading-tight">
+                        {achievement.title}
+                      </h3>
+                      <p className="text-gray-600 leading-relaxed text-sm">
+                        {achievement.description}
+                      </p>
+                    </div>
                   </div>
                 </div>
               ))}
             </div>
+
           </div>
         </section>
 
-        {/* Interactive Gallery Section */}
-        <section className="py-8 sm:py-10 bg-gradient-to-br from-indigo-50 to-purple-50 overflow-hidden relative"> {/* Reduced padding */}
+        {/* Video Player Section */}
+        <section className="py-16 sm:py-20 bg-gradient-to-br from-primary-50 to-secondary-50 overflow-hidden relative animate-slide-up">
           {/* Background Decoration */}
           <div className="absolute inset-0">
-            <div className="absolute top-10 left-10 w-24 h-24 bg-gradient-to-r from-[#5A32EA]/10 to-purple-300/20 rounded-full blur-2xl animate-pulse"></div> {/* Smaller */}
-            <div className="absolute bottom-20 right-20 w-28 h-28 bg-gradient-to-r from-indigo-200/30 to-[#5A32EA]/10 rounded-full blur-2xl animate-pulse"></div> {/* Smaller */}
+            <div className="absolute top-10 left-10 w-24 h-24 bg-gradient-to-r from-primary/10 to-secondary-300/20 rounded-full blur-2xl animate-pulse"></div>
+            <div className="absolute bottom-20 right-20 w-28 h-28 bg-gradient-to-r from-secondary-200/30 to-primary/10 rounded-full blur-2xl animate-pulse"></div>
           </div>
-          <div className="max-w-5xl mx-auto px-2 sm:px-4 lg:px-6 relative z-10"> {/* Narrower container */}
-            <div className="text-center mb-6"> {/* Less margin */}
+          
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="text-center mb-12">
               <div className="flex flex-col items-center">
-                <div className="relative mb-4"> {/* Less margin */}
-                  <div className="w-10 h-10 bg-gradient-to-r from-[#5A32EA] to-indigo-600 rounded-2xl flex items-center justify-center shadow-xl transform hover:scale-105 transition-all duration-300">
-                    <i className="fas fa-images text-white text-lg"></i> {/* Smaller icon */}
+                <div className="relative mb-6">
+                  <div className="w-16 h-16 bg-gradient-to-r from-primary to-secondary rounded-2xl flex items-center justify-center shadow-xl transform hover:scale-105 transition-all duration-300">
+                    <i className="fas fa-play text-white text-2xl"></i>
                   </div>
-                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full flex items-center justify-center shadow-lg">
-                    <i className="fas fa-heart text-white text-xs"></i>
+                  <div className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-accent-400 to-pink-400 rounded-full flex items-center justify-center shadow-lg">
+                    <i className="fas fa-video text-white text-xs"></i>
                   </div>
-                  <div className="absolute -bottom-1 -left-1 w-3 h-3 bg-gradient-to-r from-green-400 to-emerald-400 rounded-full flex items-center justify-center shadow-lg">
+                  <div className="absolute -bottom-2 -left-2 w-5 h-5 bg-gradient-to-r from-green-400 to-emerald-400 rounded-full flex items-center justify-center shadow-lg">
                     <i className="fas fa-star text-white text-xs"></i>
                   </div>
                 </div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-2 flex items-center justify-center"> {/* Smaller title */}
-                  <i className="fas fa-camera-retro mr-2 text-[#5A32EA]"></i>
-                  Campus Life Gallery
+                <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 flex items-center justify-center">
+                  <i className="fas fa-play-circle mr-3 text-primary"></i>
+                  Discover Our Story
                 </h2>
-                <div className="w-10 h-1 bg-gradient-to-r from-[#5A32EA] to-purple-600 rounded-full mb-2"></div> {/* Thinner divider */}
-                <p className="text-base text-gray-600 max-w-2xl mx-auto leading-relaxed mb-3"> {/* Smaller text */}
-                  Experience the vibrant moments that define our community through a visual journey of 
-                  <span className="font-semibold text-[#5A32EA]"> innovation, excellence, and shared memories</span>
+                <div className="w-16 h-1 bg-gradient-to-r from-primary to-secondary rounded-full mb-4"></div>
+                <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                  Watch our inspiring journey from a small engineering college to a global community of 
+                  <span className="font-semibold text-primary"> innovators, leaders, and changemakers</span>
                 </p>
-                {/* Category Tags - Smaller */}
-                <div className="flex flex-wrap items-center justify-center gap-2">
-                  <div className="flex items-center space-x-1 bg-white/80 backdrop-blur-sm px-2 py-1 rounded-xl shadow-sm border border-white/40 hover:shadow-md transition-all duration-300">
-                    <i className="fas fa-graduation-cap text-[#5A32EA] text-xs"></i>
-                    <span className="text-xs font-medium text-gray-700">Campus Life</span>
-                  </div>
-                  <div className="flex items-center space-x-1 bg-white/80 backdrop-blur-sm px-2 py-1 rounded-xl shadow-sm border border-white/40 hover:shadow-md transition-all duration-300">
-                    <i className="fas fa-users text-purple-500 text-xs"></i>
-                    <span className="text-xs font-medium text-gray-700">Events</span>
-                  </div>
-                  <div className="flex items-center space-x-1 bg-white/80 backdrop-blur-sm px-2 py-1 rounded-xl shadow-sm border border-white/40 hover:shadow-md transition-all duration-300">
-                    <i className="fas fa-trophy text-amber-500 text-xs"></i>
-                    <span className="text-xs font-medium text-gray-700">Achievements</span>
-                  </div>
-                  <div className="flex items-center space-x-1 bg-white/80 backdrop-blur-sm px-2 py-1 rounded-xl shadow-sm border border-white/40 hover:shadow-md transition-all duration-300">
-                    <i className="fas fa-lightbulb text-green-500 text-xs"></i>
-                    <span className="text-xs font-medium text-gray-700">Innovation</span>
-                  </div>
-                </div>
               </div>
             </div>
-            <div className="relative">
-              {galleryLoading ? (
-                <div className="relative h-32 md:h-40 rounded-xl overflow-hidden shadow-xl bg-gray-200 animate-pulse flex items-center justify-center"> {/* Less height */}
-                  <div className="text-center">
-                    <div className="inline-block w-4 h-4 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mb-2"></div>
-                    <p className="text-gray-600 text-xs">Loading gallery...</p>
-                  </div>
-                </div>
-              ) : galleryImages.length === 0 ? (
-                <div className="relative h-32 md:h-40 rounded-xl overflow-hidden shadow-xl bg-gray-100 flex items-center justify-center"> {/* Less height */}
-                  <div className="text-center">
-                    <i className="fas fa-images text-xl text-gray-400 mb-2"></i>
-                    <p className="text-sm text-gray-600">No gallery images available</p>
-                  </div>
-                </div>
-              ) : (
-                <>
-            
-                {/* Main Gallery Display */}
-                <div
-                  className="relative rounded-xl overflow-hidden shadow-xl bg-gray-900 max-h-80 mx-auto"
-                  style={{ height: '20rem', width: '100%', maxWidth: '1200px' }} // Increased maxWidth for more breadth
-                >
-                  <div 
-                    className="flex transition-transform duration-700 ease-in-out"
-                    style={{ transform: `translateX(-${currentGalleryIndex * 100}%)` }}
-                  >
-                    {galleryImages.map((image, index) => (
-                      <div key={image.id} className="w-full flex-shrink-0 relative">
-                        <div className="relative w-full h-80" style={{ paddingBottom: '0' }}>
-                          <img
-                            src={image.image}
-                            alt={image.title}
-                            className="absolute inset-0 w-full h-full object-cover rounded-xl"
-                            onError={(e) => {
-                              e.target.src = 'https://images.unsplash.com/photo-1562774053-701939374585?w=800&h=600&fit=crop';
-                            }}
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent rounded-xl"></div>
-                          <div className="absolute bottom-2 left-2 right-2 text-white">
-                            <h3 className="text-base font-bold mb-1 text-white drop-shadow-lg">{image.title}</h3>
-                            <p className="text-xs text-gray-100 drop-shadow-md">{image.description}</p>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  {/* Navigation Arrows */}
-                  <button
-                    onClick={() => setCurrentGalleryIndex((prev) => (prev - 1 + galleryImages.length) % galleryImages.length)}
-                    className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-[#5A32EA]/20 backdrop-blur-md text-white p-1 rounded-full hover:bg-[#5A32EA]/40 transition-all duration-300 group"
-                  >
-                    <i className="fas fa-chevron-left group-hover:scale-110 transition-transform duration-300 text-xs"></i>
-                  </button>
-                  <button
-                    onClick={() => setCurrentGalleryIndex((prev) => (prev + 1) % galleryImages.length)}
-                    className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-[#5A32EA]/20 backdrop-blur-md text-white p-1 rounded-full hover:bg-[#5A32EA]/40 transition-all duration-300 group"
-                  >
-                    <i className="fas fa-chevron-right group-hover:scale-110 transition-transform duration-300 text-xs"></i>
-                  </button>
-                </div>
 
-                {/* Thumbnail Navigation - smaller */}
-                <div className="flex justify-center mt-2 mb-2 space-x-1 overflow-x-auto pb-2 px-2">
-                  {galleryImages.map((image, index) => (
-                    <button
-                      key={image.id}
-                      onClick={() => setCurrentGalleryIndex(index)}
-                      className={`flex-shrink-0 w-10 h-7 rounded-lg overflow-hidden transition-all duration-300 relative ${
-                        index === currentGalleryIndex 
-                          ? 'ring-2 ring-[#5A32EA] ring-opacity-60 scale-105 z-10 mx-0.5' 
-                          : 'opacity-70 hover:opacity-100 hover:scale-100 mx-0.5'
-                      }`}
-                    >
-                      <img
-                        src={image.image}
-                        alt={image.title}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          e.target.src = 'https://images.unsplash.com/photo-1562774053-701939374585?w=800&h=600&fit=crop';
-                        }}
-                      />
-                    </button>
-                  ))}
-                </div>
-                {/* Progress Indicators - smaller */}
-                <div className="flex justify-center mt-2 space-x-1">
-                  {galleryImages.map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setCurrentGalleryIndex(index)}
-                      className={`transition-all duration-300 ${
-                        index === currentGalleryIndex 
-                          ? 'w-4 h-1.5 bg-[#5A32EA] rounded-full' 
-                          : 'w-1.5 h-1.5 bg-gray-300 rounded-full hover:bg-gray-400'
-                      }`}
-                    />
-                  ))}
-                </div>
-                </>
-              )}
-            </div>
-          </div>
-        </section>
+            {/* Video Player */}
+            <VideoPlayer
+              videoId={null} // Will be set when YouTube integration is ready
+              title="CUCEK Alumni Network"
+              description="Click to play our story"
+              duration="5:30 min"
+              views="2.5K views"
+              year="2024"
+              onPlay={() => console.log('Video play clicked')}
+              onShare={() => console.log('Video share clicked')}
+            />
 
-        {/* Alumni Testimonials Section */}
-        <section className="py-16 sm:py-20 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-gray-900 mb-4 flex items-center justify-center">
-                <i className="fas fa-quote-left mr-3 text-[#5A32EA]"></i>
-                What Our Alumni Say
-              </h2>
-              <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-                Hear from graduates who are making their mark across the globe
-              </p>
-            </div>
-            
-            <div className="relative overflow-hidden">
-              {/* Main Testimonial Display */}
-              <div className="relative">
-                <div 
-                  className="flex transition-transform duration-700 ease-in-out"
-                  style={{ transform: `translateX(-${currentTestimonialIndex * 100}%)` }}
-                >
-                  {testimonials.map((testimonial, index) => (
-                    <div key={testimonial.id} className="w-full flex-shrink-0 px-4">
-                      <div className="max-w-4xl mx-auto">
-                        <div className="bg-gradient-to-br from-white to-indigo-50 rounded-2xl shadow-lg p-6 md:p-8 relative overflow-hidden min-h-[350px] md:min-h-[400px] border border-indigo-100">
-                          {/* Decorative Elements */}
-                          <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-[#5A32EA]/10 to-purple-200/20 rounded-full -translate-y-12 translate-x-12"></div>
-                          <div className="absolute bottom-0 left-0 w-20 h-20 bg-gradient-to-tr from-blue-100/30 to-[#5A32EA]/10 rounded-full translate-y-10 -translate-x-10"></div>
-                          
-                          <div className="relative z-10">
-                            {/* Quote Icon */}
-                            <div className="flex justify-center mb-6">
-                              <div className="w-12 h-12 bg-[#5A32EA] rounded-full flex items-center justify-center shadow-lg">
-                                <i className="fas fa-quote-left text-white text-lg"></i>
-                              </div>
-                            </div>
-                            
-                            {/* Testimonial Quote */}
-                            <div className="mb-6 max-h-24 overflow-y-auto scrollbar-hide">
-                              <blockquote className="text-sm md:text-base text-gray-700 text-center leading-relaxed italic max-w-3xl mx-auto break-words">
-                                "{testimonial.quote}"
-                              </blockquote>
-                            </div>
-                            
-                            {/* Alumni Info - Centered */}
-                            <div className="flex flex-col items-center justify-center text-center space-y-3">
-                              <img
-                                src={testimonial.image}
-                                alt={testimonial.name}
-                                className="w-16 h-16 rounded-full object-cover border-4 border-[#5A32EA]/20 shadow-lg"
-                                onError={(e) => {
-                                  e.target.src = 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop';
-                                }}
-                              />
-                              <div className="space-y-1">
-                                <h4 className="text-base md:text-lg font-bold text-gray-900">{testimonial.name}</h4>
-                                <p className="text-[#5A32EA] font-semibold text-sm">{testimonial.position}</p>
-                                <p className="text-gray-600 text-sm">{testimonial.company}</p>
-                                <div className="flex items-center justify-center text-xs text-gray-500 space-x-1">
-                                  <i className="fas fa-graduation-cap text-[#5A32EA]"></i>
-                                  <span>Class of {testimonial.batch} • {testimonial.department}</span>
-                                </div>
-                                <div className="flex items-center justify-center text-xs text-gray-500 space-x-1">
-                                  <i className="fas fa-map-marker-alt text-[#5A32EA]"></i>
-                                  <span>{testimonial.location}</span>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              
-              {/* Navigation Arrows */}
-              <button
-                onClick={() => setCurrentTestimonialIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length)}
-                className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white shadow-lg text-gray-700 p-4 rounded-full hover:bg-[#5A32EA] hover:text-white transition-all duration-300 group border border-gray-200"
-              >
-                <i className="fas fa-chevron-left group-hover:scale-110 transition-transform duration-300"></i>
-              </button>
-              <button
-                onClick={() => setCurrentTestimonialIndex((prev) => (prev + 1) % testimonials.length)}
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white shadow-lg text-gray-700 p-4 rounded-full hover:bg-[#5A32EA] hover:text-white transition-all duration-300 group border border-gray-200"
-              >
-                <i className="fas fa-chevron-right group-hover:scale-110 transition-transform duration-300"></i>
-              </button>
-              
-              {/* Progress Indicators */}
-              <div className="flex justify-center mt-12 space-x-3">
-                {testimonials.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentTestimonialIndex(index)}
-                    className={`transition-all duration-300 ${
-                      index === currentTestimonialIndex 
-                        ? 'w-10 h-3 bg-[#5A32EA] rounded-full' 
-                        : 'w-3 h-3 bg-gray-300 rounded-full hover:bg-gray-400'
-                    }`}
-                  />
-                ))}
-              </div>
-
-              {/* View All Testimonials Button */}
-              <div className="text-center mt-12">
-                {testimonialsLoading ? (
-                  <div className="flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
-                    <span className="ml-3 text-gray-600">Loading testimonials...</span>
-                  </div>
-                ) : (
-                  <Link
-                    to="/testimonials"
-                    className="inline-flex items-center px-8 py-4 bg-[#5A32EA] text-white font-semibold rounded-full hover:bg-[#4827b8] transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
-                  >
-                    <i className="fas fa-comments mr-2"></i>
-                    <span>View All Testimonials</span>
-                    <i className="fas fa-arrow-right ml-2"></i>
-                  </Link>
-                )}
-              </div>
-            </div>
-            
-            {/* Quick Stats from Testimonials */}
+            {/* Video Features */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
-              <div className="text-center">
-                <div className="w-12 h-12 bg-gradient-to-r from-[#5A32EA] to-blue-500 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg">
-                  <i className="fas fa-thumbs-up text-white text-lg"></i>
+              <div className="text-center p-6 bg-white/60 backdrop-blur-sm rounded-xl shadow-lg border border-white/40 hover:shadow-xl transition-all duration-300">
+                <div className="w-12 h-12 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center mx-auto mb-4">
+                  <i className="fas fa-graduation-cap text-white text-lg"></i>
                 </div>
-                <h4 className="text-xl font-bold text-gray-900 mb-1">98%</h4>
-                <p className="text-gray-600 font-medium text-sm">Alumni Satisfaction Rate</p>
+                <h4 className="font-bold text-gray-900 mb-2">Alumni Stories</h4>
+                <p className="text-sm text-gray-600">Real success stories from our graduates</p>
               </div>
-              <div className="text-center">
-                <div className="w-12 h-12 bg-gradient-to-r from-[#5A32EA] to-purple-500 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg">
-                  <i className="fas fa-user-graduate text-white text-lg"></i>
+              <div className="text-center p-6 bg-white/60 backdrop-blur-sm rounded-xl shadow-lg border border-white/40 hover:shadow-xl transition-all duration-300">
+                <div className="w-12 h-12 bg-gradient-to-r from-secondary to-accent rounded-full flex items-center justify-center mx-auto mb-4">
+                  <i className="fas fa-lightbulb text-white text-lg"></i>
                 </div>
-                <h4 className="text-xl font-bold text-gray-900 mb-1">87%</h4>
-                <p className="text-gray-600 font-medium text-sm">Actively Mentor Current Students</p>
+                <h4 className="font-bold text-gray-900 mb-2">Innovation</h4>
+                <p className="text-sm text-gray-600">Cutting-edge projects and research</p>
               </div>
-              <div className="text-center">
-                <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-[#5A32EA] rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg">
-                  <i className="fas fa-heart text-white text-lg"></i>
+              <div className="text-center p-6 bg-white/60 backdrop-blur-sm rounded-xl shadow-lg border border-white/40 hover:shadow-xl transition-all duration-300">
+                <div className="w-12 h-12 bg-gradient-to-r from-accent to-primary rounded-full flex items-center justify-center mx-auto mb-4">
+                  <i className="fas fa-globe text-white text-lg"></i>
                 </div>
-                <h4 className="text-xl font-bold text-gray-900 mb-1">94%</h4>
-                <p className="text-gray-600 font-medium text-sm">Would Recommend CUCEK</p>
+                <h4 className="font-bold text-gray-900 mb-2">Global Impact</h4>
+                <p className="text-sm text-gray-600">Making a difference worldwide</p>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Featured Alumni Carousel */}
-        <section className="py-8 sm:py-10 bg-gradient-to-br from-indigo-50 to-purple-50 overflow-hidden"> {/* Reduced padding */}
-          <div className="max-w-5xl mx-auto px-2 sm:px-4 lg:px-6"> {/* Narrower container */}
-            <div className="text-center mb-6"> {/* Less margin */}
-              <h2 className="text-2xl font-bold text-gray-900 mb-2 flex items-center justify-center"> {/* Smaller title */}
-                <i className="fas fa-medal mr-2 text-[#5A32EA]"></i>
-                Alumni Spotlight
-              </h2>
-              <p className="text-base text-gray-600">Meet the changemakers from our community</p>
-            </div>
-            <div className="relative">
-              {spotlightsLoading ? (
-                <div className="flex items-center justify-center py-8">
-                  <div className="text-center">
-                    <div className="inline-block w-4 h-4 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mb-2"></div>
-                    <p className="text-gray-600 text-xs">Loading spotlights...</p>
-                  </div>
-                </div>
-              ) : successStories.length === 0 ? (
-                <div className="flex items-center justify-center py-10">
-                  <div className="text-center">
-                    <i className="fas fa-medal text-3xl text-gray-400 mb-2"></i>
-                    <h3 className="text-lg font-bold text-gray-900 mb-2">No Alumni Spotlights Yet</h3>
-                    <p className="text-sm text-gray-600 max-w-md mx-auto">
-                      We're working on featuring amazing stories from our alumni community. 
-                      Check back soon!
-                    </p>
-                  </div>
-                </div>
-              ) : (
-                <>
-                  <div className="overflow-hidden rounded-2xl shadow-xl">
-                    <div 
-                      className="flex transition-transform duration-500 ease-in-out"
-                      style={{ transform: `translateX(-${currentStoryIndex * 100}%)` }}
-                    >
-                      {successStories.map((story, index) => (
-                        <div key={index} className="w-full flex-shrink-0">
-                          <div className="bg-[#5A32EA] p-1 rounded-2xl">
-                            <div className="bg-white rounded-2xl p-4 md:p-6">
-                              <div className="flex flex-col md:flex-row items-center gap-4"> {/* Less gap */}
-                                <div className="flex-shrink-0">
-                                  <img
-                                    src={story.image}
-                                    alt={story.name}
-                                    className="w-20 h-20 md:w-28 md:h-28 rounded-full object-cover shadow-lg border-2 border-white" /* Smaller image */
-                                    onError={(e) => {
-                                      e.target.src = 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop';
-                                    }}
-                                  />
-                                </div>
-                                <div className="flex-1 text-center md:text-left">
-                                  <h3 className="text-lg font-bold text-gray-900 mb-1">{story.name}</h3>
-                                  <div className="text-sm font-semibold text-gray-700 mb-0.5">{story.position}</div>
-                                  <div className="text-[#5A32EA] font-medium mb-1">{story.company}</div>
-                                  <div className="flex items-center justify-center md:justify-start text-gray-500 mb-1">
-                                    <i className="fas fa-graduation-cap mr-1 text-[#5A32EA]"></i>
-                                    <span className="text-xs">Class of {story.batch} • {story.department}</span>
-                                  </div>
-                                  <p className="text-xs text-gray-700 mb-1 leading-relaxed">{story.achievement}</p>
-                                  <div className="inline-flex items-center px-2 py-0.5 bg-indigo-50 rounded-full text-xs font-medium text-[#5A32EA] border border-indigo-200">
-                                    <i className="fas fa-chart-line mr-1"></i>
-                                    {story.impact}
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  {/* Carousel Navigation - smaller */}
-                  <div className="flex justify-center mt-4 space-x-1">
-                    {successStories.map((_, index) => (
-                      <button
-                        key={index}
-                        onClick={() => setCurrentStoryIndex(index)}
-                        className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                          index === currentStoryIndex ? 'bg-[#5A32EA] w-6' : 'bg-gray-300'
-                        }`}
-                      />
-                    ))}
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-        </section>
 
-        {/* Interactive Timeline */}
-        <section className="py-16 sm:py-20 bg-gradient-to-br from-slate-50 via-indigo-50 to-purple-50 text-gray-900 relative overflow-hidden">
-          {/* Decorative Background Elements */}
+
+        {/* Our Legacy - Redesigned Timeline */}
+        <section className="py-20 sm:py-24 bg-gradient-to-br from-slate-50 via-white to-gray-50 relative overflow-hidden animate-slide-up">
+          {/* Background Elements */}
           <div className="absolute inset-0">
-            <div className="absolute top-20 left-10 w-64 h-64 bg-gradient-to-r from-[#5A32EA]/10 to-purple-200/20 rounded-full blur-3xl"></div>
-            <div className="absolute bottom-20 right-10 w-80 h-80 bg-gradient-to-r from-indigo-200/30 to-[#5A32EA]/10 rounded-full blur-3xl"></div>
+            <div className="absolute top-20 left-20 w-72 h-72 bg-gradient-to-r from-primary/5 to-secondary/5 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-20 right-20 w-96 h-96 bg-gradient-to-r from-secondary/5 to-accent/5 rounded-full blur-3xl"></div>
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gradient-to-r from-primary/3 to-secondary/3 rounded-full blur-3xl"></div>
           </div>
           
           <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold mb-4 flex items-center justify-center">
-                <i className="fas fa-history mr-3 text-[#5A32EA]"></i>
-                Our Legacy
+            {/* Section Header */}
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center px-6 py-3 rounded-full text-sm font-medium bg-primary/10 text-primary-700 border border-primary/20 mb-6">
+                <span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
+                Our Journey Through Time
+              </div>
+              <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
+                A Legacy of
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-secondary-600"> Excellence</span>
               </h2>
-              <p className="text-lg text-gray-600">Three decades of excellence and innovation</p>
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                From humble beginnings to becoming a beacon of engineering excellence, 
+                discover the milestones that shaped our remarkable journey
+              </p>
             </div>
-            
-            <div className="relative">
-              {/* Enhanced Timeline Line with Gradient */}
-              <div className="absolute left-1/2 transform -translate-x-0.5 h-full w-1 bg-gradient-to-b from-[#5A32EA] via-indigo-400 to-purple-400 rounded-full shadow-sm"></div>
 
-              <div className="space-y-12">
+            {/* Timeline Container */}
+            <div className="relative">
+              {/* Central Timeline Line */}
+              <div className="absolute left-1/2 transform -translate-x-0.5 w-1 h-full bg-gradient-to-b from-primary via-secondary to-accent rounded-full shadow-lg"></div>
+              
+              {/* Timeline Items */}
+              <div className="space-y-16">
                 {timelineMilestones.map((milestone, index) => (
                   <div key={index} className="relative group">
                     <div className={`flex items-center ${index % 2 === 0 ? 'justify-start' : 'justify-end'}`}>
-                      <div className={`w-1/2 ${index % 2 === 0 ? 'pr-8' : 'pl-8'}`}>
-                        <div className="bg-white/95 backdrop-blur-xl rounded-2xl p-6 border border-indigo-100 hover:border-[#5A32EA]/30 transition-all duration-500 shadow-lg hover:shadow-xl group-hover:scale-105 transform">
-                          {/* Gradient Border Effect */}
-                          <div className="absolute inset-0 bg-gradient-to-r from-[#5A32EA]/5 via-indigo-100/20 to-purple-100/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                      {/* Content Card */}
+                      <div className={`w-full lg:w-5/12 ${index % 2 === 0 ? 'lg:pr-8' : 'lg:pl-8'}`}>
+                        <div className="relative bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100 overflow-hidden group-hover:border-primary/30">
+                          {/* Background Pattern */}
+                          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primary/5 to-secondary/5 rounded-full -translate-y-16 translate-x-16"></div>
+                          <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-accent/5 to-primary/5 rounded-full translate-y-12 -translate-x-12"></div>
                           
                           <div className="relative z-10">
-                            <div className="flex items-center mb-3">
-                              <div className="w-10 h-10 bg-gradient-to-r from-[#5A32EA] to-indigo-600 rounded-xl flex items-center justify-center mr-3 shadow-lg group-hover:shadow-xl transition-all duration-300">
-                                <i className="fas fa-calendar-alt text-white text-sm"></i>
-                              </div>
-                              <div className="text-2xl font-bold bg-gradient-to-r from-[#5A32EA] to-indigo-600 bg-clip-text text-transparent">
-                                {milestone.year}
-                              </div>
+                            {/* Year Badge */}
+                            <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-primary to-secondary text-white text-sm font-bold mb-4 shadow-lg">
+                              <i className="fas fa-calendar-alt mr-2"></i>
+                              {milestone.year}
                             </div>
-                            <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-[#5A32EA] transition-colors duration-300">{milestone.title}</h3>
-                            <p className="text-sm text-gray-600 leading-relaxed">{milestone.description}</p>
+                            
+                            {/* Title */}
+                            <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-primary transition-colors duration-300">
+                              {milestone.title}
+                            </h3>
+                            
+                            {/* Description */}
+                            <p className="text-gray-600 leading-relaxed text-base">
+                              {milestone.description}
+                            </p>
                           </div>
                         </div>
                       </div>
                       
-                      {/* Enhanced Timeline Dots with Pulse Effect */}
-                      <div className="absolute left-1/2 transform -translate-x-1/2 z-20">
+                      {/* Timeline Dot */}
+                      <div className="absolute left-1/2 transform -translate-x-1/2 z-20 hidden lg:block">
                         <div className="relative">
-                          <div className="w-6 h-6 bg-gradient-to-r from-[#5A32EA] to-indigo-600 rounded-full border-3 border-white shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-125"></div>
-                          <div className="absolute inset-0 w-6 h-6 bg-gradient-to-r from-[#5A32EA] to-indigo-600 rounded-full animate-ping opacity-20 group-hover:opacity-40"></div>
+                          <div className="w-8 h-8 bg-gradient-to-r from-primary to-secondary rounded-full border-4 border-white shadow-xl group-hover:shadow-2xl transition-all duration-300 group-hover:scale-125 flex items-center justify-center">
+                            <div className="w-3 h-3 bg-white rounded-full"></div>
+                          </div>
+                          <div className="absolute inset-0 w-8 h-8 bg-gradient-to-r from-primary to-secondary rounded-full animate-ping opacity-20 group-hover:opacity-40"></div>
                         </div>
                       </div>
                     </div>
                   </div>
                 ))}
+              </div>
+            </div>
+
+            {/* Bottom CTA Section */}
+            <div className="mt-20 text-center">
+              <div className="bg-gradient-to-r from-primary to-secondary rounded-3xl p-8 sm:p-12 text-white relative overflow-hidden">
+                {/* Background Pattern */}
+                <div className="absolute inset-0 bg-black/10"></div>
+                <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-32 translate-x-32"></div>
+                <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-24 -translate-x-24"></div>
+                
+                <div className="relative z-10">
+                  <h3 className="text-3xl sm:text-4xl font-bold mb-4">Join Our Continuing Story</h3>
+                  <p className="text-white/90 text-lg max-w-2xl mx-auto mb-8">
+                    Be part of our legacy as we continue to shape the future of engineering education and innovation
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button
+                      onClick={() => navigate('/role-selection')}
+                      className="px-8 py-4 bg-white text-primary rounded-2xl font-semibold hover:bg-gray-50 transition-colors duration-200 flex items-center justify-center"
+                    >
+                      <i className="fas fa-user-plus mr-2"></i>
+                      Join Our Community
+                    </button>
+                    <button
+                      onClick={() => navigate('/events')}
+                      className="px-8 py-4 border-2 border-white text-white rounded-2xl font-semibold hover:bg-white hover:text-primary transition-colors duration-200 flex items-center justify-center"
+                    >
+                      <i className="fas fa-calendar-alt mr-2"></i>
+                      Explore Events
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </section>
 
         {/* Call to Action with Modern Design */}
-        <section className="py-16 sm:py-20 bg-[#5A32EA] relative overflow-hidden">
+        <section className="py-16 sm:py-20 bg-primary relative overflow-hidden animate-slide-up">
           <div className="absolute inset-0 bg-black/10"></div>
           <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <div className="max-w-4xl mx-auto">
@@ -1002,7 +689,7 @@ const AboutPage = () => {
                 <i className="fas fa-rocket mr-3"></i>
                 Ready to Shape the Future?
               </h2>
-              <p className="text-lg text-indigo-100 mb-8 leading-relaxed">
+              <p className="text-lg text-white/90 mb-8 leading-relaxed">
                 Join our global community of innovators, entrepreneurs, and leaders who are 
                 making a real impact in their fields and beyond.
               </p>
@@ -1010,25 +697,25 @@ const AboutPage = () => {
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                 <button
                   onClick={() => navigate('/role-selection')}
-                  className="group relative px-10 py-4 bg-white text-[#5A32EA] rounded-2xl font-bold text-lg overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+                  className="group relative px-10 py-4 bg-white text-primary rounded-2xl font-bold text-lg overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl"
                 >
                   <span className="relative z-10 flex items-center">
                     <i className="fas fa-user-plus mr-2"></i>
                     Join Alumni Network
                   </span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-indigo-50 to-purple-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary-50 to-secondary-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </button>
                 
                 <button
                   onClick={() => navigate('/events')}
-                  className="px-10 py-4 border-2 border-white text-white rounded-2xl font-bold text-lg hover:bg-white hover:text-[#5A32EA] transition-all duration-300 flex items-center"
+                  className="px-10 py-4 border-2 border-white text-white rounded-2xl font-bold text-lg hover:bg-white hover:text-primary transition-all duration-300 flex items-center"
                 >
                   <i className="fas fa-calendar-check mr-2"></i>
                   Explore Events
                 </button>
               </div>
               
-              <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6 text-indigo-100">
+              <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6 text-white/90">
                 <div className="flex flex-col items-center">
                   <i className="fas fa-globe-americas text-2xl mb-2"></i>
                   <h4 className="font-semibold text-sm">Global Network</h4>

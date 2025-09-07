@@ -32,13 +32,13 @@ const ActiveFilters = ({
   };
 
   return (
-    <div className="flex flex-wrap gap-2 mb-4">
+    <div className="flex flex-wrap gap-3 mb-6">
       {selectedType && (
-        <div className="flex items-center gap-1 px-3 py-2 sm:py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm font-medium">
-          <span className="text-xs sm:text-sm">Type: {getTypeLabel()}</span>
+        <div className="flex items-center gap-1 px-4 py-2 bg-accent-100 text-accent-700 rounded-full text-sm font-medium shadow-lg animate-fade-in">
+          <span className="text-sm">Type: {getTypeLabel()}</span>
           <button
             onClick={onClearType}
-            className="ml-1 hover:text-indigo-900 transition-colors p-1"
+            className="ml-1 hover:text-accent-800 transition-colors p-1 rounded-full hover:bg-accent-200"
             aria-label="Clear type filter"
           >
             <XMarkIcon className="h-3 w-3" />
@@ -47,11 +47,11 @@ const ActiveFilters = ({
       )}
       
       {(sortBy !== 'createdAt' || sortOrder !== 'desc') && (
-        <div className="flex items-center gap-1 px-3 py-2 sm:py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
-          <span className="text-xs sm:text-sm">Sort: {getSortLabel()}</span>
+        <div className="flex items-center gap-1 px-4 py-2 bg-secondary-100 text-secondary-700 rounded-full text-sm font-medium shadow-lg animate-fade-in">
+          <span className="text-sm">Sort: {getSortLabel()}</span>
           <button
             onClick={onClearSort}
-            className="ml-1 hover:text-green-900 transition-colors p-1"
+            className="ml-1 hover:text-secondary-800 transition-colors p-1 rounded-full hover:bg-secondary-200"
             aria-label="Clear sort filter"
           >
             <XMarkIcon className="h-3 w-3" />

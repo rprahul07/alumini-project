@@ -59,10 +59,10 @@ const EventFilterButton = ({
   };
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div className="relative z-50" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-2 font-semibold border-2 border-indigo-400 bg-white/60 backdrop-blur text-sm text-indigo-700 hover:bg-white/80 shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 rounded-full whitespace-nowrap"
+        className="flex items-center gap-2 px-4 py-3 font-medium border border-gray-300 bg-white text-sm text-gray-700 hover:bg-gray-50 hover:border-primary shadow-sm hover:shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary rounded-lg whitespace-nowrap group w-full xl:w-auto"
       >
         <FunnelIcon className="h-4 w-4" />
         <span className="hidden sm:inline">Filters</span>
@@ -70,7 +70,7 @@ const EventFilterButton = ({
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-80 sm:w-64 bg-white rounded-xl shadow-lg border border-gray-200 z-50 max-h-[80vh] overflow-y-auto scrollbar-hide">
+        <div className="absolute right-0 mt-2 w-80 sm:w-64 bg-white rounded-xl shadow-2xl border border-gray-200 z-[99999] max-h-[80vh] overflow-y-auto scrollbar-hide">
           <div className="p-4 space-y-4">
             {/* Event Type Filter */}
             <div>
@@ -80,7 +80,7 @@ const EventFilterButton = ({
               <select
                 value={selectedEventType}
                 onChange={handleEventTypeChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 text-sm"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-primary text-sm"
               >
                 {eventTypeOptions.map((type) => (
                   <option key={type.value} value={type.value}>
@@ -99,21 +99,21 @@ const EventFilterButton = ({
                 <button
                   type="button"
                   onClick={() => onTimeFilterChange && onTimeFilterChange('all')}
-                  className={`px-4 py-2 rounded-lg text-sm border transition-colors ${timeFilter === 'all' ? 'bg-indigo-100 text-indigo-700 font-medium border-indigo-400' : 'text-gray-700 border-gray-300 hover:bg-gray-50'}`}
+                  className={`px-4 py-2 rounded-lg text-sm border transition-colors ${timeFilter === 'all' ? 'bg-accent-100 text-accent-700 font-medium border-accent-400' : 'text-gray-700 border-gray-300 hover:bg-gray-50'}`}
                 >
                   All
                 </button>
                 <button
                   type="button"
                   onClick={() => onTimeFilterChange && onTimeFilterChange('upcoming')}
-                  className={`px-4 py-2 rounded-lg text-sm border transition-colors ${timeFilter === 'upcoming' ? 'bg-indigo-100 text-indigo-700 font-medium border-indigo-400' : 'text-gray-700 border-gray-300 hover:bg-gray-50'}`}
+                  className={`px-4 py-2 rounded-lg text-sm border transition-colors ${timeFilter === 'upcoming' ? 'bg-accent-100 text-accent-700 font-medium border-accent-400' : 'text-gray-700 border-gray-300 hover:bg-gray-50'}`}
                 >
                   Upcoming
                 </button>
                 <button
                   type="button"
                   onClick={() => onTimeFilterChange && onTimeFilterChange('past')}
-                  className={`px-4 py-2 rounded-lg text-sm border transition-colors ${timeFilter === 'past' ? 'bg-indigo-100 text-indigo-700 font-medium border-indigo-400' : 'text-gray-700 border-gray-300 hover:bg-gray-50'}`}
+                  className={`px-4 py-2 rounded-lg text-sm border transition-colors ${timeFilter === 'past' ? 'bg-accent-100 text-accent-700 font-medium border-accent-400' : 'text-gray-700 border-gray-300 hover:bg-gray-50'}`}
                 >
                   Past
                 </button>
@@ -132,7 +132,7 @@ const EventFilterButton = ({
                     onClick={() => handleSortChange(option.value)}
                     className={`w-full text-left px-4 py-3 rounded-lg text-sm transition-colors ${
                       getSortLabel() === option.label
-                        ? 'bg-indigo-100 text-indigo-700 font-medium'
+                        ? 'bg-accent-100 text-accent-700 font-medium'
                         : 'text-gray-700 hover:bg-gray-50'
                     }`}
                   >

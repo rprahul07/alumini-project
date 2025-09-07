@@ -156,29 +156,29 @@ const AlumniDashboard = () => {
       title: 'Mentorships Given',
       value: 0,
       Icon: AcademicCapIcon,
-      iconBg: 'bg-gradient-to-br from-indigo-200 to-purple-200',
-      iconColor: 'text-indigo-600',
+      iconBg: 'bg-gradient-to-br from-primary-200 to-secondary-200',
+      iconColor: 'text-primary-600',
     },
     {
       title: 'Events Created',
       value: 0,
       Icon: CalendarIcon,
-      iconBg: 'bg-gradient-to-br from-pink-100 to-purple-100',
-      iconColor: 'text-pink-500',
+      iconBg: 'bg-gradient-to-br from-accent-100 to-primary-100',
+      iconColor: 'text-accent-500',
     },
     {
       title: 'Jobs Posted',
       value: 0,
       Icon: BriefcaseIcon,
-      iconBg: 'bg-gradient-to-br from-blue-100 to-indigo-100',
-      iconColor: 'text-blue-600',
+      iconBg: 'bg-gradient-to-br from-secondary-100 to-primary-100',
+      iconColor: 'text-secondary-600',
     },
     {
       title: 'Student Connections',
       value: 0,
       Icon: UserGroupIcon,
-      iconBg: 'bg-gradient-to-br from-orange-100 to-amber-100',
-      iconColor: 'text-orange-600',
+      iconBg: 'bg-gradient-to-br from-primary-100 to-accent-100',
+      iconColor: 'text-primary-600',
     },
   ]);
   const [statsLoading, setStatsLoading] = useState(true);
@@ -219,7 +219,7 @@ const AlumniDashboard = () => {
     <>
       <Navbar />
       {/* Top nav bar (already present) */}
-      <div className="min-h-screen font-roboto bg-gradient-to-br from-purple-50 to-white pt-16">
+      <div className="min-h-screen font-roboto bg-gradient-to-br from-slate-50 via-white to-gray-50 pt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col lg:flex-row gap-6 min-h-[600px] items-start">
             {/* Sidebar: Profile + Stats */}
@@ -264,16 +264,16 @@ const AlumniDashboard = () => {
               <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg p-6 border border-gray-200/50 flex flex-col md:flex-row items-center justify-between gap-4">
                 <div className="flex-1 min-w-0">
                   <h1 className="text-2xl font-bold text-gray-900 mb-2">
-                    Welcome back, <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500">{user?.fullName || 'Alumni'}</span>
+                    Welcome back, <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-500 to-secondary-500">{user?.fullName || 'Alumni'}</span>
                   </h1>
                   <div className="w-full max-w-sm">
                     <div className="w-full h-2 bg-gray-200 rounded-full">
-                      <div className="h-2 rounded-full bg-gradient-to-r from-indigo-400 to-purple-400 transition-all duration-300" style={{ width: '100%' }}></div>
+                      <div className="h-2 rounded-full bg-gradient-to-r from-primary-400 to-secondary-400 transition-all duration-300" style={{ width: '100%' }}></div>
                     </div>
                   </div>
                 </div>
                 <div className="hidden md:flex flex-shrink-0">
-                  <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-full p-4 flex items-center justify-center">
+                  <div className="bg-gradient-to-r from-primary-50 to-secondary-50 rounded-full p-4 flex items-center justify-center">
                     <span className="text-3xl">🎓</span>
                   </div>
                 </div>

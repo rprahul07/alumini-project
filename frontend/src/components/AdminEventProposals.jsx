@@ -167,7 +167,7 @@ const AdminEventProposals = () => {
     <>
       <button 
         onClick={() => setIsModalOpen(true)}
-        className="rounded-full px-4 py-1.5 font-semibold bg-indigo-600 text-white text-sm shadow hover:bg-indigo-700 transition-colors flex items-center gap-2"
+        className="rounded-full px-4 py-1.5 font-semibold bg-primary text-white text-sm shadow hover:bg-primary-700 transition-colors flex items-center gap-2"
       >
         <ClipboardDocumentListIcon className="h-5 w-5" />
         <span>Event Proposals</span>
@@ -195,14 +195,14 @@ const AdminEventProposals = () => {
             <div className="p-6">
               {loading ? (
                 <div className="flex justify-center items-center py-12">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
                 </div>
               ) : error ? (
                 <div className="text-center py-12">
                   <div className="text-red-600 text-lg font-medium">{error}</div>
                   <button 
                     onClick={fetchEvents}
-                    className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+                    className="mt-4 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-700 transition-colors"
                   >
                     Try Again
                   </button>
@@ -282,7 +282,7 @@ const AdminEventProposals = () => {
                               <div className="flex space-x-2">
                                 <button
                                   onClick={() => openEventDetails(event)}
-                                  className="text-indigo-600 hover:text-indigo-900 transition-colors"
+                                  className="text-secondary hover:text-secondary-900 transition-colors"
                                   title="View Details"
                                 >
                                   <EyeIcon className="h-4 w-4" />
@@ -378,8 +378,8 @@ const AdminEventProposals = () => {
                    priority={false}
                  />
                ) : (
-                 <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-100 to-indigo-200">
-                   <PhotoIcon className="h-20 w-20 text-indigo-400" />
+                 <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-accent-100 to-accent-200">
+                   <PhotoIcon className="h-20 w-20 text-accent-400" />
                  </div>
                )}
               

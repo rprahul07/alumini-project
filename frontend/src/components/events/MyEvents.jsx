@@ -158,7 +158,7 @@ const MyEvents = ({ showAlert, refreshTrigger = 0 }) => {
                   </td>
                   <td className="px-2 py-2 whitespace-nowrap text-right flex gap-2 justify-end">
                     <button
-                      className="inline-block px-2 py-1 rounded-full bg-indigo-100 text-indigo-700 font-semibold text-xs hover:bg-indigo-200 transition-colors"
+                      className="inline-block px-2 py-1 rounded-full bg-accent-100 text-accent-700 font-semibold text-xs hover:bg-accent-200 transition-colors"
                       onClick={() => openEventDetails(event)}
                     >
                       View

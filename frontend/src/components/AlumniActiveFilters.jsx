@@ -33,55 +33,55 @@ const AlumniActiveFilters = ({
   };
 
   return (
-    <div className="flex flex-wrap gap-2 mb-4">
+    <div className="flex flex-wrap gap-3 mb-6">
       {selectedGraduationYear && (
-        <div className="flex items-center gap-1 px-3 py-2 sm:py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm font-medium">
-          <span className="text-xs sm:text-sm">Year: {getGraduationYearLabel()}</span>
+        <div className="flex items-center gap-3 px-4 py-2 bg-accent-100 text-accent-700 rounded-full text-sm font-semibold shadow-lg animate-fade-in">
+          <span>Year: {getGraduationYearLabel()}</span>
           <button
             onClick={onClearGraduationYear}
-            className="ml-1 hover:text-indigo-900 transition-colors p-1"
+            className="text-accent-600 hover:text-accent-800 transition-colors p-1 rounded-full hover:bg-accent-200"
             aria-label="Clear graduation year filter"
           >
-            <XMarkIcon className="h-3 w-3" />
+            <XMarkIcon className="h-4 w-4" />
           </button>
         </div>
       )}
       
       {selectedCompany && (
-        <div className="flex items-center gap-1 px-3 py-2 sm:py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
-          <span className="text-xs sm:text-sm">Company: {selectedCompany}</span>
+        <div className="flex items-center gap-3 px-4 py-2 bg-accent-100 text-accent-700 rounded-full text-sm font-semibold shadow-lg animate-fade-in">
+          <span>Company: {selectedCompany}</span>
           <button
             onClick={onClearCompany}
-            className="ml-1 hover:text-blue-900 transition-colors p-1"
+            className="text-accent-600 hover:text-accent-800 transition-colors p-1 rounded-full hover:bg-accent-200"
             aria-label="Clear company filter"
           >
-            <XMarkIcon className="h-3 w-3" />
+            <XMarkIcon className="h-4 w-4" />
           </button>
         </div>
       )}
       
       {selectedRole && (
-        <div className="flex items-center gap-1 px-3 py-2 sm:py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium">
-          <span className="text-xs sm:text-sm">Role: {selectedRole}</span>
+        <div className="flex items-center gap-3 px-4 py-2 bg-accent-100 text-accent-700 rounded-full text-sm font-semibold shadow-lg animate-fade-in">
+          <span>Role: {selectedRole}</span>
           <button
             onClick={onClearRole}
-            className="ml-1 hover:text-purple-900 transition-colors p-1"
+            className="text-accent-600 hover:text-accent-800 transition-colors p-1 rounded-full hover:bg-accent-200"
             aria-label="Clear role filter"
           >
-            <XMarkIcon className="h-3 w-3" />
+            <XMarkIcon className="h-4 w-4" />
           </button>
         </div>
       )}
       
       {(sortBy !== 'createdAt' || sortOrder !== 'desc') && (
-        <div className="flex items-center gap-1 px-3 py-2 sm:py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
-          <span className="text-xs sm:text-sm">Sort: {getSortLabel()}</span>
+        <div className="flex items-center gap-3 px-4 py-2 bg-secondary-100 text-secondary-700 rounded-full text-sm font-semibold shadow-lg animate-fade-in">
+          <span>Sort: {getSortLabel()}</span>
           <button
             onClick={onClearSort}
-            className="ml-1 hover:text-green-900 transition-colors p-1"
+            className="text-secondary-600 hover:text-secondary-800 transition-colors p-1 rounded-full hover:bg-secondary-200"
             aria-label="Clear sort filter"
           >
-            <XMarkIcon className="h-3 w-3" />
+            <XMarkIcon className="h-4 w-4" />
           </button>
         </div>
       )}

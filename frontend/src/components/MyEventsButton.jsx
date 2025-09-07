@@ -121,7 +121,7 @@ const MyEventsButton = () => {
 
   return (
     <>
-      <button onClick={handleOpenModal} className="rounded-full px-4 py-1.5 font-semibold bg-indigo-600 text-white text-sm shadow hover:bg-indigo-700 transition-colors">
+      <button onClick={handleOpenModal} className="rounded-full px-4 py-1.5 font-semibold bg-primary text-white text-sm shadow hover:bg-primary-700 transition-colors">
         <span className="hidden xs:inline">My Events</span>
         <CalendarIcon className="h-5 w-5 inline-block xs:ml-0 align-text-bottom" />
       </button>
@@ -142,7 +142,7 @@ const MyEventsButton = () => {
                   className={`px-3 py-2 rounded-full text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${selectedStatus === status ?
                     (status === 'approved' ? 'bg-green-600 text-white' :
                      status === 'pending' ? 'bg-yellow-600 text-white' :
-                     'bg-indigo-600 text-white') :
+                     'bg-primary text-white') :
                     'bg-white text-gray-700 hover:bg-gray-100'}`}
                 >
                   {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -170,7 +170,7 @@ const MyEventsButton = () => {
                           <div className="text-xs text-gray-400 truncate">{event.location}</div>
                         </div>
                         <div className="flex flex-col gap-1 items-end ml-2">
-                          <button onClick={() => openEventDetails(event)} className="rounded-full p-2 hover:bg-gray-100" title="View"><EyeIcon className="h-5 w-5 text-indigo-600" /></button>
+                          <button onClick={() => openEventDetails(event)} className="rounded-full p-2 hover:bg-gray-100" title="View"><EyeIcon className="h-5 w-5 text-secondary" /></button>
                           {!isEventPast(event.date) && <button onClick={() => handleEditEvent(event)} className="rounded-full p-2 hover:bg-gray-100" title="Edit"><PencilIcon className="h-5 w-5 text-green-600" /></button>}
                           <button onClick={() => handleDeleteEvent(event.id)} className="rounded-full p-2 hover:bg-gray-100" title="Delete" disabled={actionLoading === event.id}><TrashIcon className="h-5 w-5 text-red-600" /></button>
                         </div>

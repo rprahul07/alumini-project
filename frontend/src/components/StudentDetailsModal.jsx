@@ -66,35 +66,36 @@ const StudentDetailsModal = ({ studentId, open, onClose }) => {
   const resumeUrl = student?.resumeUrl || '';
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-1 sm:p-2 z-50">
-      <div className="bg-white rounded-2xl w-full max-w-sm sm:max-w-md md:max-w-lg max-h-[80vh] overflow-y-auto scrollbar-hide p-3 relative" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-        {/* Header */}
-        <div className="flex items-center justify-between mb-2">
-          <h2 className="text-base sm:text-lg font-bold text-gray-900">Student Profile</h2>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            <XMarkIcon className="h-6 w-6" />
-          </button>
-        </div>
-
-        {loading ? (
-          <div className="flex justify-center items-center py-10">
-            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600"></div>
-          </div>
-        ) : error ? (
-          <div className="text-red-600 text-center py-10">
-            <div className="mb-4">{error}</div>
+    <>
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-1 sm:p-2 z-50">
+        <div className="bg-white rounded-2xl w-full max-w-sm sm:max-w-md md:max-w-lg max-h-[80vh] overflow-y-auto scrollbar-hide p-3 relative" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+          {/* Header */}
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-base sm:text-lg font-bold text-gray-900">Student Profile</h2>
             <button
               onClick={onClose}
-              className="rounded-full px-4 py-1.5 font-semibold border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
+              className="text-gray-400 hover:text-gray-600 transition-colors"
             >
-              Close
+              <XMarkIcon className="h-6 w-6" />
             </button>
           </div>
-        ) : (
-          <>
+
+          {loading ? (
+            <div className="flex justify-center items-center py-10">
+              <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
+            </div>
+          ) : error ? (
+            <div className="text-red-600 text-center py-10">
+              <div className="mb-4">{error}</div>
+              <button
+                onClick={onClose}
+                className="rounded-full px-4 py-1.5 font-semibold border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
+              >
+                Close
+              </button>
+            </div>
+          ) : (
+            <>
             {/* Student Image + Role badge */}
             <div className="relative h-28 sm:h-36 bg-gray-200 rounded-2xl mb-2 flex items-center justify-center overflow-hidden">
               {photoUrl ? (
@@ -105,12 +106,12 @@ const StudentDetailsModal = ({ studentId, open, onClose }) => {
                   loading="lazy"
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-100 to-indigo-200 rounded-2xl">
-                  <AcademicCapIcon className="h-12 w-12 text-indigo-400" />
+                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary-100 to-secondary-100 rounded-2xl">
+                  <AcademicCapIcon className="h-12 w-12 text-primary-400" />
                 </div>
               )}
               <div className="absolute top-2 left-2">
-                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-blue-100 text-blue-700">Student</span>
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-primary-100 text-primary-700">Student</span>
               </div>
             </div>
 
@@ -127,7 +128,7 @@ const StudentDetailsModal = ({ studentId, open, onClose }) => {
                     <EnvelopeIcon className="h-4 w-4 mr-2 text-gray-400" />
                     <a 
                       href={`mailto:${email}`}
-                      className="text-indigo-600 hover:text-indigo-800 transition-colors"
+                      className="text-primary-600 hover:text-primary-800 transition-colors"
                     >
                       {email}
                     </a>
@@ -211,7 +212,7 @@ const StudentDetailsModal = ({ studentId, open, onClose }) => {
                     {skills.map((skill, index) => (
                       <span 
                         key={index}
-                        className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-700"
+                        className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-accent-100 text-accent-700"
                       >
                         <SparklesIcon className="h-3 w-3 mr-1" />
                         {skill}
@@ -261,7 +262,7 @@ const StudentDetailsModal = ({ studentId, open, onClose }) => {
                       <a 
                         href={resumeUrl} 
                         download 
-                        className="text-indigo-600 hover:text-indigo-800 transition-colors font-medium text-sm"
+                        className="text-primary-600 hover:text-primary-800 transition-colors font-medium text-sm"
                       >
                         <DocumentArrowDownIcon className="h-4 w-4 inline mr-1" />
                         Download CV
@@ -283,10 +284,11 @@ const StudentDetailsModal = ({ studentId, open, onClose }) => {
                 </button>
               </div>
             </div>
-          </>
-        )}
+            </>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

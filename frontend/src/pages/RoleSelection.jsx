@@ -47,18 +47,18 @@ const RoleSelection = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-12 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-white to-gray-50 py-12 px-4">
       <div className="w-full max-w-md">
         {/* Already logged in message */}
         {user && (
           <div className="mb-6 bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-6">
             <p className="text-lg text-gray-800 mb-4 text-center">
-              You are already logged in as <span className="font-semibold text-indigo-700">{user.fullName || user.email || user.role}</span>.
+              You are already logged in as <span className="font-semibold text-primary-700">{user.fullName || user.email || user.role}</span>.
             </p>
             <div className="flex flex-col gap-3">
               <button
                 onClick={handleContinue}
-                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-full transition-all duration-200 shadow-lg hover:shadow-xl"
+                className="w-full bg-primary hover:bg-primary-700 text-white font-semibold py-3 px-6 rounded-full transition-all duration-200 shadow-lg hover:shadow-xl"
               >
                 Continue to Dashboard
               </button>
@@ -89,7 +89,7 @@ const RoleSelection = () => {
                 <button
                   key={role.id}
                   onClick={() => handleRoleSelect(role.id)}
-                  className="w-full bg-white/60 backdrop-blur border-2 border-indigo-200 rounded-2xl p-4 hover:border-indigo-400 hover:bg-white/80 transition-all duration-200 text-left group"
+                  className="w-full bg-white/60 backdrop-blur border-2 border-primary-200 rounded-2xl p-4 hover:border-primary-400 hover:bg-white/80 transition-all duration-200 text-left group"
                 >
                   <div className="flex items-center space-x-4">
                     <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${role.color} flex items-center justify-center text-white group-hover:scale-110 transition-transform duration-200`}>
@@ -103,7 +103,7 @@ const RoleSelection = () => {
                         {role.description}
                       </p>
                     </div>
-                    <div className="text-indigo-600 group-hover:translate-x-1 transition-transform duration-200">
+                    <div className="text-primary-600 group-hover:translate-x-1 transition-transform duration-200">
                       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>

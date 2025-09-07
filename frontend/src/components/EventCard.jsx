@@ -115,145 +115,152 @@ const EventCard = ({ event, user, onEventUpdate, showEdit, showDelete, onEdit, o
     : (!isLoggedIn || isFaculty)
       ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
     : isRegistered
-        ? 'bg-green-500 text-white cursor-not-allowed'
-        : 'bg-indigo-600 text-white hover:bg-indigo-700';
+        ? 'bg-accent text-white cursor-not-allowed'
+        : 'bg-primary text-white hover:bg-primary-700';
 
   return (
     <>
       <div 
-        className={`bg-white rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden cursor-pointer transform hover:scale-[1.02] flex flex-col h-full w-full max-w-sm sm:max-w-md md:max-w-lg ${sm ? 'p-1 text-xs' : 'p-3'}`}
+        className={`group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden cursor-pointer transform hover:scale-[1.01] w-full z-10 ${sm ? 'h-32' : 'h-80'} ${sm ? 'p-1 text-xs' : ''}`}
         onClick={handleCardClick}
       >
-        {/* Event Image */}
-        <div className={`relative ${sm ? 'h-16' : 'h-28'} bg-gray-200 flex-shrink-0 w-full rounded-2xl overflow-hidden`}>
+        {/* Event Image with Gradient Overlay */}
+        <div className={`relative ${sm ? 'h-16' : 'h-full'} w-full overflow-hidden`}>
           {event.imageUrl ? (
             <OptimizedImage 
               src={event.imageUrl} 
               alt={event.name}
               wrapperClassName="w-full h-full"
-              className="w-full h-full object-cover"
-              sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              sizes="(max-width: 640px) 100vw, (max-width: 768px) 100vw, (max-width: 1024px) 100vw, 100vw"
               loading="lazy"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-100 to-indigo-200 rounded-2xl">
-              <CalendarIcon className={`${sm ? 'h-8 w-8' : 'h-12 w-12'} text-indigo-400`} />
+            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-accent-100 to-accent-200">
+              <CalendarIcon className={`${sm ? 'h-8 w-8' : 'h-20 w-20'} text-accent-400`} />
             </div>
           )}
           
+          {/* Black Gradient Overlay for Text Readability */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+          
           {/* Event Type Badge */}
           {!sm && (
-            <div className="absolute top-3 left-3">
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+            <div className="absolute top-6 left-6 z-10">
+              <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold bg-white/90 backdrop-blur-sm text-accent-700 shadow-lg">
                 {event.type}
               </span>
             </div>
           )}
 
-          {/* Registration/Capacity Badge - only show for logged-in users and not for admin */}
+          {/* Registration/Capacity Badge */}
           {!sm && isLoggedIn && user?.role !== 'admin' && (
-            <div className="absolute top-3 right-3 z-10">
-              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold shadow-sm ${
+            <div className="absolute top-6 right-6 z-10">
+              <span className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold shadow-lg backdrop-blur-sm ${
                 maxCapacity
                   ? (registeredCount >= maxCapacity
-                      ? 'bg-red-100 text-red-700'
-                      : 'bg-green-100 text-green-700')
-                  : 'bg-gray-200 text-gray-600'
+                      ? 'bg-red-500/90 text-white'
+                      : 'bg-green-500/90 text-white')
+                  : 'bg-gray-500/90 text-white'
               }`}>
                 {maxCapacity
-                  ? `${registeredCount} / ${maxCapacity} Registered`
+                  ? `${registeredCount}/${maxCapacity}`
                   : `${registeredCount} Registered`}
                 {maxCapacity && registeredCount >= maxCapacity && (
-                  <span className="ml-2 font-bold">(Full)</span>
+                  <span className="ml-2 font-bold">FULL</span>
                 )}
               </span>
             </div>
           )}
-        </div>
 
-        {/* Event Content */}
-        <div className={`p-3 flex flex-col flex-grow ${sm ? 'p-1' : ''}`}>
-          {/* Event Title */}
-          <h3 className={`font-bold text-gray-900 mb-2 line-clamp-2 ${sm ? 'text-sm' : 'text-xl'} sm:text-lg md:text-xl leading-tight`}>
-            {event.name}
-          </h3>
+          {/* Event Content Overlay */}
+          <div className={`absolute bottom-0 left-0 right-0 p-4 text-white ${sm ? 'p-2' : ''}`}>
+            {/* Event Title */}
+            <h3 className={`font-bold mb-2 line-clamp-2 ${sm ? 'text-sm' : 'text-xl md:text-2xl'} leading-tight drop-shadow-lg`}>
+              {event.name}
+            </h3>
 
-          {/* Event Details */}
-          <div className="space-y-1 mb-2">
-            <div className="flex items-center text-xs sm:text-sm text-gray-500">
-              <CalendarIcon className="h-4 w-4 mr-2 text-gray-400" />
-              {formatDate(event.date)}
+            {/* Event Details */}
+            <div className={`space-y-1 mb-3 ${sm ? 'space-y-1 mb-2' : ''}`}>
+              <div className="flex items-center text-sm text-white/90 drop-shadow-md">
+                <CalendarIcon className="h-3 w-3 mr-2 text-white/80" />
+                {formatDate(event.date)}
+              </div>
+              
+              <div className="flex items-center text-sm text-white/90 drop-shadow-md">
+                <ClockIcon className="h-3 w-3 mr-2 text-white/80" />
+                {formatTime(event.time)}
+              </div>
+              
+              <div className="flex items-center text-sm text-white/90 drop-shadow-md">
+                <MapPinIcon className="h-3 w-3 mr-2 text-white/80" />
+                {event.location}
+              </div>
             </div>
-            
-            <div className="flex items-center text-xs sm:text-sm text-gray-500">
-              <ClockIcon className="h-4 w-4 mr-2 text-gray-400" />
-              {formatTime(event.time)}
+
+            {/* Organizer */}
+            <div className={`text-xs text-white/80 mb-3 drop-shadow-md ${sm ? 'text-xs mb-2' : ''}`}>
+              Organized by: {event.organizer}
             </div>
-            
-            <div className="flex items-center text-xs sm:text-sm text-gray-500">
-              <MapPinIcon className="h-4 w-4 mr-2 text-gray-400" />
-              {event.location}
+
+            {/* Action Buttons */}
+            <div className="flex gap-2">
+              {showEdit || showDelete ? (
+                <div className="flex gap-2">
+                  {showEdit && (
+                    <button
+                      onClick={e => { e.stopPropagation(); onEdit && onEdit(event); }}
+                      className="px-4 py-2 bg-secondary text-white rounded-full font-semibold text-xs shadow-lg hover:bg-secondary-700 hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                    >
+                      Edit
+                    </button>
+                  )}
+                  {showDelete && (
+                    <button
+                      onClick={e => { e.stopPropagation(); onDelete && onDelete(event); }}
+                      className="px-4 py-2 bg-red-500 text-white rounded-full font-semibold text-xs shadow-lg hover:bg-red-600 hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                    >
+                      Delete
+                    </button>
+                  )}
+                </div>
+              ) : isAdmin ? (
+                <button
+                  onClick={handleViewRegistrations}
+                  className="px-4 py-2 bg-secondary text-white rounded-full font-semibold text-xs shadow-lg hover:bg-secondary-700 hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center gap-1"
+                >
+                  <UsersIcon className="h-3 w-3" />
+                  <span>View</span>
+                </button>
+              ) : isOrganizer ? (
+                <button
+                  disabled
+                  className="px-4 py-2 bg-gray-500/50 text-white rounded-full font-semibold text-xs cursor-not-allowed"
+                >
+                  Organizer
+                </button>
+              ) : (
+                <div className="flex gap-2">
+                  <button
+                    onClick={isLoggedIn && !isRegistered && !isFaculty && !registrationClosed ? handleRegistration : undefined}
+                    onMouseEnter={() => setIsHovering(true)}
+                    onMouseLeave={() => setIsHovering(false)}
+                    disabled={buttonDisabled}
+                    className={`px-4 py-2 rounded-full text-xs font-semibold shadow-lg transition-all duration-300 transform hover:scale-105 flex items-center justify-center ${buttonClass}`}
+                    title={!isLoggedIn || isFaculty ? 'Login to register' : ''}
+                  >
+                    {buttonText}
+                  </button>
+                  <button
+                    onClick={handleCardClick}
+                    className="px-4 py-2 bg-white/20 backdrop-blur-sm text-white rounded-full font-semibold text-xs shadow-lg hover:bg-white/30 hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                  >
+                    Read More
+                  </button>
+                </div>
+              )}
             </div>
           </div>
-
-          {/* Organizer */}
-          <div className="text-xs sm:text-sm text-gray-400 mb-2">
-            Organized by: {event.organizer}
-          </div>
-
-          {/* Spacer to push button to bottom */}
-          <div className="flex-grow"></div>
-
-          {/* Button - Different for admin vs regular users */}
-          {showEdit || showDelete ? (
-            <div className="flex space-x-1 mt-2 w-full">
-              {showEdit && (
-                <button
-                  onClick={e => { e.stopPropagation(); onEdit && onEdit(event); }}
-                  className={`rounded-full px-4 py-1.5 font-semibold bg-blue-600 text-white hover:bg-blue-700 text-sm`}
-                >
-                  Edit
-                </button>
-              )}
-              {showDelete && (
-                <button
-                  onClick={e => { e.stopPropagation(); onDelete && onDelete(event); }}
-                  className={`rounded-full px-4 py-1.5 font-semibold bg-red-600 text-white hover:bg-red-700 text-sm`}
-                >
-                  Delete
-                </button>
-              )}
-            </div>
-          ) : isAdmin ? (
-            // Admin sees "View Registrations" button
-            <button
-              onClick={handleViewRegistrations}
-              className={`rounded-full px-4 py-1.5 font-semibold bg-indigo-600 text-white text-sm shadow hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2`}
-            >
-              <UsersIcon className="h-5 w-5" />
-              <span>View Registrations</span>
-            </button>
-          ) : isOrganizer ? (
-            // Organizer sees a disabled button
-            <button
-              disabled
-              className={`rounded-full px-4 py-1.5 font-semibold bg-gray-200 text-gray-600 cursor-not-allowed`}
-            >
-              You are the organizer
-            </button>
-          ) : (
-            // Registration button for all other users
-            <button
-              onClick={isLoggedIn && !isRegistered && !isFaculty && !registrationClosed ? handleRegistration : undefined}
-              onMouseEnter={() => setIsHovering(true)}
-              onMouseLeave={() => setIsHovering(false)}
-              disabled={buttonDisabled}
-              className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors flex items-center justify-center ${buttonClass}`}
-              title={!isLoggedIn || isFaculty ? 'Login to register' : ''}
-            >
-              {buttonText}
-            </button>
-          )}
         </div>
       </div>
 

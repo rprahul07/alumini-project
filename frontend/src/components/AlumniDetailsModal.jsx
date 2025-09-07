@@ -65,15 +65,15 @@ const AlumniDetailsModal = ({ open, onClose, alumni, onRequestMentorship, onRefr
             <h4 className="text-base font-semibold text-gray-900 mb-1">Contact Information</h4>
             <div className="space-y-2">
               <div className="animate-pulse flex items-center space-x-3">
-                <div className="h-4 w-4 bg-gradient-to-r from-indigo-400 to-purple-500 rounded-full animate-spin"></div>
+                <div className="h-4 w-4 bg-gradient-to-r from-primary-400 to-secondary-500 rounded-full animate-spin"></div>
                 <div className="h-4 bg-gray-200 rounded w-48"></div>
               </div>
               <div className="animate-pulse flex items-center space-x-3">
-                <div className="h-4 w-4 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-full animate-spin"></div>
+                <div className="h-4 w-4 bg-gradient-to-r from-secondary-400 to-primary-500 rounded-full animate-spin"></div>
                 <div className="h-4 bg-gray-200 rounded w-32"></div>
               </div>
               <div className="animate-pulse flex items-center space-x-3">
-                <div className="h-4 w-4 bg-gradient-to-r from-green-400 to-blue-500 rounded-full animate-spin"></div>
+                <div className="h-4 w-4 bg-gradient-to-r from-accent-400 to-primary-500 rounded-full animate-spin"></div>
                 <div className="h-4 bg-gray-200 rounded w-40"></div>
               </div>
             </div>
@@ -108,7 +108,7 @@ const AlumniDetailsModal = ({ open, onClose, alumni, onRequestMentorship, onRefr
                   <EnvelopeIcon className="h-4 w-4 mr-2 text-gray-400" />
                   <a 
                     href={`mailto:${contactInfo.email}`}
-                    className="text-indigo-600 hover:text-indigo-800 transition-colors"
+                    className="text-primary-600 hover:text-primary-800 transition-colors"
                   >
                     {contactInfo.email}
                   </a>
@@ -121,7 +121,7 @@ const AlumniDetailsModal = ({ open, onClose, alumni, onRequestMentorship, onRefr
                     href={contactInfo.linkedinUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-indigo-600 hover:text-indigo-800 transition-colors"
+                    className="text-primary-600 hover:text-primary-800 transition-colors"
                   >
                     LinkedIn Profile
                   </a>
@@ -132,7 +132,7 @@ const AlumniDetailsModal = ({ open, onClose, alumni, onRequestMentorship, onRefr
                   <PhoneIcon className="h-4 w-4 mr-2 text-gray-400" />
                   <a 
                     href={`tel:${contactInfo.phoneNumber}`}
-                    className="text-indigo-600 hover:text-indigo-800 transition-colors"
+                    className="text-primary-600 hover:text-primary-800 transition-colors"
                   >
                     {contactInfo.phoneNumber}
                   </a>
@@ -175,7 +175,7 @@ const AlumniDetailsModal = ({ open, onClose, alumni, onRequestMentorship, onRefr
           {alumni?.connectionStatus !== 'pending' && (
             <button
               onClick={handleRequestMentorship}
-              className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors text-sm"
+              className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors text-sm"
             >
               Request Mentorship
             </button>
@@ -212,8 +212,8 @@ const AlumniDetailsModal = ({ open, onClose, alumni, onRequestMentorship, onRefr
                 loading="lazy"
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-100 to-indigo-200 rounded-2xl">
-                <AcademicCapIcon className="h-12 w-12 text-indigo-400" />
+              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary-100 to-secondary-100 rounded-2xl">
+                <AcademicCapIcon className="h-12 w-12 text-primary-400" />
               </div>
             )}
             
@@ -237,7 +237,7 @@ const AlumniDetailsModal = ({ open, onClose, alumni, onRequestMentorship, onRefr
             {/* Tier Badge */}
             {alumni?.connectionStatus === 'accepted' && alumni?.tier && (
               <div className="absolute top-2 right-2">
-                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-indigo-100 text-indigo-800">
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-primary-100 text-primary-800">
                   <UserIcon className="h-3 w-3 mr-1" />
                   Tier {alumni.tier}
                 </span>
@@ -262,7 +262,7 @@ const AlumniDetailsModal = ({ open, onClose, alumni, onRequestMentorship, onRefr
               )}
               {alumni?.course && (
                 <div className="flex items-center text-xs sm:text-sm text-gray-500">
-                  <svg className="h-4 w-4 mr-2 text-indigo-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 20h9" /><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m0 0H3a1 1 0 01-1-1V5a1 1 0 011-1h9" /></svg>
+                  <svg className="h-4 w-4 mr-2 text-primary-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 20h9" /><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m0 0H3a1 1 0 01-1-1V5a1 1 0 011-1h9" /></svg>
                   {alumni.course}
                 </div>
               )}

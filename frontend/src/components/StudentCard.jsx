@@ -1,10 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { AcademicCapIcon } from '@heroicons/react/24/outline';
 import OptimizedImage from './OptimizedImage';
-import StudentDetailsModal from './StudentDetailsModal';
 
-const StudentCard = ({ student }) => {
-  const [showModal, setShowModal] = useState(false);
+const StudentCard = ({ student, onCardClick }) => {
 
   // Extract fields
   const name = student.fullName || student.name || (student.user && student.user.fullName) || '';
@@ -21,7 +19,7 @@ const StudentCard = ({ student }) => {
       console.error('No student ID available');
       return;
     }
-    setShowModal(true);
+    onCardClick && onCardClick(student);
   };
 
   const handleViewClick = (e) => {
@@ -30,17 +28,16 @@ const StudentCard = ({ student }) => {
       console.error('No student ID available');
       return;
     }
-    setShowModal(true);
+    onCardClick && onCardClick(student);
   };
 
   return (
-    <>
-      <div
-        onClick={handleCardClick}
-        className="bg-white shadow-md rounded-2xl w-full max-w-sm flex flex-col h-full cursor-pointer"
-      >
+    <div
+      onClick={handleCardClick}
+      className="bg-white shadow-lg rounded-2xl w-full max-w-sm flex flex-col h-full cursor-pointer hover:shadow-xl transition-all duration-300 transform hover:scale-105 z-10"
+    >
         {/* Image at the top */}
-        <div className="relative h-28 bg-gray-200 flex-shrink-0 w-full rounded-t-2xl">
+        <div className="relative h-32 bg-gray-200 flex-shrink-0 w-full rounded-t-2xl overflow-hidden">
           {photoUrl ? (
             <OptimizedImage
               src={photoUrl}
@@ -50,8 +47,8 @@ const StudentCard = ({ student }) => {
               priority={false}
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-100 to-indigo-200 rounded-t-2xl">
-              <AcademicCapIcon className="h-12 w-12 text-indigo-400" />
+            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary-100 to-secondary-100 rounded-t-2xl">
+              <AcademicCapIcon className="h-12 w-12 text-primary-400" />
             </div>
           )}
         </div>
@@ -61,35 +58,31 @@ const StudentCard = ({ student }) => {
           <h3 className="text-lg font-semibold text-gray-900 mb-1">{name}</h3>
           {/* Details, each on its own line */}
           {department && (
-            <p className="text-sm text-gray-500 mb-1 flex items-center"><AcademicCapIcon className="h-4 w-4 mr-1 text-gray-400" />{department}</p>
+            <p className="text-sm text-gray-600 mb-2 flex items-center">
+              <AcademicCapIcon className="h-4 w-4 mr-2 text-primary-500" />
+              {department}
+            </p>
           )}
           {currentSemester && (
-            <p className="text-sm text-gray-500 mb-1 flex items-center"><AcademicCapIcon className="h-4 w-4 mr-1 text-gray-400" />Semester {currentSemester}</p>
+            <p className="text-sm text-gray-600 mb-3 flex items-center">
+              <AcademicCapIcon className="h-4 w-4 mr-2 text-secondary-500" />
+              Semester {currentSemester}
+            </p>
           )}
           {/* Spacer */}
           <div className="flex-grow"></div>
           {/* Footer: Button */}
-          <div className="flex flex-col gap-2 mt-2">
+          <div className="flex flex-col gap-2 mt-3">
             <button
-              className="rounded-full px-4 py-1.5 font-semibold w-full text-sm flex items-center justify-center transition-colors bg-indigo-600 text-white hover:bg-indigo-700"
+              className="rounded-full px-4 py-2 font-semibold w-full text-sm flex items-center justify-center transition-colors bg-primary text-white hover:bg-primary-700 shadow-md hover:shadow-lg"
               onClick={handleViewClick}
               disabled={!studentId}
             >
-              View
+              View Profile
             </button>
           </div>
         </div>
       </div>
-      
-      {/* Render modal when showModal is true */}
-      {showModal && (
-        <StudentDetailsModal
-          studentId={studentId}
-          open={showModal}
-          onClose={() => setShowModal(false)}
-        />
-      )}
-    </>
   );
 };
 

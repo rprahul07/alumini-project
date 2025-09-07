@@ -164,14 +164,14 @@ const AdminOpportunities = () => {
     <div className="flex flex-col">
       <div className="mb-4 flex flex-row gap-2 items-center">
         <button
-          className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all duration-200 flex items-center space-x-1 focus:outline-none focus:ring-2 focus:ring-indigo-300 ${activeTab === 'pending' ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-indigo-600 border-indigo-600'}`}
+          className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all duration-200 flex items-center space-x-1 focus:outline-none focus:ring-2 focus:ring-primary-300 ${activeTab === 'pending' ? 'bg-primary text-white border-primary' : 'bg-white text-primary-600 border-primary'}`}
           onClick={() => setActiveTab('pending')}
           disabled={activeTab === 'pending'}
         >
           Pending
         </button>
         <button
-          className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all duration-200 flex items-center space-x-1 focus:outline-none focus:ring-2 focus:ring-indigo-300 ${activeTab === 'approved' ? 'bg-green-600 text-white border-green-600' : 'bg-white text-green-600 border-green-600'}`}
+          className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all duration-200 flex items-center space-x-1 focus:outline-none focus:ring-2 focus:ring-primary-300 ${activeTab === 'approved' ? 'bg-accent text-white border-accent' : 'bg-white text-accent border-accent'}`}
           onClick={() => setActiveTab('approved')}
           disabled={activeTab === 'approved'}
         >
@@ -195,13 +195,13 @@ const AdminOpportunities = () => {
               </div>
               <div className="mt-3 sm:mt-0 flex gap-2 justify-end">
                 <button
-                  className="px-3 py-1 rounded-full bg-indigo-600 text-white text-xs font-semibold hover:bg-indigo-700 transition-colors"
+                  className="px-3 py-1 rounded-full bg-primary text-white text-xs font-semibold hover:bg-primary-700 transition-colors"
                   onClick={() => handleView(job)}
                 >
                   View
                 </button>
                 <button
-                  className="px-3 py-1 rounded-full bg-green-600 text-white text-xs font-semibold hover:bg-green-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="px-3 py-1 rounded-full bg-accent text-white text-xs font-semibold hover:bg-green-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                   onClick={async () => {
                     if (job.status === 'pending') {
                       setActionLoading(job.id);
@@ -273,7 +273,7 @@ const ProtectedRoute = ({ children }) => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
           <p className="text-gray-600 text-lg mt-4">
             Loading authentication...
           </p>
@@ -324,7 +324,7 @@ const Sidebar = ({ onNavigate, activeView }) => {
       <div className="lg:hidden p-4">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="p-2 text-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="p-2 text-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
         >
           {isOpen ? <FiX className="h-6 w-6" /> : <FiMenu className="h-6 w-6" />}
         </button>
@@ -358,9 +358,9 @@ const Sidebar = ({ onNavigate, activeView }) => {
                 <li key={item.title} className="mb-3">
                   <button
                     onClick={() => handleNavigationClick(item.view)}
-                    className={`w-full text-left flex items-center space-x-3 p-3 text-gray-700 rounded-xl hover:bg-indigo-50 hover:text-indigo-700 transition-colors duration-200 group ${activeView === item.view ? 'bg-indigo-100' : ''}`}
+                    className={`w-full text-left flex items-center space-x-3 p-3 text-gray-700 rounded-xl hover:bg-primary-50 hover:text-primary-700 transition-colors duration-200 group ${activeView === item.view ? 'bg-primary-100' : ''}`}
                   >
-                    <item.icon className="h-6 w-6 text-gray-500 group-hover:text-indigo-600" />
+                    <item.icon className="h-6 w-6 text-gray-500 group-hover:text-primary-600" />
                     <span className="font-medium">{item.title}</span>
                   </button>
                 </li>
@@ -369,10 +369,10 @@ const Sidebar = ({ onNavigate, activeView }) => {
               <li className="mb-3">
                 <button
                   onClick={() => setIsUserManagementExpanded(!isUserManagementExpanded)}
-                  className="w-full text-left flex items-center justify-between space-x-3 p-3 text-gray-700 rounded-xl hover:bg-indigo-50 hover:text-indigo-700 transition-colors duration-200 group"
+                  className="w-full text-left flex items-center justify-between space-x-3 p-3 text-gray-700 rounded-xl hover:bg-primary-50 hover:text-primary-700 transition-colors duration-200 group"
                 >
                   <div className="flex items-center space-x-3">
-                    <FiUsers className="h-6 w-6 text-gray-500 group-hover:text-indigo-600" />
+                    <FiUsers className="h-6 w-6 text-gray-500 group-hover:text-primary-600" />
                     <span className="font-medium">User Management</span>
                   </div>
                   <svg
@@ -395,7 +395,7 @@ const Sidebar = ({ onNavigate, activeView }) => {
                       <li key={item.title}>
                         <button
                           onClick={() => handleNavigationClick(item.view)}
-                          className={`w-full text-left flex items-center space-x-3 p-2 text-gray-600 rounded-lg hover:bg-indigo-100 hover:text-indigo-800 transition-colors duration-200 ${activeView === item.view ? 'bg-indigo-100' : ''}`}
+                          className={`w-full text-left flex items-center space-x-3 p-2 text-gray-600 rounded-lg hover:bg-primary-100 hover:text-primary-800 transition-colors duration-200 ${activeView === item.view ? 'bg-primary-100' : ''}`}
                         >
                           <item.icon className="h-5 w-5 text-gray-400" />
                           <span className="text-sm">{item.title}</span>
@@ -409,36 +409,36 @@ const Sidebar = ({ onNavigate, activeView }) => {
               <li className="mb-3">
                 <button
                   onClick={() => onNavigate("contact-messages")}
-                  className="w-full text-left flex items-center space-x-3 p-3 text-gray-700 rounded-xl hover:bg-indigo-50 hover:text-indigo-700 transition-colors duration-200 group"
+                  className="w-full text-left flex items-center space-x-3 p-3 text-gray-700 rounded-xl hover:bg-primary-50 hover:text-primary-700 transition-colors duration-200 group"
                 >
-                  <FiBell className="h-6 w-6 text-gray-500 group-hover:text-indigo-600" />
+                  <FiBell className="h-6 w-6 text-gray-500 group-hover:text-primary-600" />
                   <span className="font-medium">Contact Messages</span>
                 </button>
               </li>
               <li className="mb-3">
                 <button
                   onClick={() => onNavigate("testimonials")}
-                  className={`w-full text-left flex items-center space-x-3 p-3 text-gray-700 rounded-xl hover:bg-indigo-50 hover:text-indigo-700 transition-colors duration-200 group ${activeView === "testimonials" ? 'bg-indigo-100' : ''}`}
+                  className={`w-full text-left flex items-center space-x-3 p-3 text-gray-700 rounded-xl hover:bg-primary-50 hover:text-primary-700 transition-colors duration-200 group ${activeView === "testimonials" ? 'bg-primary-100' : ''}`}
                 >
-                  <FiMessageSquare className="h-6 w-6 text-gray-500 group-hover:text-indigo-600" />
+                  <FiMessageSquare className="h-6 w-6 text-gray-500 group-hover:text-primary-600" />
                   <span className="font-medium">Testimonials</span>
                 </button>
               </li>
               <li className="mb-3">
                 <button
                   onClick={() => onNavigate("settings")}
-                  className="w-full text-left flex items-center space-x-3 p-3 text-gray-700 rounded-xl hover:bg-indigo-50 hover:text-indigo-700 transition-colors duration-200 group"
+                  className="w-full text-left flex items-center space-x-3 p-3 text-gray-700 rounded-xl hover:bg-primary-50 hover:text-primary-700 transition-colors duration-200 group"
                 >
-                  <FiSettings className="h-6 w-6 text-gray-500 group-hover:text-indigo-600" />
+                  <FiSettings className="h-6 w-6 text-gray-500 group-hover:text-primary-600" />
                   <span className="font-medium">Settings</span>
                 </button>
               </li>
               <li className="mb-3">
                 <button
                   onClick={() => onNavigate("help")}
-                  className="w-full text-left flex items-center space-x-3 p-3 text-gray-700 rounded-xl hover:bg-indigo-50 hover:text-indigo-700 transition-colors duration-200 group"
+                  className="w-full text-left flex items-center space-x-3 p-3 text-gray-700 rounded-xl hover:bg-primary-50 hover:text-primary-700 transition-colors duration-200 group"
                 >
-                  <FiHelpCircle className="h-6 w-6 text-gray-500 group-hover:text-indigo-600" />
+                  <FiHelpCircle className="h-6 w-6 text-gray-500 group-hover:text-primary-600" />
                   <span className="font-medium">Help</span>
                 </button>
               </li>
@@ -454,7 +454,7 @@ const Sidebar = ({ onNavigate, activeView }) => {
 // A component to display user profile completion status.
 const ProfileCard = ({ isProfileComplete }) => {
   return (
-    <div className="flex items-center space-x-4 bg-gradient-to-r from-indigo-50 to-purple-50 p-4 rounded-xl shadow-inner">
+    <div className="flex items-center space-x-4 bg-gradient-to-r from-primary-50 to-secondary-50 p-4 rounded-xl shadow-inner">
       <div
         className={`p-3 rounded-full ${
           isProfileComplete ? "bg-green-100" : "bg-red-100"
@@ -462,7 +462,7 @@ const ProfileCard = ({ isProfileComplete }) => {
       >
         {isProfileComplete ? (
           <svg
-            className="h-6 w-6 text-green-600"
+            className="h-6 w-6 text-accent"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -551,7 +551,7 @@ const UserVerificationTable = ({ users, onVerify, onReject }) => {
   const getStatusClass = (status) => {
     switch (status) {
       case "Pending":
-        return "bg-yellow-100 text-yellow-800";
+        return "bg-accent-100 text-yellow-800";
       case "Approved":
         return "bg-green-100 text-green-800";
       case "Rejected":
@@ -572,7 +572,7 @@ const UserVerificationTable = ({ users, onVerify, onReject }) => {
           <input
             type="text"
             placeholder="Search users..."
-            className="pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent w-full sm:w-64"
+            className="pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent w-full sm:w-64"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -586,7 +586,7 @@ const UserVerificationTable = ({ users, onVerify, onReject }) => {
             onClick={() => setFilterStatus(status)}
             className={`px-4 py-2 rounded-lg font-semibold shadow-sm transition-all ${
               filterStatus === status
-                ? "bg-indigo-600 text-white hover:bg-indigo-700"
+                ? "bg-primary text-white hover:bg-primary-700"
                 : "bg-gray-100 text-gray-700 hover:bg-gray-200"
             }`}
           >
@@ -654,7 +654,7 @@ const UserVerificationTable = ({ users, onVerify, onReject }) => {
                       <div className="flex space-x-2">
                         <button
                           onClick={() => onVerify(user.id)}
-                          className="text-indigo-600 hover:text-indigo-900 transition-colors duration-200 px-3 py-1 bg-indigo-50 rounded-lg text-xs"
+                          className="text-primary-600 hover:text-primary-900 transition-colors duration-200 px-3 py-1 bg-primary-50 rounded-lg text-xs"
                         >
                           Verify
                         </button>
@@ -774,7 +774,7 @@ const UserTableDisplay = ({ userType, users, onUpdateUser, onDeleteUser }) => {
         <input
           type="text"
           placeholder={`Search ${userType}...`}
-          className="pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent w-full max-w-md"
+          className="pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent w-full max-w-md"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
@@ -815,7 +815,7 @@ const UserTableDisplay = ({ userType, users, onUpdateUser, onDeleteUser }) => {
                                   user.fullName
                                 )
                               }
-                              className="text-indigo-600 hover:text-indigo-900 transition-colors duration-200 px-3 py-1 bg-indigo-50 rounded-lg text-xs"
+                              className="text-primary-600 hover:text-primary-900 transition-colors duration-200 px-3 py-1 bg-primary-50 rounded-lg text-xs"
                             >
                               Update
                             </button>
@@ -1181,9 +1181,9 @@ const AdminDashboard = () => {
       case "dashboard":
         return (
           <>
-            <div className="mb-4 mt-3 bg-gradient-to-r from-indigo-100 via-white to-indigo-50 rounded-xl p-5 flex flex-col min-h-[96px]">
+            <div className="mb-4 mt-3 bg-gradient-to-r from-primary-100 via-white to-primary-50 rounded-xl p-5 flex flex-col min-h-[96px]">
               <h1 className="text-lg font-semibold text-gray-700 leading-tight">
-                Welcome back, <span className="text-indigo-500 font-bold">{user?.fullName || 'Admin'}</span>!
+                Welcome back, <span className="text-primary font-bold">{user?.fullName || 'Admin'}</span>!
               </h1>
               <p className="text-base text-gray-500 mt-1">
                 Your admin dashboard for managing users, events, and more.
@@ -1195,8 +1195,8 @@ const AdminDashboard = () => {
                 {/* Total Users */}
                 <div className="flex items-center bg-white shadow-md rounded-xl p-4 border-t-8 border-indigo-500 transition-transform transform hover:scale-105">
                   <div className="flex-shrink-0 mr-4">
-                    <div className="bg-indigo-100 p-3 rounded-full">
-                      <FiUsers className="text-indigo-600 text-2xl" />
+                    <div className="bg-primary-100 p-3 rounded-full">
+                      <FiUsers className="text-primary-600 text-2xl" />
                     </div>
                   </div>
                   <div>
@@ -1208,7 +1208,7 @@ const AdminDashboard = () => {
                 <div className="flex items-center bg-white shadow-md rounded-xl p-4 border-t-8 border-green-500 transition-transform transform hover:scale-105">
                   <div className="flex-shrink-0 mr-4">
                     <div className="bg-green-100 p-3 rounded-full">
-                      <FiBriefcase className="text-green-600 text-2xl" />
+                      <FiBriefcase className="text-accent text-2xl" />
                     </div>
                   </div>
                   <div>
@@ -1217,10 +1217,10 @@ const AdminDashboard = () => {
                   </div>
                 </div>
                 {/* Students */}
-                <div className="flex items-center bg-white shadow-md rounded-xl p-4 border-t-8 border-blue-500 transition-transform transform hover:scale-105">
+                <div className="flex items-center bg-white shadow-md rounded-xl p-4 border-t-8 border-secondary transition-transform transform hover:scale-105">
                   <div className="flex-shrink-0 mr-4">
-                    <div className="bg-blue-100 p-3 rounded-full">
-                      <FiBook className="text-blue-600 text-2xl" />
+                    <div className="bg-secondary-100 p-3 rounded-full">
+                      <FiBook className="text-secondary text-2xl" />
                     </div>
                   </div>
                   <div>
@@ -1229,10 +1229,10 @@ const AdminDashboard = () => {
                   </div>
                 </div>
                 {/* Faculty */}
-                <div className="flex items-center bg-white shadow-md rounded-xl p-4 border-t-8 border-yellow-500 transition-transform transform hover:scale-105">
+                <div className="flex items-center bg-white shadow-md rounded-xl p-4 border-t-8 border-accent transition-transform transform hover:scale-105">
                   <div className="flex-shrink-0 mr-4">
-                    <div className="bg-yellow-100 p-3 rounded-full">
-                      <FiUser className="text-yellow-600 text-2xl" />
+                    <div className="bg-accent-100 p-3 rounded-full">
+                      <FiUser className="text-accent text-2xl" />
                     </div>
                   </div>
                   <div>
@@ -1241,10 +1241,10 @@ const AdminDashboard = () => {
                   </div>
                 </div>
                 {/* Admins */}
-                <div className="flex items-center bg-white shadow-md rounded-xl p-4 border-t-8 border-pink-500 transition-transform transform hover:scale-105">
+                <div className="flex items-center bg-white shadow-md rounded-xl p-4 border-t-8 border-primary transition-transform transform hover:scale-105">
                   <div className="flex-shrink-0 mr-4">
-                    <div className="bg-pink-100 p-3 rounded-full">
-                      <FiShield className="text-pink-600 text-2xl" />
+                    <div className="bg-primary-100 p-3 rounded-full">
+                      <FiShield className="text-primary text-2xl" />
                     </div>
                   </div>
                   <div>
@@ -1378,7 +1378,7 @@ const AdminDashboard = () => {
               <label className="block mb-2 font-semibold">{inputLabel}</label>
               <input
                 type="text"
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-400"
                 value={inputValue}
                 onChange={e => setInputValue(e.target.value)}
               />
@@ -1392,7 +1392,7 @@ const AdminDashboard = () => {
               </button>
               <button
                 onClick={() => { setInputModalOpen(false); if (inputCallback) inputCallback(inputValue); }}
-                className="rounded-full px-4 py-1.5 font-semibold bg-indigo-600 text-white hover:bg-indigo-700 transition-colors w-full sm:w-auto"
+                className="rounded-full px-4 py-1.5 font-semibold bg-primary text-white hover:bg-primary-700 transition-colors w-full sm:w-auto"
               >
                 Create
               </button>

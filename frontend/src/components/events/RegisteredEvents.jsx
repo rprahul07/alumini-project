@@ -91,7 +91,7 @@ const RegisteredEvents = () => {
       {loading ? (
         <div className="flex justify-center items-center py-12">
           <div className="flex flex-col items-center space-y-3">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
             <p className="text-gray-600 text-sm">Loading registered events...</p>
           </div>
         </div>
@@ -102,7 +102,7 @@ const RegisteredEvents = () => {
             <p className="text-red-600 font-medium">{error}</p>
             <button
               onClick={() => window.location.reload()}
-              className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors text-sm"
+              className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-700 transition-colors text-sm"
             >
               Retry
             </button>
@@ -160,7 +160,7 @@ const RegisteredEvents = () => {
                   </td>
                   <td className="px-2 py-2 whitespace-nowrap text-right flex gap-2 justify-end" role="gridcell">
                     <button
-                      className="px-2 py-1 rounded-full bg-indigo-600 text-white text-xs font-semibold hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 transition-all duration-200"
+                      className="px-2 py-1 rounded-full bg-primary text-white text-xs font-semibold hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1 transition-all duration-200"
                       onClick={() => handleView(event)}
                       aria-label={`View details for ${event.eventName || event.name || 'event'}`}
                       type="button"

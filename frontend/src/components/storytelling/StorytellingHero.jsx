@@ -56,7 +56,7 @@ const StorytellingHero = () => {
 
 
   return (
-    <section className="bg-gradient-to-br from-green-50 via-white to-blue-50 pt-20 pb-16 relative overflow-hidden min-h-screen">
+    <section className="bg-gradient-to-br from-green-50 via-white to-blue-50 pt-16 pb-12 relative overflow-hidden min-h-[80vh]">
       {/* Clean background with subtle gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-green-50/30 via-transparent to-blue-50/30"></div>
       
@@ -65,11 +65,11 @@ const StorytellingHero = () => {
         initial={{ opacity: 0, scale: 0 }}
         animate={{ opacity: 0.1, scale: 1 }}
         transition={{ duration: 2, delay: 0.5 }}
-        className="absolute top-20 right-10 w-40 h-40 bg-gradient-to-r from-green-400 to-blue-400 rounded-full blur-3xl"
+        className="absolute top-16 right-8 w-32 h-32 bg-gradient-to-r from-green-400 to-blue-400 rounded-full blur-3xl"
       />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full h-full">
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 lg:gap-8 items-start pt-8 lg:pt-12">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full h-full">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 lg:gap-6 items-start pt-6 lg:pt-8">
           {/* Left Side - Content */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
@@ -82,7 +82,7 @@ const StorytellingHero = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight"
+              className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold leading-tight"
             >
               <span className="bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
                 {getMainHeading()}
@@ -94,7 +94,7 @@ const StorytellingHero = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="text-base sm:text-lg md:text-xl text-gray-600 leading-relaxed max-w-2xl font-medium"
+              className="text-sm sm:text-base md:text-lg text-gray-600 leading-relaxed max-w-2xl font-medium"
             >
               {getSubtitle()}
             </motion.p>
@@ -104,7 +104,7 @@ const StorytellingHero = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.6 }}
-              className="text-sm sm:text-base text-gray-500 leading-relaxed max-w-2xl"
+              className="text-xs sm:text-sm text-gray-500 leading-relaxed max-w-2xl"
             >
               {getDescription()}
             </motion.p>
@@ -114,10 +114,10 @@ const StorytellingHero = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.8 }}
-              className="relative bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-4 border border-green-100"
+              className="relative bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-3 border border-green-100"
             >
               <div className="absolute left-0 top-0 w-1 h-full bg-gradient-to-b from-green-400 to-blue-400 rounded-full"></div>
-              <blockquote className="pl-6 italic text-sm sm:text-base text-gray-600 leading-relaxed">
+              <blockquote className="pl-4 italic text-xs sm:text-sm text-gray-600 leading-relaxed">
                 "We build our dream at CUCEK, and now we return with stories of success"
               </blockquote>
             </motion.div>
@@ -127,15 +127,15 @@ const StorytellingHero = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 1.0 }}
-              className="flex flex-col sm:flex-row gap-3 pt-4"
+              className="flex flex-col sm:flex-row gap-2 pt-3"
             >
               <button
                 onClick={handleCallToAction}
-                className="group relative inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-green-600 to-blue-600 text-white font-semibold rounded-full hover:from-green-700 hover:to-blue-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl text-sm"
+                className="group relative inline-flex items-center justify-center px-5 py-2.5 bg-gradient-to-r from-green-600 to-blue-600 text-white font-semibold rounded-full hover:from-green-700 hover:to-blue-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl text-xs sm:text-sm"
               >
                 <span className="mr-2">{getCallToAction()}</span>
                 <motion.svg
-                  className="w-4 h-4"
+                  className="w-3 h-3"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -153,11 +153,11 @@ const StorytellingHero = () => {
                     timelineSection.scrollIntoView({ behavior: 'smooth' });
                   }
                 }}
-                className="group relative inline-flex items-center justify-center px-5 py-3 bg-white text-green-600 font-semibold rounded-full border-2 border-green-200 hover:border-green-300 hover:bg-green-50 transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg text-sm"
+                className="group relative inline-flex items-center justify-center px-4 py-2.5 bg-white text-green-600 font-semibold rounded-full border-2 border-green-200 hover:border-green-300 hover:bg-green-50 transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg text-xs sm:text-sm"
               >
                 <span className="mr-2">Discover Stories</span>
                 <motion.svg
-                  className="w-4 h-4"
+                  className="w-3 h-3"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -178,7 +178,7 @@ const StorytellingHero = () => {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="relative flex justify-center xl:justify-end order-first xl:order-last"
           >
-            <div className="relative w-full max-w-4xl xl:max-w-3xl">
+            <div className="relative w-full max-w-2xl xl:max-w-xl">
               {/* Interactive Timeline */}
               <InteractiveTimeline />
             </div>

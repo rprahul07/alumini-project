@@ -106,7 +106,7 @@ const EventRegistrationsModal = ({ event, isOpen, onClose, user }) => {
         <div className="flex-1 overflow-y-auto p-2 no-scrollbar" style={{ maxHeight: '50vh' }}>
           {loading ? (
             <div className="flex items-center justify-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
               <span className="ml-3 text-gray-600">Loading registrations...</span>
             </div>
           ) : registrations.length === 0 ? (
@@ -128,8 +128,8 @@ const EventRegistrationsModal = ({ event, isOpen, onClose, user }) => {
                           className="h-7 w-7 rounded-full object-cover"
                         />
                       ) : (
-                        <div className="h-7 w-7 rounded-full bg-indigo-100 flex items-center justify-center">
-                          <UserIcon className="h-4 w-4 text-indigo-600" />
+                        <div className="h-7 w-7 rounded-full bg-accent-100 flex items-center justify-center">
+                          <UserIcon className="h-4 w-4 text-accent-600" />
                         </div>
                       )}
                     </div>
@@ -138,7 +138,7 @@ const EventRegistrationsModal = ({ event, isOpen, onClose, user }) => {
                     <div className="flex-1">
                       <div className="flex items-center space-x-1">
                         <h3 className="font-medium text-gray-900 text-sm">{user.fullName}</h3>
-                        <span className="inline-flex items-center px-1 py-0.5 rounded-full text-[10px] font-medium bg-indigo-100 text-indigo-800">
+                        <span className="inline-flex items-center px-1 py-0.5 rounded-full text-[10px] font-medium bg-accent-100 text-accent-800">
                           {formatRole(user.role)}
                         </span>
                       </div>

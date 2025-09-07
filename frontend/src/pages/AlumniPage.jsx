@@ -263,27 +263,52 @@ const AlumniPage = () => {
 
   return (
     <>
-      <div className="min-h-screen bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-gray-50">
+        {/* Hero Section */}
+        <section className="bg-gradient-to-r from-primary-600 via-primary-700 to-secondary-600 text-white py-12 sm:py-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 animate-fade-in">
+                Alumni Network
+              </h1>
+              <p className="text-lg sm:text-xl text-white/90 max-w-3xl mx-auto animate-fade-in" style={{ animationDelay: '0.2s' }}>
+                Connect with successful graduates, find mentors, and build meaningful professional relationships
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Search and Filters */}
-          <div className="mb-6 flex flex-row gap-2 items-center w-full">
-            <AlumniSearch onSearch={handleSearch} isLoading={loading} />
-            <div className="flex gap-2">
-              <AlumniFilterButton 
-                selectedGraduationYear={selectedGraduationYear}
-                selectedCompany={selectedCompany}
-                selectedRole={selectedRole}
-                sortBy={sortBy}
-                sortOrder={sortOrder}
-                onFilterChange={handleFilterChange}
-                onSortChange={handleSortChange}
-              />
-              <BookmarkFilterButton
-                showBookmarkedOnly={showBookmarkedOnly}
-                onToggle={() => setShowBookmarkedOnly(!showBookmarkedOnly)}
-                bookmarkCount={bookmarkedUserIds.size}
-                loading={bookmarkLoading}
-              />
+          <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200 p-6 mb-8 z-40 relative animate-slide-up">
+            <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center w-full">
+              <div className="flex-1 w-full">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Search Alumni</label>
+                <AlumniSearch onSearch={handleSearch} isLoading={loading} />
+              </div>
+              <div className="flex gap-3 w-full lg:w-auto">
+                <div className="flex-1 lg:flex-none">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Filter & Sort</label>
+                  <AlumniFilterButton 
+                    selectedGraduationYear={selectedGraduationYear}
+                    selectedCompany={selectedCompany}
+                    selectedRole={selectedRole}
+                    sortBy={sortBy}
+                    sortOrder={sortOrder}
+                    onFilterChange={handleFilterChange}
+                    onSortChange={handleSortChange}
+                  />
+                </div>
+                <div className="flex-1 lg:flex-none">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Bookmarks</label>
+                  <BookmarkFilterButton
+                    showBookmarkedOnly={showBookmarkedOnly}
+                    onToggle={() => setShowBookmarkedOnly(!showBookmarkedOnly)}
+                    bookmarkCount={bookmarkedUserIds.size}
+                    loading={bookmarkLoading}
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
@@ -301,28 +326,66 @@ const AlumniPage = () => {
           />
 
           {/* Alumni Grid */}
-          <div className="mt-8">
+          <div className="mt-8 animate-fade-in">
             {loading ? (
-              <div className="flex justify-center items-center py-16">
-                <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-indigo-600"></div>
+              <div className="flex flex-col items-center justify-center py-20">
+                <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary mb-4"></div>
+                <p className="text-gray-600 text-lg font-medium">Loading alumni...</p>
               </div>
             ) : error ? (
-              <div className="flex flex-col items-center py-16">
-                <div className="text-red-600 text-lg font-semibold mb-4">{error}</div>
+              <div className="flex flex-col items-center py-20">
+                <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
+                  <i className="fas fa-exclamation-triangle text-red-600 text-2xl"></i>
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">Something went wrong</h3>
+                <p className="text-gray-600 text-center mb-6 max-w-md">{error}</p>
                 <button
                   onClick={fetchAlumni}
-                  className="rounded-full px-4 py-1.5 font-semibold bg-indigo-600 text-white shadow hover:bg-indigo-700 transition"
+                  className="px-6 py-3 bg-primary text-white rounded-lg font-semibold hover:bg-primary-700 transition-colors duration-200 flex items-center"
                 >
-                  Retry
+                  <i className="fas fa-refresh mr-2"></i>
+                  Try Again
                 </button>
               </div>
             ) : alumni.length === 0 ? (
-              <div className="text-center text-gray-500 py-16 text-lg font-medium">
-                No alumni found. Try adjusting your filters or search.
+              <div className="flex flex-col items-center py-20">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                  <i className="fas fa-users text-gray-400 text-2xl"></i>
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">No alumni found</h3>
+                <p className="text-gray-600 text-center mb-6 max-w-md">
+                  Try adjusting your search terms or filters to find more alumni.
+                </p>
+                <button
+                  onClick={() => {
+                    setSearchTerm('');
+                    setSelectedGraduationYear('');
+                    setSelectedCompany('');
+                    setSelectedRole('');
+                    setCurrentPage(1);
+                  }}
+                  className="px-6 py-3 bg-primary text-white rounded-lg font-semibold hover:bg-primary-700 transition-colors duration-200 flex items-center"
+                >
+                  <i className="fas fa-refresh mr-2"></i>
+                  Clear Filters
+                </button>
               </div>
             ) : filteredAlumni.length === 0 ? (
-              <div className="text-center text-gray-500 py-16 text-lg font-medium">
-                No bookmarked alumni found. Bookmark some alumni to see them here.
+              <div className="flex flex-col items-center py-20">
+                <div className="w-16 h-16 bg-accent-100 rounded-full flex items-center justify-center mb-4">
+                  <i className="fas fa-bookmark text-accent-600 text-2xl"></i>
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">No bookmarked alumni</h3>
+                <p className="text-gray-600 text-center mb-6 max-w-md">
+                  Bookmark some alumni to see them here. Click the bookmark icon on any alumni card.
+                </p>
+                <button
+                  onClick={() => setShowBookmarkedOnly(false)}
+                  className="px-6 py-3 bg-primary text-white rounded-lg font-semibold hover:bg-primary-700 transition-colors duration-200 flex items-center"
+                >
+                  <i className="fas fa-eye mr-2"></i>
+                  View All Alumni
+                </button>
               </div>
             ) : (
               <>

@@ -81,7 +81,7 @@ const AlumniCard = ({
   } else {
     displayButton = (
       <button
-        className="rounded-full px-4 py-1.5 font-semibold w-full text-sm flex items-center justify-center transition-colors bg-indigo-600 text-white hover:bg-indigo-700"
+        className="rounded-full px-4 py-2 font-semibold w-full text-sm flex items-center justify-center transition-colors bg-primary text-white hover:bg-primary-700 shadow-md hover:shadow-lg"
         onClick={e => {
           e.stopPropagation();
           if (!buttonDisabled) {
@@ -103,11 +103,11 @@ const AlumniCard = ({
 
   return (
     <div
-      className="bg-white shadow-md rounded-2xl w-full max-w-sm flex flex-col h-full cursor-pointer"
+      className="bg-white shadow-lg rounded-2xl w-full max-w-sm flex flex-col h-full cursor-pointer hover:shadow-xl transition-all duration-300 transform hover:scale-105 z-10"
       onClick={handleCardClick}
     >
       {/* Image at the top */}
-      <div className="relative h-28 bg-gray-200 flex-shrink-0 w-full rounded-t-2xl">
+      <div className="relative h-32 bg-gray-200 flex-shrink-0 w-full rounded-t-2xl overflow-hidden">
         {photoUrl ? (
           <OptimizedImage
             src={photoUrl || '/default-avatar.png'}
@@ -117,8 +117,8 @@ const AlumniCard = ({
             priority={false}
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-100 to-indigo-200 rounded-t-2xl">
-            <span className="text-indigo-400 text-4xl font-bold">?</span>
+          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary-100 to-secondary-100 rounded-t-2xl">
+            <span className="text-primary-400 text-4xl font-bold">?</span>
           </div>
         )}
         
@@ -129,15 +129,15 @@ const AlumniCard = ({
             onBookmarkToggle && onBookmarkToggle(alumni.userId);
           }}
           disabled={bookmarkLoading}
-          className={`absolute top-2 right-2 p-1 bg-white/80 backdrop-blur-sm rounded-full shadow-md hover:bg-white transition-all ${
+          className={`absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all ${
             bookmarkLoading ? 'cursor-not-allowed opacity-50' : ''
           }`}
         >
           {bookmarkLoading ? (
-            <div className="w-3 h-3 border border-gray-400 border-t-transparent rounded-full animate-spin" />
+            <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
           ) : (
             <Heart 
-              size={14} 
+              size={16} 
               className={`${isBookmarked ? 'text-red-500 fill-red-500' : 'text-gray-600'} transition-colors`} 
             />
           )}
@@ -153,9 +153,9 @@ const AlumniCard = ({
         {courseLine && <p className="text-sm text-gray-500 mb-1">{courseLine}</p>}
         {/* Tags */}
         {tags.length > 0 && (
-          <div className="flex gap-2 flex-wrap mb-2">
+          <div className="flex gap-2 flex-wrap mb-3">
             {tags.map((tag, i) => (
-              <span key={i} className="px-3 py-1 text-sm bg-purple-100 text-purple-700 rounded-full">{tag}</span>
+              <span key={i} className="px-3 py-1 text-xs bg-accent-100 text-accent-700 rounded-full font-medium">{tag}</span>
             ))}
           </div>
         )}
@@ -164,25 +164,25 @@ const AlumniCard = ({
         {/* Footer: Socials + Button */}
         <div className="flex flex-col gap-2 mt-2">
           {(linkedinUrl || email) && (
-            <div className="flex gap-2 mb-1">
+            <div className="flex gap-2 mb-2">
               {linkedinUrl && (
                 <a
                   href={linkedinUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2 bg-gray-100 rounded-full hover:bg-gray-200"
+                  className="p-2 bg-gray-100 rounded-full hover:bg-primary-100 transition-colors"
                   onClick={e => e.stopPropagation()}
                 >
-                  <Linkedin size={18} className="text-gray-600" />
+                  <Linkedin size={18} className="text-gray-600 hover:text-primary-600" />
                 </a>
               )}
               {email && (
                 <a
                   href={`mailto:${email}`}
-                  className="p-2 bg-gray-100 rounded-full hover:bg-gray-200"
+                  className="p-2 bg-gray-100 rounded-full hover:bg-primary-100 transition-colors"
                   onClick={e => e.stopPropagation()}
                 >
-                  <Mail size={18} className="text-gray-600" />
+                  <Mail size={18} className="text-gray-600 hover:text-primary-600" />
                 </a>
               )}
             </div>
