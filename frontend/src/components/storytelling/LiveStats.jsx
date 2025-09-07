@@ -9,54 +9,55 @@ const LiveStats = () => {
   const navigate = useNavigate();
 
   const stats = [
-    {
-      id: 'members',
-      value: 25000,
-      label: 'Alumni Members',
-      icon: '👥',
-      color: 'from-blue-500 to-cyan-500',
-      suffix: '+'
-    },
-    {
-      id: 'countries',
-      value: 65,
-      label: 'Countries',
-      icon: '🌍',
-      color: 'from-green-500 to-emerald-500',
-      suffix: '+'
-    },
-    {
-      id: 'events',
-      value: 1200,
-      label: 'Events Hosted',
-      icon: '🎉',
-      color: 'from-purple-500 to-pink-500',
-      suffix: '+'
-    },
-    {
-      id: 'mentorship',
-      value: 5000,
-      label: 'Mentorship Hours',
-      icon: '🤝',
-      color: 'from-orange-500 to-red-500',
-      suffix: '+'
-    },
-    {
-      id: 'jobs',
-      value: 850,
-      label: 'Jobs Posted',
-      icon: '💼',
-      color: 'from-indigo-500 to-purple-500',
-      suffix: '+'
-    },
-    {
-      id: 'startups',
-      value: 150,
-      label: 'Startups Founded',
-      icon: '🚀',
-      color: 'from-teal-500 to-cyan-500',
-      suffix: '+'
-    }
+  {
+  id: 'members',
+  value: 15000,
+  label: 'Alumni Members',
+  icon: '👥',
+  color: 'from-blue-500 to-cyan-500',
+  suffix: '+'
+},
+{
+  id: 'countries',
+  value: 45,
+  label: 'Countries',
+  icon: '🌍',
+  color: 'from-green-500 to-emerald-500',
+  suffix: '+'
+},
+{
+  id: 'events',
+  value: 300,
+  label: 'Events Hosted',
+  icon: '🎉',
+  color: 'from-purple-500 to-pink-500',
+  suffix: '+'
+},
+{
+  id: 'mentorship',
+  value: 2000,
+  label: 'Mentorship Hours',
+  icon: '🤝',
+  color: 'from-orange-500 to-red-500',
+  suffix: '+'
+},
+{
+  id: 'jobs',
+  value: 400,
+  label: 'Jobs Posted',
+  icon: '💼',
+  color: 'from-indigo-500 to-purple-500',
+  suffix: '+'
+},
+{
+  id: 'startups',
+  value: 80,
+  label: 'Startups Founded',
+  icon: '🚀',
+  color: 'from-teal-500 to-cyan-500',
+  suffix: '+'
+}
+
   ];
 
   // Counter animation hook

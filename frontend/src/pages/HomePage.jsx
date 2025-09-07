@@ -35,52 +35,53 @@ const featuresData = [
   {
     icon: "🌐",
     title: "Global Alumni Network",
-    description: "Connect with 10,000+ CUCEK graduates across 50+ countries. Build lifelong professional relationships and expand your global reach.",
+    description: "Connect with thousands of CUCEK graduates working in India and abroad. Build lifelong professional relationships and expand your reach.",
     category: "Networking",
-    stats: "10,000+ Alumni",
+    stats: "7,500+ Alumni",
     color: "from-primary-500 to-primary-600"
   },
   {
     icon: "💼",
     title: "Career Advancement",
-    description: "Access exclusive job opportunities, mentorship programs, and career guidance from industry leaders and successful alumni.",
+    description: "Access job opportunities, mentorship programs, and career guidance shared by industry leaders and alumni.",
     category: "Career",
-    stats: "500+ Jobs Posted",
+    stats: "Opportunities Shared",
     color: "from-secondary-500 to-secondary-600"
   },
   {
     icon: "🎉",
     title: "Exclusive Events",
-    description: "Join networking meetups, workshops, reunions, and industry conferences organized specifically for CUCEK alumni.",
+    description: "Join reunions, workshops, and networking meetups organized by CUCEK alumni chapters and the college.",
     category: "Events",
-    stats: "50+ Events/Year",
+    stats: "Regular Alumni Meets",
     color: "from-green-500 to-emerald-600"
   },
   {
     icon: "📚",
     title: "Knowledge Hub",
-    description: "Access premium resources, research papers, industry insights, and educational content shared by expert alumni.",
+    description: "Access shared resources, research papers, and industry insights contributed by CUCEK alumni.",
     category: "Resources",
-    stats: "1000+ Resources",
+    stats: "Growing Repository",
     color: "from-blue-500 to-cyan-600"
   },
   {
     icon: "🤝",
     title: "Mentorship Programs",
-    description: "Get mentored by senior alumni or mentor junior graduates. Share experiences and guide the next generation.",
+    description: "Get guidance from senior alumni or mentor current students to support the next generation of engineers.",
     category: "Mentorship",
-    stats: "200+ Mentors",
+    stats: "Active Mentors",
     color: "from-purple-500 to-pink-600"
   },
   {
     icon: "🏆",
     title: "Alumni Recognition",
-    description: "Celebrate achievements, showcase success stories, and get recognized for your contributions to the community.",
+    description: "Celebrate achievements, showcase alumni success stories, and highlight contributions to the community.",
     category: "Recognition",
-    stats: "Monthly Awards",
+    stats: "Annual Awards",
     color: "from-orange-500 to-red-600"
   },
 ];
+
 
 const filters = [
   "All Features",
@@ -738,42 +739,42 @@ const HomePage = () => {
             {/* Core Values Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
               {[
-                {
-                  icon: "🌐",
-                  title: "Global Impact",
-                  description: "10,000+ alumni across 50+ countries, driving innovation and excellence worldwide.",
-                  color: "from-primary-500 to-primary-600"
-                },
-                {
-                  icon: "🤝",
-                  title: "Lifelong Connections",
-                  description: "Building professional relationships that last a lifetime, from campus to career.",
-                  color: "from-secondary-500 to-secondary-600"
-                },
-                {
-                  icon: "🚀",
-                  title: "Career Acceleration",
-                  description: "Exclusive opportunities, mentorship, and resources to fast-track your success.",
-                  color: "from-green-500 to-emerald-600"
-                },
-                {
-                  icon: "💡",
-                  title: "Knowledge Sharing",
-                  description: "Access to industry insights, best practices, and cutting-edge innovations.",
-                  color: "from-blue-500 to-cyan-600"
-                },
-                {
-                  icon: "🎯",
-                  title: "CUCEK Identity",
-                  description: "Celebrating our unique engineering heritage and shared academic journey.",
-                  color: "from-purple-500 to-pink-600"
-                },
-                {
-                  icon: "🌟",
-                  title: "Community First",
-                  description: "Supporting each other's growth while giving back to the next generation.",
-                  color: "from-orange-500 to-red-600"
-                }
+                 {
+    icon: "🌐",
+    title: "Global Impact",
+    description: "Thousands of CUCEK alumni are contributing across the globe, driving innovation and excellence in diverse fields.",
+    color: "from-primary-500 to-primary-600"
+  },
+  {
+    icon: "🤝",
+    title: "Lifelong Connections",
+    description: "Building professional and personal relationships that last a lifetime, from campus to career.",
+    color: "from-secondary-500 to-secondary-600"
+  },
+  {
+    icon: "🚀",
+    title: "Career Support",
+    description: "Access opportunities, guidance, and mentorship shared by CUCEK alumni to strengthen your career journey.",
+    color: "from-green-500 to-emerald-600"
+  },
+  {
+    icon: "💡",
+    title: "Knowledge Sharing",
+    description: "Stay connected with industry insights, best practices, and innovations contributed by alumni experts.",
+    color: "from-blue-500 to-cyan-600"
+  },
+  {
+    icon: "🎯",
+    title: "CUCEK Identity",
+    description: "Celebrating our shared academic journey, engineering heritage, and strong CUCEK community spirit.",
+    color: "from-purple-500 to-pink-600"
+  },
+  {
+    icon: "🌟",
+    title: "Community First",
+    description: "Supporting each other’s growth while giving back to future CUCEK engineers and innovators.",
+    color: "from-orange-500 to-red-600"
+  }
               ].map((value, index) => (
                     <motion.div
                       key={index}
@@ -815,13 +816,13 @@ const HomePage = () => {
               
               <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                 {[
-                  { number: "10,000+", label: "Active Alumni" },
-                  { number: "50+", label: "Countries" },
-                  { number: "500+", label: "Success Stories" },
-                  { number: "95%", label: "Career Satisfaction" }
+                 { number: "10,000+", label: "Graduates Worldwide" },
+                 { number: "Global", label: "Alumni Presence" },
+                 { number: "Inspiring", label: "Success Stories" },
+                 { number: "Strong", label: "Career Outcomes" }
                 ].map((stat, index) => (
                   <div key={index} className="text-center">
-                    <div className="text-3xl font-bold mb-2">{stat.number}</div>
+                    <div className="text-xl font-bold mb-2">{stat.number}</div>
                     <div className="text-primary-100 text-sm font-medium">{stat.label}</div>
                   </div>
                 ))}
@@ -901,7 +902,7 @@ const HomePage = () => {
                         <div className="text-xs text-gray-400">Alumni</div>
                       </div>
                       <div className="text-center p-3 bg-white/5 rounded-lg backdrop-blur-sm">
-                        <div className="text-2xl font-bold text-secondary-400">50+</div>
+                        <div className="text-2xl font-bold text-secondary-400">45+</div>
                         <div className="text-xs text-gray-400">Countries</div>
                       </div>
                     </div>
