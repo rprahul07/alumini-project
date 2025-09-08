@@ -25,10 +25,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 const defaultImages = {
   hero: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&h=600&fit=crop",
   about: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&h=600&fit=crop",
-  alumni1: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=60&h=60&fit=crop",
-  alumni2: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&h=60&fit=crop",
-  alumni3: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=60&h=60&fit=crop",
-  alumni4: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=60&h=60&fit=crop"
+  // Placeholder avatar for users without profile photos
+  placeholderAvatar: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMzAiIGZpbGw9IiNGM0Y0RjYiLz4KPGNpcmNsZSBjeD0iMzAiIGN5PSIyNCIgcj0iMTAiIGZpbGw9IiM5Q0EzQUYiLz4KPHBhdGggZD0iTTE1IDQ1QzE1IDM3LjI2ODcgMjEuMjY4NyAzMSAzMCAzMUMzOC43MzEzIDMxIDQ1IDM3LjI2ODcgNDUgNDVWNDdIMTVWNDVaIiBmaWxsPSIjOUNBM0FGIi8+Cjwvc3ZnPgo="
 };
 
 const featuresData = [
@@ -177,7 +175,9 @@ const HomePage = () => {
             createdAt: testimonial.createdAt,
             name: testimonial.user?.fullName || 'Alumni',
             department: testimonial.user?.department || 'Engineering',
-            photoUrl: testimonial.user?.photoUrl || defaultImages.alumni1,
+            photoUrl: (testimonial.user?.photoUrl && testimonial.user.photoUrl.trim() !== '') 
+              ? testimonial.user.photoUrl 
+              : defaultImages.placeholderAvatar,
             graduationYear: testimonial.user?.alumni?.graduationYear || '2020',
             course: testimonial.user?.alumni?.course || 'Computer Science',
             currentJobTitle: testimonial.user?.alumni?.currentJobTitle || 'Software Engineer',
@@ -222,7 +222,9 @@ const HomePage = () => {
             redirectionUrl: spotlight.redirectionUrl,
             user: {
               fullName: spotlight.user?.fullName || 'Alumni',
-              photoUrl: spotlight.user?.photoUrl || defaultImages.alumni1,
+              photoUrl: (spotlight.user?.photoUrl && spotlight.user.photoUrl.trim() !== '') 
+                ? spotlight.user.photoUrl 
+                : defaultImages.placeholderAvatar,
               department: spotlight.user?.department || 'Engineering',
               graduationYear: spotlight.user?.alumni?.graduationYear || '2020',
               currentJobTitle: spotlight.user?.alumni?.currentJobTitle || 'Professional',
@@ -596,10 +598,12 @@ const HomePage = () => {
                           <div className="relative mb-4">
                             <div className="w-20 h-20 rounded-full overflow-hidden border-3 border-gradient-to-r from-primary-500 to-secondary-500 shadow-lg">
                               <OptimizedImage
-                                src={spotlights[currentSpotlightIndex]?.user?.photoUrl || defaultImages.alumni1}
+                                src={(spotlights[currentSpotlightIndex]?.user?.photoUrl && spotlights[currentSpotlightIndex].user.photoUrl.trim() !== '') 
+                                  ? spotlights[currentSpotlightIndex].user.photoUrl 
+                                  : defaultImages.placeholderAvatar}
                                 alt={spotlights[currentSpotlightIndex]?.user?.fullName || 'Alumni'}
                                 className="w-full h-full object-cover"
-                                fallbackSrc={defaultImages.alumni1}
+                                fallbackSrc={defaultImages.placeholderAvatar}
                               />
                             </div>
                             {/* Glittering effect around photo */}

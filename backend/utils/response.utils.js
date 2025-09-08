@@ -26,7 +26,22 @@ export const handleError = (error, req, res) => {
 
   // Prisma error handling
   if (error.code === 'P2002') {
-    const field = error.meta?.target?.includes('email') ? 'Email' : 'Roll number';
+    const target = error.meta?.target || [];
+    let field = 'Field';
+    
+    if (target.includes('email')) {
+      field = 'Email';
+    } else if (target.includes('roll_number')) {
+      field = 'Roll number';
+    } else if (target.includes('phone_number')) {
+      field = 'Phone number';
+    } else if (target.length > 0) {
+      // Convert snake_case to Title Case
+      field = target[0].split('_').map(word => 
+        word.charAt(0).toUpperCase() + word.slice(1)
+      ).join(' ');
+    }
+    
     return res.status(409).json(
       createResponse(false, `${field} already exists`)
     );

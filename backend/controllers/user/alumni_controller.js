@@ -1012,3 +1012,58 @@ export const getAlumniByTier = async (req, res) => {
     });
   }
 };
+
+/**
+ * Get the 10 latest alumni reconnects (public endpoint)
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+export const getLatestReconnects = async (req, res) => {
+  try {
+    // Get the 10 most recently created alumni users
+    const latestAlumni = await prisma.user.findMany({
+      where: {
+        role: ROLES.ALUMNI,
+      },
+      select: {
+        id: true,
+        fullName: true,
+        photoUrl: true,
+        department: true,
+        alumni: {
+          select: {
+            graduationYear: true,
+          }
+        }
+      },
+      orderBy: {
+        createdAt: 'desc'
+      },
+      take: 10
+    });
+
+    // Transform the data to match frontend expectations
+    const transformedAlumni = latestAlumni.map(alumni => ({
+      id: alumni.id,
+      name: alumni.fullName,
+      photo: alumni.photoUrl || null,
+      department: alumni.department || 'Unknown',
+      batch: alumni.alumni?.graduationYear ? 
+        `${alumni.alumni.graduationYear}` : 
+        'Unknown'
+    }));
+
+    return res.status(200).json({
+      success: true,
+      data: transformedAlumni,
+      message: 'Latest reconnects retrieved successfully'
+    });
+  } catch (error) {
+    console.error('Error fetching latest reconnects:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to fetch latest reconnects',
+      error: error.message,
+    });
+  }
+};

@@ -62,12 +62,10 @@ const AnimatedTestimonialRows = ({ testimonials }) => {
     };
   }, [touchTimeout]);
 
-  const defaultImages = {
-    alumni1: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=60&h=60&fit=crop",
-    alumni2: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&h=60&fit=crop",
-    alumni3: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=60&h=60&fit=crop",
-    alumni4: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=60&h=60&fit=crop"
-  };
+const defaultImages = {
+  // Placeholder avatar for users without profile photos
+  placeholderAvatar: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMzAiIGZpbGw9IiNGM0Y0RjYiLz4KPGNpcmNsZSBjeD0iMzAiIGN5PSIyNCIgcj0iMTAiIGZpbGw9IiM5Q0EzQUYiLz4KPHBhdGggZD0iTTE1IDQ1QzE1IDM3LjI2ODcgMjEuMjY4NyAzMSAzMCAzMUMzOC43MzEzIDMxIDQ1IDM3LjI2ODcgNDUgNDVWNDdIMTVWNDVaIiBmaWxsPSIjOUNBM0FGIi8+Cjwvc3ZnPgo="
+};
 
   // Duplicate testimonials for seamless infinite scroll
   const duplicatedTestimonials = [...testimonials, ...testimonials];
@@ -167,9 +165,11 @@ const TestimonialCard = ({ testimonial, handleImageError, defaultImages, variant
         <div className="flex items-start space-x-3 mb-3 flex-shrink-0">
           <div className="relative">
             <img
-              src={testimonial.photoUrl}
+              src={(testimonial.photoUrl && testimonial.photoUrl.trim() !== '') 
+                ? testimonial.photoUrl 
+                : defaultImages.placeholderAvatar}
               className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-md"
-              onError={(e) => handleImageError(e, defaultImages.alumni1)}
+              onError={(e) => handleImageError(e, defaultImages.placeholderAvatar)}
               loading="lazy"
               alt={`${testimonial.name} profile`}
             />

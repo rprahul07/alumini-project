@@ -5,6 +5,9 @@ import { spotlightAPI } from '../../services/spotlightService';
 import { useAuth } from '../../contexts/AuthContext';
 import ConfirmDialog from '../ConfirmDialog';
 
+// Placeholder avatar for users without profile photos
+const placeholderAvatar = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMzAiIGZpbGw9IiNGM0Y0RjYiLz4KPGNpcmNsZSBjeD0iMzAiIGN5PSIyNCIgcj0iMTAiIGZpbGw9IiM5Q0EzQUYiLz4KPHBhdGggZD0iTTE1IDQ1QzE1IDM3LjI2ODcgMjEuMjY4NyAzMSAzMCAzMUMzOC43MzEzIDMxIDQ1IDM3LjI2ODcgNDUgNDVWNDdIMTVWNDVaIiBmaWxsPSIjOUNBM0FGIi8+Cjwvc3ZnPgo=";
+
 const AdminSpotlight = () => {
   const { isAdmin } = useAuth();
   
@@ -273,11 +276,13 @@ const AdminSpotlight = () => {
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center space-x-3">
                   <img
-                    src={spotlight.user?.photoUrl || '/default-avatar.png'}
+                    src={(spotlight.user?.photoUrl && spotlight.user.photoUrl.trim() !== '') 
+                      ? spotlight.user.photoUrl 
+                      : placeholderAvatar}
                     alt={spotlight.user?.fullName || 'Alumni'}
                     className="w-12 h-12 rounded-full object-cover border-2 border-gray-200"
                     onError={(e) => {
-                      e.target.src = '/default-avatar.png';
+                      e.target.src = placeholderAvatar;
                     }}
                   />
                   <div>
@@ -388,10 +393,12 @@ const AdminSpotlight = () => {
                     <div className="mt-2 p-3 bg-indigo-50 border border-indigo-200 rounded-lg flex items-center justify-between">
                       <div className="flex items-center space-x-3">
                         <img
-                          src={selectedAlumni.photoUrl || '/default-avatar.png'}
+                          src={(selectedAlumni.photoUrl && selectedAlumni.photoUrl.trim() !== '') 
+                            ? selectedAlumni.photoUrl 
+                            : placeholderAvatar}
                           alt={selectedAlumni.name}
                           className="w-8 h-8 rounded-full object-cover"
-                          onError={(e) => { e.target.src = '/default-avatar.png'; }}
+                          onError={(e) => { e.target.src = placeholderAvatar; }}
                         />
                         <div>
                           <p className="font-medium text-gray-900">{selectedAlumni.name}</p>
@@ -431,10 +438,12 @@ const AdminSpotlight = () => {
                           className="w-full p-3 text-left hover:bg-gray-50 border-b border-gray-100 last:border-b-0 flex items-center space-x-3"
                         >
                           <img
-                            src={alumni.photoUrl || '/default-avatar.png'}
+                            src={(alumni.photoUrl && alumni.photoUrl.trim() !== '') 
+                              ? alumni.photoUrl 
+                              : placeholderAvatar}
                             alt={alumni.name}
                             className="w-10 h-10 rounded-full object-cover"
-                            onError={(e) => { e.target.src = '/default-avatar.png'; }}
+                            onError={(e) => { e.target.src = placeholderAvatar; }}
                           />
                           <div className="flex-1 min-w-0">
                             <p className="font-medium text-gray-900 truncate">{alumni.name}</p>

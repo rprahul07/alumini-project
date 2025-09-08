@@ -77,6 +77,15 @@ export const registerStudent = async (req, res) => {
       throw new AppError("Email already exists", 409);
     }
 
+    // Check if roll number already exists
+    const existingStudent = await prisma.student.findUnique({
+      where: { rollNumber: req.body.rollNumber }
+    });
+    
+    if (existingStudent) {
+      throw new AppError("Roll number already exists", 409);
+    }
+
     const newStudent = await createStudent(req.body);
     generateTokenAndSetCookie(newStudent.id, ROLES.STUDENT, res);
 

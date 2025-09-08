@@ -12,6 +12,7 @@ import {
   getAlumniSelf,
   deleteProfilePicture,
   getAlumniByTier,
+  getLatestReconnects,
 } from "../controllers/user/alumni_controller.js";
 import {
   createEventForAlumni,

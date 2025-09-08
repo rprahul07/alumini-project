@@ -711,21 +711,25 @@ const UserTableDisplay = ({ userType, users, onUpdateUser, onDeleteUser }) => {
     setSelectedUserId(userId);
     setSelectedUserName(userName);
     setModalAction(action);
-    if (action === 'delete') {
-      setConfirmMessage(`Are you sure you want to delete ${userName}? This action cannot be undone.`);
-      setPendingAction(() => () => {
-        onDeleteUser(userId, userType);
-      });
     setIsConfirmModalOpen(true);
-    } else {
-      setIsConfirmModalOpen(true);
-    }
   };
 
-  const handleConfirmAction = () => {
+  const handleConfirmAction = async () => {
+    console.log('Confirm action called:', { modalAction, selectedUserId, userType });
+    
     if (modalAction === 'update') {
       navigate(`/admin/edit-user/${userType}/${selectedUserId}`);
-    setIsConfirmModalOpen(false);
+      setIsConfirmModalOpen(false);
+    } else if (modalAction === 'delete') {
+      try {
+        console.log('Calling onDeleteUser with:', selectedUserId, userType);
+        await onDeleteUser(selectedUserId, userType);
+        toast.success('User deleted successfully');
+      } catch (err) {
+        console.error('Delete error in confirm action:', err);
+        toast.error('Failed to delete user');
+      }
+      setIsConfirmModalOpen(false);
     }
     setSelectedUserId(null);
     setSelectedUserName("");
@@ -864,22 +868,7 @@ const UserTableDisplay = ({ userType, users, onUpdateUser, onDeleteUser }) => {
         message={modalAction === "delete"
             ? `Are you sure you want to delete ${selectedUserName}? This action cannot be undone.`
           : `Are you sure you want to update ${selectedUserName}?`}
-        onConfirm={async () => {
-          setIsConfirmModalOpen(false);
-          if (modalAction === 'delete') {
-            try {
-              await onDeleteUser(selectedUserId, userType);
-              toast.success('User deleted successfully');
-            } catch (err) {
-              toast.error('Failed to delete user');
-            }
-          } else if (modalAction === 'update') {
-            navigate(`/admin/edit-user/${userType}/${selectedUserId}`);
-          }
-          setSelectedUserId(null);
-          setSelectedUserName("");
-          setModalAction(null);
-        }}
+        onConfirm={handleConfirmAction}
         onCancel={() => {
           setIsConfirmModalOpen(false);
           setSelectedUserId(null);
@@ -1101,10 +1090,14 @@ const AdminDashboard = () => {
   };
 
   const handleDeleteUser = async (id, type) => {
+    console.log('Delete user called with:', { id, type });
+    
     if (!id) {
+      console.error('Invalid user ID:', id);
       toast.error("Invalid user ID");
       return;
     }
+    
     try {
       let endpoint = "";
       switch (type) {
@@ -1120,13 +1113,20 @@ const AdminDashboard = () => {
         default:
           throw new Error("Invalid user type");
       }
-      await apiService.raw.delete(endpoint);
+      
+      console.log('Making delete request to:', endpoint);
+      const response = await apiService.raw.delete(endpoint);
+      console.log('Delete response:', response);
+      
       // Only re-fetch the affected list
       if (type === "students") refetchStudents();
       if (type === "alumni") refetchAlumni();
       if (type === "faculty") refetchFaculty();
+      
       toast.success("User deleted successfully");
     } catch (err) {
+      console.error('Delete user error:', err);
+      console.error('Error response:', err.response);
       toast.error(
         err.response?.data?.message ||
           "Failed to delete user. Please try again."

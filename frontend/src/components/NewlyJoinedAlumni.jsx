@@ -6,18 +6,47 @@ import { useAuth } from '../contexts/AuthContext';
 
 const NewlyJoinedAlumni = () => {
   const { user, loading: authLoading } = useAuth();
-  const [currentIndex, setCurrentIndex] = useState(0);
   const [newlyJoinedAlumni, setNewlyJoinedAlumni] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [hoveredIndex, setHoveredIndex] = useState(null);
+  const [maxItemsPerRow, setMaxItemsPerRow] = useState(6); // Default for mobile
 
-  // Default images for fallback
-  const defaultImages = {
-    alumni1: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=face",
-    alumni2: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
-    alumni3: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face",
-    alumni4: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
+  // Placeholder avatar for users without profile photos
+  const placeholderAvatar = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMzAiIGZpbGw9IiNGM0Y0RjYiLz4KPGNpcmNsZSBjeD0iMzAiIGN5PSIyNCIgcj0iMTAiIGZpbGw9IiM5Q0EzQUYiLz4KPHBhdGggZD0iTTE1IDQ1QzE1IDM3LjI2ODcgMjEuMjY4NyAzMSAzMCAzMUMzOC43MzEzIDMxIDQ1IDM3LjI2ODcgNDUgNDVWNDdIMTVWNDVaIiBmaWxsPSIjOUNBM0FGIi8+Cjwvc3ZnPgo=";
+
+  // Calculate maximum items per row based on screen size
+  const calculateMaxItemsPerRow = () => {
+    const screenWidth = window.innerWidth;
+    
+    if (screenWidth < 640) { // sm: mobile
+      return 4; // 4 items on mobile
+    } else if (screenWidth < 768) { // md: small tablet
+      return 5; // 5 items on small tablet
+    } else if (screenWidth < 1024) { // lg: tablet
+      return 6; // 6 items on tablet
+    } else if (screenWidth < 1280) { // xl: desktop
+      return 8; // 8 items on desktop
+    } else { // 2xl: large desktop
+      return 10; // 10 items on large desktop
+    }
   };
+
+  // Update max items per row on window resize
+  useEffect(() => {
+    const handleResize = () => {
+      setMaxItemsPerRow(calculateMaxItemsPerRow());
+    };
+
+    // Set initial value
+    handleResize();
+
+    // Add event listener
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Fetch recently reconnected alumni from API
   useEffect(() => {
@@ -37,27 +66,40 @@ const NewlyJoinedAlumni = () => {
       try {
         setLoading(true);
         setError(null);
-        const result = await alumniAPI.getNewlyJoined();
+        const result = await alumniAPI.getLatestReconnects();
         
         if (result.success && result.data.length > 0) {
-          // Transform API data to match component structure
-          const transformedAlumni = result.data.map((alumni, index) => ({
-            id: alumni.id || index + 1,
-            name: alumni.user?.fullName || 'Alumni',
-            batch: alumni.graduationYear || '2018',
-            photo: alumni.user?.photoUrl || defaultImages[`alumni${(index % 4) + 1}`],
-            department: alumni.department || 'Engineering',
-            reconnectedDate: alumni.updatedAt || alumni.createdAt
-          }));
+          // Transform API data to match component structure and limit to maxItemsPerRow
+          const transformedAlumni = result.data.slice(0, maxItemsPerRow).map((alumni, index) => {
+            const photoUrl = (alumni.photo && alumni.photo.trim() !== '') 
+              ? alumni.photo 
+              : placeholderAvatar;
+            
+            console.log('Alumni photo data:', {
+              name: alumni.name,
+              originalPhoto: alumni.photo,
+              processedPhoto: photoUrl,
+              isPlaceholder: photoUrl === placeholderAvatar
+            });
+            
+            return {
+              id: alumni.id || index + 1,
+              name: alumni.name || 'Alumni',
+              batch: alumni.batch || 'Unknown',
+              photo: photoUrl,
+              department: alumni.department || 'Unknown',
+              reconnectedDate: new Date().toISOString()
+            };
+          });
           setNewlyJoinedAlumni(transformedAlumni);
         } else {
-          // Fallback to sample data if API fails - showing alumni from different years
-          setNewlyJoinedAlumni([
+          // Fallback to sample data if API fails - showing alumni based on screen size
+          const sampleData = [
             {
               id: 1,
               name: "Sarah Johnson",
               batch: "2015",
-              photo: defaultImages.alumni1,
+              photo: placeholderAvatar,
               department: "Computer Science",
               reconnectedDate: new Date().toISOString()
             },
@@ -65,7 +107,7 @@ const NewlyJoinedAlumni = () => {
               id: 2,
               name: "Rajesh Kumar",
               batch: "2017",
-              photo: defaultImages.alumni2,
+              photo: placeholderAvatar,
               department: "Electronics",
               reconnectedDate: new Date().toISOString()
             },
@@ -73,7 +115,7 @@ const NewlyJoinedAlumni = () => {
               id: 3,
               name: "Priya Sharma",
               batch: "2016",
-              photo: defaultImages.alumni3,
+              photo: placeholderAvatar,
               department: "Mechanical",
               reconnectedDate: new Date().toISOString()
             },
@@ -81,7 +123,7 @@ const NewlyJoinedAlumni = () => {
               id: 4,
               name: "Amit Patel",
               batch: "2018",
-              photo: defaultImages.alumni4,
+              photo: placeholderAvatar,
               department: "Civil",
               reconnectedDate: new Date().toISOString()
             },
@@ -89,7 +131,7 @@ const NewlyJoinedAlumni = () => {
               id: 5,
               name: "Deepika Singh",
               batch: "2014",
-              photo: defaultImages.alumni1,
+              photo: placeholderAvatar,
               department: "Computer Science",
               reconnectedDate: new Date().toISOString()
             },
@@ -97,56 +139,69 @@ const NewlyJoinedAlumni = () => {
               id: 6,
               name: "Vikram Reddy",
               batch: "2019",
-              photo: defaultImages.alumni2,
+              photo: placeholderAvatar,
               department: "Electrical",
               reconnectedDate: new Date().toISOString()
+            },
+            {
+              id: 7,
+              name: "Anita Desai",
+              batch: "2020",
+              photo: placeholderAvatar,
+              department: "Information Technology",
+              reconnectedDate: new Date().toISOString()
+            },
+            {
+              id: 8,
+              name: "Rohit Verma",
+              batch: "2013",
+              photo: placeholderAvatar,
+              department: "Mechanical",
+              reconnectedDate: new Date().toISOString()
+            },
+            {
+              id: 9,
+              name: "Kavya Nair",
+              batch: "2021",
+              photo: placeholderAvatar,
+              department: "Computer Science",
+              reconnectedDate: new Date().toISOString()
+            },
+            {
+              id: 10,
+              name: "Arjun Menon",
+              batch: "2012",
+              photo: placeholderAvatar,
+              department: "Electronics",
+              reconnectedDate: new Date().toISOString()
             }
-          ]);
+          ];
+          setNewlyJoinedAlumni(sampleData.slice(0, maxItemsPerRow));
         }
       } catch (err) {
         console.error('Failed to fetch recently reconnected alumni:', err);
         setError('Failed to load alumni data');
         // Use fallback data
-        setNewlyJoinedAlumni([
+        const fallbackData = [
           {
             id: 1,
             name: "Sample Alumni",
             batch: "2015",
-            photo: defaultImages.alumni1,
+            photo: placeholderAvatar,
             department: "Engineering",
             reconnectedDate: new Date().toISOString()
           }
-        ]);
+        ];
+        setNewlyJoinedAlumni(fallbackData.slice(0, maxItemsPerRow));
       } finally {
         setLoading(false);
       }
     };
 
     fetchRecentlyReconnectedAlumni();
-  }, [user, authLoading]);
+  }, [user, authLoading, maxItemsPerRow]);
 
-  // Auto-slide effect - fully automatic
-  useEffect(() => {
-    if (newlyJoinedAlumni.length <= 1) return;
-
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % newlyJoinedAlumni.length);
-    }, 4000); // Increased to 4 seconds for better viewing
-
-    return () => clearInterval(interval);
-  }, [newlyJoinedAlumni.length]);
-
-  const nextSlide = () => {
-    setCurrentIndex((prev) => (prev + 1) % newlyJoinedAlumni.length);
-  };
-
-  const prevSlide = () => {
-    setCurrentIndex((prev) => (prev - 1 + newlyJoinedAlumni.length) % newlyJoinedAlumni.length);
-  };
-
-  const goToSlide = (index) => {
-    setCurrentIndex(index);
-  };
+  // No carousel logic needed for the new design
 
   // Loading state
   if (loading) {
@@ -173,39 +228,42 @@ const NewlyJoinedAlumni = () => {
   }
 
   return (
-    <section className="py-12 md:py-16 bg-gradient-to-br from-secondary-50 via-white to-primary-50 relative overflow-hidden">
-      {/* Background decorative elements */}
+    <section className="py-12 bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 relative">
+      {/* Enhanced Background decorative elements */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 right-20 w-64 h-64 bg-gradient-to-br from-primary-200/20 to-secondary-200/20 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 left-20 w-48 h-48 bg-gradient-to-tr from-secondary-200/20 to-primary-200/20 rounded-full blur-3xl"></div>
+        {/* Animated gradient orbs */}
+        <div className="absolute top-10 right-10 w-96 h-96 bg-gradient-to-br from-primary-400/30 to-secondary-400/30 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-tr from-secondary-400/30 to-primary-400/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-primary-300/20 to-secondary-300/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+        
+        {/* Floating particles */}
+        <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-primary-400/60 rounded-full animate-bounce" style={{ animationDelay: '0.5s' }}></div>
+        <div className="absolute top-3/4 right-1/4 w-1 h-1 bg-secondary-400/60 rounded-full animate-bounce" style={{ animationDelay: '1.5s' }}></div>
+        <div className="absolute top-1/2 right-1/3 w-1.5 h-1.5 bg-primary-300/60 rounded-full animate-bounce" style={{ animationDelay: '2.5s' }}></div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="text-center mb-8 md:mb-12"
+          className="text-center mb-8"
         >
-          <div className="inline-flex items-center px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-medium bg-white/80 backdrop-blur-sm text-primary-700 border border-primary-200 mb-3 md:mb-4">
-            <span className="w-1.5 h-1.5 md:w-2 md:h-2 bg-primary-500 rounded-full mr-1.5 md:mr-2"></span>
-            <span className="hidden sm:inline">Welcome Back</span>
-            <span className="sm:hidden">Welcome Back</span>
+          <div className="inline-flex items-center px-6 py-3 rounded-full text-sm font-semibold bg-gradient-to-r from-primary-500/20 to-secondary-500/20 backdrop-blur-sm text-white border border-white/20 mb-8 shadow-lg">
+            <span className="w-3 h-3 bg-gradient-to-r from-primary-400 to-secondary-400 rounded-full mr-3 animate-pulse"></span>
+            <span>Welcome Home</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 md:mb-4 px-4">
-            Alumni{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-secondary-600">
-              Reconnected
+          <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
+            People who made the{' '}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 via-secondary-400 to-primary-400 animate-pulse">
+              Homecoming true
             </span>
           </h2>
-          <p className="text-sm sm:text-base md:text-lg text-gray-600 max-w-xl md:max-w-2xl mx-auto px-4">
-            Alumni who have reconnected with our community after years
-          </p>
         </motion.div>
 
-        {/* Sliding Carousel */}
+        {/* Circular Alumni Photos */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -213,91 +271,112 @@ const NewlyJoinedAlumni = () => {
           viewport={{ once: true }}
           className="relative"
         >
-          <div className="relative overflow-hidden rounded-xl md:rounded-2xl bg-white/90 backdrop-blur-sm border border-gray-200/50 shadow-xl">
-            {/* Alumni Cards Container */}
-            <div className="relative h-20 sm:h-24 md:h-28">
-              <AnimatePresence mode="wait">
+          {/* Enhanced Container with glass morphism */}
+          <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-3xl p-6 md:p-8 border border-white/20 shadow-2xl relative">
+            {/* Inner glow effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-primary-500/10 via-transparent to-secondary-500/10 rounded-3xl"></div>
+            
+            <div className="flex justify-center items-center flex-wrap gap-4 md:gap-6 lg:gap-8 relative z-10">
+              {newlyJoinedAlumni.map((alumni, index) => (
                 <motion.div
-                  key={currentIndex}
-                  initial={{ opacity: 0, x: 300 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -300 }}
-                  transition={{ duration: 0.6, ease: "easeInOut" }}
-                  className="absolute inset-0 flex items-center justify-center"
+                  key={alumni.id}
+                  className="relative flex-shrink-0 group cursor-pointer"
+                  onMouseEnter={() => setHoveredIndex(index)}
+                  onMouseLeave={() => setHoveredIndex(null)}
+                  whileHover={{ 
+                    scale: 1.2,
+                    y: -8,
+                    transition: { duration: 0.4, ease: "easeOut" }
+                  }}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ 
+                    duration: 0.8, 
+                    delay: index * 0.1,
+                    ease: "easeOut"
+                  }}
                 >
-                  <div className="flex items-center justify-center px-3 sm:px-6 md:px-8">
-                    {/* Uniform Alumni Card */}
-                    <div className="flex items-center space-x-3 sm:space-x-4 md:space-x-6 bg-gradient-to-r from-primary-50 to-secondary-50 rounded-lg md:rounded-xl p-3 sm:p-4 md:p-6 border border-primary-200/50 shadow-lg w-full max-w-md">
-                      <div className="relative flex-shrink-0">
-                        <div className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full overflow-hidden border-2 md:border-4 border-gradient-to-r from-primary-500 to-secondary-500 shadow-lg">
-                          <OptimizedImage
-                            src={newlyJoinedAlumni[currentIndex]?.photo}
-                            alt={newlyJoinedAlumni[currentIndex]?.name}
-                            className="w-full h-full object-cover"
-                            fallbackSrc="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=face"
+                  {/* Enhanced Circular Photo with animated gradient border */}
+                  <div className="relative">
+                    <div className="w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-full overflow-hidden shadow-2xl group-hover:shadow-primary-500/50 transition-all duration-500">
+                      <div className="w-full h-full rounded-full bg-gradient-to-r from-primary-400 via-secondary-400 to-primary-400 p-1 animate-pulse">
+                        <div className="w-full h-full rounded-full overflow-hidden bg-white relative">
+                          <img
+                            src={alumni.photo}
+                            alt={alumni.name}
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                            onError={(e) => {
+                              console.log('Image failed to load:', alumni.photo);
+                              e.target.src = placeholderAvatar;
+                            }}
+                            onLoad={() => console.log('Image loaded successfully:', alumni.photo)}
                           />
+                          {/* Overlay effect on hover */}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                         </div>
-                        {/* Welcome Badge */}
-                        <div className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center">
-                          <span className="text-white text-xs">✨</span>
-                        </div>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="text-sm sm:text-base md:text-xl font-bold text-gray-900 mb-0.5 sm:mb-1 truncate">
-                          {newlyJoinedAlumni[currentIndex]?.name}
-                        </h3>
-                        <p className="text-primary-600 font-semibold text-xs sm:text-sm md:text-base mb-0.5 sm:mb-1">
-                          Batch {newlyJoinedAlumni[currentIndex]?.batch}
-                        </p>
-                        <p className="text-xs sm:text-sm text-gray-600 truncate">
-                          {newlyJoinedAlumni[currentIndex]?.department} Engineering
-                        </p>
                       </div>
                     </div>
+                    
+                    {/* Enhanced online indicator with glow */}
+                    <div className="absolute -bottom-2 -right-2 w-6 h-6 sm:w-7 sm:h-7 bg-gradient-to-r from-green-400 to-emerald-400 rounded-full border-3 border-white shadow-lg flex items-center justify-center group-hover:shadow-green-400/50 transition-all duration-300">
+                      <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                    </div>
+                    
+                    {/* Glow ring effect */}
+                    <div className="absolute inset-0 rounded-full bg-gradient-to-r from-primary-400/30 to-secondary-400/30 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10"></div>
+                    
+                    {/* Enhanced Hover Tooltip */}
+                    <AnimatePresence>
+                      {hoveredIndex === index && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 20, scale: 0.8 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: 20, scale: 0.8 }}
+                          transition={{ duration: 0.3 }}
+                          className="absolute -top-28 left-1/2 transform -translate-x-1/2 z-50"
+                        >
+                          <div className="bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-xl rounded-2xl px-6 py-4 shadow-2xl border border-white/30 min-w-max">
+                            <p className="text-base font-bold text-gray-900 text-center mb-2">
+                              {alumni.name}
+                            </p>
+                            <p className="text-sm text-primary-600 font-semibold text-center mb-1">
+                              Batch {alumni.batch}
+                            </p>
+                            <p className="text-xs text-gray-600 text-center">
+                              {alumni.department}
+                            </p>
+                            <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-white/95"></div>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
                 </motion.div>
-              </AnimatePresence>
-            </div>
-
-            {/* Navigation Arrows */}
-            {newlyJoinedAlumni.length > 1 && (
-              <>
-                <button
-                  onClick={prevSlide}
-                  className="absolute left-2 md:left-4 top-1/2 transform -translate-y-1/2 w-8 h-8 md:w-10 md:h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 border border-gray-200/50"
-                >
-                  <svg className="w-4 h-4 md:w-5 md:h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
-                </button>
-                <button
-                  onClick={nextSlide}
-                  className="absolute right-2 md:right-4 top-1/2 transform -translate-y-1/2 w-8 h-8 md:w-10 md:h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 border border-gray-200/50"
-                >
-                  <svg className="w-4 h-4 md:w-5 md:h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
-              </>
-            )}
-          </div>
-
-          {/* Dots Indicator */}
-          {newlyJoinedAlumni.length > 1 && (
-            <div className="flex justify-center mt-4 md:mt-6 space-x-1.5 md:space-x-2">
-              {newlyJoinedAlumni.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => goToSlide(index)}
-                  className={`w-2 h-2 md:w-3 md:h-3 rounded-full transition-all duration-300 ${
-                    index === currentIndex
-                      ? 'bg-gradient-to-r from-primary-500 to-secondary-500 scale-125'
-                      : 'bg-gray-300 hover:bg-gray-400'
-                  }`}
-                />
               ))}
             </div>
-          )}
+          </div>
+        </motion.div>
+
+        {/* Enhanced Emotional message */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          viewport={{ once: true }}
+          className="text-center mt-8"
+        >
+          <div className="inline-flex items-center space-x-4 bg-gradient-to-r from-primary-500/20 via-secondary-500/20 to-primary-500/20 backdrop-blur-xl rounded-full px-10 py-5 border border-white/30 shadow-2xl relative overflow-hidden">
+            {/* Animated background */}
+            <div className="absolute inset-0 bg-gradient-to-r from-primary-400/10 to-secondary-400/10 rounded-full animate-pulse"></div>
+            
+            <div className="flex items-center space-x-3 relative z-10">
+              <div className="w-4 h-4 bg-gradient-to-r from-primary-400 to-secondary-400 rounded-full animate-pulse shadow-lg"></div>
+              <span className="text-lg font-bold text-white italic tracking-wide">
+                Latest members to reconnect
+              </span>
+              <div className="w-4 h-4 bg-gradient-to-r from-secondary-400 to-primary-400 rounded-full animate-pulse shadow-lg" style={{ animationDelay: '0.5s' }}></div>
+            </div>
+          </div>
         </motion.div>
       </div>
     </section>

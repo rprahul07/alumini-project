@@ -46,6 +46,41 @@ export const alumniAPI = {
   },
 
   /**
+   * Get latest reconnects (public endpoint)
+   * @returns {Promise} Promise that resolves to latest reconnects data
+   */
+  getLatestReconnects: async () => {
+    try {
+      const response = await axios.get('/api/public/latest-reconnects');
+      
+      if (response.data.success) {
+        return {
+          success: true,
+          data: response.data.data || [],
+          message: 'Latest reconnects fetched successfully'
+        };
+      } else {
+        console.error('API returned error:', response.data);
+        return {
+          success: false,
+          data: [],
+          message: response.data.message || 'API returned an error'
+        };
+      }
+    } catch (error) {
+      console.error('Error fetching latest reconnects:', error);
+      console.error('Error response:', error.response?.data);
+      console.error('Error status:', error.response?.status);
+      
+      return {
+        success: false,
+        data: [],
+        message: error.response?.data?.message || error.response?.data?.error || 'Failed to fetch latest reconnects'
+      };
+    }
+  },
+
+  /**
    * Search alumni with filters
    * @param {Object} filters - Search filters
    * @returns {Promise} Promise that resolves to alumni search results
