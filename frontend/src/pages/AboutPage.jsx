@@ -143,13 +143,13 @@ const AboutPage = () => {
   {
     icon: 'fas fa-globe-americas',
     title: 'Global Recognition',
-    description: 'CUCEK alumni are placed in global companies.',
+    description: 'CUCEK alumni work in global companies across 45+ countries, offering worldwide opportunities and a strong professional network.',
     color: 'from-blue-400 to-cyan-400'
   },
   {
     icon: 'fas fa-lightbulb',
     title: 'Innovation Hub',
-    description: 'Encourages student projects, coding clubs, and startup mentorship through alumni and faculty.',
+    description: 'CUCEK supports student projects, coding clubs, and startup initiatives with mentorship from alumni and faculty.',
     color: 'from-purple-400 to-pink-400'
   },
   {
@@ -463,30 +463,57 @@ const AboutPage = () => {
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* Additional Features Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {achievements.slice(2).map((achievement, index) => (
-                <div key={index} className="group">
-                  <div className="relative bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 overflow-hidden">
-                    {/* Background Pattern */}
-                    <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-primary/5 to-secondary/5 rounded-full -translate-y-8 translate-x-8"></div>
-                    
-                    <div className="relative z-10">
-                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 bg-gradient-to-r ${achievement.color} shadow-md group-hover:shadow-xl group-hover:scale-110 transition-all duration-300`}>
-                        <i className={`${achievement.icon} text-white text-lg`}></i>
-                      </div>
-                      <h3 className="text-lg font-bold text-gray-900 mb-3 group-hover:text-primary transition-colors duration-300 leading-tight">
-                        {achievement.title}
-                      </h3>
-                      <p className="text-gray-600 leading-relaxed text-sm">
-                        {achievement.description}
-                      </p>
+               {/* Feature 3 - Large Card */}
+              <div className="lg:col-span-1 group">
+                <div className="relative bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100 overflow-hidden">
+                  {/* Background Pattern */}
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-secondary/10 to-accent/10 rounded-full -translate-y-16 translate-x-16"></div>
+                  <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-primary/10 to-secondary/10 rounded-full translate-y-12 -translate-x-12"></div>
+                  
+                  <div className="relative z-10">
+                    <div className="w-16 h-16 bg-gradient-to-r from-secondary to-accent rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
+                      <i className="fas fa-lightbulb text-white text-2xl"></i>
+                    </div>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-secondary transition-colors duration-300">
+                      Innovation Hub
+                    </h3>
+                    <p className="text-gray-600 leading-relaxed mb-6">
+                      CUCEK supports student projects, coding clubs, and startup initiatives with mentorship from alumni and faculty.
+                    </p>
+                    <div className="flex items-center text-secondary font-semibold">
+                      <span>Learn More</span>
+                      <i className="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform duration-300"></i>
                     </div>
                   </div>
                 </div>
-              ))}
+              </div>
+
+               {/* Feature 4 - Large Card */}
+              <div className="lg:col-span-1 group">
+                <div className="relative bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100 overflow-hidden">
+                  {/* Background Pattern */}
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-secondary/10 to-accent/10 rounded-full -translate-y-16 translate-x-16"></div>
+                  <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-primary/10 to-secondary/10 rounded-full translate-y-12 -translate-x-12"></div>
+                  
+                  <div className="relative z-10">
+                    <div className="w-16 h-16 bg-gradient-to-r from-secondary to-accent rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
+                      <i className="fas fa-handshake text-white text-2xl"></i>
+                    </div>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-secondary transition-colors duration-300">
+                      Strong Network
+                    </h3>
+                    <p className="text-gray-600 leading-relaxed mb-6">
+                     Active alumni support and regular placement drives with leading recruiters.
+                    </p>
+                    <div className="flex items-center text-secondary font-semibold">
+                      <span>Learn More</span>
+                      <i className="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform duration-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
             </div>
 
           </div>
