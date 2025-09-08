@@ -56,7 +56,13 @@ const EventsPage = () => {
 
       if (response.data.success) {
         console.log('Fetched events:', response.data.data.events);
-        setEvents(response.data.data.events);
+        // Filter out any undefined or null events and ensure they have required properties
+        const validEvents = (response.data.data.events || []).filter(event => 
+          event && 
+          event.id && 
+          typeof event.id === 'string' || typeof event.id === 'number'
+        );
+        setEvents(validEvents);
         setTotalPages(response.data.data.pagination.totalPages);
       } else {
         setError(response.data.message || 'Failed to fetch events');

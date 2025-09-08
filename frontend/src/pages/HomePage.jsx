@@ -264,8 +264,11 @@ const HomePage = () => {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-indigo-600"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 via-white to-secondary-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary-600 mx-auto mb-4"></div>
+          <p className="text-gray-600 text-lg font-medium">Loading CUCEK Alumni Connect...</p>
+        </div>
       </div>
     );
   }
@@ -340,7 +343,7 @@ const HomePage = () => {
                 viewport={{ once: true }}
                 className="text-center py-12"
               >
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
                 <p className="text-gray-500 mt-4">Loading testimonials...</p>
               </motion.div>
             ) : testimonials.length === 0 ? (

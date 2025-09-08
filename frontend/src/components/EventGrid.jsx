@@ -17,20 +17,25 @@ const EventGrid = ({ events, user, onEventUpdate }) => {
   useEffect(() => {
     if (!events || events.length === 0) return;
 
-    // Show first 3 events immediately
-    setVisibleEvents(events.slice(0, 3));
+    // Show first 3 events immediately (with safety check)
+    const initialEvents = events.slice(0, 3).filter(event => event && event.id);
+    setVisibleEvents(initialEvents);
 
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             const index = parseInt(entry.target.dataset.index);
-            setVisibleEvents(prev => {
-              if (!prev.some(event => event.id === events[index].id)) {
-                return [...prev, events[index]];
-              }
-              return prev;
-            });
+            // Validate index is within bounds
+            if (index >= 0 && index < events.length) {
+              setVisibleEvents(prev => {
+                const eventToAdd = events[index];
+                if (eventToAdd && eventToAdd.id && !prev.some(event => event && event.id === eventToAdd.id)) {
+                  return [...prev, eventToAdd];
+                }
+                return prev;
+              });
+            }
           }
         });
       },
@@ -64,7 +69,7 @@ const EventGrid = ({ events, user, onEventUpdate }) => {
   return (
     <div className="space-y-8">
       {/* Render visible events */}
-      {visibleEvents.map((event, index) => (
+      {visibleEvents.filter(event => event && event.id).map((event, index) => (
         <div 
           key={event.id}
           className="animate-fade-in"
