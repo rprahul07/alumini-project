@@ -85,8 +85,8 @@ const EventCard = ({ event, user, onEventUpdate, showEdit, showDelete, onEdit, o
 
   // Check if user can register
   const canRegister = user && (user.role === 'student' || user.role === 'alumni');
-  const isEventFull = event.maxCapacity && event.registeredUsers && 
-    event.registeredUsers.length >= event.maxCapacity;
+  const isEventFull = event.maxCapacity && event.registeredCount && 
+    event.registeredCount >= event.maxCapacity;
   const isAdmin = user?.role === 'admin';
   // Check if user is the organizer
   const isOrganizer = user && event.createdBy && event.createdBy.id === user.id;

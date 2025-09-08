@@ -14,7 +14,7 @@ const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
   
   const [isRegistering, setIsRegistering] = useState(false);
   const [isRegistered, setIsRegistered] = useState(
-    currentUser && event && event.registeredUsers && event.registeredUsers.includes(currentUser.id)
+    currentUser && event && event.isRegistered
   );
   // Add state for confirm dialog if needed
   const [confirmOpen, setConfirmOpen] = React.useState(false);
@@ -23,8 +23,8 @@ const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
 
   // Update registration status when user or event changes
   React.useEffect(() => {
-    if (currentUser && event && event.registeredUsers) {
-      setIsRegistered(event.registeredUsers.includes(currentUser.id));
+    if (currentUser && event) {
+      setIsRegistered(!!event.isRegistered);
     } else {
       setIsRegistered(false);
     }
@@ -95,7 +95,7 @@ const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
   // Check if event is in the past
   const isPastEvent = event ? new Date(event.date) < new Date(new Date().setHours(0,0,0,0)) : false;
   const maxCapacity = event && Number(event.maxCapacity) > 0 ? Number(event.maxCapacity) : null;
-  const registeredCount = event && event.registeredUsers ? event.registeredUsers.length : 0;
+  const registeredCount = event && event.registeredCount ? Number(event.registeredCount) : 0;
   const isEventFull = maxCapacity && registeredCount >= maxCapacity;
   const registrationClosed = isPastEvent || isEventFull;
 
@@ -213,9 +213,9 @@ const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
                     </div>
                   )}
                 </div>
-                {event.maxCapacity && (
+                {maxCapacity && (
                   <div className="text-xs text-gray-500 mt-1">
-                    {event.registeredCount || 0} of {event.maxCapacity} spots taken
+                    {registeredCount} of {maxCapacity} spots taken
                   </div>
                 )}
               </div>
@@ -255,7 +255,7 @@ const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
             </div>
             <div className="bg-white border border-gray-200 rounded-lg p-3 text-center">
               <div className="text-lg font-bold text-accent-600 mb-1">
-                {event.registeredCount || 0}
+                {registeredCount}
               </div>
               <div className="text-xs text-gray-600">Registered</div>
             </div>
