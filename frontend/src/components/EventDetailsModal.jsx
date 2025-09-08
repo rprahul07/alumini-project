@@ -131,18 +131,18 @@ const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
             : 'bg-primary text-white hover:bg-primary-700';
 
   const modalContent = (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
-      <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden shadow-2xl animate-slide-up">
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-fade-in">
+      <div className="bg-white/10 backdrop-blur-2xl rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-hidden shadow-2xl border border-white/20 animate-slide-up">
         {/* Header Section */}
-        <div className="bg-gradient-to-r from-primary-600 to-secondary-600 px-6 py-4">
+        <div className="bg-gradient-to-r from-primary-500/20 to-secondary-500/20 backdrop-blur-xl px-6 py-4 border-b border-white/20">
           <div className="flex items-center justify-between">
             {/* Event Type Badge */}
             <div className="flex items-center gap-3">
-              <span className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold bg-white/90 text-primary-700">
+              <span className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold bg-white/20 backdrop-blur-xl text-white border border-white/30 font-body">
                 {event.type}
               </span>
               {event.maxCapacity && (
-                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-accent-100 text-accent-700">
+                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-accent-500/20 text-accent-300 border border-accent-400/30 backdrop-blur-xl">
                   {event.registeredCount || 0}/{event.maxCapacity} spots
                 </span>
               )}
@@ -151,7 +151,7 @@ const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
             {/* Close Button */}
             <button
               onClick={onClose}
-              className="w-8 h-8 bg-white/20 text-white rounded-full flex items-center justify-center hover:bg-white/30 transition-all duration-200"
+              className="w-8 h-8 bg-white/20 backdrop-blur-xl text-white rounded-full flex items-center justify-center hover:bg-white/30 transition-all duration-200 border border-white/30"
             >
               <XMarkIcon className="h-4 w-4" />
             </button>
@@ -159,23 +159,23 @@ const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
         </div>
 
         {/* Content Section */}
-        <div className="p-6 overflow-y-auto max-h-[calc(90vh-80px)]">
+        <div className="p-6 overflow-y-auto max-h-[calc(90vh-80px)] scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
           {/* Event Title */}
           <div className="mb-6">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3 leading-tight">
+            <h2 className="text-2xl md:text-3xl font-bold font-display text-white mb-3 leading-tight">
               {event.name}
             </h2>
-            <div className="flex flex-wrap items-center gap-4 text-gray-600">
-              <div className="flex items-center text-sm">
-                <CalendarIcon className="h-4 w-4 mr-2 text-primary" />
+            <div className="flex flex-wrap items-center gap-4 text-white/80">
+              <div className="flex items-center text-sm font-body">
+                <CalendarIcon className="h-4 w-4 mr-2 text-primary-400" />
                 {formatDate(event.date)}
               </div>
-              <div className="flex items-center text-sm">
-                <ClockIcon className="h-4 w-4 mr-2 text-primary" />
+              <div className="flex items-center text-sm font-body">
+                <ClockIcon className="h-4 w-4 mr-2 text-secondary-400" />
                 {event.time}
               </div>
-              <div className="flex items-center text-sm">
-                <MapPinIcon className="h-4 w-4 mr-2 text-primary" />
+              <div className="flex items-center text-sm font-body">
+                <MapPinIcon className="h-4 w-4 mr-2 text-accent-400" />
                 {event.location}
               </div>
             </div>
@@ -184,37 +184,37 @@ const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
           {/* Event Details Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             {/* Organizer Info */}
-            <div className="bg-gray-50 rounded-xl p-4">
+            <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-4 border border-white/20">
               <div className="flex items-center">
-                <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center mr-3">
-                  <UserIcon className="h-5 w-5 text-primary-600" />
+                <div className="w-10 h-10 bg-primary-500/20 rounded-full flex items-center justify-center mr-3 border border-primary-400/30">
+                  <UserIcon className="h-5 w-5 text-primary-400" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 text-sm">Organized by</h3>
-                  <p className="text-gray-600 text-sm">{event.organizer}</p>
+                  <h3 className="font-semibold text-white text-sm font-body">Organized by</h3>
+                  <p className="text-white/80 text-sm font-body">{event.organizer}</p>
                 </div>
               </div>
             </div>
 
             {/* Registration Status */}
             {isLoggedIn && (
-              <div className="bg-gray-50 rounded-xl p-4">
-                <h3 className="font-semibold text-gray-900 text-sm mb-2">Registration Status</h3>
+              <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-4 border border-white/20">
+                <h3 className="font-semibold text-white text-sm mb-2 font-body">Registration Status</h3>
                 <div className="flex items-center">
                   {isRegistered ? (
-                    <div className="flex items-center text-green-600">
+                    <div className="flex items-center text-green-400">
                       <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-                      <span className="text-sm font-medium">You're registered!</span>
+                      <span className="text-sm font-medium font-body">You're registered!</span>
                     </div>
                   ) : (
-                    <div className="flex items-center text-gray-600">
-                      <div className="w-2 h-2 bg-gray-400 rounded-full mr-2"></div>
-                      <span className="text-sm font-medium">Not registered</span>
+                    <div className="flex items-center text-white/60">
+                      <div className="w-2 h-2 bg-white/40 rounded-full mr-2"></div>
+                      <span className="text-sm font-medium font-body">Not registered</span>
                     </div>
                   )}
                 </div>
                 {maxCapacity && (
-                  <div className="text-xs text-gray-500 mt-1">
+                  <div className="text-xs text-white/60 mt-1 font-body">
                     {registeredCount} of {maxCapacity} spots taken
                   </div>
                 )}
@@ -225,12 +225,12 @@ const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
           {/* Event Description */}
           {event.description && (
             <div className="mb-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center">
-                <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
+              <h3 className="text-lg font-bold text-white mb-3 flex items-center font-display">
+                <div className="w-2 h-2 bg-primary-400 rounded-full mr-2"></div>
                 About This Event
               </h3>
-              <div className="bg-gradient-to-r from-primary-50 to-secondary-50 rounded-xl p-4">
-                <p className="text-gray-700 leading-relaxed text-sm">
+              <div className="bg-gradient-to-r from-primary-500/10 to-secondary-500/10 backdrop-blur-xl rounded-2xl p-4 border border-white/20">
+                <p className="text-white/90 leading-relaxed text-sm font-body">
                   {event.description}
                 </p>
               </div>
@@ -239,47 +239,47 @@ const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
 
           {/* Event Stats */}
           <div className="grid grid-cols-4 gap-3 mb-6">
-            <div className="bg-white border border-gray-200 rounded-lg p-3 text-center">
-              <div className="text-lg font-bold text-primary-600 mb-1">
+            <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-3 text-center">
+              <div className="text-lg font-bold text-primary-400 mb-1 font-display">
                 {new Date(event.date).toLocaleDateString('en-US', { day: 'numeric' })}
               </div>
-              <div className="text-xs text-gray-600">
+              <div className="text-xs text-white/70 font-body">
                 {new Date(event.date).toLocaleDateString('en-US', { month: 'short' })}
               </div>
             </div>
-            <div className="bg-white border border-gray-200 rounded-lg p-3 text-center">
-              <div className="text-lg font-bold text-secondary-600 mb-1">
+            <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-3 text-center">
+              <div className="text-lg font-bold text-secondary-400 mb-1 font-display">
                 {event.time}
               </div>
-              <div className="text-xs text-gray-600">Time</div>
+              <div className="text-xs text-white/70 font-body">Time</div>
             </div>
-            <div className="bg-white border border-gray-200 rounded-lg p-3 text-center">
-              <div className="text-lg font-bold text-accent-600 mb-1">
+            <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-3 text-center">
+              <div className="text-lg font-bold text-accent-400 mb-1 font-display">
                 {registeredCount}
               </div>
-              <div className="text-xs text-gray-600">Registered</div>
+              <div className="text-xs text-white/70 font-body">Registered</div>
             </div>
-            <div className="bg-white border border-gray-200 rounded-lg p-3 text-center">
-              <div className="text-lg font-bold text-gray-600 mb-1">
+            <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-3 text-center">
+              <div className="text-lg font-bold text-white/80 mb-1 font-display">
                 {event.maxCapacity || '∞'}
               </div>
-              <div className="text-xs text-gray-600">Capacity</div>
+              <div className="text-xs text-white/70 font-body">Capacity</div>
             </div>
           </div>
 
           {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-3 justify-end pt-4 border-t border-gray-200">
+          <div className="flex flex-col sm:flex-row gap-3 justify-end pt-4 border-t border-white/20">
             {!isLoggedIn && !authLoading ? (
               <div className="text-center sm:text-left">
-                <h4 className="text-lg font-bold text-gray-900 mb-1">
+                <h4 className="text-lg font-bold text-white mb-1 font-display">
                   Ready to join this event?
                 </h4>
-                <p className="text-gray-600 mb-4 text-sm">
+                <p className="text-white/80 mb-4 text-sm font-body">
                   Sign in to register and get updates about this event.
                 </p>
                 <a
                   href="/role-selection"
-                  className="inline-flex items-center gap-2 rounded-lg px-6 py-3 font-semibold bg-primary text-white hover:bg-primary-700 hover:shadow-lg transition-all duration-300 transform hover:scale-105 text-sm"
+                  className="inline-flex items-center gap-2 rounded-2xl px-6 py-3 font-semibold bg-gradient-to-r from-primary-500 to-secondary-500 text-white hover:from-primary-600 hover:to-secondary-600 hover:shadow-2xl transition-all duration-300 transform hover:scale-105 text-sm font-body"
                 >
                   <UserIcon className="h-4 w-4" />
                   Login to Register
@@ -289,7 +289,7 @@ const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
               <div className="flex flex-col sm:flex-row gap-3">
                 <button
                   onClick={onClose}
-                  className="px-6 py-3 rounded-lg font-semibold border-2 border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-300 text-sm"
+                  className="px-6 py-3 rounded-2xl font-semibold border-2 border-white/30 text-white/80 hover:bg-white/10 hover:border-white/50 transition-all duration-300 text-sm font-body"
                 >
                   Close
                 </button>
@@ -297,7 +297,13 @@ const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
                   <button
                     onClick={handleRegistration}
                     disabled={buttonDisabled}
-                    className={`px-6 py-3 rounded-lg font-semibold shadow-lg transition-all duration-300 transform hover:scale-105 flex items-center gap-2 text-sm ${buttonClass}`}
+                    className={`px-6 py-3 rounded-2xl font-semibold shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center gap-2 text-sm font-body ${
+                      buttonDisabled
+                        ? 'bg-white/20 backdrop-blur-xl text-white/60 cursor-not-allowed border border-white/30'
+                        : isRegistered
+                          ? 'bg-gradient-to-r from-green-500 to-green-600 text-white cursor-not-allowed'
+                          : 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white hover:from-primary-600 hover:to-secondary-600 hover:shadow-2xl'
+                    }`}
                   >
                     {isRegistered ? (
                       <>

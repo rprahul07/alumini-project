@@ -15,11 +15,11 @@ const JobPagination = ({ currentPage, totalPages, onPageChange }) => {
   const pageNumbers = getPageNumbers();
 
   return (
-    <div className="flex items-center justify-center gap-3 mt-12">
+    <div className="flex items-center justify-center gap-2 mt-12">
       <button
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className="flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold bg-white text-gray-600 hover:bg-primary hover:text-white shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:bg-white disabled:hover:text-gray-600 border border-gray-200"
+        className="flex items-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold bg-white/10 backdrop-blur-xl text-white hover:bg-white/20 hover:shadow-xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:bg-white/10 border border-white/20 font-body"
       >
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -32,11 +32,11 @@ const JobPagination = ({ currentPage, totalPages, onPageChange }) => {
         <>
           <button
             onClick={() => onPageChange(1)}
-            className="rounded-full px-4 py-2 text-sm font-semibold shadow-md transition-all duration-300 transform hover:scale-105 border bg-white text-primary hover:bg-primary hover:text-white"
+            className="rounded-xl px-4 py-3 text-sm font-semibold bg-white/10 backdrop-blur-xl text-white hover:bg-white/20 transition-all duration-300 transform hover:scale-105 border border-white/20 font-body"
           >
             1
           </button>
-          {currentPage > 4 && <span className="px-2 text-gray-400">...</span>}
+          {currentPage > 4 && <span className="px-2 text-white/60">...</span>}
         </>
       )}
       
@@ -45,10 +45,10 @@ const JobPagination = ({ currentPage, totalPages, onPageChange }) => {
         <button
           key={page}
           onClick={() => onPageChange(page)}
-          className={`rounded-full px-4 py-2 text-sm font-semibold shadow-md transition-all duration-300 transform hover:scale-105 border ${
+          className={`rounded-xl px-4 py-3 text-sm font-semibold transition-all duration-300 transform hover:scale-105 font-body ${
             page === currentPage
-              ? 'bg-primary text-white shadow-lg scale-105 border-primary'
-              : 'bg-white text-primary hover:bg-primary hover:text-white border-gray-200'
+              ? 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white shadow-xl scale-105 border border-primary-400/30'
+              : 'bg-white/10 backdrop-blur-xl text-white hover:bg-white/20 border border-white/20'
           }`}
         >
           {page}
@@ -58,10 +58,10 @@ const JobPagination = ({ currentPage, totalPages, onPageChange }) => {
       {/* Last page and ellipsis */}
       {currentPage < totalPages - 2 && (
         <>
-          {currentPage < totalPages - 3 && <span className="px-2 text-gray-400">...</span>}
+          {currentPage < totalPages - 3 && <span className="px-2 text-white/60">...</span>}
           <button
             onClick={() => onPageChange(totalPages)}
-            className="rounded-full px-4 py-2 text-sm font-semibold shadow-md transition-all duration-300 transform hover:scale-105 border bg-white text-primary hover:bg-primary hover:text-white"
+            className="rounded-xl px-4 py-3 text-sm font-semibold bg-white/10 backdrop-blur-xl text-white hover:bg-white/20 transition-all duration-300 transform hover:scale-105 border border-white/20 font-body"
           >
             {totalPages}
           </button>
@@ -71,7 +71,7 @@ const JobPagination = ({ currentPage, totalPages, onPageChange }) => {
       <button
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className="flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold bg-white text-gray-600 hover:bg-primary hover:text-white shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:bg-white disabled:hover:text-gray-600 border border-gray-200"
+        className="flex items-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold bg-white/10 backdrop-blur-xl text-white hover:bg-white/20 hover:shadow-xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:bg-white/10 border border-white/20 font-body"
       >
         Next
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

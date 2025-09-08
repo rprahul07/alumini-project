@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from '../config/axios';
+import Navbar from '../components/Navbar';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
 const ContactPage = () => {
@@ -136,7 +137,9 @@ const ContactPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-gray-50">
+    <>
+      <Navbar />
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-gray-50">
       {isSubmitted ? (
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
             <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
@@ -396,7 +399,8 @@ const ContactPage = () => {
         </section>
         </>
       )}
-    </div>
+      </div>
+    </>
   );
 };
 

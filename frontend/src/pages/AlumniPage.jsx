@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import Navbar from '../components/Navbar';
 import AlumniSearch from '../components/AlumniSearch';
 import AlumniFilterButton from '../components/AlumniFilterButton';
 import AlumniActiveFilters from '../components/AlumniActiveFilters';
@@ -263,6 +264,7 @@ const AlumniPage = () => {
 
   return (
     <>
+      <Navbar />
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-gray-50">
         {/* Hero Section */}
         <section className="bg-gradient-to-r from-primary-600 via-primary-700 to-secondary-600 text-white py-12 sm:py-16">

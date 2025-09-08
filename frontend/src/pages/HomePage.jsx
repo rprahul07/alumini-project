@@ -259,6 +259,19 @@ const HomePage = () => {
     return () => clearInterval(interval);
   }, [spotlights.length]);
 
+  // Set light background for home page
+  useEffect(() => {
+    // Set light background
+    document.body.style.backgroundColor = '#f9fafb'; // gray-50
+    document.documentElement.style.backgroundColor = '#f9fafb';
+    
+    // Cleanup function to reset background when component unmounts
+    return () => {
+      document.body.style.backgroundColor = '';
+      document.documentElement.style.backgroundColor = '';
+    };
+  }, []);
+
   const handleImageError = (e, fallbackSrc) => {
     e.target.onerror = null;
     e.target.src = fallbackSrc;

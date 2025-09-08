@@ -127,6 +127,9 @@ const Navbar = ({ isHome = false }) => {
 
   // Auto-detect if on home page
   const isHomePage = isHome || location.pathname === '/';
+  
+  // Detect if on a page with dark background (events, jobs, etc.)
+  const isDarkBackgroundPage = ['/events', '/jobs', '/alumni', '/students'].includes(location.pathname);
 
   // Handle scroll effect
   useEffect(() => {
@@ -220,7 +223,7 @@ const Navbar = ({ isHome = false }) => {
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled || !isHomePage 
+        scrolled || !isHomePage || isDarkBackgroundPage
           ? 'bg-black/20 backdrop-blur-lg border-b border-white/10 shadow-lg' 
           : 'bg-transparent'
       }`}
@@ -269,8 +272,12 @@ const Navbar = ({ isHome = false }) => {
                     className={({ isActive }) =>
                       `relative px-4 py-2 rounded-full text-sm font-semibold font-body transition-all duration-300 transform hover:scale-105 overflow-hidden ${
                         isActive && !isDashboardRoute
-                          ? 'bg-white/90 backdrop-blur-sm border border-primary-300/30 shadow-lg text-primary-700 font-bold'
-                          : 'text-gray-700 hover:bg-white/60 hover:shadow-md hover:text-primary-600'
+                          ? isDarkBackgroundPage
+                            ? 'bg-white/20 backdrop-blur-sm border border-white/30 shadow-lg text-white font-bold'
+                            : 'bg-white/90 backdrop-blur-sm border border-primary-300/30 shadow-lg text-primary-700 font-bold'
+                          : isDarkBackgroundPage
+                            ? 'text-white/90 hover:bg-white/20 hover:shadow-md hover:text-white'
+                            : 'text-gray-700 hover:bg-white/60 hover:shadow-md hover:text-primary-600'
                       }`
                     }
                     end={link.path === '/'}
@@ -287,13 +294,21 @@ const Navbar = ({ isHome = false }) => {
               <div className="relative dropdown-container" ref={avatarRef}>
                 <button
                   onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className="flex items-center space-x-3 p-2 rounded-2xl bg-white/70 backdrop-blur-xl border border-white/30 hover:bg-white/90 transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl"
+                  className={`flex items-center space-x-3 p-2 rounded-2xl backdrop-blur-xl border transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl ${
+                    isDarkBackgroundPage
+                      ? 'bg-white/20 border-white/30 hover:bg-white/30'
+                      : 'bg-white/70 border-white/30 hover:bg-white/90'
+                  }`}
                 >
                   <ProfileImage user={user} size="w-8 h-8" textSize="text-xs" />
-                  <span className="hidden sm:block text-sm font-semibold font-body text-gray-700">
+                  <span className={`hidden sm:block text-sm font-semibold font-body ${
+                    isDarkBackgroundPage ? 'text-white' : 'text-gray-700'
+                  }`}>
                     Hi, {getUserDisplayName(user)}
                   </span>
-                                     <svg className={`w-3 h-3 text-gray-500 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className={`w-3 h-3 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''} ${
+                    isDarkBackgroundPage ? 'text-white/70' : 'text-gray-500'
+                  }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                    </svg>
                 </button>
@@ -311,14 +326,18 @@ const Navbar = ({ isHome = false }) => {
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="lg:hidden p-2 rounded-xl bg-white/70 backdrop-blur-xl border border-white/30 hover:bg-white/90 transition-all duration-300 shadow-xl"
+              className={`lg:hidden p-2 rounded-xl backdrop-blur-xl border transition-all duration-300 shadow-xl ${
+                isDarkBackgroundPage
+                  ? 'bg-white/20 border-white/30 hover:bg-white/30'
+                  : 'bg-white/70 border-white/30 hover:bg-white/90'
+              }`}
             >
                              {isMenuOpen ? (
-                 <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                 <svg className={`w-5 h-5 ${isDarkBackgroundPage ? 'text-white' : 'text-gray-700'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                  </svg>
                ) : (
-                 <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                 <svg className={`w-5 h-5 ${isDarkBackgroundPage ? 'text-white' : 'text-gray-700'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                  </svg>
                )}
@@ -329,7 +348,11 @@ const Navbar = ({ isHome = false }) => {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="lg:hidden bg-white/95 backdrop-blur-2xl mx-4 mt-2 rounded-3xl shadow-2xl border border-white/40 animate-in slide-in-from-top duration-300">
+        <div className={`lg:hidden backdrop-blur-2xl mx-4 mt-2 rounded-3xl shadow-2xl border animate-in slide-in-from-top duration-300 ${
+          isDarkBackgroundPage
+            ? 'bg-white/10 border-white/20'
+            : 'bg-white/95 border-white/40'
+        }`}>
           <div className="py-4">
             {navLinks
               .filter(link => (!link.auth || user) && !(link.hideForStudent && user?.role === 'student'))
@@ -342,8 +365,12 @@ const Navbar = ({ isHome = false }) => {
                     className={({ isActive }) =>
                       `flex items-center px-6 py-3 text-sm font-semibold font-body transition-all duration-200 ${
                         isActive && !isDashboardRoute
-                          ? 'bg-gradient-to-r from-primary-100 to-secondary-100 text-primary-700 mx-4 rounded-xl shadow-md border border-primary-200'
-                          : 'text-gray-700 hover:bg-gradient-to-r hover:from-primary-50 hover:to-secondary-50 hover:text-primary-700 mx-4 rounded-xl'
+                          ? isDarkBackgroundPage
+                            ? 'bg-white/20 text-white mx-4 rounded-xl shadow-md border border-white/30'
+                            : 'bg-gradient-to-r from-primary-100 to-secondary-100 text-primary-700 mx-4 rounded-xl shadow-md border border-primary-200'
+                          : isDarkBackgroundPage
+                            ? 'text-white/90 hover:bg-white/20 hover:text-white mx-4 rounded-xl'
+                            : 'text-gray-700 hover:bg-gradient-to-r hover:from-primary-50 hover:to-secondary-50 hover:text-primary-700 mx-4 rounded-xl'
                       }`
                     }
                     end={link.path === '/'}

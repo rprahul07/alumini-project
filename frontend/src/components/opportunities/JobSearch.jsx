@@ -25,28 +25,28 @@ const JobSearch = ({ onSearch, isLoading = false }) => {
 
   return (
     <form onSubmit={handleSubmit} className="relative flex-1">
-      <div className="relative">
-        <MagnifyingGlassIcon className="absolute left-2.5 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
+      <div className="relative group">
+        <MagnifyingGlassIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-primary-400 transition-colors duration-200" />
         <input
           type="text"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="Search jobs..."
-          className="w-full pl-7 pr-7 py-3 border border-gray-300 bg-white text-sm text-gray-700 placeholder-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200 shadow-sm hover:shadow-md"
+          placeholder="Search for opportunities..."
+          className="w-full pl-12 pr-12 py-4 bg-white/10 backdrop-blur-xl border border-white/20 text-white placeholder-gray-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-400/50 focus:border-primary-400/50 transition-all duration-300 shadow-lg hover:shadow-xl hover:bg-white/15 font-body"
           disabled={isLoading}
         />
         {searchTerm && (
           <button
             type="button"
             onClick={handleClear}
-            className="absolute right-2.5 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors p-0.5"
+            className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors p-1 rounded-full hover:bg-white/10"
           >
             <XMarkIcon className="h-4 w-4" />
           </button>
         )}
         {isLoading && (
-          <div className="absolute right-2.5 top-1/2 transform -translate-y-1/2">
-            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+          <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
+            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary-400"></div>
           </div>
         )}
       </div>

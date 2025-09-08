@@ -1,7 +1,6 @@
 import React from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import MainLayout from '../layouts/MainLayout';
 import HomePage from '../pages/HomePage';
 import AuthPage from '../pages/AuthPage';
 import RoleSelection from '../pages/RoleSelection';
@@ -46,38 +45,36 @@ const AppRoutes = () => {
       {/* HomePage with special styling */}
       <Route path="/" element={<HomePage />} />
       
-      {/* Routes with MainLayout (includes Navbar) */}
-      <Route path="/" element={<MainLayout />}>
-        <Route path="events" element={<EventsPage />} />
-        <Route path="about" element={<AboutPage />} />
-        <Route path="testimonials" element={<TestimonialsPage />} />
-        <Route path="contact" element={<ContactPage />} />
-        <Route path="faq" element={<FaqPage />} />
-        <Route 
-          path="alumni" 
-          element={
-            <ProtectedRoute>
-              <AlumniPage />
-            </ProtectedRoute>
-          } 
-        />
-        <Route
-          path="students"
-          element={
-            <ProtectedRoute allowedRoles={['faculty', 'alumni', 'admin']}>
-              <StudentsPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="jobs"
-          element={
-            <ProtectedRoute>
-              <JobsPage />
-            </ProtectedRoute>
-          }
-        />
-      </Route>
+      {/* Routes with individual Navbar components */}
+      <Route path="events" element={<EventsPage />} />
+      <Route path="about" element={<AboutPage />} />
+      <Route path="testimonials" element={<TestimonialsPage />} />
+      <Route path="contact" element={<ContactPage />} />
+      <Route path="faq" element={<FaqPage />} />
+      <Route 
+        path="alumni" 
+        element={
+          <ProtectedRoute>
+            <AlumniPage />
+          </ProtectedRoute>
+        } 
+      />
+      <Route
+        path="students"
+        element={
+          <ProtectedRoute allowedRoles={['faculty', 'alumni', 'admin']}>
+            <StudentsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="jobs"
+        element={
+          <ProtectedRoute>
+            <JobsPage />
+          </ProtectedRoute>
+        }
+      />
 
       {/* Student Dashboard */}
       <Route

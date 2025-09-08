@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { testimonialsAPI } from '../services/testimonialsService';
 import { dashboardAPI } from '../services/dashboardService';
+import Navbar from '../components/Navbar';
 import TestimonialSearch from '../components/TestimonialSearch';
 import TestimonialFilterButton from '../components/TestimonialFilterButton';
 import TestimonialActiveFilters from '../components/TestimonialActiveFilters';
@@ -142,6 +143,7 @@ const TestimonialsPage = () => {
 
   return (
     <>
+      <Navbar />
       <div className="min-h-screen bg-gray-50">
       
       {/* Hero Section */}

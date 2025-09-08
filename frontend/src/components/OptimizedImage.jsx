@@ -19,16 +19,20 @@ const OptimizedImage = ({
 
   // Handle image load success
   const handleLoad = () => {
+    console.log('Image loaded successfully:', imageSrc);
     setIsLoaded(true);
     setHasError(false);
   };
 
   // Handle image load error
   const handleError = () => {
+    console.log('Image load error for:', imageSrc);
     if (fallbackSrc && imageSrc !== fallbackSrc) {
+      console.log('Trying fallback image:', fallbackSrc);
       setImageSrc(fallbackSrc);
       setHasError(false);
     } else {
+      console.log('No fallback available, showing error state');
       setHasError(true);
     }
   };

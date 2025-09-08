@@ -103,20 +103,20 @@ const SimpleApplyModal = ({ open, onClose, job, showAlert, onSuccess }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 relative">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-4">
+      <div className="bg-white/10 backdrop-blur-2xl rounded-3xl w-full max-w-md shadow-2xl border border-white/20 relative animate-slide-up">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-gray-100">
+        <div className="bg-gradient-to-r from-primary-500/20 to-secondary-500/20 backdrop-blur-xl px-6 py-4 border-b border-white/20 rounded-t-3xl">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold text-gray-900">Apply for Job</h2>
+            <h2 className="text-xl font-bold text-white font-display">Apply for Job</h2>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 transition-colors"
+              className="w-8 h-8 bg-white/20 backdrop-blur-xl text-white rounded-full flex items-center justify-center hover:bg-white/30 transition-all duration-200 border border-white/30"
             >
-              <XMarkIcon className="h-6 w-6" />
+              <XMarkIcon className="h-4 w-4" />
             </button>
           </div>
-          <p className="text-sm text-gray-600 mt-1">{job.jobTitle} at {job.companyName}</p>
+          <p className="text-sm text-white/80 mt-1 font-body">{job.jobTitle} at {job.companyName}</p>
         </div>
 
         {/* Content */}
@@ -124,21 +124,21 @@ const SimpleApplyModal = ({ open, onClose, job, showAlert, onSuccess }) => {
           {job.registrationType === 'external' ? (
             // External Application Flow
             <>
-              <div className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                    <UserIcon className="h-5 w-5 text-blue-600" />
+              <div className="space-y-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-gradient-to-r from-primary-500/20 to-secondary-500/20 rounded-2xl flex items-center justify-center border border-primary-400/30">
+                    <UserIcon className="h-6 w-6 text-primary-400" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold text-gray-900">External Application</h3>
-                    <p className="text-sm text-gray-600">This job requires external application</p>
+                    <h3 className="font-bold text-white text-lg font-display">External Application</h3>
+                    <p className="text-sm text-white/80 font-body">This job requires external application</p>
                   </div>
                 </div>
-                <div className="p-4 bg-blue-50 border border-blue-200 rounded-xl">
-                  <p className="text-sm text-blue-800 mb-2">
+                <div className="bg-gradient-to-r from-primary-500/10 to-secondary-500/10 backdrop-blur-xl rounded-2xl p-4 border border-white/20">
+                  <p className="text-sm text-white/90 mb-2 font-body">
                     You will be redirected to the company's application portal.
                   </p>
-                  <p className="text-xs text-blue-600">
+                  <p className="text-xs text-white/70 font-body">
                     You can complete your profile later if needed.
                   </p>
                 </div>
@@ -148,7 +148,7 @@ const SimpleApplyModal = ({ open, onClose, job, showAlert, onSuccess }) => {
               <button
                 onClick={handleApply}
                 disabled={applying}
-                className="w-full px-4 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 disabled:bg-gray-300 disabled:text-gray-500 transition-colors flex items-center justify-center gap-2"
+                className="w-full px-6 py-4 bg-gradient-to-r from-primary-500 to-secondary-500 text-white rounded-2xl font-semibold hover:from-primary-600 hover:to-secondary-600 disabled:bg-gray-500/20 disabled:text-gray-400 transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl flex items-center justify-center gap-3 font-body"
               >
                 {applying ? (
                   <>
@@ -156,7 +156,12 @@ const SimpleApplyModal = ({ open, onClose, job, showAlert, onSuccess }) => {
                     Redirecting...
                   </>
                 ) : (
-                  'Apply via External Link'
+                  <>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                    Apply via External Link
+                  </>
                 )}
               </button>
             </>
@@ -164,48 +169,48 @@ const SimpleApplyModal = ({ open, onClose, job, showAlert, onSuccess }) => {
             // Internal Application Flow
             <>
               {/* Profile Edit Section */}
-              <div className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                    <UserIcon className="h-5 w-5 text-blue-600" />
+              <div className="space-y-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-gradient-to-r from-primary-500/20 to-secondary-500/20 rounded-2xl flex items-center justify-center border border-primary-400/30">
+                    <UserIcon className="h-6 w-6 text-primary-400" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold text-gray-900">Update Your Profile</h3>
-                    <p className="text-sm text-gray-600">Ensure your profile is complete before applying</p>
+                    <h3 className="font-bold text-white text-lg font-display">Update Your Profile</h3>
+                    <p className="text-sm text-white/80 font-body">Ensure your profile is complete before applying</p>
                   </div>
                 </div>
                 <button
                   onClick={openProfileEdit}
-                  className="w-full px-4 py-2.5 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors"
+                  className="w-full px-6 py-3 bg-gradient-to-r from-primary-500 to-secondary-500 text-white rounded-2xl font-semibold hover:from-primary-600 hover:to-secondary-600 transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl font-body"
                 >
                   Edit Profile
                 </button>
               </div>
 
               {/* CV Upload Section */}
-              <div className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                    <DocumentTextIcon className="h-5 w-5 text-green-600" />
+              <div className="space-y-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-gradient-to-r from-green-500/20 to-emerald-500/20 rounded-2xl flex items-center justify-center border border-green-400/30">
+                    <DocumentTextIcon className="h-6 w-6 text-green-400" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold text-gray-900">Upload CV</h3>
-                    <p className="text-sm text-gray-600">Upload your resume for this application</p>
+                    <h3 className="font-bold text-white text-lg font-display">Upload CV</h3>
+                    <p className="text-sm text-white/80 font-body">Upload your resume for this application</p>
                   </div>
                 </div>
 
                 {/* Current CV Display */}
                 {user.resumeUrl && !cvFile && (
-                  <div className="p-3 bg-green-50 border border-green-200 rounded-xl">
+                  <div className="bg-gradient-to-r from-green-500/10 to-emerald-500/10 backdrop-blur-xl rounded-2xl p-4 border border-white/20">
                     <div className="flex items-center gap-3">
-                      <PaperClipIcon className="h-5 w-5 text-green-600" />
+                      <PaperClipIcon className="h-5 w-5 text-green-400" />
                       <div className="flex-1">
-                        <p className="text-sm font-medium text-green-800">Current CV</p>
+                        <p className="text-sm font-medium text-white font-body">Current CV</p>
                         <a 
                           href={user.resumeUrl} 
                           target="_blank" 
                           rel="noopener noreferrer" 
-                          className="text-xs text-green-600 hover:text-green-800 underline"
+                          className="text-xs text-green-400 hover:text-green-300 underline font-body"
                         >
                           View CV
                         </a>
@@ -216,16 +221,16 @@ const SimpleApplyModal = ({ open, onClose, job, showAlert, onSuccess }) => {
 
                 {/* New CV Upload */}
                 {cvFile && (
-                  <div className="p-3 bg-blue-50 border border-blue-200 rounded-xl">
+                  <div className="bg-gradient-to-r from-primary-500/10 to-secondary-500/10 backdrop-blur-xl rounded-2xl p-4 border border-white/20">
                     <div className="flex items-center gap-3">
-                      <PaperClipIcon className="h-5 w-5 text-blue-600" />
+                      <PaperClipIcon className="h-5 w-5 text-primary-400" />
                       <div className="flex-1">
-                        <p className="text-sm font-medium text-blue-800">New CV Uploaded</p>
-                        <p className="text-xs text-blue-600">{cvFile.file.name}</p>
+                        <p className="text-sm font-medium text-white font-body">New CV Uploaded</p>
+                        <p className="text-xs text-white/70 font-body">{cvFile.file.name}</p>
                       </div>
                       <button
                         onClick={() => setCvFile(null)}
-                        className="text-blue-400 hover:text-blue-600"
+                        className="text-white/60 hover:text-white transition-colors"
                       >
                         <XMarkIcon className="h-4 w-4" />
                       </button>
@@ -245,26 +250,26 @@ const SimpleApplyModal = ({ open, onClose, job, showAlert, onSuccess }) => {
                   />
                   <label 
                     htmlFor="cv-upload"
-                    className={`block w-full p-4 border-2 border-dashed rounded-xl text-center transition-all duration-200 ${
+                    className={`block w-full p-6 border-2 border-dashed rounded-2xl text-center transition-all duration-300 ${
                       cvUploading 
-                        ? 'border-blue-200 bg-blue-50 cursor-not-allowed' 
-                        : 'border-gray-300 bg-gray-50 hover:border-blue-400 hover:bg-blue-50 cursor-pointer'
+                        ? 'border-primary-400/50 bg-primary-500/10 cursor-not-allowed' 
+                        : 'border-white/30 bg-white/5 hover:border-primary-400/50 hover:bg-primary-500/10 cursor-pointer'
                     }`}
                   >
-                    <div className="flex flex-col items-center gap-2">
+                    <div className="flex flex-col items-center gap-3">
                       {cvUploading ? (
                         <>
-                          <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-                          <span className="text-sm text-blue-600 font-medium">Uploading...</span>
+                          <div className="w-8 h-8 border-2 border-primary-400 border-t-transparent rounded-full animate-spin"></div>
+                          <span className="text-sm text-primary-400 font-medium font-body">Uploading...</span>
                         </>
                       ) : (
                         <>
-                          <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-8 h-8 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                           </svg>
                           <div>
-                            <span className="text-sm font-medium text-gray-700">Upload New CV</span>
-                            <p className="text-xs text-gray-500 mt-1">PDF, DOC, or DOCX (max 5MB)</p>
+                            <span className="text-sm font-medium text-white font-body">Upload New CV</span>
+                            <p className="text-xs text-white/60 mt-1 font-body">PDF, DOC, or DOCX (max 5MB)</p>
                           </div>
                         </>
                       )}
@@ -277,7 +282,7 @@ const SimpleApplyModal = ({ open, onClose, job, showAlert, onSuccess }) => {
               <button
                 onClick={handleApply}
                 disabled={applying || (!user.resumeUrl && !cvFile)}
-                className="w-full px-4 py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 disabled:bg-gray-300 disabled:text-gray-500 transition-colors flex items-center justify-center gap-2"
+                className="w-full px-6 py-4 bg-gradient-to-r from-primary-500 to-secondary-500 text-white rounded-2xl font-semibold hover:from-primary-600 hover:to-secondary-600 disabled:bg-gray-500/20 disabled:text-gray-400 transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl flex items-center justify-center gap-3 font-body"
               >
                 {applying ? (
                   <>
@@ -285,7 +290,12 @@ const SimpleApplyModal = ({ open, onClose, job, showAlert, onSuccess }) => {
                     Applying...
                   </>
                 ) : (
-                  'Apply Now'
+                  <>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                    Apply Now
+                  </>
                 )}
               </button>
             </>
