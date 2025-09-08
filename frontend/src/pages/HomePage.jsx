@@ -293,23 +293,25 @@ const HomePage = () => {
           <StorytellingHero />
         </section>
 
+        {/* Latest Reconnect - Newly Joined Alumni */}
+        <NewlyJoinedAlumni />
+
+        {/* Memory Lane Gallery */}
+        <MemoryLaneGallery />
 
         {/* Beautiful Testimonials Section */}
-        <section id="testimonials" className="py-20 bg-gradient-to-br from-green-50 via-white to-blue-50 relative overflow-hidden">
-          {/* Elegant Background Elements */}
+        <section id="testimonials" className="py-20 bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 relative overflow-hidden">
+          {/* Enhanced Background decorative elements */}
           <div className="absolute inset-0 overflow-hidden">
-            <div 
-              className="absolute top-20 right-20 w-40 h-40 bg-gradient-to-br from-green-100/40 to-blue-100/40 rounded-full blur-3xl"
-              style={{ transform: `translateY(${parallaxSlow}px) translateX(${parallaxMedium * 0.3}px)` }}
-            ></div>
-            <div 
-              className="absolute bottom-20 left-20 w-32 h-32 bg-gradient-to-tr from-blue-100/40 to-green-100/40 rounded-full blur-3xl"
-              style={{ transform: `translateY(${-parallaxFast}px) translateX(${-parallaxSlow * 0.4}px)` }}
-            ></div>
-            <div 
-              className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-60 h-60 bg-gradient-to-r from-green-50/30 to-blue-50/30 rounded-full blur-3xl"
-              style={{ transform: `translate(-50%, -50%) translateY(${parallaxMedium}px)` }}
-            ></div>
+            {/* Animated gradient orbs */}
+            <div className="absolute top-10 right-10 w-96 h-96 bg-gradient-to-br from-primary-400/30 to-secondary-400/30 rounded-full blur-3xl animate-pulse"></div>
+            <div className="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-tr from-secondary-400/30 to-primary-400/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-primary-300/20 to-secondary-300/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+            
+            {/* Floating particles */}
+            <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-primary-400/60 rounded-full animate-bounce" style={{ animationDelay: '0.5s' }}></div>
+            <div className="absolute top-3/4 right-1/4 w-1 h-1 bg-secondary-400/60 rounded-full animate-bounce" style={{ animationDelay: '1.5s' }}></div>
+            <div className="absolute top-1/2 right-1/3 w-1.5 h-1.5 bg-primary-300/60 rounded-full animate-bounce" style={{ animationDelay: '2.5s' }}></div>
           </div>
 
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -321,17 +323,17 @@ const HomePage = () => {
               viewport={{ once: true }}
               className="text-center mb-16"
             >
-              <div className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-gradient-to-r from-green-100 to-blue-100 text-green-700 mb-4 border border-green-200">
-                <span className="w-2 h-2 bg-gradient-to-r from-green-500 to-blue-500 rounded-full mr-2 animate-pulse"></span>
-                💬 Testimonials
+              <div className="inline-flex items-center px-6 py-3 rounded-full text-sm font-semibold bg-gradient-to-r from-primary-500/20 to-secondary-500/20 backdrop-blur-sm text-white border border-white/20 mb-8 shadow-lg">
+                <span className="w-3 h-3 bg-gradient-to-r from-primary-400 to-secondary-400 rounded-full mr-3 animate-pulse"></span>
+                <span>💬 Testimonials</span>
               </div>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold font-display text-white mb-6 leading-tight">
                 What Our{' '}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-blue-600">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 via-secondary-400 to-primary-400 animate-pulse">
                   Alumni Say
                 </span>
               </h2>
-              <p className="text-base text-gray-600 max-w-2xl mx-auto leading-relaxed">
+              <p className="text-base md:text-lg text-gray-300 max-w-2xl mx-auto leading-relaxed font-body">
                 Discover inspiring stories from our graduates who are making a difference in their fields
               </p>
             </motion.div>
@@ -375,23 +377,23 @@ const HomePage = () => {
           </div>
         </section>
 
-        {/* Live Stats */}
+        {/* Our Growth Impact - Live Stats */}
         <LiveStats />
-
-        {/* Newly Joined Alumni */}
-        <NewlyJoinedAlumni />
-
-        {/* Memory Lane Gallery */}
-        <MemoryLaneGallery />
 
 
         {/* Enhanced Features Section */}
-        <section id="features" className="py-16 bg-gradient-to-br from-primary-50 via-white to-secondary-50 relative overflow-hidden">
-            {/* Background decorative elements */}
+        <section id="features" className="py-16 bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 relative overflow-hidden">
+            {/* Enhanced Background decorative elements */}
             <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute top-16 right-16 w-48 h-48 bg-gradient-to-br from-primary-200/20 to-secondary-200/20 rounded-full blur-3xl"></div>
-            <div className="absolute bottom-16 left-16 w-40 h-40 bg-gradient-to-tr from-secondary-200/20 to-primary-200/20 rounded-full blur-3xl"></div>
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-primary-100/15 to-secondary-100/15 rounded-full blur-3xl"></div>
+            {/* Animated gradient orbs */}
+            <div className="absolute top-10 right-10 w-96 h-96 bg-gradient-to-br from-primary-400/30 to-secondary-400/30 rounded-full blur-3xl animate-pulse"></div>
+            <div className="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-tr from-secondary-400/30 to-primary-400/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-primary-300/20 to-secondary-300/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+            
+            {/* Floating particles */}
+            <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-primary-400/60 rounded-full animate-bounce" style={{ animationDelay: '0.5s' }}></div>
+            <div className="absolute top-3/4 right-1/4 w-1 h-1 bg-secondary-400/60 rounded-full animate-bounce" style={{ animationDelay: '1.5s' }}></div>
+            <div className="absolute top-1/2 right-1/3 w-1.5 h-1.5 bg-primary-300/60 rounded-full animate-bounce" style={{ animationDelay: '2.5s' }}></div>
             </div>
 
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -403,17 +405,17 @@ const HomePage = () => {
                 viewport={{ once: true }}
               className="text-center mb-12"
             >
-              <div className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-white/80 backdrop-blur-sm text-primary-700 border border-primary-200 mb-4">
-                <span className="w-2 h-2 bg-primary-500 rounded-full mr-2"></span>
-                Why Join CUCEK Alumni Connect
+              <div className="inline-flex items-center px-6 py-3 rounded-full text-sm font-semibold bg-gradient-to-r from-primary-500/20 to-secondary-500/20 backdrop-blur-sm text-white border border-white/20 mb-8 shadow-lg">
+                <span className="w-3 h-3 bg-gradient-to-r from-primary-400 to-secondary-400 rounded-full mr-3 animate-pulse"></span>
+                <span>Why Join CUCEK Alumni Connect</span>
                 </div>
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold font-display text-white mb-6 leading-tight">
                 Unlock Your{' '}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-secondary-600">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 via-secondary-400 to-primary-400 animate-pulse">
                   Alumni Potential
                   </span>
                 </h2>
-                <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                <p className="text-base md:text-lg text-gray-300 max-w-2xl mx-auto font-body">
                 Join thousands of successful CUCEK graduates who are shaping the future through our powerful alumni network
                 </p>
               </motion.div>
@@ -430,10 +432,10 @@ const HomePage = () => {
                 <button
                   key={filter}
                   onClick={() => setActiveFilter(filter)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 transform hover:scale-105 ${
+                  className={`px-4 py-2 rounded-full text-base font-semibold transition-all duration-300 transform hover:scale-105 ${
                     activeFilter === filter
                       ? 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white shadow-md'
-                      : 'bg-white/80 backdrop-blur-sm text-gray-600 hover:bg-white hover:text-primary-600 border border-gray-200 hover:border-primary-300'
+                      : 'bg-white/10 backdrop-blur-sm text-gray-300 hover:bg-white/20 hover:text-white border border-white/20 hover:border-white/30'
                   }`}
                 >
                   {filter}
@@ -460,7 +462,7 @@ const HomePage = () => {
                     viewport={{ once: true }}
                     className="group"
                   >
-                    <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 hover:border-primary-300 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 h-full">
+                    <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 border border-white/20 hover:border-white/30 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 h-full shadow-2xl">
                           {/* Icon */}
                       <div className="flex items-center justify-center mb-4">
                         <div className={`w-12 h-12 bg-gradient-to-r ${feature.color} text-white flex items-center justify-center rounded-xl group-hover:scale-110 transition-all duration-300 shadow-md`}>
@@ -469,10 +471,10 @@ const HomePage = () => {
                           </div>
                           
                           {/* Content */}
-                      <h3 className="text-lg font-bold text-gray-900 mb-3 group-hover:text-primary-600 transition-colors duration-300 text-center">
+                      <h3 className="text-xl md:text-2xl font-bold text-white mb-3 group-hover:text-primary-400 transition-colors duration-300 text-center">
                         {feature.title}
                               </h3>
-                      <p className="text-gray-600 leading-relaxed text-sm text-center">{feature.description}</p>
+                      <p className="text-gray-300 leading-relaxed text-base text-center font-medium">{feature.description}</p>
                     </div>
                   </motion.div>
                 ))}
@@ -486,34 +488,45 @@ const HomePage = () => {
                 viewport={{ once: true }}
                 className="text-center mt-12"
               >
-              <div className="bg-gradient-to-r from-primary-500 to-secondary-500 rounded-2xl p-6 text-white">
-                <h3 className="text-xl font-bold mb-3">Ready to Join Our Community?</h3>
-                <p className="text-primary-100 mb-4 max-w-xl mx-auto text-sm">
-                  Connect with fellow CUCEK alumni, unlock new opportunities, and be part of a network that's changing the world.
-                </p>
-                {!user && (
-                <button
-                    onClick={() => navigate('/register')}
-                    className="inline-flex items-center px-6 py-3 bg-white text-primary-600 font-semibold rounded-full hover:bg-primary-50 transition-all duration-300 transform hover:scale-105 shadow-md"
-                >
-                    <span className="mr-2">Join Now</span>
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                  </svg>
-                </button>
-                )}
+              <div className="bg-gradient-to-r from-primary-500/20 via-secondary-500/20 to-primary-500/20 backdrop-blur-xl rounded-2xl p-6 text-white border border-white/30 shadow-2xl relative overflow-hidden">
+                {/* Animated background */}
+                <div className="absolute inset-0 bg-gradient-to-r from-primary-400/10 to-secondary-400/10 rounded-2xl animate-pulse"></div>
+                
+                <div className="relative z-10">
+                  <h3 className="text-2xl font-bold mb-3">Ready to Join Our Community?</h3>
+                  <p className="text-gray-300 mb-4 max-w-xl mx-auto text-base">
+                    Connect with fellow CUCEK alumni, unlock new opportunities, and be part of a network that's changing the world.
+                  </p>
+                  {!user && (
+                  <button
+                      onClick={() => navigate('/register')}
+                      className="inline-flex items-center px-6 py-3 bg-white/20 backdrop-blur-sm text-white font-semibold rounded-full hover:bg-white/30 transition-all duration-300 transform hover:scale-105 shadow-lg border border-white/30 text-base"
+                  >
+                      <span className="mr-2">Join Now</span>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                    </svg>
+                  </button>
+                  )}
+                </div>
               </div>
               </motion.div>
             </div>
           </section>
 
         {/* Alumni Spotlight Section */}
-        <section id="spotlight" className="py-16 bg-gradient-to-br from-primary-50 via-white to-secondary-50 relative overflow-hidden">
-          {/* Background decorative elements */}
+        <section id="spotlight" className="py-16 bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 relative overflow-hidden">
+          {/* Enhanced Background decorative elements */}
           <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute top-20 right-20 w-64 h-64 bg-gradient-to-br from-primary-200/20 to-secondary-200/20 rounded-full blur-3xl"></div>
-            <div className="absolute bottom-20 left-20 w-48 h-48 bg-gradient-to-tr from-secondary-200/20 to-primary-200/20 rounded-full blur-3xl"></div>
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gradient-to-r from-primary-100/15 to-secondary-100/15 rounded-full blur-3xl"></div>
+            {/* Animated gradient orbs */}
+            <div className="absolute top-10 right-10 w-96 h-96 bg-gradient-to-br from-primary-400/30 to-secondary-400/30 rounded-full blur-3xl animate-pulse"></div>
+            <div className="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-tr from-secondary-400/30 to-primary-400/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-primary-300/20 to-secondary-300/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+            
+            {/* Floating particles */}
+            <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-primary-400/60 rounded-full animate-bounce" style={{ animationDelay: '0.5s' }}></div>
+            <div className="absolute top-3/4 right-1/4 w-1 h-1 bg-secondary-400/60 rounded-full animate-bounce" style={{ animationDelay: '1.5s' }}></div>
+            <div className="absolute top-1/2 right-1/3 w-1.5 h-1.5 bg-primary-300/60 rounded-full animate-bounce" style={{ animationDelay: '2.5s' }}></div>
           </div>
 
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -525,17 +538,17 @@ const HomePage = () => {
               viewport={{ once: true }}
               className="text-center mb-12"
             >
-              <div className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-white/80 backdrop-blur-sm text-primary-700 border border-primary-200 mb-4">
-                <span className="w-2 h-2 bg-primary-500 rounded-full mr-2"></span>
-                Alumni Spotlight
+              <div className="inline-flex items-center px-6 py-3 rounded-full text-sm font-semibold bg-gradient-to-r from-primary-500/20 to-secondary-500/20 backdrop-blur-sm text-white border border-white/20 mb-8 shadow-lg">
+                <span className="w-3 h-3 bg-gradient-to-r from-primary-400 to-secondary-400 rounded-full mr-3 animate-pulse"></span>
+                <span>Alumni Spotlight</span>
               </div>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold font-display text-white mb-6 leading-tight">
                 Meet Our{' '}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-secondary-600">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 via-secondary-400 to-primary-400 animate-pulse">
                   Featured Alumni
                 </span>
               </h2>
-              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              <p className="text-base md:text-lg text-gray-300 max-w-2xl mx-auto font-body">
                 Discover inspiring stories and achievements from our accomplished graduates
               </p>
             </motion.div>
@@ -570,132 +583,123 @@ const HomePage = () => {
               </motion.div>
             ) : (
                   <motion.div
-                    initial={{ opacity: 0, y: 30 }}
+                    initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8 }}
+                    transition={{ duration: 0.6 }}
                     viewport={{ once: true }}
-                className="relative"
-              >
-                {/* Glittering Frame */}
-                <div className="relative bg-gradient-to-r from-primary-500 via-primary-600 to-secondary-600 p-1 rounded-2xl shadow-xl">
-                  {/* Animated glittering border */}
-                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-primary-500 via-primary-600 to-secondary-600 opacity-75 animate-pulse"></div>
-                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-secondary-500 via-primary-500 to-primary-600 opacity-50 animate-pulse" style={{ animationDelay: '1s' }}></div>
-                  
-                  {/* Inner content */}
-                  <div className="relative bg-white rounded-xl p-6">
+                    className="relative"
+                  >
                     <AnimatePresence mode="wait">
                       <motion.div
                         key={currentSpotlightIndex}
-                        initial={{ opacity: 0, x: 30 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -30 }}
-                        transition={{ duration: 0.4 }}
-                        className="flex items-start gap-6"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.4, ease: "easeOut" }}
+                        className="bg-white/10 backdrop-blur-xl rounded-2xl border border-white/20 shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300"
                       >
-                        {/* Left Side - Alumni Photo & Details */}
-                        <div className="flex-shrink-0 flex flex-col items-center">
-                          <div className="relative mb-4">
-                            <div className="w-20 h-20 rounded-full overflow-hidden border-3 border-gradient-to-r from-primary-500 to-secondary-500 shadow-lg">
-                              <OptimizedImage
-                                src={(spotlights[currentSpotlightIndex]?.user?.photoUrl && spotlights[currentSpotlightIndex].user.photoUrl.trim() !== '') 
-                                  ? spotlights[currentSpotlightIndex].user.photoUrl 
-                                  : defaultImages.placeholderAvatar}
-                                alt={spotlights[currentSpotlightIndex]?.user?.fullName || 'Alumni'}
-                                className="w-full h-full object-cover"
-                                fallbackSrc={defaultImages.placeholderAvatar}
-                              />
+                        <div className="p-6">
+                          <div className="flex items-start gap-4">
+                            {/* Alumni Photo */}
+                            <div className="flex-shrink-0">
+                              <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-white/30 shadow-lg">
+                                <OptimizedImage
+                                  src={(spotlights[currentSpotlightIndex]?.user?.photoUrl && spotlights[currentSpotlightIndex].user.photoUrl.trim() !== '') 
+                                    ? spotlights[currentSpotlightIndex].user.photoUrl 
+                                    : defaultImages.placeholderAvatar}
+                                  alt={spotlights[currentSpotlightIndex]?.user?.fullName || 'Alumni'}
+                                  className="w-full h-full object-cover"
+                                  fallbackSrc={defaultImages.placeholderAvatar}
+                                />
+                              </div>
                             </div>
-                            {/* Glittering effect around photo */}
-                            <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-full animate-ping"></div>
-                            <div className="absolute -bottom-1 -left-1 w-3 h-3 bg-gradient-to-r from-blue-400 to-blue-500 rounded-full animate-ping" style={{ animationDelay: '0.5s' }}></div>
-                      </div>
-                      
-                          {/* Alumni Details */}
-                          <div className="text-center">
-                            <h3 className="text-lg font-bold text-gray-900 mb-1">
-                              {spotlights[currentSpotlightIndex]?.user?.fullName || 'Alumni'}
-                      </h3>
-                            <p className="text-primary-600 font-semibold text-sm mb-1">
-                              {spotlights[currentSpotlightIndex]?.user?.currentJobTitle || 'Professional'}
-                            </p>
-                            <p className="text-secondary-600 font-medium text-sm">
-                              {spotlights[currentSpotlightIndex]?.user?.companyName || 'Leading Company'}
-                            </p>
+
+                            {/* Content */}
+                            <div className="flex-1 min-w-0">
+                              {/* Header */}
+                              <div className="flex items-start justify-between mb-3">
+                                <div>
+                                  <h3 className="text-lg font-bold font-display text-white mb-1">
+                                    {spotlights[currentSpotlightIndex]?.user?.fullName || 'Alumni'}
+                                  </h3>
+                                  <p className="text-primary-400 font-medium text-sm">
+                                    {spotlights[currentSpotlightIndex]?.user?.currentJobTitle || 'Professional'}
+                                  </p>
+                                  <p className="text-secondary-400 text-sm">
+                                    {spotlights[currentSpotlightIndex]?.user?.companyName || 'Leading Company'}
+                                  </p>
+                                </div>
+                                <div className="w-8 h-8 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                                  </svg>
+                                </div>
+                              </div>
+
+                              {/* Title */}
+                              <h4 className="text-xl font-bold font-display text-white mb-3 leading-tight">
+                                {spotlights[currentSpotlightIndex]?.title || 'Success Story'}
+                              </h4>
+
+                              {/* Description */}
+                              <p className="text-gray-200 leading-relaxed font-body text-sm mb-4">
+                                {spotlights[currentSpotlightIndex]?.description || 'An inspiring story of achievement and success.'}
+                              </p>
+
+                              {/* Action Button */}
+                              {spotlights[currentSpotlightIndex]?.redirectionUrl && (
+                                <a
+                                  href={spotlights[currentSpotlightIndex].redirectionUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-semibold font-body rounded-lg hover:from-primary-600 hover:to-secondary-600 transition-all duration-200 text-sm"
+                                >
+                                  <span className="mr-2">Read More</span>
+                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                  </svg>
+                                </a>
+                              )}
+                            </div>
                           </div>
                         </div>
-
-                        {/* Middle - Content */}
-                        <div className="flex-1 flex flex-col justify-center">
-                          {/* Spotlight Title with Icon */}
-                          <div className="flex items-center gap-3 mb-4">
-                            <div className="w-8 h-8 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full flex items-center justify-center flex-shrink-0">
-                              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-                              </svg>
-                            </div>
-                            <h4 className="text-xl font-bold text-gray-800 leading-tight">
-                              {spotlights[currentSpotlightIndex]?.title || 'Success Story'}
-                            </h4>
-                          </div>
-
-                          {/* Spotlight Description */}
-                          <div className="bg-gray-50 rounded-lg p-4 mb-4">
-                            <p className="text-gray-700 leading-relaxed">
-                              {spotlights[currentSpotlightIndex]?.description || 'An inspiring story of achievement and success.'}
-                            </p>
-                          </div>
-
-                          {/* Action Button */}
-                          {spotlights[currentSpotlightIndex]?.redirectionUrl && (
-                            <div className="flex justify-start">
-                              <a
-                                href={spotlights[currentSpotlightIndex].redirectionUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="group inline-flex items-center px-5 py-2.5 bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-semibold rounded-full hover:from-primary-600 hover:to-secondary-600 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
-                              >
-                                <span className="mr-2">Explore Full Story</span>
-                                <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                </svg>
-                              </a>
-                            </div>
-                          )}
-                    </div>
-                  </motion.div>
+                      </motion.div>
                     </AnimatePresence>
 
                     {/* Navigation Dots */}
                     {spotlights.length > 1 && (
-                      <div className="flex justify-center mt-4 space-x-2">
+                      <div className="flex justify-center mt-6 space-x-2">
                         {spotlights.map((_, index) => (
                           <button
                             key={index}
                             onClick={() => setCurrentSpotlightIndex(index)}
-                            className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                            className={`w-2 h-2 rounded-full transition-all duration-200 ${
                               index === currentSpotlightIndex
                                 ? 'bg-gradient-to-r from-primary-500 to-secondary-500 scale-125'
-                                : 'bg-gray-300 hover:bg-gray-400'
+                                : 'bg-gray-400 hover:bg-gray-300'
                             }`}
                           />
                         ))}
                       </div>
                     )}
-                  </div>
-                </div>
-            </motion.div>
+                  </motion.div>
             )}
           </div>
         </section>
 
         {/* Mission & Values Section */}
-        <section id="about" className="py-20 bg-gradient-to-br from-primary-50 via-white to-secondary-50 relative overflow-hidden">
-          {/* Background decorative elements */}
+        <section id="about" className="py-20 bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 relative overflow-hidden">
+          {/* Enhanced Background decorative elements */}
           <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute top-20 right-20 w-72 h-72 bg-gradient-to-br from-primary-200/20 to-secondary-200/20 rounded-full blur-3xl"></div>
-            <div className="absolute bottom-20 left-20 w-64 h-64 bg-gradient-to-tr from-secondary-200/20 to-primary-200/20 rounded-full blur-3xl"></div>
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-primary-100/15 to-secondary-100/15 rounded-full blur-3xl"></div>
+            {/* Animated gradient orbs */}
+            <div className="absolute top-10 right-10 w-96 h-96 bg-gradient-to-br from-primary-400/30 to-secondary-400/30 rounded-full blur-3xl animate-pulse"></div>
+            <div className="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-tr from-secondary-400/30 to-primary-400/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-primary-300/20 to-secondary-300/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+            
+            {/* Floating particles */}
+            <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-primary-400/60 rounded-full animate-bounce" style={{ animationDelay: '0.5s' }}></div>
+            <div className="absolute top-3/4 right-1/4 w-1 h-1 bg-secondary-400/60 rounded-full animate-bounce" style={{ animationDelay: '1.5s' }}></div>
+            <div className="absolute top-1/2 right-1/3 w-1.5 h-1.5 bg-primary-300/60 rounded-full animate-bounce" style={{ animationDelay: '2.5s' }}></div>
           </div>
 
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -707,17 +711,17 @@ const HomePage = () => {
                 viewport={{ once: true }}
               className="text-center mb-16"
             >
-              <div className="inline-flex items-center px-6 py-3 rounded-full text-sm font-medium bg-white/80 backdrop-blur-sm text-primary-700 border border-primary-200 mb-6">
-                <span className="w-2 h-2 bg-primary-500 rounded-full mr-3"></span>
-                Our Mission & Values
+              <div className="inline-flex items-center px-6 py-3 rounded-full text-sm font-semibold bg-gradient-to-r from-primary-500/20 to-secondary-500/20 backdrop-blur-sm text-white border border-white/20 mb-8 shadow-lg">
+                <span className="w-3 h-3 bg-gradient-to-r from-primary-400 to-secondary-400 rounded-full mr-3 animate-pulse"></span>
+                <span>Our Mission & Values</span>
                   </div>
-              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold font-display text-white mb-6 leading-tight">
                 From CUCEK to the{' '}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-secondary-600">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 via-secondary-400 to-primary-400 animate-pulse">
                   World Stage
                     </span>
                 </h2>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              <p className="text-base md:text-lg text-gray-300 max-w-3xl mx-auto leading-relaxed font-body">
                 Built by CUCEK graduates, for CUCEK graduates. We understand the unique journey from student to industry leader.
               </p>
             </motion.div>
@@ -730,14 +734,14 @@ const HomePage = () => {
               viewport={{ once: true }}
               className="text-center mb-16"
             >
-              <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-8 border border-gray-200/50 shadow-xl">
+              <div className="bg-white/10 backdrop-blur-xl rounded-3xl p-8 border border-white/20 shadow-2xl">
                 <div className="w-16 h-16 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full flex items-center justify-center mx-auto mb-6">
                   <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">Our Mission</h3>
-                <p className="text-lg text-gray-700 leading-relaxed max-w-4xl mx-auto">
+                <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">Our Mission</h3>
+                <p className="text-base md:text-lg text-gray-300 leading-relaxed max-w-4xl mx-auto font-medium">
                   To empower CUCEK graduates worldwide by fostering meaningful connections, sharing knowledge, and creating opportunities that accelerate career growth and community impact.
                 </p>
                 </div>
@@ -791,14 +795,14 @@ const HomePage = () => {
                       viewport={{ once: true }}
                   className="group"
                 >
-                  <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 hover:border-primary-300 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 h-full">
+                  <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 border border-white/20 hover:border-white/30 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 h-full shadow-2xl">
                     <div className={`w-12 h-12 bg-gradient-to-r ${value.color} text-white flex items-center justify-center rounded-xl mb-4 group-hover:scale-110 transition-all duration-300`}>
                       <span className="text-2xl">{value.icon}</span>
                       </div>
-                    <h4 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-primary-600 transition-colors duration-300">
+                    <h4 className="text-xl md:text-2xl font-bold text-white mb-3 group-hover:text-primary-400 transition-colors duration-300">
                       {value.title}
                     </h4>
-                    <p className="text-gray-600 leading-relaxed">
+                    <p className="text-base text-gray-300 leading-relaxed font-medium">
                       {value.description}
                     </p>
                   </div>
@@ -815,8 +819,8 @@ const HomePage = () => {
               className="bg-gradient-to-r from-primary-500 to-secondary-500 rounded-3xl p-8 text-white mb-16"
             >
               <div className="text-center mb-8">
-                <h3 className="text-2xl font-bold mb-4">CUCEK Alumni Making a Difference</h3>
-                <p className="text-primary-100 max-w-2xl mx-auto">
+                <h3 className="text-2xl md:text-3xl font-bold mb-4 text-white">CUCEK Alumni Making a Difference</h3>
+                <p className="text-base md:text-lg text-gray-300 max-w-2xl mx-auto">
                   Our graduates are leading companies, founding startups, and driving innovation across industries.
                 </p>
               </div>
@@ -829,8 +833,8 @@ const HomePage = () => {
                  { number: "Strong", label: "Career Outcomes" }
                 ].map((stat, index) => (
                   <div key={index} className="text-center">
-                    <div className="text-xl font-bold mb-2">{stat.number}</div>
-                    <div className="text-primary-100 text-sm font-medium">{stat.label}</div>
+                    <div className="text-2xl font-bold mb-2 text-white">{stat.number}</div>
+                    <div className="text-gray-300 text-base font-medium">{stat.label}</div>
                   </div>
                 ))}
               </div>
@@ -845,14 +849,14 @@ const HomePage = () => {
                     viewport={{ once: true }}
                 className="text-center"
                   >
-                <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 border border-gray-200/50 shadow-xl">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-4">Ready to Join the CUCEK Family?</h3>
-                  <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
+                <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-8 border border-white/20 shadow-2xl">
+                  <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">Ready to Join the CUCEK Family?</h3>
+                  <p className="text-base md:text-lg text-gray-300 mb-6 max-w-2xl mx-auto">
                     Connect with fellow graduates, unlock new opportunities, and be part of a network that's changing the world.
                   </p>
                     <button
                       onClick={() => navigate('/role-selection')}
-                    className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-bold rounded-full hover:from-primary-600 hover:to-secondary-600 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                    className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-semibold rounded-full hover:from-primary-600 hover:to-secondary-600 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl text-base"
                     >
                       <span className="mr-2">🚀 Join Our Community</span>
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -866,13 +870,19 @@ const HomePage = () => {
         </section>
 
 
-        {/* Modern Footer */}
-        <footer className="bg-gradient-to-br from-gray-900 via-gray-800 to-primary-900 text-white relative overflow-hidden">
-          {/* Background decorative elements */}
+        {/* Enhanced Modern Footer */}
+        <footer className="bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 text-white relative overflow-hidden">
+          {/* Enhanced Background decorative elements */}
           <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute top-20 right-20 w-72 h-72 bg-gradient-to-br from-primary-500/10 to-secondary-500/10 rounded-full blur-3xl"></div>
-            <div className="absolute bottom-20 left-20 w-64 h-64 bg-gradient-to-tr from-secondary-500/10 to-primary-500/10 rounded-full blur-3xl"></div>
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-primary-400/5 to-secondary-400/5 rounded-full blur-3xl"></div>
+            {/* Animated gradient orbs */}
+            <div className="absolute top-10 right-10 w-96 h-96 bg-gradient-to-br from-primary-400/20 to-secondary-400/20 rounded-full blur-3xl animate-pulse"></div>
+            <div className="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-tr from-secondary-400/20 to-primary-400/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-primary-300/15 to-secondary-300/15 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+            
+            {/* Floating particles */}
+            <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-primary-400/40 rounded-full animate-bounce" style={{ animationDelay: '0.5s' }}></div>
+            <div className="absolute top-3/4 right-1/4 w-1 h-1 bg-secondary-400/40 rounded-full animate-bounce" style={{ animationDelay: '1.5s' }}></div>
+            <div className="absolute top-1/2 right-1/3 w-1.5 h-1.5 bg-primary-300/40 rounded-full animate-bounce" style={{ animationDelay: '2.5s' }}></div>
           </div>
 
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -904,13 +914,13 @@ const HomePage = () => {
                     
                     {/* Stats */}
                     <div className="grid grid-cols-2 gap-4 mb-6">
-                      <div className="text-center p-3 bg-white/5 rounded-lg backdrop-blur-sm">
+                      <div className="text-center p-3 bg-white/10 backdrop-blur-xl rounded-lg border border-white/20 shadow-lg">
                         <div className="text-2xl font-bold text-primary-400">10K+</div>
-                        <div className="text-xs text-gray-400">Alumni</div>
+                        <div className="text-xs text-gray-300">Alumni</div>
                       </div>
-                      <div className="text-center p-3 bg-white/5 rounded-lg backdrop-blur-sm">
+                      <div className="text-center p-3 bg-white/10 backdrop-blur-xl rounded-lg border border-white/20 shadow-lg">
                         <div className="text-2xl font-bold text-secondary-400">45+</div>
-                        <div className="text-xs text-gray-400">Countries</div>
+                        <div className="text-xs text-gray-300">Countries</div>
                       </div>
                     </div>
                 </div>

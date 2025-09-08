@@ -219,9 +219,9 @@ const Navbar = ({ isHome = false }) => {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled || !isHomePage 
-          ? 'bg-white/85 backdrop-blur-xl border border-white/20 shadow-xl' 
+          ? 'bg-black/20 backdrop-blur-lg border-b border-white/10 shadow-lg' 
           : 'bg-transparent'
       }`}
       style={{ height: '64px' }}
@@ -231,26 +231,26 @@ const Navbar = ({ isHome = false }) => {
           {/* Logo Section */}
           <Link 
             to="/" 
-            className="flex items-center space-x-3 group hover:animate-pulse"
+            className="flex items-center space-x-3 group hover:scale-105 transition-transform duration-300"
           >
             {/* Enhanced Brand Typography */}
             <div className="hidden sm:block">
               <div className="flex flex-col">
-                <span className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-blue-600 group-hover:from-green-700 group-hover:to-blue-700 transition-all duration-300">
+                <span className="text-xl font-bold font-display text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-secondary-600 group-hover:from-primary-700 group-hover:to-secondary-700 transition-all duration-300">
                   Alumni Connect
                 </span>
                 <div className="flex items-center space-x-1 -mt-1">
-                  <span className="text-xs font-medium text-gray-500 group-hover:text-green-600 transition-colors duration-300">
+                  <span className="text-xs font-medium font-body text-gray-500 group-hover:text-primary-600 transition-colors duration-300">
                     CUCEK Network
                   </span>
-                  <div className="w-1 h-1 bg-green-600 rounded-full opacity-60"></div>
+                  <div className="w-1 h-1 bg-primary-600 rounded-full opacity-60 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </div>
               </div>
             </div>
             
             {/* Mobile Logo with Modern Touch */}
             <div className="block sm:hidden">
-              <span className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-blue-600">
+              <span className="text-lg font-bold font-display text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-secondary-600">
                 Alumni
               </span>
             </div>
@@ -267,10 +267,10 @@ const Navbar = ({ isHome = false }) => {
                     key={link.title}
                     to={link.path}
                     className={({ isActive }) =>
-                      `relative px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 transform hover:scale-105 overflow-hidden ${
+                      `relative px-4 py-2 rounded-full text-sm font-semibold font-body transition-all duration-300 transform hover:scale-105 overflow-hidden ${
                         isActive && !isDashboardRoute
-                          ? 'bg-white/90 backdrop-blur-sm border border-green-300/30 shadow-lg text-green-700 font-semibold'
-                          : 'text-gray-700 hover:bg-white/60 hover:shadow-md hover:text-green-600'
+                          ? 'bg-white/90 backdrop-blur-sm border border-primary-300/30 shadow-lg text-primary-700 font-bold'
+                          : 'text-gray-700 hover:bg-white/60 hover:shadow-md hover:text-primary-600'
                       }`
                     }
                     end={link.path === '/'}
@@ -287,10 +287,10 @@ const Navbar = ({ isHome = false }) => {
               <div className="relative dropdown-container" ref={avatarRef}>
                 <button
                   onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className="flex items-center space-x-3 p-2 rounded-2xl bg-white/60 backdrop-blur-sm border border-white/20 hover:bg-white/80 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                  className="flex items-center space-x-3 p-2 rounded-2xl bg-white/70 backdrop-blur-xl border border-white/30 hover:bg-white/90 transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl"
                 >
                   <ProfileImage user={user} size="w-8 h-8" textSize="text-xs" />
-                  <span className="hidden sm:block text-sm font-medium text-gray-700">
+                  <span className="hidden sm:block text-sm font-semibold font-body text-gray-700">
                     Hi, {getUserDisplayName(user)}
                   </span>
                                      <svg className={`w-3 h-3 text-gray-500 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -302,7 +302,7 @@ const Navbar = ({ isHome = false }) => {
             ) : (
               <button
                 onClick={() => navigate('/role-selection')}
-                className="bg-gradient-to-r from-green-600 to-blue-600 text-white px-6 py-2 rounded-full text-sm font-semibold hover:from-green-700 hover:to-blue-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                className="bg-gradient-to-r from-primary-600 to-secondary-600 text-white px-6 py-2 rounded-full text-sm font-semibold font-body hover:from-primary-700 hover:to-secondary-700 transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl"
               >
                 Get Started
               </button>
@@ -311,7 +311,7 @@ const Navbar = ({ isHome = false }) => {
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="lg:hidden p-2 rounded-xl bg-white/60 backdrop-blur-sm border border-white/20 hover:bg-white/80 transition-all duration-300 shadow-lg"
+              className="lg:hidden p-2 rounded-xl bg-white/70 backdrop-blur-xl border border-white/30 hover:bg-white/90 transition-all duration-300 shadow-xl"
             >
                              {isMenuOpen ? (
                  <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -329,7 +329,7 @@ const Navbar = ({ isHome = false }) => {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="lg:hidden bg-white/95 backdrop-blur-xl mx-4 mt-2 rounded-2xl shadow-2xl border border-white/30 animate-in slide-in-from-top duration-300">
+        <div className="lg:hidden bg-white/95 backdrop-blur-2xl mx-4 mt-2 rounded-3xl shadow-2xl border border-white/40 animate-in slide-in-from-top duration-300">
           <div className="py-4">
             {navLinks
               .filter(link => (!link.auth || user) && !(link.hideForStudent && user?.role === 'student'))
@@ -340,10 +340,10 @@ const Navbar = ({ isHome = false }) => {
                     key={link.title}
                     to={link.path}
                     className={({ isActive }) =>
-                      `flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 ${
+                      `flex items-center px-6 py-3 text-sm font-semibold font-body transition-all duration-200 ${
                         isActive && !isDashboardRoute
-                          ? 'bg-gradient-to-r from-green-100 to-blue-100 text-green-700 mx-4 rounded-xl shadow-md border border-green-200'
-                          : 'text-gray-700 hover:bg-gradient-to-r hover:from-green-50 hover:to-blue-50 hover:text-green-700 mx-4 rounded-xl'
+                          ? 'bg-gradient-to-r from-primary-100 to-secondary-100 text-primary-700 mx-4 rounded-xl shadow-md border border-primary-200'
+                          : 'text-gray-700 hover:bg-gradient-to-r hover:from-primary-50 hover:to-secondary-50 hover:text-primary-700 mx-4 rounded-xl'
                       }`
                     }
                     end={link.path === '/'}
@@ -382,12 +382,12 @@ const Navbar = ({ isHome = false }) => {
 
           {!user && (
             <div className="border-t border-gray-200 pt-4 pb-4 px-4">
-              <button
-                onClick={() => { setIsMenuOpen(false); navigate('/role-selection'); }}
-                className="w-full bg-gradient-to-r from-green-600 to-blue-600 text-white py-3 px-6 rounded-xl text-sm font-semibold hover:from-green-700 hover:to-blue-700 transition-all duration-300 shadow-lg"
-              >
-                Get Started
-              </button>
+                <button
+                  onClick={() => { setIsMenuOpen(false); navigate('/role-selection'); }}
+                  className="w-full bg-gradient-to-r from-primary-600 to-secondary-600 text-white py-3 px-6 rounded-xl text-sm font-semibold font-body hover:from-primary-700 hover:to-secondary-700 transition-all duration-300 shadow-xl"
+                >
+                  Get Started
+                </button>
             </div>
           )}
         </div>

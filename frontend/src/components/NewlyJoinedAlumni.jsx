@@ -50,12 +50,6 @@ const NewlyJoinedAlumni = () => {
 
   // Fetch recently reconnected alumni from API
   useEffect(() => {
-    // Only fetch if user is authenticated
-    if (!user && !authLoading) {
-      setLoading(false);
-      return;
-    }
-
     // If still loading auth, show loading state
     if (authLoading) {
       setLoading(true);
@@ -83,7 +77,7 @@ const NewlyJoinedAlumni = () => {
             });
             
             return {
-              id: alumni.id || index + 1,
+            id: alumni.id || index + 1,
               name: alumni.name || 'Alumni',
               batch: alumni.batch || 'Unknown',
               photo: photoUrl,
@@ -199,7 +193,7 @@ const NewlyJoinedAlumni = () => {
     };
 
     fetchRecentlyReconnectedAlumni();
-  }, [user, authLoading, maxItemsPerRow]);
+  }, [authLoading, maxItemsPerRow]);
 
   // No carousel logic needed for the new design
 
@@ -217,10 +211,7 @@ const NewlyJoinedAlumni = () => {
     );
   }
 
-  // Don't show component if user is not authenticated
-  if (!user && !authLoading) {
-    return null;
-  }
+  // Show component for all users (authenticated and non-authenticated)
 
   // Error state or no data
   if (error || newlyJoinedAlumni.length === 0) {
@@ -255,7 +246,7 @@ const NewlyJoinedAlumni = () => {
             <span className="w-3 h-3 bg-gradient-to-r from-primary-400 to-secondary-400 rounded-full mr-3 animate-pulse"></span>
             <span>Welcome Home</span>
           </div>
-          <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold font-display text-white mb-6 leading-tight">
             People who made the{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 via-secondary-400 to-primary-400 animate-pulse">
               Homecoming true
@@ -315,7 +306,7 @@ const NewlyJoinedAlumni = () => {
                           <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                         </div>
                       </div>
-                    </div>
+                      </div>
                     
                     {/* Enhanced online indicator with glow */}
                     <div className="absolute -bottom-2 -right-2 w-6 h-6 sm:w-7 sm:h-7 bg-gradient-to-r from-green-400 to-emerald-400 rounded-full border-3 border-white shadow-lg flex items-center justify-center group-hover:shadow-green-400/50 transition-all duration-300">
@@ -371,7 +362,7 @@ const NewlyJoinedAlumni = () => {
             
             <div className="flex items-center space-x-3 relative z-10">
               <div className="w-4 h-4 bg-gradient-to-r from-primary-400 to-secondary-400 rounded-full animate-pulse shadow-lg"></div>
-              <span className="text-lg font-bold text-white italic tracking-wide">
+              <span className="text-base font-semibold text-white italic tracking-wide">
                 Latest members to reconnect
               </span>
               <div className="w-4 h-4 bg-gradient-to-r from-secondary-400 to-primary-400 rounded-full animate-pulse shadow-lg" style={{ animationDelay: '0.5s' }}></div>

@@ -133,12 +133,18 @@ const MemoryLaneGallery = () => {
   };
 
   return (
-    <section className="py-20 bg-gradient-to-br from-primary-50 via-secondary-50 to-primary-100 relative overflow-hidden">
-      {/* Background decorative elements */}
+    <section className="py-20 bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 relative overflow-hidden">
+      {/* Enhanced Background decorative elements */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 right-20 w-72 h-72 bg-gradient-to-br from-primary-200 to-secondary-200 rounded-full opacity-20 blur-3xl"></div>
-        <div className="absolute bottom-20 left-20 w-72 h-72 bg-gradient-to-tr from-secondary-200 to-primary-200 rounded-full opacity-20 blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-primary-100 to-secondary-100 rounded-full opacity-10 blur-3xl"></div>
+        {/* Animated gradient orbs */}
+        <div className="absolute top-10 right-10 w-96 h-96 bg-gradient-to-br from-primary-400/30 to-secondary-400/30 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-tr from-secondary-400/30 to-primary-400/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-primary-300/20 to-secondary-300/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+        
+        {/* Floating particles */}
+        <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-primary-400/60 rounded-full animate-bounce" style={{ animationDelay: '0.5s' }}></div>
+        <div className="absolute top-3/4 right-1/4 w-1 h-1 bg-secondary-400/60 rounded-full animate-bounce" style={{ animationDelay: '1.5s' }}></div>
+        <div className="absolute top-1/2 right-1/3 w-1.5 h-1.5 bg-primary-300/60 rounded-full animate-bounce" style={{ animationDelay: '2.5s' }}></div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -150,17 +156,17 @@ const MemoryLaneGallery = () => {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <div className="inline-flex items-center px-6 py-3 rounded-full text-sm font-medium bg-white/80 backdrop-blur-sm text-primary-700 border border-primary-200 mb-6">
-            <span className="w-2 h-2 bg-primary-500 rounded-full mr-3"></span>
-            Memory Lane Gallery
+          <div className="inline-flex items-center px-6 py-3 rounded-full text-sm font-semibold bg-gradient-to-r from-primary-500/20 to-secondary-500/20 backdrop-blur-sm text-white border border-white/20 mb-8 shadow-lg">
+            <span className="w-3 h-3 bg-gradient-to-r from-primary-400 to-secondary-400 rounded-full mr-3 animate-pulse"></span>
+            <span>Memory Lane Gallery</span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
             Our Journey Through{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-secondary-600">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 via-secondary-400 to-primary-400 animate-pulse">
               Time & Achievement
             </span>
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-base md:text-lg text-gray-300 max-w-3xl mx-auto leading-relaxed">
             Discover the cherished memories of our college days and celebrate the remarkable achievements of our alumni community
           </p>
         </motion.div>
@@ -180,11 +186,11 @@ const MemoryLaneGallery = () => {
                 <span className="w-2 h-2 bg-white rounded-full mr-2"></span>
                 CUCEK Gallery
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">College Memories</h3>
-              <p className="text-gray-600 text-sm">Moments that shaped our journey</p>
+              <h3 className="text-xl md:text-2xl font-bold text-white mb-2">College Memories</h3>
+              <p className="text-gray-300 text-sm md:text-base">Moments that shaped our journey</p>
             </div>
 
-            <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl overflow-hidden border border-primary-100">
+            <div className="bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden border border-white/20">
               {/* Image Slider */}
               <div className="relative h-80 overflow-hidden">
                 <AnimatePresence mode="wait">
@@ -268,11 +274,11 @@ const MemoryLaneGallery = () => {
                 <span className="w-2 h-2 bg-white rounded-full mr-2"></span>
                 Alumni Gallery
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">Alumni Memories</h3>
-              <p className="text-gray-600 text-sm">Success stories from our graduates</p>
+              <h3 className="text-xl md:text-2xl font-bold text-white mb-2">Alumni Memories</h3>
+              <p className="text-gray-300 text-sm md:text-base">Success stories from our graduates</p>
             </div>
 
-            <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl overflow-hidden border border-secondary-100">
+            <div className="bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden border border-white/20">
               {/* Image Slider */}
               <div className="relative h-80 overflow-hidden">
                 <AnimatePresence mode="wait">
