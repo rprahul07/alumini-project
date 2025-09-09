@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import OptimizedImage from '../OptimizedImage';
+import { galleryAPI } from '../../services/galleryService';
 
 const MemoryLaneGallery = () => {
   const navigate = useNavigate();
@@ -9,94 +10,80 @@ const MemoryLaneGallery = () => {
   const [activeAlumniSlide, setActiveAlumniSlide] = useState(0);
   const [isHovering, setIsHovering] = useState(null);
   const [selectedMemory, setSelectedMemory] = useState(null);
+  const [galleryImages, setGalleryImages] = useState([]);
+  const [galleryLoading, setGalleryLoading] = useState(true);
+  const [galleryError, setGalleryError] = useState(null);
 
   // College memories data
   const collegeMemories = [
     {
       id: 1,
-      year: '2020',
-      title: 'Tech Fest 2020',
-      description: 'Annual technical festival showcasing innovation',
-      image: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&h=600&fit=crop',
-      category: 'Events',
-      memories: ['Innovation showcase', 'Student presentations', 'Industry partnerships']
+      year: '2025',
+      title: 'Golden Hour at Campus',
+      description: 'Peaceful evening view of CUCEK during golden hour',
+      image: 'https://i.postimg.cc/HkYZkjvr/PXL-20250825-124106600.jpg',
+      category: 'Campus Life',
+      memories: ['Evening walks', 'Chilling with friends', 'Serene vibes']
     },
     {
       id: 2,
-      year: '2021',
-      title: 'Graduation Ceremony',
-      description: 'Celebrating our graduates achievements',
-      image: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&h=600&fit=crop',
-      category: 'Ceremonies',
-      memories: ['Degree conferring', 'Award ceremonies', 'Family celebrations']
-    },
-    {
-      id: 3,
-      year: '2022',
-      title: 'Campus Expansion',
-      description: 'New facilities and modern infrastructure',
-      image: 'https://images.unsplash.com/photo-1562774053-701939374585?w=800&h=600&fit=crop',
+      year: '2025',
+      title: 'Aerial Campus View',
+      description: 'Bird’s eye view capturing the entire CUCEK campus',
+      image: 'https://i.postimg.cc/fbFBCCzd/pixelcut-export-01-jpeg.jpg',
       category: 'Infrastructure',
-      memories: ['New buildings', 'Advanced labs', 'Student amenities']
-    },
-    {
-      id: 4,
-      year: '2023',
-      title: 'Cultural Festival',
-      description: 'Celebrating diversity and cultural heritage',
-      image: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800&h=600&fit=crop',
-      category: 'Cultural',
-      memories: ['Cultural performances', 'Food festivals', 'Art exhibitions']
-    }
-  ];
-
-  // Alumni achievements data
-  const alumniAchievements = [
-    {
-      id: 1,
-      year: '2024',
-      title: 'TechStart Solutions',
-      description: 'AI-powered startup by Sarah Kumar (Class of 2018)',
-      image: 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=800&h=600&fit=crop',
-      category: 'Startup',
-      founder: 'Sarah Kumar',
-      class: '2018',
-      achievements: ['$2M Series A funding', '50+ employees', 'International recognition']
-    },
-    {
-      id: 2,
-      year: '2023',
-      title: 'GreenTech Innovations',
-      description: 'Sustainable technology company by Raj Patel (Class of 2019)',
-      image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop',
-      category: 'Company',
-      founder: 'Raj Patel',
-      class: '2019',
-      achievements: ['Environmental impact award', '100+ green projects', 'Global expansion']
+      memories: ['College buildings', 'Green landscapes', 'Campus pride']
     },
     {
       id: 3,
-      year: '2024',
-      title: 'Alumni Reunion',
-      description: 'Grand reunion of CUCEK alumni from across the globe',
-      image: 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=800&h=600&fit=crop',
-      category: 'Reunion',
-      founder: 'Alumni Association',
-      class: 'Various',
-      achievements: ['500+ attendees', 'Networking sessions', 'Award ceremonies']
-    },
-    {
-      id: 4,
-      year: '2023',
-      title: 'Innovation Summit',
-      description: 'Annual alumni innovation showcase and networking',
-      image: 'https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=800&h=600&fit=crop',
-      category: 'Event',
-      founder: 'Alumni Network',
-      class: 'Various',
-      achievements: ['50+ presentations', 'Industry partnerships', 'Mentorship programs']
+      year: '2025',
+      title: 'CUCEK College Front',
+      description: 'Main college building standing tall with pride',
+      image: 'https://i.postimg.cc/bNNkGb8f/Whats-App-Image-2025-01-25-at-22-02-49-c6cdb553.jpg',
+      category: 'Memorable Spots',
+      memories: ['Morning lectures', 'Group photos', 'First-day excitement']
     }
   ];
+  
+
+  // Fetch gallery images from API
+  useEffect(() => {
+    const fetchGalleryImages = async () => {
+      try {
+        setGalleryLoading(true);
+        setGalleryError(null);
+        const result = await galleryAPI.getGallery();
+        
+        if (result.success && result.data.length > 0) {
+          // Transform API data to match our component structure
+          const transformedImages = result.data.map((item, index) => ({
+            id: item.id || index + 1,
+            year: new Date(item.createdAt).getFullYear().toString(),
+            title: item.title || `Gallery Image ${index + 1}`,
+            description: item.description || 'A beautiful moment from our gallery',
+            image: item.imageUrl || item.image || '',
+            category: item.category || 'Gallery',
+            founder: item.uploadedBy || 'Alumni',
+            class: 'Various',
+            achievements: ['Community shared', 'Memorable moment', 'Alumni contribution']
+          }));
+          setGalleryImages(transformedImages);
+        } else {
+          // No fallback data - show empty state
+          setGalleryImages([]);
+        }
+      } catch (error) {
+        console.error('Failed to fetch gallery images:', error);
+        setGalleryError('Failed to load gallery images');
+        // No fallback data - show empty state
+        setGalleryImages([]);
+      } finally {
+        setGalleryLoading(false);
+      }
+    };
+
+    fetchGalleryImages();
+  }, []);
 
   // Auto-advance slides
   useEffect(() => {
@@ -105,14 +92,14 @@ const MemoryLaneGallery = () => {
     }, 6000);
     
     const alumniInterval = setInterval(() => {
-      setActiveAlumniSlide((prev) => (prev + 1) % alumniAchievements.length);
+      setActiveAlumniSlide((prev) => (prev + 1) % galleryImages.length);
     }, 7000);
     
     return () => {
       clearInterval(collegeInterval);
       clearInterval(alumniInterval);
     };
-  }, []);
+  }, [galleryImages.length]);
 
   const handleCollegeSlideChange = (index) => {
     setActiveCollegeSlide(index);
@@ -272,80 +259,122 @@ const MemoryLaneGallery = () => {
             <div className="text-center mb-6">
               <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-secondary-500 to-secondary-600 text-white rounded-full text-sm font-semibold mb-3 shadow-lg">
                 <span className="w-2 h-2 bg-white rounded-full mr-2"></span>
-                Alumni Gallery
+                {galleryLoading ? 'Loading...' : 'API Gallery'}
               </div>
-              <h3 className="text-xl md:text-2xl font-bold text-white mb-2">Alumni Memories</h3>
-              <p className="text-gray-300 text-sm md:text-base">Success stories from our graduates</p>
+              <h3 className="text-xl md:text-2xl font-bold text-white mb-2">
+                {galleryLoading ? 'Loading Gallery...' : 'Community Gallery'}
+              </h3>
+              <p className="text-gray-300 text-sm md:text-base">
+                {galleryLoading ? 'Fetching images from our gallery' : 'Images shared by our community'}
+              </p>
             </div>
 
             <div className="bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden border border-white/20">
               {/* Image Slider */}
               <div className="relative h-80 overflow-hidden">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={activeAlumniSlide}
-                    initial={{ opacity: 0, scale: 1.1 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                    transition={{ duration: 0.6 }}
-                    className="absolute inset-0"
-                  >
-                    <OptimizedImage
-                      src={alumniAchievements[activeAlumniSlide].image}
-                      alt={`${alumniAchievements[activeAlumniSlide].title} - ${alumniAchievements[activeAlumniSlide].year}`}
-                      className="w-full h-full object-cover"
-                      fallbackSrc="https://images.unsplash.com/photo-1551434678-e076c223a692?w=800&h=600&fit=crop"
-                      loading="lazy"
-                    />
-                    
-                    {/* Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent">
-                      <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                        <h4 className="text-2xl font-bold mb-2">{alumniAchievements[activeAlumniSlide].title}</h4>
-                        <p className="text-secondary-100 mb-2">{alumniAchievements[activeAlumniSlide].description}</p>
-                        <p className="text-sm text-secondary-200 mb-4">by {alumniAchievements[activeAlumniSlide].founder} (Class of {alumniAchievements[activeAlumniSlide].class})</p>
+                {galleryLoading ? (
+                  <div className="absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
+                    <div className="text-center">
+                      <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mb-4 mx-auto animate-pulse">
+                        <i className="fas fa-spinner fa-spin text-white text-2xl"></i>
                       </div>
+                      <h4 className="text-lg font-bold text-white mb-2">Loading Gallery...</h4>
+                      <p className="text-white/80 text-sm">Please wait</p>
                     </div>
-                  </motion.div>
-                </AnimatePresence>
+                  </div>
+                ) : galleryError ? (
+                  <div className="absolute inset-0 bg-gradient-to-br from-red-500/30 to-red-600/30 flex items-center justify-center">
+                    <div className="text-center">
+                      <div className="w-16 h-16 bg-red-500/30 backdrop-blur-sm rounded-full flex items-center justify-center mb-4 mx-auto">
+                        <i className="fas fa-exclamation-triangle text-white text-2xl"></i>
+                      </div>
+                      <h4 className="text-lg font-bold text-white mb-2">Gallery Unavailable</h4>
+                      <p className="text-white/80 text-sm mb-4">Unable to load gallery images</p>
+                    </div>
+                  </div>
+                ) : galleryImages.length > 0 ? (
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={activeAlumniSlide}
+                      initial={{ opacity: 0, scale: 1.1 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.9 }}
+                      transition={{ duration: 0.6 }}
+                      className="absolute inset-0"
+                    >
+                      <OptimizedImage
+                        src={galleryImages[activeAlumniSlide].image}
+                        alt={`${galleryImages[activeAlumniSlide].title} - ${galleryImages[activeAlumniSlide].year}`}
+                        className="w-full h-full object-cover"
+                        fallbackSrc=""
+                        loading="lazy"
+                      />
+                      
+                      {/* Overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent">
+                        <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                          <h4 className="text-2xl font-bold mb-2">{galleryImages[activeAlumniSlide].title}</h4>
+                          <p className="text-secondary-100 mb-2">{galleryImages[activeAlumniSlide].description}</p>
+                          <p className="text-sm text-secondary-200 mb-4">by {galleryImages[activeAlumniSlide].founder} (Class of {galleryImages[activeAlumniSlide].class})</p>
+                        </div>
+                      </div>
+                    </motion.div>
+                  </AnimatePresence>
+                ) : (
+                  <div className="absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
+                    <div className="text-center">
+                      <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mb-4 mx-auto">
+                        <i className="fas fa-images text-white text-2xl"></i>
+                      </div>
+                      <h4 className="text-lg font-bold text-white mb-2">No Gallery Images</h4>
+                      <p className="text-white/80 text-sm">Gallery images will appear here</p>
+                    </div>
+                  </div>
+                )}
               </div>
 
-              {/* Navigation Arrows */}
-              <button
-                onClick={() => handleAlumniSlideChange((activeAlumniSlide - 1 + alumniAchievements.length) % alumniAchievements.length)}
-                className="absolute left-4 top-1/3 transform -translate-y-1/2 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110 backdrop-blur-sm"
-                aria-label="Previous slide"
-              >
-                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
-              
-                <button
-                onClick={() => handleAlumniSlideChange((activeAlumniSlide + 1) % alumniAchievements.length)}
-                className="absolute right-4 top-1/3 transform -translate-y-1/2 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110 backdrop-blur-sm"
-                aria-label="Next slide"
-                >
-                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
-
-              {/* Slide Indicators */}
-              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-                {alumniAchievements.map((_, index) => (
+              {/* Navigation Arrows - Only show if gallery has images */}
+              {galleryImages.length > 1 && (
+                <>
                   <button
-                    key={index}
-                    onClick={() => handleAlumniSlideChange(index)}
-                    className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                      index === activeAlumniSlide
-                        ? 'bg-white scale-125'
-                        : 'bg-white/50 hover:bg-white/75'
-                    }`}
-                    aria-label={`Go to slide ${index + 1}`}
-                  />
-                ))}
-              </div>
+                    onClick={() => handleAlumniSlideChange((activeAlumniSlide - 1 + galleryImages.length) % galleryImages.length)}
+                    className="absolute left-4 top-1/3 transform -translate-y-1/2 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110 backdrop-blur-sm"
+                    aria-label="Previous slide"
+                  >
+                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                  </button>
+                  
+                  <button
+                    onClick={() => handleAlumniSlideChange((activeAlumniSlide + 1) % galleryImages.length)}
+                    className="absolute right-4 top-1/3 transform -translate-y-1/2 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110 backdrop-blur-sm"
+                    aria-label="Next slide"
+                  >
+                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </>
+              )}
+
+              {/* Slide Indicators - Only show if gallery has images */}
+              {galleryImages.length > 1 && (
+                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+                  {galleryImages.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => handleAlumniSlideChange(index)}
+                      className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                        index === activeAlumniSlide
+                          ? 'bg-white scale-125'
+                          : 'bg-white/50 hover:bg-white/75'
+                      }`}
+                      aria-label={`Go to slide ${index + 1}`}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           </motion.div>
         </div>
