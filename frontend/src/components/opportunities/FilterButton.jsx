@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from 'react';
-import ReactDOM from 'react-dom';
 import { FunnelIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 
 const FilterButton = ({ 
@@ -10,15 +9,12 @@ const FilterButton = ({
   onSortChange 
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
   const dropdownRef = useRef(null);
-  const buttonRef = useRef(null);
 
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target) && 
-          buttonRef.current && !buttonRef.current.contains(event.target)) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsOpen(false);
       }
     };
@@ -26,18 +22,6 @@ const FilterButton = ({
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
-
-  // Calculate dropdown position
-  useEffect(() => {
-    if (isOpen && buttonRef.current) {
-      const rect = buttonRef.current.getBoundingClientRect();
-      setDropdownPosition({
-        top: rect.bottom + window.scrollY + 8,
-        left: rect.right - 320, // 320px is the dropdown width
-        width: rect.width
-      });
-    }
-  }, [isOpen]);
 
   const jobTypes = [
     { value: '', label: 'All Types' },
@@ -142,34 +126,26 @@ const FilterButton = ({
   );
 
   return (
-    <>
-      <div className="relative">
-        <button
-          ref={buttonRef}
-          onClick={() => setIsOpen(!isOpen)}
-          className="flex items-center gap-3 px-6 py-4 font-semibold bg-white/10 backdrop-blur-xl border border-white/20 text-white hover:bg-white/20 hover:border-white/30 shadow-lg hover:shadow-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-400/50 focus:border-primary-400/50 rounded-xl whitespace-nowrap group w-full xl:w-auto"
-        >
-          <FunnelIcon className="h-5 w-5 group-hover:text-primary-400 transition-colors duration-200" />
-          <span className="hidden sm:inline font-body">Filters & Sort</span>
-          <ChevronDownIcon className={`h-4 w-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
-        </button>
-      </div>
+    <div className="relative z-[9999]" ref={dropdownRef}>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center gap-3 px-6 py-4 font-semibold bg-white/10 backdrop-blur-xl border border-white/30 text-white hover:bg-white/20 hover:border-primary-400/50 shadow-xl hover:shadow-2xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-400/50 focus:border-primary-400/50 rounded-2xl whitespace-nowrap group w-full xl:w-auto font-body text-base"
+      >
+        <FunnelIcon className="h-5 w-5" />
+        <span className="hidden sm:inline">Filters</span>
+        <ChevronDownIcon className={`h-5 w-5 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+      </button>
 
-      {isOpen && ReactDOM.createPortal(
-        <div 
-          ref={dropdownRef}
-          className="fixed w-80 sm:w-72 bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 max-h-[80vh] overflow-y-auto scrollbar-hide"
-          style={{
-            top: dropdownPosition.top,
-            left: dropdownPosition.left,
-            zIndex: 999999
-          }}
-        >
-          <DropdownContent />
-        </div>,
-        document.body
+      {isOpen && (
+        <div className="absolute right-0 sm:right-0 left-0 sm:left-auto mt-3 w-80 sm:w-72 bg-white/10 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/20 z-[99999] max-h-[80vh] overflow-y-auto scrollbar-hide" style={{ zIndex: 99999 }}>
+          {/* Dark gradient overlay for better text visibility */}
+          <div className="absolute inset-0 bg-gradient-to-br from-black/40 to-black/60 rounded-3xl"></div>
+          <div className="relative z-10">
+            <DropdownContent />
+          </div>
+        </div>
       )}
-    </>
+    </div>
   );
 };
 

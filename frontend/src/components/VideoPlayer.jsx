@@ -109,44 +109,54 @@ const VideoPlayer = ({
         </div>
       </div>
 
-      {/* Video Info Card */}
-      <div className="mt-6 bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-white/40">
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <div className="flex-1">
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Our Alumni Success Stories</h3>
-            <p className="text-gray-600 mb-3">
-              Discover how our graduates are making a difference in technology, innovation, and society worldwide.
-            </p>
-            <div className="flex items-center space-x-4 text-sm text-gray-500">
-              <div className="flex items-center">
-                <i className="fas fa-clock mr-2 text-primary"></i>
-                <span>{duration}</span>
+      {/* Compact Video Info Card */}
+      <div className="mt-6">
+        <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 shadow-lg border border-white/40 hover:shadow-xl transition-all duration-300">
+          <div className="flex items-center justify-between gap-4">
+            {/* Content Section */}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center space-x-3 mb-2">
+                <div className="w-8 h-8 bg-gradient-to-r from-primary to-secondary rounded-lg flex items-center justify-center">
+                  <i className="fas fa-graduation-cap text-white text-sm"></i>
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 truncate">Our Alumni Success Stories</h3>
               </div>
-              <div className="flex items-center">
-                <i className="fas fa-eye mr-2 text-primary"></i>
-                <span>{views}</span>
-              </div>
-              <div className="flex items-center">
-                <i className="fas fa-calendar mr-2 text-primary"></i>
-                <span>{year}</span>
+              <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+                Discover how our graduates are making a difference in technology, innovation, and society worldwide.
+              </p>
+              <div className="flex items-center space-x-4 text-xs text-gray-500">
+                <span className="flex items-center">
+                  <i className="fas fa-clock mr-1 text-primary"></i>
+                  {duration}
+                </span>
+                <span className="flex items-center">
+                  <i className="fas fa-eye mr-1 text-primary"></i>
+                  {views}
+                </span>
+                <span className="flex items-center">
+                  <i className="fas fa-calendar mr-1 text-primary"></i>
+                  {year}
+                </span>
               </div>
             </div>
-          </div>
-          <div className="flex items-center space-x-3">
-            <button 
-              className="px-6 py-3 bg-primary text-white rounded-lg font-semibold hover:bg-primary-700 transition-colors duration-200 flex items-center"
-              onClick={handlePlay}
-            >
-              <i className={`fas ${isPlaying ? 'fa-pause' : 'fa-play'} mr-2`}></i>
-              {isPlaying ? 'Pause Video' : 'Play Video'}
-            </button>
-            <button 
-              className="px-6 py-3 border border-primary text-primary rounded-lg font-semibold hover:bg-primary hover:text-white transition-colors duration-200 flex items-center"
-              onClick={handleShare}
-            >
-              <i className="fas fa-share mr-2"></i>
-              Share
-            </button>
+            
+            {/* Action Buttons */}
+            <div className="flex items-center space-x-2">
+              <button 
+                className="px-4 py-2 bg-primary text-white rounded-lg font-semibold hover:bg-primary-700 transition-colors duration-200 flex items-center text-sm"
+                onClick={handlePlay}
+              >
+                <i className={`fas ${isPlaying ? 'fa-pause' : 'fa-play'} mr-1`}></i>
+                {isPlaying ? 'Pause' : 'Play'}
+              </button>
+              <button 
+                className="px-4 py-2 border border-primary text-primary rounded-lg font-semibold hover:bg-primary hover:text-white transition-colors duration-200 flex items-center text-sm"
+                onClick={handleShare}
+              >
+                <i className="fas fa-share mr-1"></i>
+                Share
+              </button>
+            </div>
           </div>
         </div>
       </div>

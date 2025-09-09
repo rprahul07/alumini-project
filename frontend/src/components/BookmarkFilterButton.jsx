@@ -12,25 +12,29 @@ const BookmarkFilterButton = ({
       onClick={onToggle}
       disabled={loading || disabled}
       title={showBookmarkedOnly ? `Showing bookmarked (${bookmarkCount})` : `Show bookmarked (${bookmarkCount})`}
-      className={`flex items-center gap-2 px-3 py-2 font-semibold border-2 bg-white/60 backdrop-blur text-sm shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-indigo-300 rounded-full whitespace-nowrap relative ${
+      className={`flex items-center gap-1.5 px-3 py-2 font-semibold border border-white/30 bg-white/10 backdrop-blur-sm text-sm text-white shadow-lg hover:shadow-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-400/50 rounded-lg whitespace-nowrap relative ${
         showBookmarkedOnly 
-          ? 'border-indigo-400 bg-indigo-100 text-indigo-700 hover:bg-indigo-200' 
-          : 'border-indigo-400 text-indigo-700 hover:bg-white/80'
+          ? 'bg-primary-500/20 border-primary-400/50 text-primary-300 hover:bg-primary-500/30' 
+          : 'hover:bg-white/20 hover:border-white/50'
       } ${(loading || disabled) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
     >
       {loading ? (
         <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
       ) : (
         <Heart 
-          size={16} 
-          className={`${showBookmarkedOnly ? 'fill-red-500 text-red-500' : ''} transition-colors`} 
+          size={14} 
+          className={`${showBookmarkedOnly ? 'fill-red-400 text-red-400' : 'text-white'} transition-colors`} 
         />
       )}
-      <span className="hidden sm:inline">
-        {showBookmarkedOnly ? `Bookmarked (${bookmarkCount})` : 'Bookmarked'}
+      <span className="text-xs">
+        {showBookmarkedOnly ? `Bookmarked` : 'Bookmarks'}
       </span>
-      {!showBookmarkedOnly && bookmarkCount > 0 && (
-        <span className="bg-indigo-500 text-white text-xs font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center">
+      {bookmarkCount > 0 && (
+        <span className={`text-xs font-bold rounded-full min-w-[16px] h-[16px] flex items-center justify-center ${
+          showBookmarkedOnly 
+            ? 'bg-red-500/20 text-red-300' 
+            : 'bg-white/20 text-white'
+        }`}>
           {bookmarkCount > 99 ? '99+' : bookmarkCount}
         </span>
       )}

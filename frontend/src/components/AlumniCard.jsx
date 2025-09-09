@@ -81,7 +81,7 @@ const AlumniCard = ({
   } else {
     displayButton = (
       <button
-        className="rounded-full px-4 py-2 font-semibold w-full text-sm flex items-center justify-center transition-colors bg-primary text-white hover:bg-primary-700 shadow-md hover:shadow-lg"
+        className="rounded-full px-4 py-2 font-semibold w-full text-sm flex items-center justify-center transition-all duration-300 bg-gradient-to-r from-primary-500 to-secondary-500 text-white hover:from-primary-600 hover:to-secondary-600 shadow-lg hover:shadow-xl transform hover:scale-105"
         onClick={e => {
           e.stopPropagation();
           if (!buttonDisabled) {
@@ -103,7 +103,7 @@ const AlumniCard = ({
 
   return (
     <div
-      className="bg-white shadow-lg rounded-2xl w-full max-w-sm flex flex-col h-full cursor-pointer hover:shadow-xl transition-all duration-300 transform hover:scale-105 z-10"
+      className="bg-white/10 backdrop-blur-xl shadow-2xl rounded-2xl w-full max-w-sm flex flex-col h-full cursor-pointer hover:shadow-3xl transition-all duration-300 transform hover:scale-105 z-10 border border-white/20 hover:border-white/30"
       onClick={handleCardClick}
     >
       {/* Image at the top */}
@@ -117,8 +117,10 @@ const AlumniCard = ({
             priority={false}
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary-100 to-secondary-100 rounded-t-2xl">
-            <span className="text-primary-400 text-4xl font-bold">?</span>
+          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-800/80 to-gray-900/80 rounded-t-2xl">
+            <div className="w-16 h-16 bg-gradient-to-br from-primary-400/20 to-secondary-400/20 rounded-full flex items-center justify-center border-2 border-white/20">
+              <span className="text-white/80 text-2xl font-bold">?</span>
+            </div>
           </div>
         )}
         
@@ -146,16 +148,16 @@ const AlumniCard = ({
       {/* Main Content */}
       <div className="flex flex-col flex-grow p-4">
         {/* Name */}
-        <h2 className="text-lg font-semibold text-gray-900 mb-1">{fullName}</h2>
+        <h2 className="text-lg font-semibold text-white mb-1">{fullName}</h2>
         {/* Details, each on its own line */}
-        {jobText && <p className="text-sm text-gray-500 mb-1">{jobText}</p>}
-        {batchLine && <p className="text-sm text-gray-500 mb-1">{batchLine}</p>}
-        {courseLine && <p className="text-sm text-gray-500 mb-1">{courseLine}</p>}
+        {jobText && <p className="text-sm text-gray-300 mb-1">{jobText}</p>}
+        {batchLine && <p className="text-sm text-gray-300 mb-1">{batchLine}</p>}
+        {courseLine && <p className="text-sm text-gray-300 mb-1">{courseLine}</p>}
         {/* Tags */}
         {tags.length > 0 && (
           <div className="flex gap-2 flex-wrap mb-3">
             {tags.map((tag, i) => (
-              <span key={i} className="px-3 py-1 text-xs bg-accent-100 text-accent-700 rounded-full font-medium">{tag}</span>
+              <span key={i} className="px-3 py-1 text-xs bg-white/20 backdrop-blur-sm text-white rounded-full font-medium border border-white/30">{tag}</span>
             ))}
           </div>
         )}
@@ -170,19 +172,19 @@ const AlumniCard = ({
                   href={linkedinUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2 bg-gray-100 rounded-full hover:bg-primary-100 transition-colors"
+                  className="p-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-colors border border-white/30"
                   onClick={e => e.stopPropagation()}
                 >
-                  <Linkedin size={18} className="text-gray-600 hover:text-primary-600" />
+                  <Linkedin size={18} className="text-white hover:text-primary-400" />
                 </a>
               )}
               {email && (
                 <a
                   href={`mailto:${email}`}
-                  className="p-2 bg-gray-100 rounded-full hover:bg-primary-100 transition-colors"
+                  className="p-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-colors border border-white/30"
                   onClick={e => e.stopPropagation()}
                 >
-                  <Mail size={18} className="text-gray-600 hover:text-primary-600" />
+                  <Mail size={18} className="text-white hover:text-primary-400" />
                 </a>
               )}
             </div>

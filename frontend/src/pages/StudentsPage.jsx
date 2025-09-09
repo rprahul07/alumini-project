@@ -9,6 +9,7 @@ import StudentFilterButton from '../components/StudentFilterButton';
 import StudentActiveFilters from '../components/StudentActiveFilters';
 import axios from '../config/axios';
 import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const StudentsPage = () => {
   const { user, loading: authLoading } = useAuth();
@@ -107,43 +108,78 @@ const StudentsPage = () => {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-gray-50">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 relative overflow-hidden">
+        {/* Enhanced Background decorative elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          {/* Animated gradient orbs */}
+          <div className="absolute top-10 right-10 w-96 h-96 bg-gradient-to-br from-primary-400/30 to-secondary-400/30 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-tr from-secondary-400/30 to-primary-400/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-primary-300/20 to-secondary-300/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+          
+          {/* Floating particles */}
+          <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-primary-400/60 rounded-full animate-bounce" style={{ animationDelay: '0.5s' }}></div>
+          <div className="absolute top-3/4 right-1/4 w-1 h-1 bg-secondary-400/60 rounded-full animate-bounce" style={{ animationDelay: '1.5s' }}></div>
+          <div className="absolute top-1/2 right-1/3 w-1.5 h-1.5 bg-primary-300/60 rounded-full animate-bounce" style={{ animationDelay: '2.5s' }}></div>
+        </div>
+
         {/* Hero Section */}
-        <section className="bg-gradient-to-r from-primary-600 via-primary-700 to-secondary-600 text-white py-12 sm:py-16">
+        <section className="relative z-10 py-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center">
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 animate-fade-in">
-                Student Directory
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="text-center"
+            >
+              <div className="inline-flex items-center px-6 py-3 rounded-full text-sm font-semibold bg-gradient-to-r from-primary-500/20 to-secondary-500/20 backdrop-blur-sm text-white border border-white/20 mb-8 shadow-lg">
+                <span className="w-3 h-3 bg-gradient-to-r from-primary-400 to-secondary-400 rounded-full mr-3 animate-pulse"></span>
+                <span>Student Directory</span>
+              </div>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-display text-white mb-6 leading-tight">
+                Connect with{' '}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 via-secondary-400 to-primary-400 animate-pulse">
+                  Fellow Students
+                </span>
               </h1>
-              <p className="text-lg sm:text-xl text-white/90 max-w-3xl mx-auto animate-fade-in" style={{ animationDelay: '0.2s' }}>
-                Connect with fellow students, find study partners, and build lasting friendships
+              <p className="text-base md:text-lg text-gray-300 max-w-3xl mx-auto leading-relaxed font-body">
+                Find study partners, build lasting friendships, and create meaningful connections with your peers
               </p>
-            </div>
+            </motion.div>
           </div>
         </section>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
           {/* Search and Filters */}
-          <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200 p-6 mb-8 z-40 relative animate-slide-up">
-            <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center w-full">
-              <div className="flex-1 w-full">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Search Students</label>
-                <StudentSearch
-                  searchTerm={searchTerm}
-                  onSearchChange={handleSearchChange}
-                  isLoading={loading}
-                />
-              </div>
-              <div className="flex-1 lg:flex-none">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Filter & Sort</label>
-                <StudentFilterButton
-                  selectedDepartment={selectedDepartment}
-                  selectedSemester={selectedSemester}
-                  onFilterChange={handleFilterChange}
-                />
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 p-6 mb-8 relative z-40"
+          >
+            {/* Animated background */}
+            <div className="absolute inset-0 bg-gradient-to-r from-primary-400/10 to-secondary-400/10 rounded-2xl animate-pulse"></div>
+            
+            <div className="relative z-10">
+              <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center w-full">
+                <div className="flex-1 w-full">
+                  <label className="block text-sm font-medium text-white mb-2">Search Students</label>
+                  <StudentSearch
+                    searchTerm={searchTerm}
+                    onSearchChange={handleSearchChange}
+                    isLoading={loading}
+                  />
+                </div>
+                <div className="flex-1 lg:flex-none">
+                  <label className="block text-sm font-medium text-white mb-2">Filter & Sort</label>
+                  <StudentFilterButton
+                    selectedDepartment={selectedDepartment}
+                    selectedSemester={selectedSemester}
+                    onFilterChange={handleFilterChange}
+                  />
+                </div>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Active Filters */}
           <StudentActiveFilters
@@ -153,34 +189,54 @@ const StudentsPage = () => {
             onClearSearch={handleClearSearch}
             onClearFilter={handleClearFilter}
           />
-          <div className="mt-8 animate-fade-in">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="mt-8"
+          >
             {authLoading || loading ? (
-              <div className="flex flex-col items-center justify-center py-20">
-                <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary mb-4"></div>
-                <p className="text-gray-600 text-lg font-medium">Loading students...</p>
-              </div>
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
+                className="flex flex-col items-center justify-center py-20"
+              >
+                <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary-400 mb-4"></div>
+                <p className="text-gray-300 text-lg font-medium">Loading students...</p>
+              </motion.div>
             ) : error ? (
-              <div className="flex flex-col items-center py-20">
-                <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
-                  <i className="fas fa-exclamation-triangle text-red-600 text-2xl"></i>
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
+                className="flex flex-col items-center py-20"
+              >
+                <div className="w-16 h-16 bg-red-500/20 backdrop-blur-sm rounded-full flex items-center justify-center mb-4 border border-red-500/30">
+                  <i className="fas fa-exclamation-triangle text-red-400 text-2xl"></i>
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Something went wrong</h3>
-                <p className="text-gray-600 text-center mb-6 max-w-md">{error}</p>
+                <h3 className="text-xl font-bold text-white mb-2">Something went wrong</h3>
+                <p className="text-gray-300 text-center mb-6 max-w-md">{error}</p>
                 <button 
                   onClick={fetchStudents}
-                  className="px-6 py-3 bg-primary text-white rounded-lg font-semibold hover:bg-primary-700 transition-colors duration-200 flex items-center"
+                  className="px-6 py-3 bg-gradient-to-r from-primary-500 to-secondary-500 text-white rounded-lg font-semibold hover:from-primary-600 hover:to-secondary-600 transition-all duration-300 flex items-center shadow-lg hover:shadow-xl"
                 >
                   <i className="fas fa-refresh mr-2"></i>
                   Try Again
                 </button>
-              </div>
+              </motion.div>
             ) : students.length === 0 ? (
-              <div className="flex flex-col items-center py-20">
-                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                  <i className="fas fa-graduation-cap text-gray-400 text-2xl"></i>
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
+                className="flex flex-col items-center py-20"
+              >
+                <div className="w-16 h-16 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center mb-4 border border-white/20">
+                  <i className="fas fa-graduation-cap text-primary-400 text-2xl"></i>
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">No students found</h3>
-                <p className="text-gray-600 text-center mb-6 max-w-md">
+                <h3 className="text-xl font-bold text-white mb-2">No students found</h3>
+                <p className="text-gray-300 text-center mb-6 max-w-md">
                   Try adjusting your search terms or filters to find more students.
                 </p>
                 <button
@@ -190,42 +246,57 @@ const StudentsPage = () => {
                     setSelectedSemester('');
                     setCurrentPage(1);
                   }}
-                  className="px-6 py-3 bg-primary text-white rounded-lg font-semibold hover:bg-primary-700 transition-colors duration-200 flex items-center"
+                  className="px-6 py-3 bg-gradient-to-r from-primary-500 to-secondary-500 text-white rounded-lg font-semibold hover:from-primary-600 hover:to-secondary-600 transition-all duration-300 flex items-center shadow-lg hover:shadow-xl"
                 >
                   <i className="fas fa-refresh mr-2"></i>
                   Clear Filters
                 </button>
-              </div>
+              </motion.div>
             ) : (
               <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 justify-center">
-                  {students.map((student, idx) => (
-                    <StudentCard 
-                      key={student.id || idx} 
-                      student={student} 
-                      onCardClick={handleStudentCardClick}
-                    />
-                  ))}
+                  <AnimatePresence>
+                    {students.map((student, idx) => (
+                      <motion.div
+                        key={student.id || idx}
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: idx * 0.1 }}
+                        exit={{ opacity: 0, y: -30 }}
+                      >
+                        <StudentCard 
+                          student={student} 
+                          onCardClick={handleStudentCardClick}
+                        />
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
                 </div>
-                <div className="mt-10">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.8 }}
+                  className="mt-10"
+                >
                   <EventPagination 
                     currentPage={currentPage}
                     totalPages={totalPages}
                     onPageChange={handlePageChange}
                   />
-                </div>
+                </motion.div>
               </>
             )}
-          </div>
+          </motion.div>
         </div>
 
-        {/* Student Details Modal */}
-        <StudentDetailsModal
-          open={detailsModalOpen}
-          onClose={() => setDetailsModalOpen(false)}
-          studentId={selectedStudent?.id || selectedStudent?.user?.id}
-        />
       </div>
+
+      {/* Student Details Modal - Rendered outside main container to avoid stacking context issues */}
+      <StudentDetailsModal
+        open={detailsModalOpen}
+        onClose={() => setDetailsModalOpen(false)}
+        studentId={selectedStudent?.id || selectedStudent?.user?.id}
+      />
     </>
   );
 };
