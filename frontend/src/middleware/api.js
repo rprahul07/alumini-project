@@ -59,8 +59,9 @@ axios.interceptors.response.use(
     }
 
     if (error.response?.status === 409) {
+      // Use the actual server error message instead of hardcoded message
       throw new Error(
-        "This email is already registered. Please use a different email or login."
+        error.response?.data?.message || "This email is already registered. Please use a different email or login."
       );
     }
 

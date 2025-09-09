@@ -580,7 +580,7 @@ const AboutPage = memo(() => {
         </section>
 
         {/* Video Player Section */}
-        <section className="py-20 sm:py-24 bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 relative overflow-hidden animate-slide-up">
+        <section className="py-12 sm:py-16 bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 relative overflow-hidden animate-slide-up">
           {/* Enhanced Background decorative elements */}
           <div className="absolute inset-0 overflow-hidden">
             {/* Animated gradient orbs */}
@@ -594,30 +594,30 @@ const AboutPage = memo(() => {
             <div className="absolute top-1/2 right-1/3 w-1.5 h-1.5 bg-primary-300/60 rounded-full animate-bounce" style={{ animationDelay: '2.5s' }}></div>
           </div>
           
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div className="text-center mb-16">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="text-center mb-8">
               <div className="flex flex-col items-center">
-                <div className="relative mb-8">
-                  <div className="w-20 h-20 bg-gradient-to-r from-primary to-secondary rounded-2xl flex items-center justify-center shadow-2xl transform hover:scale-110 transition-all duration-300">
-                    <i className="fas fa-play text-white text-3xl"></i>
+                <div className="relative mb-4">
+                  <div className="w-16 h-16 bg-gradient-to-r from-primary to-secondary rounded-xl flex items-center justify-center shadow-2xl transform hover:scale-110 transition-all duration-300">
+                    <i className="fas fa-play text-white text-2xl"></i>
                   </div>
-                  <div className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-r from-accent-400 to-pink-400 rounded-full flex items-center justify-center shadow-lg">
-                    <i className="fas fa-video text-white text-sm"></i>
+                  <div className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-accent-400 to-pink-400 rounded-full flex items-center justify-center shadow-lg">
+                    <i className="fas fa-video text-white text-xs"></i>
                   </div>
-                  <div className="absolute -bottom-2 -left-2 w-6 h-6 bg-gradient-to-r from-green-400 to-emerald-400 rounded-full flex items-center justify-center shadow-lg">
+                  <div className="absolute -bottom-1 -left-1 w-4 h-4 bg-gradient-to-r from-green-400 to-emerald-400 rounded-full flex items-center justify-center shadow-lg">
                     <i className="fas fa-star text-white text-xs"></i>
                   </div>
                 </div>
-                <div className="inline-flex items-center px-6 py-3 rounded-full text-sm font-semibold bg-gradient-to-r from-primary-500/20 to-secondary-500/20 backdrop-blur-sm text-white border border-white/20 mb-8 shadow-lg">
-                  <span className="w-3 h-3 bg-gradient-to-r from-primary-400 to-secondary-400 rounded-full mr-3 animate-pulse"></span>
+                <div className="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold bg-gradient-to-r from-primary-500/20 to-secondary-500/20 backdrop-blur-sm text-white border border-white/20 mb-4 shadow-lg">
+                  <span className="w-2 h-2 bg-gradient-to-r from-primary-400 to-secondary-400 rounded-full mr-2 animate-pulse"></span>
                   <span>Our Story</span>
                 </div>
-                <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold font-display text-white mb-6 leading-tight flex items-center justify-center">
-                  <i className="fas fa-play-circle mr-4 text-primary-400 text-4xl"></i>
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold font-display text-white mb-4 leading-tight flex items-center justify-center">
+                  <i className="fas fa-play-circle mr-3 text-primary-400 text-3xl"></i>
                   Discover Our Journey
                 </h2>
-                <div className="w-20 h-1 bg-gradient-to-r from-primary to-secondary rounded-full mb-6"></div>
-                <p className="text-base md:text-lg text-gray-300 max-w-3xl mx-auto leading-relaxed font-body">
+                <div className="w-16 h-1 bg-gradient-to-r from-primary to-secondary rounded-full mb-4"></div>
+                <p className="text-sm md:text-base text-gray-300 max-w-2xl mx-auto leading-relaxed font-body">
                   Watch our inspiring journey from a small engineering college to a global community of 
                   <span className="font-semibold text-primary-400"> innovators, leaders, and changemakers</span>
                 </p>
@@ -626,38 +626,41 @@ const AboutPage = memo(() => {
 
             {/* Video Player */}
             <VideoPlayer
-              videoId={null} // Will be set when YouTube integration is ready
-              title="CUCEK Alumni Network"
-              description="Click to play our story"
+              videoId="R_hQzJ0jRqE" // YouTube video ID from the provided URL
+              title="CUCEK Alumni Success Stories"
+              description="Discover how our graduates are making a difference in technology, innovation, and society worldwide"
               duration="5:30 min"
               views="2.5K views"
               year="2024"
+              muted={true} // Play without sound by default
+              autoplay={false} // Don't autoplay, let user control
+              loop={false} // Don't loop the video
               onPlay={() => console.log('Video play clicked')}
               onShare={() => console.log('Video share clicked')}
             />
 
             {/* Video Features */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
-              <div className="group text-center p-8 bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 hover:border-white/30 hover:shadow-3xl transition-all duration-300">
-                <div className="w-16 h-16 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <i className="fas fa-graduation-cap text-white text-xl"></i>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
+              <div className="group text-center p-4 bg-white/10 backdrop-blur-xl rounded-xl shadow-2xl border border-white/20 hover:border-white/30 hover:shadow-3xl transition-all duration-300">
+                <div className="w-12 h-12 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300">
+                  <i className="fas fa-graduation-cap text-white text-lg"></i>
                 </div>
-                <h4 className="text-xl md:text-2xl font-bold text-white mb-3">Alumni Stories</h4>
-                <p className="text-gray-300 leading-relaxed text-base font-medium">Real success stories from our graduates</p>
+                <h4 className="text-lg font-bold text-white mb-2">Alumni Stories</h4>
+                <p className="text-gray-300 leading-relaxed text-sm font-medium">Real success stories from our graduates</p>
               </div>
-              <div className="group text-center p-8 bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 hover:border-white/30 hover:shadow-3xl transition-all duration-300">
-                <div className="w-16 h-16 bg-gradient-to-r from-secondary to-accent rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <i className="fas fa-lightbulb text-white text-xl"></i>
+              <div className="group text-center p-4 bg-white/10 backdrop-blur-xl rounded-xl shadow-2xl border border-white/20 hover:border-white/30 hover:shadow-3xl transition-all duration-300">
+                <div className="w-12 h-12 bg-gradient-to-r from-secondary to-accent rounded-full flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300">
+                  <i className="fas fa-lightbulb text-white text-lg"></i>
                 </div>
-                <h4 className="text-xl md:text-2xl font-bold text-white mb-3">Innovation</h4>
-                <p className="text-gray-300 leading-relaxed text-base font-medium">Cutting-edge projects and research</p>
+                <h4 className="text-lg font-bold text-white mb-2">Innovation</h4>
+                <p className="text-gray-300 leading-relaxed text-sm font-medium">Cutting-edge projects and research</p>
               </div>
-              <div className="group text-center p-8 bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 hover:border-white/30 hover:shadow-3xl transition-all duration-300">
-                <div className="w-16 h-16 bg-gradient-to-r from-accent to-primary rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <i className="fas fa-globe text-white text-xl"></i>
+              <div className="group text-center p-4 bg-white/10 backdrop-blur-xl rounded-xl shadow-2xl border border-white/20 hover:border-white/30 hover:shadow-3xl transition-all duration-300">
+                <div className="w-12 h-12 bg-gradient-to-r from-accent to-primary rounded-full flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300">
+                  <i className="fas fa-globe text-white text-lg"></i>
                 </div>
-                <h4 className="text-xl md:text-2xl font-bold text-white mb-3">Global Impact</h4>
-                <p className="text-gray-300 leading-relaxed text-base font-medium">Making a difference worldwide</p>
+                <h4 className="text-lg font-bold text-white mb-2">Global Impact</h4>
+                <p className="text-gray-300 leading-relaxed text-sm font-medium">Making a difference worldwide</p>
               </div>
             </div>
           </div>

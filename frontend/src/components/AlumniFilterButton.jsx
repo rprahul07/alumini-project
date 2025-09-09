@@ -99,9 +99,7 @@ const AlumniFilterButton = ({
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 sm:right-0 left-0 sm:left-auto mt-3 w-80 sm:w-72 bg-white/10 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/20 z-[99999] max-h-[80vh] overflow-y-auto scrollbar-hide" style={{ zIndex: 99999 }}>
-          {/* Dark gradient overlay for better text visibility */}
-          <div className="absolute inset-0 bg-gradient-to-br from-black/40 to-black/60 rounded-3xl"></div>
+        <div className="absolute right-0 sm:right-0 left-0 sm:left-auto mt-3 w-80 sm:w-72 bg-gradient-to-br from-black/80 via-gray-900/90 to-black/80 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/30 z-[99999] max-h-[80vh] overflow-y-auto scrollbar-hide" style={{ zIndex: 99999 }}>
           <div className="relative z-10 p-6 space-y-6">
             {/* Batch Filter */}
             <div>

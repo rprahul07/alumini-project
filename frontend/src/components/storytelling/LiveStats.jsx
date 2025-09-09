@@ -2,62 +2,56 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 
-const LiveStats = () => {
+const LiveStats = ({ statsData, loading }) => {
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, threshold: 0.3 });
   const navigate = useNavigate();
 
+  // Use real data from API or fallback to default values
   const stats = [
-  {
-  id: 'members',
-  value: 15000,
-  label: 'Alumni Members',
-  icon: '👥',
-  color: 'from-blue-500 to-cyan-500',
-  suffix: '+'
-},
-{
-  id: 'countries',
-  value: 45,
-  label: 'Countries',
-  icon: '🌍',
-  color: 'from-green-500 to-emerald-500',
-  suffix: '+'
-},
-{
-  id: 'events',
-  value: 300,
-  label: 'Events Hosted',
-  icon: '🎉',
-  color: 'from-purple-500 to-pink-500',
-  suffix: '+'
-},
-{
-  id: 'mentorship',
-  value: 2000,
-  label: 'Mentorship Hours',
-  icon: '🤝',
-  color: 'from-orange-500 to-red-500',
-  suffix: '+'
-},
-{
-  id: 'jobs',
-  value: 400,
-  label: 'Jobs Posted',
-  icon: '💼',
-  color: 'from-indigo-500 to-purple-500',
-  suffix: '+'
-},
-{
-  id: 'startups',
-  value: 80,
-  label: 'Startups Founded',
-  icon: '🚀',
-  color: 'from-teal-500 to-cyan-500',
-  suffix: '+'
-}
-
+    {
+      id: 'members',
+      value: statsData?.alumniMembers || 15000,
+      label: 'Alumni Members',
+      color: 'from-blue-500 to-cyan-500',
+      suffix: '+'
+    },
+    {
+      id: 'countries',
+      value: 45, // This could be added to the API later
+      label: 'Countries',
+      color: 'from-green-500 to-emerald-500',
+      suffix: '+'
+    },
+    {
+      id: 'events',
+      value: statsData?.eventsHosted || 300,
+      label: 'Events Hosted',
+      color: 'from-purple-500 to-pink-500',
+      suffix: '+'
+    },
+    {
+      id: 'activeUsers',
+      value: statsData?.activeUsers || 2000,
+      label: 'Active Users',
+      color: 'from-orange-500 to-red-500',
+      suffix: '+'
+    },
+    {
+      id: 'jobs',
+      value: 20, // This could be added to the API later
+      label: 'Jobs Posted',
+      color: 'from-indigo-500 to-purple-500',
+      suffix: '+'
+    },
+    {
+      id: 'startups',
+      value: 80, // This could be added to the API later
+      label: 'Startups Founded',
+      color: 'from-teal-500 to-cyan-500',
+      suffix: '+'
+    }
   ];
 
   // Counter animation hook
@@ -95,6 +89,11 @@ const LiveStats = () => {
 
     return count;
   };
+
+  // Pre-calculate all counter values to avoid calling hooks in map
+  const animatedValues = stats.map((stat, index) => 
+    useCounter(stat.value, 1500 + index * 100)
+  );
 
   return (
     <section id="live-stats" className="py-12 bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 relative overflow-hidden">
@@ -141,55 +140,59 @@ const LiveStats = () => {
 
         {/* Compact Stats Grid */}
         <div ref={ref} className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          {stats.map((stat, index) => {
-            const animatedValue = useCounter(stat.value, 1500 + index * 100);
-            
-            return (
+          {loading ? (
+            // Loading skeleton
+            Array.from({ length: 6 }).map((_, index) => (
               <motion.div
-                key={stat.id}
+                key={index}
                 initial={{ opacity: 0, y: 20, scale: 0.9 }}
                 whileInView={{ opacity: 1, y: 0, scale: 1 }}
                 transition={{ duration: 0.5, delay: index * 0.05 }}
                 viewport={{ once: true }}
                 className="group"
               >
-                <div className="bg-white/10 backdrop-blur-xl rounded-xl p-4 border border-white/20 hover:border-white/30 hover:bg-white/20 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl text-center shadow-2xl">
-                  {/* Compact Icon */}
-                  <div className="mb-3">
-                    <motion.div
-                      className={`w-12 h-12 mx-auto bg-gradient-to-r ${stat.color} rounded-full flex items-center justify-center text-white text-xl shadow-lg group-hover:scale-110 transition-transform duration-300`}
-                      whileHover={{ rotate: 360 }}
-                      transition={{ duration: 0.6 }}
-                    >
-                      {stat.icon}
-                    </motion.div>
-                  </div>
-
-                  {/* Compact Value */}
-                  <div className="mb-2">
-                    <motion.div
-                      className="text-2xl md:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-secondary-400 mb-1"
-                      key={animatedValue}
-                    >
-                      {animatedValue.toLocaleString()}{stat.suffix}
-                    </motion.div>
-                    <div className="text-sm font-semibold text-gray-300 leading-tight">{stat.label}</div>
-                  </div>
-
-                  {/* Compact Progress bar */}
-                  <div className="w-full bg-white/20 rounded-full h-1 overflow-hidden">
-                    <motion.div
-                      className={`h-full bg-gradient-to-r ${stat.color} rounded-full`}
-                      initial={{ width: 0 }}
-                      whileInView={{ width: '100%' }}
-                      transition={{ duration: 1.5, delay: 0.3 + index * 0.05 }}
-                      viewport={{ once: true }}
-                    />
-                  </div>
-                </div>
+                 <div className="bg-white/10 backdrop-blur-xl rounded-xl p-4 border border-white/20 text-center shadow-2xl">
+                   {/* Loading Value */}
+                   <div className="mb-2">
+                     <div className="text-2xl md:text-3xl font-bold text-white/50 mb-1 animate-pulse">
+                       ---
+                     </div>
+                     <div className="text-sm font-semibold text-gray-400 leading-tight animate-pulse">
+                       Loading...
+                     </div>
+                   </div>
+                 </div>
               </motion.div>
-            );
-          })}
+            ))
+          ) : (
+            stats.map((stat, index) => {
+              const animatedValue = animatedValues[index];
+              
+              return (
+                <motion.div
+                  key={stat.id}
+                  initial={{ opacity: 0, y: 20, scale: 0.9 }}
+                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ duration: 0.5, delay: index * 0.05 }}
+                  viewport={{ once: true }}
+                  className="group"
+                >
+                   <div className="bg-white/10 backdrop-blur-xl rounded-xl p-4 border border-white/20 hover:border-white/30 hover:bg-white/20 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl text-center shadow-2xl">
+                     {/* Compact Value */}
+                     <div className="mb-2">
+                       <motion.div
+                         className="text-2xl md:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-secondary-400 mb-1"
+                         key={animatedValue}
+                       >
+                         {animatedValue.toLocaleString()}{stat.suffix}
+                       </motion.div>
+                       <div className="text-sm font-semibold text-gray-300 leading-tight">{stat.label}</div>
+                     </div>
+                   </div>
+                </motion.div>
+              );
+            })
+          )}
         </div>
 
         {/* Inspirational Quote Section */}

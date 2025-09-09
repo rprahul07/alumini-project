@@ -1,4 +1,4 @@
-import React, { useState, memo, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { XMarkIcon, CalendarIcon, ClockIcon, MapPinIcon, UserGroupIcon, UserIcon } from '@heroicons/react/24/outline';
 import OptimizedImage from './OptimizedImage';
 import axios from '../config/axios';
@@ -7,7 +7,7 @@ import ConfirmDialog from './ConfirmDialog';
 import { useAuth } from '../contexts/AuthContext';
 import ReactDOM from 'react-dom';
 
-const EventDetailsModal = memo(({ event, user, isOpen, onClose, onEventUpdate }) => {
+const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
   // Use auth context as primary source, fallback to prop for backward compatibility
   const { user: authUser, loading: authLoading } = useAuth();
   const currentUser = authUser || user; // Use authUser as primary, user prop as fallback
@@ -29,8 +29,6 @@ const EventDetailsModal = memo(({ event, user, isOpen, onClose, onEventUpdate })
       setIsRegistered(false);
     }
   }, [currentUser, event]);
-
-  if (!isOpen || !event) return null;
 
   // Format date
   const formatDate = useCallback((dateString) => {
@@ -337,8 +335,11 @@ const EventDetailsModal = memo(({ event, user, isOpen, onClose, onEventUpdate })
     </div>
   );
 
+  // Only render modal if it's open and event exists
+  if (!isOpen || !event) return null;
+  
   return ReactDOM.createPortal(modalContent, document.body);
-});
+};
 
 export default EventDetailsModal; 
     

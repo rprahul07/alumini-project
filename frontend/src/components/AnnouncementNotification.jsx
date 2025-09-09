@@ -20,13 +20,13 @@ const AnnouncementNotification = ({ announcements, loading }) => {
     return () => clearInterval(interval);
   }, [announcements.length, isDismissed]);
 
-  // Auto-hide notification after 10 seconds
+  // Auto-hide notification after 5 seconds
   useEffect(() => {
     if (isDismissed) return;
 
     const timer = setTimeout(() => {
       setIsVisible(false);
-    }, 10000);
+    }, 5000);
 
     setAutoHideTimer(timer);
 
@@ -51,7 +51,7 @@ const AnnouncementNotification = ({ announcements, loading }) => {
     }
     const timer = setTimeout(() => {
       setIsVisible(false);
-    }, 10000);
+    }, 5000);
     setAutoHideTimer(timer);
   };
 
@@ -91,8 +91,64 @@ const AnnouncementNotification = ({ announcements, loading }) => {
     return `${Math.floor(diffInHours / 168)}w ago`;
   };
 
-  if (loading || !announcements || announcements.length === 0 || isDismissed) {
+  // Show loading animation and auto-dismiss after completion
+  useEffect(() => {
+    if (loading) {
+      // Auto-dismiss after loading animation completes (2 seconds)
+      const timer = setTimeout(() => {
+        setIsVisible(false);
+      }, 2000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [loading]);
+
+  // Auto-dismiss if no announcements
+  useEffect(() => {
+    if (!announcements || announcements.length === 0) {
+      const timer = setTimeout(() => {
+        setIsVisible(false);
+      }, 1000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [announcements]);
+
+  if (!announcements || announcements.length === 0 || isDismissed) {
     return null;
+  }
+
+  // Show loading state with animation
+  if (loading) {
+    return (
+      <AnimatePresence>
+        <motion.div
+          initial={{ opacity: 0, x: 320, scale: 0.9 }}
+          animate={{ opacity: 1, x: 0, scale: 1 }}
+          exit={{ opacity: 0, x: 320, scale: 0.9 }}
+          transition={{ 
+            type: "spring", 
+            stiffness: 400, 
+            damping: 25,
+            duration: 0.4 
+          }}
+          className="fixed top-4 right-4 z-50 max-w-xs w-full"
+        >
+          <div className="bg-white/10 backdrop-blur-2xl rounded-2xl shadow-2xl border border-white/20 overflow-hidden relative">
+            {/* Animated background gradient */}
+            <div className="absolute inset-0 bg-gradient-to-br from-primary-500/10 via-secondary-500/10 to-primary-500/10 rounded-2xl animate-pulse"></div>
+            
+            {/* Loading content */}
+            <div className="p-4 relative z-10">
+              <div className="flex items-center justify-center space-x-3">
+                <div className="animate-spin rounded-full h-6 w-6 border-2 border-primary-400 border-t-transparent"></div>
+                <span className="text-white font-medium">Loading announcements...</span>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </AnimatePresence>
+    );
   }
 
   const currentAnnouncement = announcements[currentIndex];
@@ -210,7 +266,7 @@ const AnnouncementNotification = ({ announcements, loading }) => {
                 className="h-full bg-gradient-to-r from-primary-400 via-secondary-400 to-primary-400 rounded-full"
                 initial={{ width: "0%" }}
                 animate={{ width: "100%" }}
-                transition={{ duration: 10, ease: "linear" }}
+                transition={{ duration: 5, ease: "linear" }}
               />
             </div>
           </div>

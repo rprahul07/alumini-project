@@ -128,8 +128,8 @@ const Navbar = memo(({ isHome = false }) => {
   // Auto-detect if on home page
   const isHomePage = isHome || location.pathname === '/';
   
-  // Detect if on a page with dark background (events, jobs, etc.)
-  const isDarkBackgroundPage = ['/events', '/jobs', '/alumni', '/students'].includes(location.pathname);
+  // Detect if on a page with dark background (events, jobs, home, etc.)
+  const isDarkBackgroundPage = ['/', '/events', '/jobs', '/alumni', '/students'].includes(location.pathname);
 
   // Handle scroll effect
   useEffect(() => {
@@ -350,8 +350,8 @@ const Navbar = memo(({ isHome = false }) => {
       {isMenuOpen && (
         <div className={`lg:hidden backdrop-blur-2xl mx-4 mt-2 rounded-3xl shadow-2xl border animate-in slide-in-from-top duration-300 ${
           isDarkBackgroundPage
-            ? 'bg-white/10 border-white/20'
-            : 'bg-white/95 border-white/40'
+            ? 'bg-gradient-to-br from-black/80 via-gray-900/90 to-black/80 border-white/30'
+            : 'bg-gradient-to-br from-black/80 via-gray-900/90 to-black/80 border-white/30'
         }`}>
           <div className="py-4">
             {navLinks
@@ -365,12 +365,8 @@ const Navbar = memo(({ isHome = false }) => {
                     className={({ isActive }) =>
                       `flex items-center px-6 py-3 text-sm font-semibold font-body transition-all duration-200 ${
                         isActive && !isDashboardRoute
-                          ? isDarkBackgroundPage
-                            ? 'bg-white/20 text-white mx-4 rounded-xl shadow-md border border-white/30'
-                            : 'bg-gradient-to-r from-primary-100 to-secondary-100 text-primary-700 mx-4 rounded-xl shadow-md border border-primary-200'
-                          : isDarkBackgroundPage
-                            ? 'text-white/90 hover:bg-white/20 hover:text-white mx-4 rounded-xl'
-                            : 'text-gray-700 hover:bg-gradient-to-r hover:from-primary-50 hover:to-secondary-50 hover:text-primary-700 mx-4 rounded-xl'
+                          ? 'bg-white/20 text-white mx-4 rounded-xl shadow-md border border-white/30'
+                          : 'text-white hover:bg-white/20 hover:text-white mx-4 rounded-xl'
                       }`
                     }
                     end={link.path === '/'}
@@ -383,11 +379,11 @@ const Navbar = memo(({ isHome = false }) => {
           </div>
 
           {user && (
-            <div className="border-t border-gray-200 pt-4 pb-4">
+            <div className="border-t border-white/20 pt-4 pb-4">
               {!isDashboard && (
                 <button
                   onClick={() => { setIsMenuOpen(false); handleDashboardRedirect(); }}
-                  className="w-full flex items-center px-6 py-3 text-sm font-medium text-gray-700 hover:bg-gradient-to-r hover:from-green-50 hover:to-blue-50 hover:text-green-700 mx-4 rounded-xl transition-all duration-200"
+                  className="w-full flex items-center px-6 py-3 text-sm font-medium text-white hover:bg-white/20 hover:text-white mx-4 rounded-xl transition-all duration-200"
                 >
                   <svg className="w-4 h-4 mr-3 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -397,7 +393,7 @@ const Navbar = memo(({ isHome = false }) => {
               )}
               <button
                 onClick={handleLogout}
-                className="w-full flex items-center px-6 py-3 text-sm font-medium text-gray-700 hover:bg-gradient-to-r hover:from-red-50 hover:to-pink-50 hover:text-red-700 mx-4 rounded-xl transition-all duration-200"
+                className="w-full flex items-center px-6 py-3 text-sm font-medium text-white hover:bg-white/20 hover:text-white mx-4 rounded-xl transition-all duration-200"
               >
                                  <svg className="w-4 h-4 mr-3 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
