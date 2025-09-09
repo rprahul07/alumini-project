@@ -19,21 +19,15 @@ const EditUserPage = () => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      console.log('EditUserPage: Fetching user data for:', { type, id });
       setLoading(true);
       setError(null);
       try {
         const apiType = userTypeToApi[type];
         if (!apiType) throw new Error('Invalid user type');
         
-        console.log('EditUserPage: Making GET request to:', `/api/${apiType}/${id}`);
         const res = await apiService.raw.get(`/api/${apiType}/${id}`);
-        console.log('EditUserPage: Fetch response:', res);
         
         const userData = res.data.data || res.data;
-        console.log('EditUserPage: Raw API response:', res.data);
-        console.log('EditUserPage: Setting user data:', userData);
-        console.log('EditUserPage: User data structure:', JSON.stringify(userData, null, 2));
         
         // Ensure nested objects exist to prevent rendering issues
         const processedUserData = {
@@ -116,10 +110,8 @@ const EditUserPage = () => {
           };
         }
         
-        console.log('EditUserPage: Processed user data:', processedUserData);
         setUserData(processedUserData);
       } catch (err) {
-        console.error('EditUserPage: Fetch error:', err);
         setError(err.response?.data?.message || err.message || 'Failed to fetch user data');
       } finally {
         setLoading(false);
@@ -130,7 +122,6 @@ const EditUserPage = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    console.log('EditUserPage: Field changed:', { name, value });
     
     // Handle nested fields (e.g., student.currentSemester)
     if (name.includes('.')) {
@@ -149,7 +140,6 @@ const EditUserPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('EditUserPage: Submitting form with data:', userData);
     setSaving(true);
     setError(null);
     try {

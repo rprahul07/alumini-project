@@ -25,7 +25,6 @@ export const alumniAPI = {
           message: 'Newly joined alumni fetched successfully'
         };
       } else {
-        console.error('API returned error:', response.data);
         return {
           success: false,
           data: [],
@@ -60,7 +59,6 @@ export const alumniAPI = {
           message: 'Latest reconnects fetched successfully'
         };
       } else {
-        console.error('API returned error:', response.data);
         return {
           success: false,
           data: [],

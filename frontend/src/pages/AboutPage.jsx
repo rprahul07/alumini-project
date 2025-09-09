@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import { testimonialsAPI } from '../services/testimonialsService';
 import { dashboardAPI } from '../services/dashboardService';
 import Navbar from '../components/Navbar';
 import VideoPlayer from '../components/VideoPlayer';
-import '@fortawesome/fontawesome-free/css/all.min.css';
 import { useNavigate, Link } from 'react-router-dom';
 
-const AboutPage = () => {
+const AboutPage = memo(() => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('mission');
   const [currentTestimonialIndex, setCurrentTestimonialIndex] = useState(0);
@@ -859,6 +858,6 @@ const AboutPage = () => {
       </div>
     </>
   );
-};
+});
 
 export default AboutPage;

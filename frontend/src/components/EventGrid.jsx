@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import EventCard from './EventCard';
 import { preloadEventImages } from '../utils/imagePreloader';
 
@@ -6,24 +6,28 @@ const EventGrid = ({ events, user, onEventUpdate }) => {
   const [visibleEvents, setVisibleEvents] = useState([]);
   const observerRef = useRef(null);
 
-  // Debug events data
-  console.log('EventGrid events:', events);
-  console.log('First event imageUrl:', events?.[0]?.imageUrl);
+  // Debug events data (removed for production performance)
 
+
+  // Memoize filtered events to prevent unnecessary re-renders
+  const filteredEvents = useMemo(() => {
+    return events ? events.filter(event => event && event.id) : [];
+  }, [events]);
 
   // Preload critical event images for better perceived performance
   useEffect(() => {
-    if (events && events.length > 0) {
-      preloadEventImages(events, 10); // Preload first 10 event images
+    if (filteredEvents.length > 0) {
+      // Preload first 3 images for better LCP
+      preloadEventImages(filteredEvents, 3);
     }
-  }, [events]);
+  }, [filteredEvents]);
 
   // Intersection Observer for lazy loading
   useEffect(() => {
-    if (!events || events.length === 0) return;
+    if (!filteredEvents || filteredEvents.length === 0) return;
 
     // Show first 10 events immediately (with safety check)
-    const initialEvents = events.slice(0, 10).filter(event => event && event.id);
+    const initialEvents = filteredEvents.slice(0, 10);
     setVisibleEvents(initialEvents);
 
     const observer = new IntersectionObserver(
@@ -32,12 +36,12 @@ const EventGrid = ({ events, user, onEventUpdate }) => {
           if (entry.isIntersecting) {
             const index = parseInt(entry.target.dataset.index);
             // Validate index is within bounds
-            if (index >= 0 && index < events.length) {
+            if (index >= 0 && index < filteredEvents.length) {
               setVisibleEvents(prev => {
                 // Load 5 events at a time for faster loading
                 const startIndex = Math.floor(index / 5) * 5;
-                const endIndex = Math.min(startIndex + 5, events.length);
-                const eventsToAdd = events.slice(startIndex, endIndex).filter(event => 
+                const endIndex = Math.min(startIndex + 5, filteredEvents.length);
+                const eventsToAdd = filteredEvents.slice(startIndex, endIndex).filter(event => 
                   event && event.id && !prev.some(prevEvent => prevEvent && prevEvent.id === event.id)
                 );
                 return [...prev, ...eventsToAdd];
@@ -55,7 +59,7 @@ const EventGrid = ({ events, user, onEventUpdate }) => {
     observerRef.current = observer;
 
     // Observe placeholder elements for remaining events (starting from index 10)
-    events.slice(10).forEach((_, index) => {
+    filteredEvents.slice(10).forEach((_, index) => {
       const placeholder = document.getElementById(`event-placeholder-${index + 10}`);
       if (placeholder) {
         observer.observe(placeholder);
@@ -67,9 +71,9 @@ const EventGrid = ({ events, user, onEventUpdate }) => {
         observerRef.current.disconnect();
       }
     };
-  }, [events]);
+  }, [filteredEvents]);
 
-  if (!events || events.length === 0) {
+  if (!filteredEvents || filteredEvents.length === 0) {
     return null;
   }
 
@@ -91,7 +95,7 @@ const EventGrid = ({ events, user, onEventUpdate }) => {
       ))}
       
       {/* Enhanced placeholder elements for lazy loading */}
-      {events && events.length > visibleEvents.length && events.slice(visibleEvents.length).map((_, index) => (
+      {filteredEvents && filteredEvents.length > visibleEvents.length && filteredEvents.slice(visibleEvents.length).map((_, index) => (
         <div
           key={`placeholder-${index + visibleEvents.length}`}
           id={`event-placeholder-${index + visibleEvents.length}`}

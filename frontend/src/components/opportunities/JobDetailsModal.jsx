@@ -53,23 +53,23 @@ const JobDetailsModal = ({ job, open, onClose, onJobEdit, onJobDelete, showAlert
     <>
       {/* Modal Overlay */}
       <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-1 sm:p-2 z-50">
-        <div className="bg-white/10 backdrop-blur-xl rounded-2xl w-full max-w-sm sm:max-w-md md:max-w-lg max-h-[85vh] overflow-y-auto scrollbar-hide p-6 border border-white/20 shadow-2xl">
+        <div className="bg-white/10 backdrop-blur-xl rounded-xl lg:rounded-2xl w-full max-w-sm sm:max-w-md md:max-w-lg max-h-[90vh] overflow-y-auto scrollbar-hide p-3 sm:p-4 lg:p-6 border border-white/20 shadow-2xl">
           
           {/* Header */}
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl sm:text-2xl font-bold text-white font-display">Job Details</h2>
-            <button onClick={onClose} className="text-white/60 hover:text-white transition-colors p-2 rounded-full hover:bg-white/10">
-              <XMarkIcon className="h-6 w-6" />
+          <div className="flex items-center justify-between mb-4 sm:mb-6">
+            <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-white font-display">Job Details</h2>
+            <button onClick={onClose} className="text-white/60 hover:text-white transition-colors p-1 sm:p-2 rounded-full hover:bg-white/10">
+              <XMarkIcon className="h-5 w-5 sm:h-6 sm:w-6" />
             </button>
           </div>
 
           {/* Job Overview */}
-          <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 mb-6 border border-white/20">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-bold text-white text-xl sm:text-2xl leading-tight">
+          <div className="bg-white/10 backdrop-blur-xl rounded-xl lg:rounded-2xl p-3 sm:p-4 lg:p-6 mb-4 sm:mb-6 border border-white/20">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+              <h3 className="font-bold text-white text-lg sm:text-xl lg:text-2xl leading-tight">
                 {job.jobTitle}
               </h3>
-              <span className={`px-4 py-2 rounded-full text-sm font-semibold shadow-lg backdrop-blur-sm border ${
+              <span className={`px-3 sm:px-4 py-1 sm:py-2 rounded-full text-xs sm:text-sm font-semibold shadow-lg backdrop-blur-sm border ${
                 job.type === 'internship' 
                   ? 'bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-400 border-green-400/30' 
                   : 'bg-gradient-to-r from-primary-500/20 to-secondary-500/20 text-primary-400 border-primary-400/30'
@@ -187,25 +187,25 @@ const JobDetailsModal = ({ job, open, onClose, onJobEdit, onJobDelete, showAlert
           )}
 
           {/* Footer Buttons */}
-          <div className="flex justify-between items-center gap-4 pt-6 border-t border-white/10">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4 pt-4 sm:pt-6 border-t border-white/10">
             <button
               onClick={onClose}
-              className="px-6 py-3 font-semibold bg-white/10 backdrop-blur-xl border border-white/20 text-white hover:bg-white/20 transition-all duration-300 rounded-xl shadow-lg hover:shadow-xl font-body"
+              className="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 font-semibold bg-white/10 backdrop-blur-xl border border-white/20 text-white hover:bg-white/20 transition-all duration-300 rounded-xl shadow-lg hover:shadow-xl font-body text-sm sm:text-base"
             >
               Close
             </button>
 
             {canEditDelete && (
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
                 <button
                   onClick={() => setShowEditModal(true)}
-                  className="px-6 py-3 font-semibold bg-gradient-to-r from-primary-500/20 to-secondary-500/20 backdrop-blur-xl border border-primary-400/30 text-primary-400 hover:from-primary-500/30 hover:to-secondary-500/30 transition-all duration-300 rounded-xl shadow-lg hover:shadow-xl font-body"
+                  className="flex-1 sm:flex-none px-4 sm:px-6 py-2 sm:py-3 font-semibold bg-gradient-to-r from-primary-500/20 to-secondary-500/20 backdrop-blur-xl border border-primary-400/30 text-primary-400 hover:from-primary-500/30 hover:to-secondary-500/30 transition-all duration-300 rounded-xl shadow-lg hover:shadow-xl font-body text-sm sm:text-base"
                 >
                   Edit
                 </button>
                 <button
                   onClick={() => setShowDeleteModal(true)}
-                  className="px-6 py-3 font-semibold bg-gradient-to-r from-red-500/20 to-pink-500/20 backdrop-blur-xl border border-red-400/30 text-red-400 hover:from-red-500/30 hover:to-pink-500/30 transition-all duration-300 rounded-xl shadow-lg hover:shadow-xl font-body"
+                  className="flex-1 sm:flex-none px-4 sm:px-6 py-2 sm:py-3 font-semibold bg-gradient-to-r from-red-500/20 to-pink-500/20 backdrop-blur-xl border border-red-400/30 text-red-400 hover:from-red-500/30 hover:to-pink-500/30 transition-all duration-300 rounded-xl shadow-lg hover:shadow-xl font-body text-sm sm:text-base"
                 >
                   Delete
                 </button>

@@ -4,6 +4,7 @@ import RegisteredEvents from './RegisteredEvents';
 import CreateEventModal from '../CreateEventModal';
 import { useAuth } from '../../contexts/AuthContext';
 import { PlusIcon } from '@heroicons/react/24/outline';
+import { motion } from 'framer-motion';
 
 const Events = ({ showAlert }) => {
   const { user } = useAuth();
@@ -25,57 +26,65 @@ const Events = ({ showAlert }) => {
 
   return (
     <div className="flex flex-col h-full">
-      {/* Tabs */}
-      <div className="flex flex-row gap-2 mb-4 items-center overflow-visible">
-        {canCreate && (
-          <>
-            {/* Modern Glassy + Button (highest z, animated ring, no shadow/scale) */}
-            <button
-              className="flex items-center justify-center w-8 h-8 rounded-full bg-white/40 backdrop-blur border border-secondary-200 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-secondary group relative overflow-visible hover:bg-secondary-50 z-30 after:content-[''] after:absolute after:inset-0 after:rounded-full after:pointer-events-none after:transition-all after:duration-300 after:opacity-0 hover:after:opacity-100 hover:after:shadow-[0_0_0_4px_rgba(2,132,199,0.15)] after:z-[-1]"
-              onClick={() => {
-                setIsCreateSelected(true);
-                setShowCreateModal(true);
-              }}
-              aria-label="Create Event"
-              title="Create Event"
-              tabIndex={0}
-              style={{ minWidth: '2rem', minHeight: '2rem' }}
-            >
-              <PlusIcon className="h-4 w-4 text-secondary group-hover:text-secondary-700 transition-colors" />
-            </button>
-            {/* My Events Button */}
-            <button
-              className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all duration-200 flex items-center space-x-1 focus:outline-none focus:ring-2 focus:ring-secondary-300 ${
+      {/* Mobile-First Tabs */}
+      <div className="flex flex-col gap-2 mb-3">
+        {/* Mobile Tab Navigation */}
+        <div className="flex gap-1 overflow-x-auto scrollbar-hide">
+          {canCreate && (
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className={`flex-shrink-0 px-2 py-1.5 rounded-lg text-xs font-medium border transition-all duration-200 ${
                 activeTab === 'myevents'
-                  ? 'bg-primary text-white border-primary shadow'
-                  : 'bg-white text-primary border-secondary-200 hover:bg-secondary-50'
+                  ? 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white border-primary-500'
+                  : 'bg-white/10 text-white border-white/30 hover:bg-white/20'
               }`}
               onClick={() => {
                 setActiveTab('myevents');
                 setIsCreateSelected(false);
               }}
             >
-              <span>My Events</span>
-            </button>
-          </>
+              My Events
+            </motion.button>
+          )}
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className={`flex-shrink-0 px-2 py-1.5 rounded-lg text-xs font-medium border transition-all duration-200 ${
+              activeTab === 'registered'
+                ? 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white border-primary-500'
+                : 'bg-white/10 text-white border-white/30 hover:bg-white/20'
+            }`}
+            onClick={() => {
+              setActiveTab('registered');
+              setIsCreateSelected(false);
+            }}
+          >
+            Registered
+          </motion.button>
+        </div>
+        
+        {/* Mobile Create Button */}
+        {canCreate && (
+          <div className="flex justify-center">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-primary-500 to-secondary-500 text-white text-xs font-semibold border border-primary-500 hover:from-primary-600 hover:to-secondary-600 transition-all duration-200 shadow-lg"
+              onClick={() => {
+                setIsCreateSelected(true);
+                setShowCreateModal(true);
+              }}
+            >
+              <PlusIcon className="h-4 w-4" />
+              Create Event
+            </motion.button>
+          </div>
         )}
-        {/* Registered Button */}
-        <button
-          className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all duration-200 flex items-center space-x-1 focus:outline-none focus:ring-2 focus:ring-secondary-300 ${
-            activeTab === 'registered'
-              ? 'bg-primary text-white border-primary shadow'
-              : 'bg-white text-primary border-secondary-200 hover:bg-secondary-50'
-          }`}
-          onClick={() => {
-            setActiveTab('registered');
-            setIsCreateSelected(false);
-          }}
-        >
-          <span>Registered</span>
-        </button>
       </div>
-      {/* Tab Content */}
-      <div className="flex-1 overflow-y-auto">
+      
+      {/* Tab Content - Mobile Optimized */}
+      <div className="flex-1 overflow-y-auto scrollbar-hide">
         {activeTab === 'myevents' && canCreate && <MyEvents showAlert={showAlert} refreshTrigger={refreshTrigger} />}
         {activeTab === 'registered' && <RegisteredEvents />}
       </div>

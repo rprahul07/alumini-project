@@ -128,28 +128,28 @@ const ReceivedApplications = () => {
         </button>
       </div>
       {/* Sub-tab Content */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 flex-1">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 flex-1 overflow-visible">
         {filteredApplications.length === 0 ? (
-          <div className="col-span-full text-center text-gray-400">No applications in this category.</div>
+          <div className="col-span-full text-center text-gray-300">No applications in this category.</div>
         ) : (
           filteredApplications.map(app => (
-            <div key={app.id} className="relative">
+            <div key={app.id} className="relative overflow-visible z-10">
               <JobCard
                 job={app}
                 onClick={() => handleCardClick(app)}
                 onApply={() => handleCardClick(app)}
               />
-              <div className="absolute top-2 right-2 bg-indigo-100 text-indigo-700 text-xs px-2 py-1 rounded-full">
+              <div className="absolute top-2 right-2 bg-primary-500/20 text-primary-300 text-xs px-2 py-1 rounded-full border border-primary-500/30 z-20">
                 {app.applicantName}
               </div>
               <button
-                className="absolute bottom-2 right-2 px-2 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700"
+                className="absolute bottom-2 right-2 px-2 py-1 text-xs bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded hover:from-blue-600 hover:to-cyan-600 transition-all duration-200 shadow-lg z-20"
                 onClick={e => { e.stopPropagation(); handleProfileClick(app.applicant); }}
               >
                 View Profile
               </button>
               <button
-                className="absolute bottom-2 left-2 px-2 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700"
+                className="absolute bottom-2 left-2 px-2 py-1 text-xs bg-gradient-to-r from-red-500 to-pink-500 text-white rounded hover:from-red-600 hover:to-pink-600 transition-all duration-200 shadow-lg z-20"
                 onClick={e => { e.stopPropagation(); handleDelete(app.id); }}
               >
                 Delete

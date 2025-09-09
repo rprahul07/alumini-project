@@ -151,6 +151,13 @@ async function handleStaticRequest(request) {
 
 // Handle page requests with network-first strategy
 async function handlePageRequest(request) {
+  const url = new URL(request.url);
+  
+  // Handle API requests with stale-while-revalidate strategy
+  if (url.pathname.startsWith('/api/')) {
+    return handleAPIRequest(request);
+  }
+  
   try {
     const networkResponse = await fetch(request);
     if (networkResponse.ok) {
@@ -168,5 +175,36 @@ async function handlePageRequest(request) {
     
     // Return offline page
     return cache.match('/');
+  }
+}
+
+// Handle API requests with stale-while-revalidate strategy
+async function handleAPIRequest(request) {
+  const cache = await caches.open(API_CACHE);
+  const cachedResponse = await cache.match(request);
+  
+  // Return cached response immediately if available
+  if (cachedResponse) {
+    // Update cache in background
+    fetch(request).then(response => {
+      if (response.ok) {
+        cache.put(request, response.clone());
+      }
+    }).catch(() => {
+      // Ignore network errors for background updates
+    });
+    
+    return cachedResponse;
+  }
+  
+  try {
+    const networkResponse = await fetch(request);
+    if (networkResponse.ok) {
+      cache.put(request, networkResponse.clone());
+    }
+    return networkResponse;
+  } catch (error) {
+    // Return cached response if available, otherwise return error
+    return cachedResponse || new Response('Network error', { status: 503 });
   }
 }

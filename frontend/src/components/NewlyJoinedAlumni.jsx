@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, memo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import OptimizedImage from './OptimizedImage';
 import { alumniAPI } from '../services/alumniService';
 import { useAuth } from '../contexts/AuthContext';
 
-const NewlyJoinedAlumni = () => {
+const NewlyJoinedAlumni = memo(() => {
   const { user, loading: authLoading } = useAuth();
   const [newlyJoinedAlumni, setNewlyJoinedAlumni] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -16,7 +16,7 @@ const NewlyJoinedAlumni = () => {
   const placeholderAvatar = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMzAiIGZpbGw9IiNGM0Y0RjYiLz4KPGNpcmNsZSBjeD0iMzAiIGN5PSIyNCIgcj0iMTAiIGZpbGw9IiM5Q0EzQUYiLz4KPHBhdGggZD0iTTE1IDQ1QzE1IDM3LjI2ODcgMjEuMjY4NyAzMSAzMCAzMUMzOC43MzEzIDMxIDQ1IDM3LjI2ODcgNDUgNDVWNDdIMTVWNDVaIiBmaWxsPSIjOUNBM0FGIi8+Cjwvc3ZnPgo=";
 
   // Calculate maximum items per row based on screen size
-  const calculateMaxItemsPerRow = () => {
+  const calculateMaxItemsPerRow = useCallback(() => {
     const screenWidth = window.innerWidth;
     
     if (screenWidth < 640) { // sm: mobile
@@ -30,7 +30,7 @@ const NewlyJoinedAlumni = () => {
     } else { // 2xl: large desktop
       return 10; // 10 items on large desktop
     }
-  };
+  }, []);
 
   // Update max items per row on window resize
   useEffect(() => {
@@ -69,12 +69,7 @@ const NewlyJoinedAlumni = () => {
               ? alumni.photo 
               : placeholderAvatar;
             
-            console.log('Alumni photo data:', {
-              name: alumni.name,
-              originalPhoto: alumni.photo,
-              processedPhoto: photoUrl,
-              isPlaceholder: photoUrl === placeholderAvatar
-            });
+            // Photo processing completed
             
             return {
             id: alumni.id || index + 1,
@@ -297,10 +292,8 @@ const NewlyJoinedAlumni = () => {
                             alt={alumni.name}
                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                             onError={(e) => {
-                              console.log('Image failed to load:', alumni.photo);
                               e.target.src = placeholderAvatar;
                             }}
-                            onLoad={() => console.log('Image loaded successfully:', alumni.photo)}
                           />
                           {/* Overlay effect on hover */}
                           <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -372,6 +365,6 @@ const NewlyJoinedAlumni = () => {
       </div>
     </section>
   );
-};
+});
 
 export default NewlyJoinedAlumni;

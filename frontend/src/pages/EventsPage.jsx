@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, memo, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import Navbar from '../components/Navbar';
 import EventGrid from '../components/EventGrid';
@@ -9,7 +9,7 @@ import EventPagination from '../components/EventPagination';
 
 import axios from '../config/axios';
 
-const EventsPage = () => {
+const EventsPage = memo(() => {
   const { user, loading: authLoading } = useAuth();
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -23,7 +23,7 @@ const EventsPage = () => {
   const [timeFilter, setTimeFilter] = useState('all');
 
   // Fetch events from API
-  const fetchEvents = async () => {
+  const fetchEvents = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -79,14 +79,14 @@ const EventsPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user, currentPage, searchTerm, selectedEventType, sortBy, sortOrder, timeFilter]);
 
   // Fetch events when component mounts or filters change
   useEffect(() => {
     if (!authLoading) {
       fetchEvents();
     }
-  }, [authLoading, currentPage, searchTerm, selectedEventType, sortBy, sortOrder, timeFilter]);
+  }, [authLoading, fetchEvents]);
 
 
 
@@ -142,6 +142,13 @@ const EventsPage = () => {
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 relative overflow-hidden">
         {/* Background Elements */}
         <div className="absolute inset-0 bg-gradient-to-br from-primary-500/10 via-transparent to-secondary-500/10"></div>
+        
+        {/* Loading State */}
+        {loading && (
+          <div className="loading-spinner">
+            <div className="spinner"></div>
+          </div>
+        )}
         <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-primary-400/20 to-transparent rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-to-tr from-secondary-400/20 to-transparent rounded-full blur-3xl"></div>
         
@@ -326,6 +333,6 @@ const EventsPage = () => {
       </div>
     </>
   );
-};
+});
 
 export default EventsPage; 

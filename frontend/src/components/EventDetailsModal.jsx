@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, memo, useCallback } from 'react';
 import { XMarkIcon, CalendarIcon, ClockIcon, MapPinIcon, UserGroupIcon, UserIcon } from '@heroicons/react/24/outline';
 import OptimizedImage from './OptimizedImage';
 import axios from '../config/axios';
@@ -7,7 +7,7 @@ import ConfirmDialog from './ConfirmDialog';
 import { useAuth } from '../contexts/AuthContext';
 import ReactDOM from 'react-dom';
 
-const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
+const EventDetailsModal = memo(({ event, user, isOpen, onClose, onEventUpdate }) => {
   // Use auth context as primary source, fallback to prop for backward compatibility
   const { user: authUser, loading: authLoading } = useAuth();
   const currentUser = authUser || user; // Use authUser as primary, user prop as fallback
@@ -33,7 +33,7 @@ const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
   if (!isOpen || !event) return null;
 
   // Format date
-  const formatDate = (dateString) => {
+  const formatDate = useCallback((dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
       weekday: 'long',
@@ -41,7 +41,7 @@ const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
       month: 'long',
       day: 'numeric'
     });
-  };
+  }, []);
 
   // Handle registration
   const handleRegistration = async () => {
@@ -338,7 +338,7 @@ const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
   );
 
   return ReactDOM.createPortal(modalContent, document.body);
-};
+});
 
 export default EventDetailsModal; 
     

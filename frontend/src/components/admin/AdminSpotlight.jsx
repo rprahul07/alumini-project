@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, memo, useCallback } from 'react';
 import { FiLoader, FiPlus, FiEdit2, FiTrash2, FiX, FiSearch, FiStar, FiExternalLink } from 'react-icons/fi';
 import { toast } from 'react-toastify';
 import { spotlightAPI } from '../../services/spotlightService';
@@ -8,7 +8,7 @@ import ConfirmDialog from '../ConfirmDialog';
 // Placeholder avatar for users without profile photos
 const placeholderAvatar = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMzAiIGZpbGw9IiNGM0Y0RjYiLz4KPGNpcmNsZSBjeD0iMzAiIGN5PSIyNCIgcj0iMTAiIGZpbGw9IiM5Q0EzQUYiLz4KPHBhdGggZD0iTTE1IDQ1QzE1IDM3LjI2ODcgMjEuMjY4NyAzMSAzMCAzMUMzOC43MzEzIDMxIDQ1IDM3LjI2ODcgNDUgNDVWNDdIMTVWNDVaIiBmaWxsPSIjOUNBM0FGIi8+Cjwvc3ZnPgo=";
 
-const AdminSpotlight = () => {
+const AdminSpotlight = memo(() => {
   const { isAdmin } = useAuth();
   
   const [spotlights, setSpotlights] = useState([]);
@@ -46,9 +46,9 @@ const AdminSpotlight = () => {
 
   useEffect(() => {
     fetchSpotlights();
-  }, []);
+  }, [fetchSpotlights]);
 
-  const fetchSpotlights = async () => {
+  const fetchSpotlights = useCallback(async () => {
     setLoading(prev => ({ ...prev, fetch: true }));
     try {
       const result = await spotlightAPI.getAllSpotlights();
@@ -61,7 +61,7 @@ const AdminSpotlight = () => {
       toast.error('Failed to fetch spotlights');
     }
     setLoading(prev => ({ ...prev, fetch: false }));
-  };
+  }, []);
 
   const searchAlumni = async (searchValue) => {
     if (!searchValue.trim()) {
@@ -559,6 +559,6 @@ const AdminSpotlight = () => {
       />
     </div>
   );
-};
+});
 
 export default AdminSpotlight;

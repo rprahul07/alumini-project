@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, memo, useCallback } from 'react';
 import { CalendarIcon, ClockIcon, MapPinIcon, UserGroupIcon, UsersIcon } from '@heroicons/react/24/outline';
 import EventDetailsModal from './EventDetailsModal';
 import EventRegistrationsModal from './EventRegistrationsModal';
@@ -7,7 +7,7 @@ import axios from '../config/axios';
 import { toast } from 'react-toastify';
 import ConfirmDialog from './ConfirmDialog';
 
-const EventCard = ({ event, user, onEventUpdate, showEdit, showDelete, onEdit, onDelete, sm }) => {
+const EventCard = memo(({ event, user, onEventUpdate, showEdit, showDelete, onEdit, onDelete, sm }) => {
   const [isRegistering, setIsRegistering] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isRegistrationsModalOpen, setIsRegistrationsModalOpen] = useState(false);
@@ -17,12 +17,9 @@ const EventCard = ({ event, user, onEventUpdate, showEdit, showDelete, onEdit, o
   const [confirmAction, setConfirmAction] = React.useState(null);
   const [confirmMessage, setConfirmMessage] = React.useState('');
 
-  // Debug event data
-  console.log('EventCard received event:', event);
-  console.log('Event imageUrl:', event?.imageUrl);
 
-  // Format date
-  const formatDate = (dateString) => {
+  // Format date - memoized for performance
+  const formatDate = useCallback((dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
       weekday: 'short',
@@ -30,12 +27,12 @@ const EventCard = ({ event, user, onEventUpdate, showEdit, showDelete, onEdit, o
       month: 'short',
       day: 'numeric'
     });
-  };
+  }, []);
 
-  // Format time
-  const formatTime = (timeString) => {
+  // Format time - memoized for performance
+  const formatTime = useCallback((timeString) => {
     return timeString;
-  };
+  }, []);
 
   // Handle registration
   const handleRegistration = async (e) => {
@@ -99,7 +96,6 @@ const EventCard = ({ event, user, onEventUpdate, showEdit, showDelete, onEdit, o
   const maxCapacity = Number(event.maxCapacity) > 0 ? Number(event.maxCapacity) : null;
   const registeredCount = Number(event.registeredCount) || 0;
   const isRegistered = !!event.isRegistered;
-  console.log('DEBUG: EventCard event:', event);
 
   // Check if event is in the past
   const isPastEvent = new Date(event.date) < new Date(new Date().setHours(0,0,0,0));
@@ -137,6 +133,8 @@ const EventCard = ({ event, user, onEventUpdate, showEdit, showDelete, onEdit, o
               wrapperClassName="w-full h-full"
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
               sizes="(max-width: 640px) 100vw, (max-width: 768px) 100vw, (max-width: 1024px) 100vw, 100vw"
+              priority={false} // Let intersection observer handle this
+              quality={75}
               loading="lazy"
               fallbackSrc="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&h=600&fit=crop"
             />
@@ -300,6 +298,6 @@ const EventCard = ({ event, user, onEventUpdate, showEdit, showDelete, onEdit, o
       />
     </>
   );
-};
+});
 
 export default EventCard; 

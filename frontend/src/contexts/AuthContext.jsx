@@ -194,14 +194,6 @@ export const AuthProvider = ({ children }) => {
 
   // Helper function to check if user is admin
   const isAdmin = () => {
-    // Debug logging to see what roles we have
-    console.log('Debug - Role check:', {
-      userRole: user?.role,
-      localStorageRole: localStorage.getItem(USER_ROLE_KEY),
-      selectedRole: selectedRole,
-      computedRole: role
-    });
-    
     // Check multiple possible role formats (case insensitive)
     const userRole = user?.role?.toLowerCase();
     const computedRole = role?.toLowerCase();

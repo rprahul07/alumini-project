@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Mail, Linkedin, Heart } from 'lucide-react';
 import OptimizedImage from './OptimizedImage';
 
-const AlumniCard = ({
+const AlumniCard = memo(({
   alumni,
   onRequestMentorship,
   onCardClick,
@@ -194,7 +194,7 @@ const AlumniCard = ({
       </div>
     </div>
   );
-};
+});
 
 export default AlumniCard; 
  

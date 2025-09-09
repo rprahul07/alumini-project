@@ -1,12 +1,9 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import HomePage from '../pages/HomePage';
 import AuthPage from '../pages/AuthPage';
 import RoleSelection from '../pages/RoleSelection';
-import StudentDashboard from '../pages/dashboards/StudentDashboard';
-import FacultyDashboard from '../pages/dashboards/FacultyDashboard';
-import AlumniDashboard from '../pages/dashboards/AlumniDashboard';
 import ProfileCard from '../components/ProfileCard';
 import ProfileEditor from '../components/ProfileEditor';
 import EventsPage from '../pages/EventsPage';
@@ -19,6 +16,18 @@ import StudentsPage from '../pages/StudentsPage';
 import JobsPage from '../pages/JobsPage';
 import FaqPage from '../pages/FaqPage';
 import TestimonialsPage from '../pages/TestimonialsPage';
+
+// Lazy load dashboard components for better performance
+const StudentDashboard = lazy(() => import('../pages/dashboards/StudentDashboard'));
+const FacultyDashboard = lazy(() => import('../pages/dashboards/FacultyDashboard'));
+const AlumniDashboard = lazy(() => import('../pages/dashboards/AlumniDashboard'));
+
+// Loading component for Suspense
+const DashboardLoading = () => (
+  <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+  </div>
+);
 
 
 // Protected route for a specific role
@@ -81,7 +90,9 @@ const AppRoutes = () => {
         path="/student/dashboard"
         element={
           <ProtectedRoute allowedRoles={['student']}>
-            <StudentDashboard />
+            <Suspense fallback={<DashboardLoading />}>
+              <StudentDashboard />
+            </Suspense>
           </ProtectedRoute>
         }
       />
@@ -90,7 +101,9 @@ const AppRoutes = () => {
         path="/faculty/dashboard"
         element={
           <ProtectedRoute allowedRoles={['faculty']}>
-            <FacultyDashboard />
+            <Suspense fallback={<DashboardLoading />}>
+              <FacultyDashboard />
+            </Suspense>
           </ProtectedRoute>
         }
       />
@@ -99,7 +112,9 @@ const AppRoutes = () => {
         path="/alumni/dashboard"
         element={
           <ProtectedRoute allowedRoles={['alumni']}>
-            <AlumniDashboard />
+            <Suspense fallback={<DashboardLoading />}>
+              <AlumniDashboard />
+            </Suspense>
           </ProtectedRoute>
         }
       />

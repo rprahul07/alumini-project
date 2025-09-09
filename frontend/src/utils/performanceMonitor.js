@@ -6,11 +6,9 @@ export const initPerformanceMonitoring = () => {
     const lcpObserver = new PerformanceObserver((list) => {
       const entries = list.getEntries();
       const lastEntry = entries[entries.length - 1];
-      console.log('LCP:', lastEntry.startTime);
-      
       // Send to analytics if needed
       if (lastEntry.startTime > 2500) {
-        console.warn('LCP is slow:', lastEntry.startTime);
+        // LCP is slow - could send to analytics
       }
     });
     lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
@@ -19,10 +17,8 @@ export const initPerformanceMonitoring = () => {
     const fidObserver = new PerformanceObserver((list) => {
       const entries = list.getEntries();
       entries.forEach(entry => {
-        console.log('FID:', entry.processingStart - entry.startTime);
-        
         if (entry.processingStart - entry.startTime > 100) {
-          console.warn('FID is slow:', entry.processingStart - entry.startTime);
+          // FID is slow - could send to analytics
         }
       });
     });
@@ -36,10 +32,8 @@ export const initPerformanceMonitoring = () => {
           clsValue += entry.value;
         }
       });
-      console.log('CLS:', clsValue);
-      
       if (clsValue > 0.1) {
-        console.warn('CLS is poor:', clsValue);
+        // CLS is poor - could send to analytics
       }
     });
     clsObserver.observe({ entryTypes: ['layout-shift'] });

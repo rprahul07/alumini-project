@@ -18,6 +18,7 @@ import { toast } from 'react-hot-toast';
 import EventCard from '../EventCard';
 import ConfirmDialog from '../ConfirmDialog';
 import { useAuth } from '../../contexts/AuthContext';
+import { motion } from 'framer-motion';
 
 const MyEvents = ({ showAlert, refreshTrigger = 0 }) => {
   const [events, setEvents] = useState([]);
@@ -116,74 +117,156 @@ const MyEvents = ({ showAlert, refreshTrigger = 0 }) => {
 
   return (
     <div className="flex flex-col h-full">
-      <h3 className="text-lg font-semibold mb-4 text-gray-800">My Created Events</h3>
+      <h3 className="text-sm font-semibold mb-3 text-white">My Created Events</h3>
       {loading ? (
-        <div className="text-center text-gray-400">Loading...</div>
+        <div className="text-center text-gray-300 py-8">Loading...</div>
       ) : error ? (
-        <div className="text-center text-red-500">{error}</div>
+        <div className="text-center text-red-400 py-8">{error}</div>
       ) : events.length === 0 ? (
-        <div className="text-center text-gray-400">You have not created any events yet.</div>
+        <div className="text-center text-gray-300 py-8">You have not created any events yet.</div>
       ) : (
-        <div className="h-full overflow-x-auto rounded-xl shadow bg-white">
-          <table className="w-full table-fixed divide-y divide-gray-200 text-xs h-full" role="grid" aria-label="My created events table">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-2 py-2 w-48 text-left font-medium text-gray-500 uppercase tracking-wider">Event Name</th>
-                <th className="px-2 py-2 w-32 text-left font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                <th className="px-2 py-2 w-24 text-left font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                <th className="px-2 py-2 w-40 text-right font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {events.map((event) => (
-                <tr key={event.id} className="hover:bg-gray-50 cursor-pointer">
-                  <td className="px-2 py-2 whitespace-nowrap font-semibold">
-                    <span className="truncate max-w-[120px] block">{event.name || '-'}</span>
-                  </td>
-                  <td className="px-2 py-2 whitespace-nowrap">
-                    <span className="truncate max-w-[100px] block">
-                      {new Date(event.date).toLocaleDateString()}
-                    </span>
-                  </td>
-                  <td className="px-2 py-2 whitespace-nowrap">
-                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                      event.status === 'approved' ? 'bg-green-100 text-green-700' :
-                      event.status === 'rejected' ? 'bg-red-100 text-red-700' :
-                      'bg-yellow-100 text-yellow-700'
+        <>
+          {/* Mobile Card View */}
+          <div className="block lg:hidden space-y-3">
+            {events.map((event, index) => (
+              <motion.div
+                key={event.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.1 }}
+                className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl p-3 hover:bg-white/20 transition-colors duration-200"
+              >
+                <div className="space-y-2">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-semibold text-white text-sm mb-1 truncate">{event.name || '-'}</h4>
+                      <p className="text-xs text-gray-300">
+                        {new Date(event.date).toLocaleDateString()}
+                      </p>
+                    </div>
+                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${
+                      event.status === 'approved' ? 'bg-green-500/20 text-green-300 border-green-500/30' :
+                      event.status === 'rejected' ? 'bg-red-500/20 text-red-300 border-red-500/30' :
+                      'bg-yellow-500/20 text-yellow-300 border-yellow-500/30'
                     }`}>
                       {event.status === 'approved' ? 'Approved' :
                      event.status === 'rejected' ? '✗ Rejected' :
                      '⏳ Pending'}
                     </span>
-                  </td>
-                  <td className="px-2 py-2 whitespace-nowrap text-right flex gap-2 justify-end">
-                    <button
-                      className="inline-block px-2 py-1 rounded-full bg-accent-100 text-accent-700 font-semibold text-xs hover:bg-accent-200 transition-colors"
+                  </div>
+                  <div className="flex gap-1">
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="flex-1 px-2 py-1.5 rounded-lg bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-semibold text-xs hover:from-primary-600 hover:to-secondary-600 transition-all duration-200 shadow-lg"
                       onClick={() => openEventDetails(event)}
                     >
                       View
-                    </button>
+                    </motion.button>
                     {!isEventPast(event.date) && (
-                      <button
-                        className="inline-block px-2 py-1 rounded-full bg-blue-100 text-blue-700 font-semibold text-xs hover:bg-blue-200 transition-colors"
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="flex-1 px-2 py-1.5 rounded-lg bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold text-xs hover:from-blue-600 hover:to-cyan-600 transition-all duration-200 shadow-lg"
                         onClick={() => handleEditEvent(event)}
                       >
                         Edit
-                      </button>
+                      </motion.button>
                     )}
-                    <button
-                      className="inline-block px-2 py-1 rounded-full bg-red-100 text-red-700 font-semibold text-xs hover:bg-red-200 transition-colors"
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="flex-1 px-2 py-1.5 rounded-lg bg-gradient-to-r from-red-500 to-pink-500 text-white font-semibold text-xs hover:from-red-600 hover:to-pink-600 transition-all duration-200 shadow-lg"
                       onClick={() => handleDeleteEvent(event.id)}
                       disabled={actionLoading === event.id}
                     >
                       Delete
-                    </button>
-                  </td>
+                    </motion.button>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Desktop Table View */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="hidden lg:block h-full overflow-x-auto rounded-xl shadow-2xl bg-white/10 backdrop-blur-xl border border-white/20"
+          >
+            <table className="w-full table-fixed divide-y divide-white/20 text-xs h-full" role="grid" aria-label="My created events table">
+              <thead className="bg-white/10">
+                <tr>
+                  <th className="px-2 py-2 w-48 text-left font-medium text-white/90 uppercase tracking-wider">Event Name</th>
+                  <th className="px-2 py-2 w-32 text-left font-medium text-white/90 uppercase tracking-wider">Date</th>
+                  <th className="px-2 py-2 w-24 text-left font-medium text-white/90 uppercase tracking-wider">Status</th>
+                  <th className="px-2 py-2 w-40 text-right font-medium text-white/90 uppercase tracking-wider">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="bg-white/5 divide-y divide-white/20">
+                {events.map((event, index) => (
+                  <motion.tr
+                    key={event.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: index * 0.1 }}
+                    className="hover:bg-white/10 cursor-pointer transition-colors duration-200"
+                  >
+                    <td className="px-2 py-2 whitespace-nowrap font-semibold">
+                      <span className="truncate max-w-[120px] block text-white">{event.name || '-'}</span>
+                    </td>
+                    <td className="px-2 py-2 whitespace-nowrap">
+                      <span className="truncate max-w-[100px] block text-gray-300">
+                        {new Date(event.date).toLocaleDateString()}
+                      </span>
+                    </td>
+                    <td className="px-2 py-2 whitespace-nowrap">
+                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${
+                        event.status === 'approved' ? 'bg-green-500/20 text-green-300 border-green-500/30' :
+                        event.status === 'rejected' ? 'bg-red-500/20 text-red-300 border-red-500/30' :
+                        'bg-yellow-500/20 text-yellow-300 border-yellow-500/30'
+                      }`}>
+                        {event.status === 'approved' ? 'Approved' :
+                       event.status === 'rejected' ? '✗ Rejected' :
+                       '⏳ Pending'}
+                      </span>
+                    </td>
+                    <td className="px-2 py-2 whitespace-nowrap text-right flex gap-2 justify-end">
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="inline-block px-2 py-1 rounded-full bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-semibold text-xs hover:from-primary-600 hover:to-secondary-600 transition-all duration-200 shadow-lg"
+                        onClick={() => openEventDetails(event)}
+                      >
+                        View
+                      </motion.button>
+                      {!isEventPast(event.date) && (
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="inline-block px-2 py-1 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold text-xs hover:from-blue-600 hover:to-cyan-600 transition-all duration-200 shadow-lg"
+                          onClick={() => handleEditEvent(event)}
+                        >
+                          Edit
+                        </motion.button>
+                      )}
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="inline-block px-2 py-1 rounded-full bg-gradient-to-r from-red-500 to-pink-500 text-white font-semibold text-xs hover:from-red-600 hover:to-pink-600 transition-all duration-200 shadow-lg"
+                        onClick={() => handleDeleteEvent(event.id)}
+                        disabled={actionLoading === event.id}
+                      >
+                        Delete
+                      </motion.button>
+                    </td>
+                  </motion.tr>
+                ))}
+              </tbody>
+            </table>
+          </motion.div>
+        </>
       )}
 
       {/* Modals */}

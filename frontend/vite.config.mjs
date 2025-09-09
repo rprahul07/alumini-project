@@ -40,7 +40,7 @@ export default defineConfig(({ command, mode }) => {
       }
     },
     build: {
-      target: 'es2015',
+      target: 'esnext',
       minify: 'terser',
       // CSS optimization
       cssCodeSplit: true,
@@ -49,11 +49,45 @@ export default defineConfig(({ command, mode }) => {
         compress: {
           drop_console: true,
           drop_debugger: true,
-          pure_funcs: ['console.log', 'console.info', 'console.debug'],
+          pure_funcs: ['console.log', 'console.info', 'console.debug', 'console.warn', 'console.error'],
+          // Advanced compression for maximum size reduction
+          passes: 3,
+          unsafe: true,
+          unsafe_comps: true,
+          unsafe_math: true,
+          unsafe_proto: true,
+          unsafe_regexp: true,
+          unsafe_undefined: true,
+          // Remove unused code
+          dead_code: true,
+          unused: true,
+          // Optimize conditionals and loops
+          conditionals: true,
+          evaluate: true,
+          loops: true,
+          // Optimize properties and sequences
+          properties: true,
+          sequences: true,
+          switches: true,
+          comparisons: true,
+          booleans: true,
+          if_return: true,
+          join_vars: true,
+          collapse_vars: true,
+          reduce_vars: true,
+          side_effects: true
         },
         mangle: {
           toplevel: true,
+          safari10: true,
+          properties: {
+            regex: /^_/
+          }
         },
+        format: {
+          comments: false,
+          beautify: false
+        }
       },
       rollupOptions: {
         output: {
@@ -68,19 +102,41 @@ export default defineConfig(({ command, mode }) => {
               if (id.includes('react-router-dom')) {
                 return 'router';
               }
-              // UI libraries
-              if (id.includes('@heroicons')) {
-                return 'heroicons';
+              // Animation libraries (large)
+              if (id.includes('framer-motion')) {
+                return 'animations';
+              }
+              // UI libraries - split by usage
+              if (id.includes('@heroicons/react/24/outline')) {
+                return 'heroicons-outline';
+              }
+              if (id.includes('@heroicons/react/24/solid')) {
+                return 'heroicons-solid';
               }
               if (id.includes('lucide-react')) {
                 return 'lucide';
               }
-              if (id.includes('react-icons')) {
-                return 'react-icons';
+              // Split react-icons by library to reduce bundle size
+              if (id.includes('react-icons/fa')) {
+                return 'react-icons-fa';
               }
-              // Utilities
-              if (id.includes('axios') || id.includes('react-hot-toast') || id.includes('react-toastify')) {
-                return 'utils';
+              if (id.includes('react-icons/fi')) {
+                return 'react-icons-fi';
+              }
+              if (id.includes('react-icons/')) {
+                return 'react-icons-other';
+              }
+              // Toast notifications
+              if (id.includes('react-hot-toast') || id.includes('react-toastify')) {
+                return 'notifications';
+              }
+              // HTTP client
+              if (id.includes('axios')) {
+                return 'http';
+              }
+              // Form handling
+              if (id.includes('react-hook-form') || id.includes('formik')) {
+                return 'forms';
               }
               // Other vendor libraries
               return 'vendor';
@@ -138,11 +194,26 @@ export default defineConfig(({ command, mode }) => {
       }
     },
     optimizeDeps: {
-      include: ['react', 'react-dom', 'react-router-dom'],
+      include: ['react', 'react-dom', 'react-router-dom', 'axios'],
       exclude: ['@fortawesome/fontawesome-free'],
       // Development optimizations
       force: isDev ? false : true, // Don't force re-optimization in dev
-      entries: isDev ? ['src/main.jsx'] : undefined // Faster dev startup
+      entries: isDev ? ['src/main.jsx'] : undefined, // Faster dev startup
+      // Better tree shaking
+      esbuildOptions: {
+        treeShaking: true,
+        minifyIdentifiers: true,
+        minifySyntax: true,
+        minifyWhitespace: true
+      }
+    },
+    define: {
+      // Remove console logs in production
+      ...(isProd ? {
+        'console.log': 'undefined',
+        'console.warn': 'undefined',
+        'console.error': 'undefined'
+      } : {})
     }
   };
 });

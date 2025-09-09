@@ -4,6 +4,7 @@ import axios from '../../config/axios';
 import { AcademicCapIcon, UserIcon, PhoneIcon, GlobeAltIcon, CheckIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { toast } from 'react-toastify';
 import ConfirmDialog from '../ConfirmDialog';
+import { motion } from 'framer-motion';
 
 const roleColors = {
   student: 'bg-blue-100 text-blue-700',
@@ -141,79 +142,168 @@ const ReceivedRequests = ({ requests, loading, error, setRequests, showAlert }) 
   };
 
   return (
-    <div className="space-y-4 h-full">
-      {/* Nested Navigation for Received Requests */}
-      <div className="flex flex-wrap gap-1 overflow-x-auto">
+    <div className="space-y-3 h-full">
+      {/* Mobile-First Navigation for Received Requests */}
+      <div className="flex gap-1 overflow-x-auto scrollbar-hide">
         {[
           { key: 'pending', label: 'Pending', color: 'yellow' },
           { key: 'accepted', label: 'Accepted', color: 'green' },
           { key: 'rejected', label: 'Rejected', color: 'red' }
         ].map(({ key, label, color }) => {
           return (
-            <button
+            <motion.button
               key={key}
-              className={`px-2 py-1 rounded-full text-[10px] font-semibold border transition-all duration-200 flex items-center space-x-1 ${
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className={`flex-shrink-0 px-2 py-1.5 rounded-lg text-xs font-medium border transition-all duration-200 ${
                 receivedSubTab === key 
-                  ? `bg-${color}-600 text-white border-${color}-600` 
-                  : `bg-white text-${color}-600 border-${color}-200 hover:bg-${color}-50`
+                  ? `bg-gradient-to-r from-${color}-500 to-${color}-600 text-white border-${color}-500` 
+                  : `bg-white/10 text-${color}-300 border-${color}-500/30 hover:bg-${color}-500/20`
               }`}
               onClick={() => setReceivedSubTab(key)}
             >
-              <span>{label}</span>
-            </button>
+              {label}
+            </motion.button>
           );
         })}
       </div>
-      {/* Requests Table */}
+      
+      {/* Requests Content */}
       <div className="h-full">
-        <div className="overflow-x-auto rounded-xl shadow bg-white h-full">
-          <table className="w-full table-fixed divide-y divide-gray-200 text-xs h-full" role="grid" aria-label="Mentorship requests table">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-2 py-2 w-48 text-left font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                <th className="px-2 py-2 w-24 text-left font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                <th className="px-2 py-2 w-40 text-right font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {loading ? (
-                <tr><td colSpan={3} className="text-center text-gray-500 py-6">Loading...</td></tr>
-              ) : error ? (
-                <tr><td colSpan={3} className="text-center text-red-500 py-6">{error}</td></tr>
-              ) : getFilteredRequests().length === 0 ? (
-                <tr><td colSpan={3} className="text-center text-gray-500 py-6">No {receivedSubTab} mentorship requests.</td></tr>
-              ) : (
-                getFilteredRequests().map(req => {
-                  const u = req.requester;
-                  return (
-                    <tr key={req.id} className="hover:bg-gray-50 cursor-pointer">
-                      <td className="px-2 py-2 whitespace-nowrap font-semibold">
-                        <div className="flex items-center gap-2">
-                          <img src={u.photoUrl} alt={u.fullName} className="w-7 h-7 rounded-full object-cover border border-gray-200" />
-                          <span className="truncate max-w-[120px] block">{u.fullName}</span>
+        {loading ? (
+          <div className="text-center text-gray-300 py-8">Loading...</div>
+        ) : error ? (
+          <div className="text-center text-red-400 py-8">{error}</div>
+        ) : getFilteredRequests().length === 0 ? (
+          <div className="text-center text-gray-300 py-8">No {receivedSubTab} mentorship requests.</div>
+        ) : (
+          <>
+            {/* Mobile Card View */}
+            <div className="block lg:hidden space-y-3">
+              {getFilteredRequests().map((req, index) => {
+                const u = req.requester;
+                return (
+                  <motion.div
+                    key={req.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: index * 0.1 }}
+                    className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl p-3 hover:bg-white/20 transition-colors duration-200"
+                  >
+                    <div className="space-y-2">
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center gap-2 flex-1 min-w-0">
+                          <img src={u.photoUrl} alt={u.fullName} className="w-8 h-8 rounded-full object-cover border border-white/30 flex-shrink-0" />
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-semibold text-white text-sm truncate">{u.fullName}</h4>
+                            <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-semibold border ${
+                              u.role === 'student' ? 'bg-blue-500/20 text-blue-300 border-blue-500/30' :
+                              u.role === 'alumni' ? 'bg-green-500/20 text-green-300 border-green-500/30' :
+                              u.role === 'faculty' ? 'bg-purple-500/20 text-purple-300 border-purple-500/30' :
+                              'bg-gray-500/20 text-gray-300 border-gray-500/30'
+                            }`}>
+                              {u.role}
+                            </span>
+                          </div>
                         </div>
-                      </td>
-                      <td className="px-2 py-2 whitespace-nowrap">
-                        <span className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${roleColors[u.role] || 'bg-gray-100 text-gray-700'}`}>{u.role}</span>
-                      </td>
-                      <td className="px-2 py-2 whitespace-nowrap text-right relative flex gap-2 justify-end">
+                      </div>
+                      <div className="flex gap-1">
                         {req.status === 'pending' && (
-                          <button
-                            className="inline-block px-2 py-1 rounded-full bg-green-100 text-green-700 font-semibold text-xs hover:bg-green-200 transition-colors"
+                          <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="flex-1 px-2 py-1.5 rounded-lg bg-gradient-to-r from-green-500 to-emerald-500 text-white font-semibold text-xs hover:from-green-600 hover:to-emerald-600 transition-all duration-200 shadow-lg"
                             onClick={e => { e.stopPropagation(); handleAccept(req); }}
                           >
                             Accept
-                          </button>
+                          </motion.button>
                         )}
-                        <button
-                          className="inline-block px-2 py-1 rounded-full bg-indigo-100 text-indigo-700 font-semibold text-xs hover:bg-indigo-200 transition-colors"
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="flex-1 px-2 py-1.5 rounded-lg bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-semibold text-xs hover:from-primary-600 hover:to-secondary-600 transition-all duration-200 shadow-lg"
                           onClick={e => { e.stopPropagation(); handleViewProfile(req); }}
                         >
                           View Profile
-                        </button>
+                        </motion.button>
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+
+            {/* Desktop Table View */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="hidden lg:block overflow-x-auto rounded-xl shadow-2xl bg-white/10 backdrop-blur-xl border border-white/20 h-full"
+            >
+          <table className="w-full table-fixed divide-y divide-white/20 text-xs h-full" role="grid" aria-label="Mentorship requests table">
+            <thead className="bg-white/10">
+              <tr>
+                <th className="px-2 py-2 w-48 text-left font-medium text-white/90 uppercase tracking-wider">Name</th>
+                <th className="px-2 py-2 w-24 text-left font-medium text-white/90 uppercase tracking-wider">Role</th>
+                <th className="px-2 py-2 w-40 text-right font-medium text-white/90 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white/5 divide-y divide-white/20">
+              {loading ? (
+                <tr><td colSpan={3} className="text-center text-gray-300 py-6">Loading...</td></tr>
+              ) : error ? (
+                <tr><td colSpan={3} className="text-center text-red-400 py-6">{error}</td></tr>
+              ) : getFilteredRequests().length === 0 ? (
+                <tr><td colSpan={3} className="text-center text-gray-300 py-6">No {receivedSubTab} mentorship requests.</td></tr>
+              ) : (
+                getFilteredRequests().map((req, index) => {
+                  const u = req.requester;
+                  return (
+                    <motion.tr
+                      key={req.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3, delay: index * 0.1 }}
+                      className="hover:bg-white/10 cursor-pointer transition-colors duration-200"
+                    >
+                      <td className="px-2 py-2 whitespace-nowrap font-semibold">
+                        <div className="flex items-center gap-2">
+                          <img src={u.photoUrl} alt={u.fullName} className="w-7 h-7 rounded-full object-cover border border-white/30" />
+                          <span className="truncate max-w-[120px] block text-white">{u.fullName}</span>
+                        </div>
+                      </td>
+                      <td className="px-2 py-2 whitespace-nowrap">
+                        <span className={`inline-block px-2 py-1 rounded-full text-xs font-semibold border ${
+                          u.role === 'student' ? 'bg-blue-500/20 text-blue-300 border-blue-500/30' :
+                          u.role === 'alumni' ? 'bg-green-500/20 text-green-300 border-green-500/30' :
+                          u.role === 'faculty' ? 'bg-purple-500/20 text-purple-300 border-purple-500/30' :
+                          'bg-gray-500/20 text-gray-300 border-gray-500/30'
+                        }`}>{u.role}</span>
+                      </td>
+                      <td className="px-2 py-2 whitespace-nowrap text-right relative flex gap-2 justify-end">
+                        {req.status === 'pending' && (
+                          <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="inline-block px-2 py-1 rounded-full bg-gradient-to-r from-green-500 to-emerald-500 text-white font-semibold text-xs hover:from-green-600 hover:to-emerald-600 transition-all duration-200 shadow-lg"
+                            onClick={e => { e.stopPropagation(); handleAccept(req); }}
+                          >
+                            Accept
+                          </motion.button>
+                        )}
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="inline-block px-2 py-1 rounded-full bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-semibold text-xs hover:from-primary-600 hover:to-secondary-600 transition-all duration-200 shadow-lg"
+                          onClick={e => { e.stopPropagation(); handleViewProfile(req); }}
+                        >
+                          View Profile
+                        </motion.button>
                         <div className="relative inline-block">
-                          <button
-                            className="inline-block px-2 py-1 rounded-full bg-gray-100 text-gray-700 font-semibold text-xs hover:bg-gray-200 transition-colors"
+                          <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="inline-block px-2 py-1 rounded-full bg-white/10 text-white font-semibold text-xs hover:bg-white/20 transition-all duration-200 border border-white/30"
                             onClick={e => {
                               e.stopPropagation();
                               if (openDropdownId === req.id) {
@@ -230,7 +320,7 @@ const ReceivedRequests = ({ requests, loading, error, setRequests, showAlert }) 
                             }}
                           >
                             ⋮
-                          </button>
+                          </motion.button>
                           {openDropdownId === req.id && ReactDOM.createPortal(
                             <div style={{ position: 'absolute', top: dropdownPosition.top, left: dropdownPosition.left, width: 128, zIndex: 9999 }} className="bg-white border border-gray-200 rounded-lg shadow-lg">
                               <ul className="py-1 text-sm">
@@ -258,30 +348,40 @@ const ReceivedRequests = ({ requests, loading, error, setRequests, showAlert }) 
                           )}
                         </div>
                       </td>
-                    </tr>
+                    </motion.tr>
                   );
                 })
               )}
             </tbody>
           </table>
-        </div>
+            </motion.div>
+          </>
+        )}
       </div>
       {/* View Profile Modal */}
       {showProfileModal && selectedRequest && ReactDOM.createPortal(
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-1 sm:p-2 z-50">
-          <div className="bg-white rounded-2xl w-full max-w-sm sm:max-w-md md:max-w-lg max-h-[80vh] overflow-y-auto scrollbar-hide p-3 relative" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-1 sm:p-2 z-50">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            transition={{ duration: 0.3 }}
+            className="bg-white/10 backdrop-blur-2xl rounded-2xl w-full max-w-sm sm:max-w-md md:max-w-lg max-h-[80vh] overflow-y-auto scrollbar-hide p-3 relative border border-white/20 shadow-2xl" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
             <div className="flex items-center justify-between mb-2">
-              <h2 className="text-base sm:text-lg font-bold text-gray-900">Profile Details</h2>
-              <button
+              <h2 className="text-base sm:text-lg font-bold text-white">Profile Details</h2>
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
                 onClick={() => setShowProfileModal(false)}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
+                className="text-gray-300 hover:text-white transition-colors"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-6 w-6">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
-              </button>
+              </motion.button>
             </div>
-            <div className="relative h-28 sm:h-36 bg-gray-200 rounded-2xl mb-2 flex items-center justify-center overflow-hidden">
+            <div className="relative h-28 sm:h-36 bg-white/10 rounded-2xl mb-2 flex items-center justify-center overflow-hidden border border-white/20">
               {selectedRequest.requester?.photoUrl ? (
                 <img
                   src={selectedRequest.requester.photoUrl}
@@ -290,119 +390,141 @@ const ReceivedRequests = ({ requests, loading, error, setRequests, showAlert }) 
                   loading="lazy"
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-100 to-indigo-200 rounded-2xl">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-12 w-12 text-indigo-400">
+                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary-500/20 to-secondary-500/20 rounded-2xl">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-12 w-12 text-primary-400">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118A7.5 7.5 0 0112 15.75a7.5 7.5 0 017.5 4.368" />
                   </svg>
                 </div>
               )}
               <div className="absolute top-2 left-2">
-                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium ${roleColors[selectedRequest.requester?.role] || 'bg-gray-100 text-gray-700'}`}>{selectedRequest.requester?.role}</span>
+                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium border ${
+                  selectedRequest.requester?.role === 'student' ? 'bg-blue-500/20 text-blue-300 border-blue-500/30' :
+                  selectedRequest.requester?.role === 'alumni' ? 'bg-green-500/20 text-green-300 border-green-500/30' :
+                  selectedRequest.requester?.role === 'faculty' ? 'bg-purple-500/20 text-purple-300 border-purple-500/30' :
+                  'bg-gray-500/20 text-gray-300 border-gray-500/30'
+                }`}>{selectedRequest.requester?.role}</span>
               </div>
             </div>
             <div className="p-2 sm:p-3 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-              <h3 className="font-bold text-gray-900 mb-2 text-xl sm:text-2xl leading-tight">{selectedRequest.requester?.fullName}</h3>
+              <h3 className="font-bold text-white mb-2 text-xl sm:text-2xl leading-tight">{selectedRequest.requester?.fullName}</h3>
               <div className="space-y-2 mb-3">
                 {selectedRequest.requester?.department && (
-                  <div className="flex items-center gap-2 text-sm text-gray-700">
-                    <AcademicCapIcon className="h-4 w-4 text-indigo-400" />
+                  <div className="flex items-center gap-2 text-sm text-gray-300">
+                    <AcademicCapIcon className="h-4 w-4 text-primary-400" />
                     <span>{selectedRequest.requester.department}</span>
                   </div>
                 )}
                 {selectedRequest.requester?.email && (
-                  <div className="flex items-center gap-2 text-sm text-gray-700">
-                    <UserIcon className="h-4 w-4 text-indigo-400" />
+                  <div className="flex items-center gap-2 text-sm text-gray-300">
+                    <UserIcon className="h-4 w-4 text-primary-400" />
                     <span>{selectedRequest.requester.email}</span>
                   </div>
                 )}
                 {selectedRequest.requester?.phoneNumber && (
-                  <div className="flex items-center gap-2 text-sm text-gray-700">
-                    <PhoneIcon className="h-4 w-4 text-indigo-400" />
+                  <div className="flex items-center gap-2 text-sm text-gray-300">
+                    <PhoneIcon className="h-4 w-4 text-primary-400" />
                     <span>{selectedRequest.requester.phoneNumber}</span>
                   </div>
                 )}
                 {selectedRequest.requester?.linkedinUrl && (
-                  <div className="flex items-center gap-2 text-sm text-gray-700">
-                    <GlobeAltIcon className="h-4 w-4 text-indigo-400" />
-                    <a href={selectedRequest.requester.linkedinUrl} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline">LinkedIn</a>
+                  <div className="flex items-center gap-2 text-sm text-gray-300">
+                    <GlobeAltIcon className="h-4 w-4 text-primary-400" />
+                    <a href={selectedRequest.requester.linkedinUrl} target="_blank" rel="noopener noreferrer" className="text-primary-400 hover:text-primary-300 hover:underline">LinkedIn</a>
                   </div>
                 )}
                 {/* Add more fields as needed */}
               </div>
               {selectedRequest.descriptionbyUser && (
                 <div className="mb-3">
-                  <div className="text-xs text-gray-500 font-semibold mb-1">Request Message</div>
-                  <div className="bg-gray-50 border-l-4 border-indigo-400 rounded-md p-3 text-gray-700 text-xs sm:text-sm leading-relaxed whitespace-pre-line">
+                  <div className="text-xs text-gray-400 font-semibold mb-1">Request Message</div>
+                  <div className="bg-primary-500/10 border-l-4 border-primary-400 rounded-md p-3 text-gray-300 text-xs sm:text-sm leading-relaxed whitespace-pre-line">
                     {selectedRequest.descriptionbyUser}
                   </div>
                 </div>
               )}
               {selectedRequest.requester?.bio && (
                 <div className="mb-3">
-                  <h4 className="text-base font-semibold text-gray-900 mb-1">Bio</h4>
-                  <div className="bg-gray-50 rounded-lg p-3 text-gray-700 text-sm leading-relaxed whitespace-pre-line break-words">
+                  <h4 className="text-base font-semibold text-white mb-1">Bio</h4>
+                  <div className="bg-white/10 rounded-lg p-3 text-gray-300 text-sm leading-relaxed whitespace-pre-line break-words">
                     {selectedRequest.requester.bio}
                   </div>
                 </div>
               )}
               {selectedRequest.status === 'accepted' && selectedRequest.tier && (
                 <div className="mb-4">
-                  <span className={`inline-block px-2 py-1 rounded-full font-semibold ${statusColors[selectedRequest.status]}`}>{selectedRequest.status}</span>
-                  <span className="ml-2 text-xs text-indigo-600 font-semibold">({tierLabels[selectedRequest.tier]})</span>
+                  <span className={`inline-block px-2 py-1 rounded-full font-semibold border ${
+                    selectedRequest.status === 'accepted' ? 'bg-green-500/20 text-green-300 border-green-500/30' :
+                    selectedRequest.status === 'pending' ? 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30' :
+                    'bg-gray-500/20 text-gray-300 border-gray-500/30'
+                  }`}>{selectedRequest.status}</span>
+                  <span className="ml-2 text-xs text-primary-400 font-semibold">({tierLabels[selectedRequest.tier]})</span>
                 </div>
               )}
               <div className="mt-4 flex flex-col sm:flex-row justify-end gap-2">
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={() => setShowProfileModal(false)}
-                  className="rounded-full px-4 py-1.5 font-semibold border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors w-full sm:w-auto"
+                  className="rounded-full px-4 py-1.5 font-semibold border border-white/30 text-white hover:bg-white/10 transition-all duration-200 w-full sm:w-auto"
                 >
                   Close
-                </button>
+                </motion.button>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>, document.body)}
       {/* Accept Modal */}
       {showAccept && selectedRequest && ReactDOM.createPortal(
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black bg-opacity-50 p-2 sm:p-4">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm sm:max-w-md max-h-[80vh] overflow-y-auto scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm p-2 sm:p-4">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            transition={{ duration: 0.3 }}
+            className="bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl w-full max-w-sm sm:max-w-md max-h-[80vh] overflow-y-auto scrollbar-hide border border-white/20" 
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
             {/* Header */}
-            <div className="sticky top-0 bg-white border-b border-gray-100 px-3 sm:px-4 py-3 rounded-t-2xl">
+            <div className="sticky top-0 bg-white/10 backdrop-blur-sm border-b border-white/20 px-4 sm:px-6 py-4 rounded-t-2xl">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-base sm:text-lg font-bold text-gray-900">Accept Mentorship Request</h3>
-                  <p className="text-xs text-gray-500 mt-1">Accept the mentorship request and choose contact tier</p>
+                  <h3 className="text-base sm:text-lg font-bold text-white">Accept Mentorship Request</h3>
+                  <p className="text-xs text-white/70 mt-1">Accept the mentorship request and choose contact tier</p>
                 </div>
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
                   onClick={() => setShowAccept(false)}
-                  className="text-gray-400 hover:text-gray-600 transition-colors p-1 rounded-full hover:bg-gray-100"
+                  className="text-white/60 hover:text-white transition-colors p-1 rounded-lg hover:bg-white/10"
                 >
                   <XMarkIcon className="h-4 w-4 sm:h-5 sm:w-5" />
-                </button>
+                </motion.button>
               </div>
             </div>
             {/* Content */}
-            <div className="p-3 sm:p-4 space-y-3 sm:space-y-4">
+            <div className="p-4 sm:p-6 space-y-4 sm:space-y-5">
               {/* Message from Student as Label and Box */}
               {selectedRequest?.descriptionbyUser && (
-                <div className="mb-2">
-                  <h4 className="text-base font-semibold text-gray-900 mb-1">Message from Student</h4>
-                  <div className="bg-indigo-50 border-l-4 border-indigo-400 rounded-md p-3 text-gray-700 text-xs sm:text-sm leading-relaxed whitespace-pre-line">
+                <div className="mb-4">
+                  <h4 className="text-sm font-semibold text-white mb-2">Message from Student</h4>
+                  <div className="bg-white/10 border-l-4 border-primary-500 rounded-lg p-3 text-white/80 text-xs sm:text-sm leading-relaxed whitespace-pre-line">
                     {selectedRequest.descriptionbyUser}
                   </div>
                 </div>
               )}
               {/* Tier Selection */}
               <div>
-                <label className="block font-semibold text-gray-900 mb-2 text-sm">Choose Contact Tier:</label>
-                <div className="space-y-1">
+                <label className="block font-semibold text-white mb-3 text-sm">Choose Contact Tier:</label>
+                <div className="space-y-2">
                   {TIERS.map(tier => (
-                    <label
+                    <motion.label
                       key={tier.value}
-                      className={`flex items-center rounded-lg border px-2 py-2 cursor-pointer transition-colors ${
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className={`flex items-center rounded-xl border px-3 py-3 cursor-pointer transition-all duration-200 ${
                         acceptTier === tier.value 
-                          ? 'border-green-500 bg-green-50' 
-                          : 'border-gray-200 bg-white hover:border-gray-300'
+                          ? 'border-green-500/50 bg-green-500/20 shadow-lg' 
+                          : 'border-white/30 bg-white/10 hover:border-white/50 hover:bg-white/20'
                       }`}
                     >
                       <input
@@ -411,26 +533,26 @@ const ReceivedRequests = ({ requests, loading, error, setRequests, showAlert }) 
                         value={tier.value}
                         checked={acceptTier === tier.value}
                         onChange={() => setAcceptTier(tier.value)}
-                        className="form-radio text-green-600 mr-2 flex-shrink-0"
+                        className="form-radio text-green-400 mr-3 flex-shrink-0"
                       />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center space-x-2">
-                          <span className="font-semibold text-gray-900 text-xs">{tier.name}</span>
+                          <span className="font-semibold text-white text-xs">{tier.name}</span>
                           {acceptTier === tier.value && (
-                            <span className="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-medium bg-green-100 text-green-800">
+                            <span className="inline-flex items-center px-2 py-1 rounded-lg text-[10px] font-medium bg-green-500/30 text-green-300 border border-green-500/50">
                               Selected
                             </span>
                           )}
                         </div>
-                        <p className="text-[10px] text-gray-600 mt-0.5">{tier.description}</p>
+                        <p className="text-[10px] text-white/70 mt-1">{tier.description}</p>
                       </div>
-                    </label>
+                    </motion.label>
                   ))}
                 </div>
               </div>
               {/* Message Input */}
               <div>
-                <label className="block font-semibold text-gray-900 mb-2 text-sm">Message to Student:</label>
+                <label className="block font-semibold text-white mb-2 text-sm">Message to Student:</label>
                 <div className="relative">
                   <textarea
                     value={acceptMsg}
@@ -438,34 +560,38 @@ const ReceivedRequests = ({ requests, loading, error, setRequests, showAlert }) 
                     rows={3}
                     maxLength={200}
                     placeholder="Write a message to the student..."
-                    className="w-full border border-gray-200 rounded-lg p-2 focus:outline-none focus:ring-1 focus:ring-green-400 focus:border-green-400 resize-none text-xs transition-colors"
+                    className="w-full bg-white/10 border border-white/30 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-green-400/50 focus:border-green-400/50 resize-none text-xs text-white placeholder-white/50 transition-all duration-200 backdrop-blur-sm"
                     disabled={actionLoading}
                   />
-                  {/* Simple gray character count, no colored badge */}
-                  <div className="absolute bottom-1 right-2">
-                    <span className="text-[10px] text-gray-500">{acceptMsg.length}/200</span>
+                  {/* Character count */}
+                  <div className="absolute bottom-2 right-3">
+                    <span className="text-[10px] text-white/60">{acceptMsg.length}/200</span>
                   </div>
                 </div>
               </div>
             </div>
             {/* Action Buttons - Sticky Bottom */}
-            <div className="sticky bottom-0 bg-white border-t border-gray-100 px-4 sm:px-6 py-4 rounded-b-2xl">
+            <div className="sticky bottom-0 bg-white/10 backdrop-blur-sm border-t border-white/20 px-4 sm:px-6 py-4 rounded-b-2xl">
               <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={() => setShowAccept(false)}
                   disabled={actionLoading}
-                  className="w-full sm:flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-full hover:bg-gray-50 transition-colors disabled:opacity-50 font-semibold text-sm"
+                  className="w-full sm:flex-1 px-4 py-2 border border-white/30 text-white/80 rounded-xl hover:bg-white/10 hover:text-white transition-all duration-200 disabled:opacity-50 font-semibold text-sm"
                 >
                   Cancel
-                </button>
-                <button
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={submitAccept}
                   disabled={actionLoading || !acceptMsg.trim()}
-                  className="w-full sm:flex-1 px-4 py-2 bg-green-100 text-green-700 border border-green-200 hover:bg-green-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-semibold text-sm rounded-full"
+                  className="w-full sm:flex-1 px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white border border-green-500/50 hover:from-green-600 hover:to-emerald-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed font-semibold text-sm rounded-xl shadow-lg"
                 >
                   {actionLoading ? (
                     <div className="flex items-center justify-center space-x-2">
-                      <div className="w-3 h-3 border-2 border-green-600 border-t-transparent rounded-full animate-spin"></div>
+                      <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                       <span>Accepting...</span>
                     </div>
                   ) : (
@@ -474,10 +600,10 @@ const ReceivedRequests = ({ requests, loading, error, setRequests, showAlert }) 
                       <span>Accept Request</span>
                     </div>
                   )}
-                </button>
+                </motion.button>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>, document.body)}
       <ConfirmDialog
         open={confirmOpen}

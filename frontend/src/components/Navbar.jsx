@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, memo, useCallback } from 'react';
 import { NavLink, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import OptimizedImage from './OptimizedImage';
@@ -116,7 +116,7 @@ const ProfileImage = ({ user, size = "w-9 h-9", textSize = "text-sm" }) => {
   );
 };
 
-const Navbar = ({ isHome = false }) => {
+const Navbar = memo(({ isHome = false }) => {
   const { user, role, logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -421,6 +421,6 @@ const Navbar = ({ isHome = false }) => {
       )}
     </nav>
   );
-};
+});
 
 export default Navbar;

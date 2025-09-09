@@ -1,12 +1,12 @@
-import React from 'react';
+import React, { memo, useCallback } from 'react';
 import { CalendarIcon, BuildingOffice2Icon, UserIcon, ClockIcon } from '@heroicons/react/24/outline';
 import { toast } from 'react-toastify';
 import ConfirmDialog from '../ConfirmDialog';
 import axios from '../../config/axios';
 
-const JobCard = ({ job, user, isApplied, onClick, onApply, onJobDeleted }) => {
+const JobCard = memo(({ job, user, isApplied, onClick, onApply, onJobDeleted }) => {
   // Format date
-  const formatDate = (dateString) => {
+  const formatDate = useCallback((dateString) => {
     if (!dateString) return 'N/A';
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
@@ -15,10 +15,10 @@ const JobCard = ({ job, user, isApplied, onClick, onApply, onJobDeleted }) => {
       month: 'short',
       day: 'numeric'
     });
-  };
+  }, []);
 
   // Format posted date
-  const formatPostedDate = (dateString) => {
+  const formatPostedDate = useCallback((dateString) => {
     if (!dateString) return '';
     const date = new Date(dateString);
     const now = new Date();
@@ -29,7 +29,7 @@ const JobCard = ({ job, user, isApplied, onClick, onApply, onJobDeleted }) => {
     if (diffDays === 2) return 'Posted yesterday';
     if (diffDays <= 7) return `Posted ${diffDays - 1} days ago`;
     return `Posted ${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
-  };
+  }, []);
 
   // Determine button state and styling
   const getButtonState = () => {
@@ -191,6 +191,6 @@ const JobCard = ({ job, user, isApplied, onClick, onApply, onJobDeleted }) => {
       />
     </div>
   );
-};
+});
 
 export default JobCard; 

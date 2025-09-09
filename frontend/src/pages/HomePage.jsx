@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, memo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { testimonialsAPI } from "../services/testimonialsService";
@@ -91,7 +91,7 @@ const filters = [
   "Recognition",
 ];
 
-const HomePage = () => {
+const HomePage = memo(() => {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
   const [activeFilter, setActiveFilter] = useState("All Features");
@@ -1071,6 +1071,6 @@ const HomePage = () => {
       </div>
     </div>
   );
-};
+});
 
 export default HomePage;

@@ -1,8 +1,10 @@
-@import "@fortawesome/fontawesome-free/css/all.min.css";
+/* Optimized CSS - removed all unused libraries */
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Critical CSS only - minimal styles for performance */
 
 :root {
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
@@ -77,16 +79,6 @@ body {
 
 .scrollbar-hide::-webkit-scrollbar {
   display: none; /* Chrome/Safari/Webkit */
-}
-
-/* Additional scrollbar hiding for announcement component */
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
 }
 
 /* Text truncation utilities */

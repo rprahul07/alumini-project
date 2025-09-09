@@ -4,6 +4,7 @@ import MyCreatedJobs from './MyCreatedJobs';
 import CreateJobModal from './CreateJobModal';
 import { useAuth } from '../../contexts/AuthContext';
 import { PlusIcon } from '@heroicons/react/24/outline';
+import { motion } from 'framer-motion';
 
 const Opportunities = ({ showAlert }) => {
   const { user } = useAuth();
@@ -28,8 +29,10 @@ const Opportunities = ({ showAlert }) => {
         {canCreate && (
           <>
             {/* Modern Glassy + Button (highest z, animated ring, no shadow/scale) */}
-            <button
-              className="flex items-center justify-center w-8 h-8 rounded-full bg-white/40 backdrop-blur border border-indigo-200 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-400 group relative overflow-visible hover:bg-indigo-50 z-30 after:content-[''] after:absolute after:inset-0 after:rounded-full after:pointer-events-none after:transition-all after:duration-300 after:opacity-0 hover:after:opacity-100 hover:after:shadow-[0_0_0_4px_rgba(99,102,241,0.15)] after:z-[-1]"
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="flex items-center justify-center w-8 h-8 rounded-full bg-white/20 backdrop-blur border border-white/30 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-400 group relative overflow-visible hover:bg-white/30 z-30 after:content-[''] after:absolute after:inset-0 after:rounded-full after:pointer-events-none after:transition-all after:duration-300 after:opacity-0 hover:after:opacity-100 hover:after:shadow-[0_0_0_4px_rgba(99,102,241,0.15)] after:z-[-1]"
               onClick={() => {
                 setIsCreateSelected(true);
                 setShowCreateModal(true);
@@ -39,14 +42,16 @@ const Opportunities = ({ showAlert }) => {
               tabIndex={0}
               style={{ minWidth: '2rem', minHeight: '2rem' }}
             >
-              <PlusIcon className="h-4 w-4 text-indigo-600 group-hover:text-indigo-700 transition-colors" />
-            </button>
+              <PlusIcon className="h-4 w-4 text-white group-hover:text-primary-300 transition-colors" />
+            </motion.button>
             {/* My Opportunities Button */}
-            <button
-              className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all duration-200 flex items-center space-x-1 focus:outline-none focus:ring-2 focus:ring-indigo-300 ${
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all duration-200 flex items-center space-x-1 focus:outline-none focus:ring-2 focus:ring-primary-300 ${
                 activeTab === 'myjobs'
-                  ? 'bg-indigo-600 text-white border-indigo-600 shadow'
-                  : 'bg-white text-indigo-600 border-indigo-200 hover:bg-indigo-50'
+                  ? 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white border-primary-500 shadow-lg'
+                  : 'bg-white/10 text-white border-white/30 hover:bg-white/20'
               }`}
               onClick={() => {
                 setActiveTab('myjobs');
@@ -54,15 +59,17 @@ const Opportunities = ({ showAlert }) => {
               }}
             >
               <span>My Opportunities</span>
-            </button>
+            </motion.button>
           </>
         )}
         {/* Applied Button */}
-        <button
-          className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all duration-200 flex items-center space-x-1 focus:outline-none focus:ring-2 focus:ring-indigo-300 ${
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all duration-200 flex items-center space-x-1 focus:outline-none focus:ring-2 focus:ring-primary-300 ${
             activeTab === 'applied'
-              ? 'bg-indigo-600 text-white border-indigo-600 shadow'
-              : 'bg-white text-indigo-600 border-indigo-200 hover:bg-indigo-50'
+              ? 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white border-primary-500 shadow-lg'
+              : 'bg-white/10 text-white border-white/30 hover:bg-white/20'
           }`}
           onClick={() => {
             setActiveTab('applied');
@@ -70,7 +77,7 @@ const Opportunities = ({ showAlert }) => {
           }}
         >
           <span>Applied</span>
-        </button>
+        </motion.button>
       </div>
       {/* Tab Content */}
       <div className="flex-1 overflow-y-auto">

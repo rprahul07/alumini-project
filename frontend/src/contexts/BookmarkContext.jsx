@@ -33,7 +33,6 @@ export const BookmarkProvider = ({ children, user }) => {
    */
   const fetchBookmarks = async () => {
     if (!user) {
-      console.log('No user found, skipping bookmark fetch');
       return;
     }
 

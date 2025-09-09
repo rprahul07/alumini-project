@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, memo, useCallback } from 'react';
 import { ToastContainer } from 'react-toastify';
 import { motion } from 'framer-motion';
 import Navbar from '../components/Navbar';
@@ -13,7 +13,7 @@ import axios from '../config/axios';
 import { useAuth } from '../contexts/AuthContext';
 import useAlert from '../hooks/useAlert';
 
-const JobsPage = () => {
+const JobsPage = memo(() => {
   // State for jobs and UI
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -35,7 +35,7 @@ const JobsPage = () => {
   const [appliedJobIds, setAppliedJobIds] = useState(new Set());
 
   // Fetch jobs from API
-  const fetchJobs = async () => {
+  const fetchJobs = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -59,13 +59,12 @@ const JobsPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPage, searchTerm, selectedType, selectedCompany, sortBy, sortOrder]);
 
   // Fetch jobs when filters/search/page change
   useEffect(() => {
     fetchJobs();
-    // eslint-disable-next-line
-  }, [currentPage, searchTerm, selectedType, selectedCompany, sortBy, sortOrder]);
+  }, [fetchJobs]);
 
   // Fetch applied jobs for logged-in user
   useEffect(() => {
@@ -365,6 +364,6 @@ const JobsPage = () => {
       />
     </>
   );
-};
+});
 
 export default JobsPage; 

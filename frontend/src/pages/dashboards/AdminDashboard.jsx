@@ -5,6 +5,7 @@ import AdminSpotlight from '../../components/admin/AdminSpotlight';
 import AdminAnnouncements from './AdminAnnouncements';
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../contexts/AuthContext"; // ✅ Added AuthContext
+import { motion } from 'framer-motion';
 import {
   FiUsers,
   FiBook,
@@ -28,7 +29,6 @@ import apiService from "../../middleware/api";
 import { useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
 import Navbar from "../../components/Navbar";
-// import AlumniEventSubmissions from "../../components/AlumniEventSubmissions"; // Removed event management
 import AdminEventsPage from '../../components/AdminEventsPage';
 import JobCard from '../../components/opportunities/JobCard';
 import JobDetailsModal from '../../components/opportunities/JobDetailsModal';
@@ -336,9 +336,9 @@ const Sidebar = ({ onNavigate, activeView }) => {
         ></div>
       )}
       <aside
-        className={`fixed inset-y-6 left-0 w-64 bg-white  shadow-xl transform ${
+        className={`fixed inset-y-0 left-0 w-72 sm:w-80 bg-white shadow-xl transform ${
           isOpen ? "translate-x-0" : "-translate-x-full"
-        } lg:relative lg:translate-x-0 transition-transform duration-300 ease-in-out z-40 lg:z-auto rounded-r-2xl lg:rounded-2xl p-4`}
+        } lg:relative lg:translate-x-0 transition-transform duration-300 ease-in-out z-40 lg:z-auto rounded-r-2xl lg:rounded-2xl p-4 overflow-y-auto`}
       >
         <div className="flex justify-end lg:hidden">
           <button
@@ -766,8 +766,13 @@ const UserTableDisplay = ({ userType, users, onUpdateUser, onDeleteUser }) => {
   });
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
-      <h2 className="text-2xl font-bold text-gray-900 mb-6 capitalize">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+      className="bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 p-8 mb-8"
+    >
+      <h2 className="text-2xl font-bold text-white mb-6 capitalize">
         {userType} Management
       </h2>
 
@@ -778,35 +783,93 @@ const UserTableDisplay = ({ userType, users, onUpdateUser, onDeleteUser }) => {
         <input
           type="text"
           placeholder={`Search ${userType}...`}
-          className="pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent w-full max-w-md"
+          className="pl-10 pr-4 py-2.5 bg-white/10 border border-white/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent w-full max-w-md text-white placeholder-gray-400"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
 
-      <div className="overflow-x-auto rounded-xl border border-gray-200">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+      {/* Mobile Card View */}
+      <div className="block lg:hidden space-y-3">
+        {filteredUsers.length > 0 ? (
+          filteredUsers.map((user) => (
+            <div key={user.userId} className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl p-4 hover:bg-white/20 transition-colors duration-200">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-semibold text-white text-lg">{getValueByKeyPath(user, "fullName") || "-"}</h3>
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                    user.role === 'alumni' ? 'bg-green-500/20 text-green-300' :
+                    user.role === 'student' ? 'bg-blue-500/20 text-blue-300' :
+                    user.role === 'faculty' ? 'bg-purple-500/20 text-purple-300' :
+                    'bg-gray-500/20 text-gray-300'
+                  }`}>
+                    {user.role || 'Unknown'}
+                  </span>
+                </div>
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-center text-gray-300">
+                    <span className="font-medium w-20">Email:</span>
+                    <span className="truncate">{getValueByKeyPath(user, "email") || "-"}</span>
+                  </div>
+                  <div className="flex items-center text-gray-300">
+                    <span className="font-medium w-20">Phone:</span>
+                    <span className="truncate">{getValueByKeyPath(user, "phoneNumber") || "-"}</span>
+                  </div>
+                  <div className="flex items-center text-gray-300">
+                    <span className="font-medium w-20">Dept:</span>
+                    <span className="truncate">{getValueByKeyPath(user, "department") || "-"}</span>
+                  </div>
+                </div>
+                {user.userId && (
+                  <div className="flex gap-2 pt-2">
+                    <button
+                      onClick={() => handleActionClick("update", user.userId, user.fullName)}
+                      className="flex-1 px-3 py-2 bg-primary-500/20 text-primary-300 rounded-lg text-xs font-medium hover:bg-primary-500/30 transition-colors"
+                    >
+                      Update
+                    </button>
+                    <button
+                      onClick={() => handleActionClick("delete", user.userId, user.fullName)}
+                      className="flex-1 px-3 py-2 bg-red-500/20 text-red-300 rounded-lg text-xs font-medium hover:bg-red-500/30 transition-colors"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="text-center py-8 text-gray-400">
+            No {userType} found.
+          </div>
+        )}
+      </div>
+
+      {/* Desktop Table View */}
+      <div className="hidden lg:block overflow-x-auto rounded-xl border border-white/20">
+        <table className="min-w-full divide-y divide-white/20">
+          <thead className="bg-white/10">
             <tr>
               {displayedHeaders.map((header) => (
                 <th
                   key={header.key}
                   scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider first:rounded-tl-xl last:rounded-tr-xl"
+                  className="px-6 py-3 text-left text-xs font-medium text-white/90 uppercase tracking-wider first:rounded-tl-xl last:rounded-tr-xl"
                 >
                   {header.label}
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-white/5 divide-y divide-white/20">
             {filteredUsers.length > 0 ? (
               filteredUsers.map((user) => (
-                <tr key={user.userId}>
+                <tr key={user.userId} className="hover:bg-white/10 transition-colors duration-200">
                   {displayedHeaders.map((header) => (
                     <td
                       key={`${user.userId}-${header.key}`}
-                      className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"
+                      className="px-6 py-4 whitespace-nowrap text-sm text-white"
                     >
                       {header.key === "actions" ? (
                         user.userId ? (
@@ -876,7 +939,7 @@ const UserTableDisplay = ({ userType, users, onUpdateUser, onDeleteUser }) => {
           setModalAction(null);
         }}
       />
-    </div>
+    </motion.div>
   );
 };
 
@@ -1171,93 +1234,128 @@ const AdminDashboard = () => {
   const renderContent = () => {
     if (dashboardLoading) {
       return (
-        <div className="text-center py-10 text-gray-500">Loading dashboard...</div>
+        <div className="text-center py-10 text-gray-300">Loading dashboard...</div>
       );
     }
     if (error) {
-      return <div className="text-center py-10 text-red-500">{error}</div>;
+      return <div className="text-center py-10 text-red-400">{error}</div>;
     }
     switch (activeView) {
       case "dashboard":
         return (
           <>
-            <div className="mb-4 mt-3 bg-gradient-to-r from-primary-100 via-white to-primary-50 rounded-xl p-5 flex flex-col min-h-[96px]">
-              <h1 className="text-lg font-semibold text-gray-700 leading-tight">
-                Welcome back, <span className="text-primary font-bold">{user?.fullName || 'Admin'}</span>!
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="mb-4 mt-3 bg-white/10 backdrop-blur-xl rounded-2xl p-5 flex flex-col min-h-[96px] border border-white/20 shadow-2xl"
+            >
+              <h1 className="text-lg font-semibold text-white leading-tight">
+                Welcome back, <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-secondary-400 font-bold">{user?.fullName || 'Admin'}</span>!
               </h1>
-              <p className="text-base text-gray-500 mt-1">
+              <p className="text-base text-gray-300 mt-1">
                 Your admin dashboard for managing users, events, and more.
               </p>
-            </div>
+            </motion.div>
             {/* --- Statistics Cards (Redesigned) --- */}
             {dashboardStats && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3 lg:gap-4 mb-4 lg:mb-8">
                 {/* Total Users */}
-                <div className="flex items-center bg-white shadow-md rounded-xl p-4 border-t-8 border-indigo-500 transition-transform transform hover:scale-105">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.1 }}
+                  className="flex items-center bg-white/10 backdrop-blur-xl shadow-2xl rounded-xl lg:rounded-2xl p-2 sm:p-3 lg:p-4 border border-white/20 transition-all duration-200 hover:bg-white/20 hover:scale-105"
+                >
                   <div className="flex-shrink-0 mr-4">
-                    <div className="bg-primary-100 p-3 rounded-full">
-                      <FiUsers className="text-primary-600 text-2xl" />
+                    <div className="bg-gradient-to-r from-primary-500/20 to-secondary-500/20 p-3 rounded-full border border-primary-500/30">
+                      <FiUsers className="text-primary-400 text-2xl" />
                     </div>
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-gray-800">{dashboardStats.totalUsers}</div>
-                    <div className="text-gray-500 text-sm">Total Users</div>
+                    <div className="text-lg sm:text-xl lg:text-2xl font-bold text-white">{dashboardStats.totalUsers}</div>
+                    <div className="text-gray-300 text-xs sm:text-sm">Total Users</div>
                   </div>
-                </div>
+                </motion.div>
                 {/* Alumni */}
-                <div className="flex items-center bg-white shadow-md rounded-xl p-4 border-t-8 border-green-500 transition-transform transform hover:scale-105">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                  className="flex items-center bg-white/10 backdrop-blur-xl shadow-2xl rounded-xl lg:rounded-2xl p-2 sm:p-3 lg:p-4 border border-white/20 transition-all duration-200 hover:bg-white/20 hover:scale-105"
+                >
                   <div className="flex-shrink-0 mr-4">
-                    <div className="bg-green-100 p-3 rounded-full">
-                      <FiBriefcase className="text-accent text-2xl" />
+                    <div className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 p-3 rounded-full border border-green-500/30">
+                      <FiBriefcase className="text-green-400 text-2xl" />
                     </div>
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-gray-800">{dashboardStats.totalAlumni}</div>
-                    <div className="text-gray-500 text-sm">Alumni</div>
+                    <div className="text-lg sm:text-xl lg:text-2xl font-bold text-white">{dashboardStats.totalAlumni}</div>
+                    <div className="text-gray-300 text-xs sm:text-sm">Alumni</div>
                   </div>
-                </div>
+                </motion.div>
                 {/* Students */}
-                <div className="flex items-center bg-white shadow-md rounded-xl p-4 border-t-8 border-secondary transition-transform transform hover:scale-105">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.3 }}
+                  className="flex items-center bg-white/10 backdrop-blur-xl shadow-2xl rounded-xl lg:rounded-2xl p-2 sm:p-3 lg:p-4 border border-white/20 transition-all duration-200 hover:bg-white/20 hover:scale-105"
+                >
                   <div className="flex-shrink-0 mr-4">
-                    <div className="bg-secondary-100 p-3 rounded-full">
-                      <FiBook className="text-secondary text-2xl" />
+                    <div className="bg-gradient-to-r from-blue-500/20 to-cyan-500/20 p-3 rounded-full border border-blue-500/30">
+                      <FiBook className="text-blue-400 text-2xl" />
                     </div>
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-gray-800">{dashboardStats.totalStudents}</div>
-                    <div className="text-gray-500 text-sm">Students</div>
+                    <div className="text-lg sm:text-xl lg:text-2xl font-bold text-white">{dashboardStats.totalStudents}</div>
+                    <div className="text-gray-300 text-xs sm:text-sm">Students</div>
                   </div>
-                </div>
+                </motion.div>
                 {/* Faculty */}
-                <div className="flex items-center bg-white shadow-md rounded-xl p-4 border-t-8 border-accent transition-transform transform hover:scale-105">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.4 }}
+                  className="flex items-center bg-white/10 backdrop-blur-xl shadow-2xl rounded-xl lg:rounded-2xl p-2 sm:p-3 lg:p-4 border border-white/20 transition-all duration-200 hover:bg-white/20 hover:scale-105"
+                >
                   <div className="flex-shrink-0 mr-4">
-                    <div className="bg-accent-100 p-3 rounded-full">
-                      <FiUser className="text-accent text-2xl" />
+                    <div className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 p-3 rounded-full border border-purple-500/30">
+                      <FiUser className="text-purple-400 text-2xl" />
                     </div>
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-gray-800">{dashboardStats.totalFaculty}</div>
-                    <div className="text-gray-500 text-sm">Faculty</div>
+                    <div className="text-lg sm:text-xl lg:text-2xl font-bold text-white">{dashboardStats.totalFaculty}</div>
+                    <div className="text-gray-300 text-xs sm:text-sm">Faculty</div>
                   </div>
-                </div>
+                </motion.div>
                 {/* Admins */}
-                <div className="flex items-center bg-white shadow-md rounded-xl p-4 border-t-8 border-primary transition-transform transform hover:scale-105">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.5 }}
+                  className="flex items-center bg-white/10 backdrop-blur-xl shadow-2xl rounded-xl lg:rounded-2xl p-2 sm:p-3 lg:p-4 border border-white/20 transition-all duration-200 hover:bg-white/20 hover:scale-105"
+                >
                   <div className="flex-shrink-0 mr-4">
-                    <div className="bg-primary-100 p-3 rounded-full">
-                      <FiShield className="text-primary text-2xl" />
+                    <div className="bg-gradient-to-r from-red-500/20 to-orange-500/20 p-3 rounded-full border border-red-500/30">
+                      <FiShield className="text-red-400 text-2xl" />
                     </div>
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-gray-800">{dashboardStats.totalAdmins}</div>
-                    <div className="text-gray-500 text-sm">Admins</div>
+                    <div className="text-lg sm:text-xl lg:text-2xl font-bold text-white">{dashboardStats.totalAdmins}</div>
+                    <div className="text-gray-300 text-xs sm:text-sm">Admins</div>
                   </div>
-                </div>
+                </motion.div>
               </div>
             )}
             {/* --- End Statistics Cards (Redesigned) --- */}
 
-            {/* Admin My Activity Card - White Card */}
-            <div className="bg-white rounded-2xl shadow-lg flex-1 p-4 flex flex-col overflow-y-auto scrollbar-hide min-w-0 w-full h-[600px] max-h-[700px]">
+            {/* Admin My Activity Card - Dark Glassmorphism Card */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+              className="bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 flex-1 p-4 flex flex-col overflow-y-auto scrollbar-hide min-w-0 w-full h-[600px] max-h-[700px]"
+            >
             <MyActivityCard
               features={[
                 {
@@ -1268,13 +1366,13 @@ const AdminDashboard = () => {
               ]}
               defaultTab="opportunities"
             />
-            </div>
+            </motion.div>
           </>
         );
       case "students":
         return (
           studentsLoading ? (
-            <div className="text-center py-10 text-gray-500">Loading students...</div>
+            <div className="text-center py-10 text-gray-300">Loading students...</div>
           ) : (
             <UserTableDisplay
               userType="students"
@@ -1287,7 +1385,7 @@ const AdminDashboard = () => {
       case "alumni":
         return (
           alumniLoading ? (
-            <div className="text-center py-10 text-gray-500">Loading alumni...</div>
+            <div className="text-center py-10 text-gray-300">Loading alumni...</div>
           ) : (
             <UserTableDisplay
               userType="alumni"
@@ -1300,7 +1398,7 @@ const AdminDashboard = () => {
       case "faculty":
         return (
           facultyLoading ? (
-            <div className="text-center py-10 text-gray-500">Loading faculty...</div>
+            <div className="text-center py-10 text-gray-300">Loading faculty...</div>
           ) : (
             <UserTableDisplay
               userType="faculty"
@@ -1346,19 +1444,30 @@ const AdminDashboard = () => {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen font-roboto bg-gray-50 pt-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-3">
+      <div className="min-h-screen font-roboto bg-gray-50 pt-16 relative overflow-hidden">
+        {/* Dark gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900"></div>
+        {/* Animated background elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary-500/20 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-secondary-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-accent-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '4s' }}></div>
+        </div>
+        {/* Content */}
+        <div className="relative z-10">
+        <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-2 lg:gap-3">
             <aside className="lg:col-span-1 space-y-4" aria-label="Sidebar and profile section">
               <Sidebar
                 onNavigate={setActiveView}
                 activeView={activeView}
               />
             </aside>
-            <main className="lg:col-span-3 space-y-5 py-8">
+            <main className="lg:col-span-3 space-y-3 lg:space-y-5 py-4 lg:py-8">
               {renderContent()}
             </main>
           </div>
+        </div>
         </div>
       </div>
       <ConfirmDialog
