@@ -259,13 +259,13 @@ const MemoryLaneGallery = () => {
             <div className="text-center mb-6">
               <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-secondary-500 to-secondary-600 text-white rounded-full text-sm font-semibold mb-3 shadow-lg">
                 <span className="w-2 h-2 bg-white rounded-full mr-2"></span>
-                {galleryLoading ? 'Loading...' : 'API Gallery'}
+                {galleryLoading ? 'Loading...' : 'Alumni Memories'}
               </div>
               <h3 className="text-xl md:text-2xl font-bold text-white mb-2">
-                {galleryLoading ? 'Loading Gallery...' : 'Community Gallery'}
+                {galleryLoading ? 'Loading Gallery...' : 'Alumni Memories'}
               </h3>
               <p className="text-gray-300 text-sm md:text-base">
-                {galleryLoading ? 'Fetching images from our gallery' : 'Images shared by our community'}
+                {galleryLoading ? 'Fetching memories from our alumni' : 'Cherished moments shared by our alumni community'}
               </p>
             </div>
 
