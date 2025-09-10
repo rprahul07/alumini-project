@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, memo, useCallback } from 'react';
 import { NavLink, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import OptimizedImage from './OptimizedImage';
+import { useInteractionTracking } from '../hooks/useAnalytics';
 // FontAwesome removed for performance optimization
 
 const navLinks = [
@@ -124,6 +125,7 @@ const Navbar = memo(({ isHome = false }) => {
   const navigate = useNavigate();
   const avatarRef = useRef(null);
   const location = useLocation();
+  const { trackClick, trackHover } = useInteractionTracking('navigation');
 
   // Auto-detect if on home page
   const isHomePage = isHome || location.pathname === '/';
@@ -158,6 +160,7 @@ const Navbar = memo(({ isHome = false }) => {
 
   const handleLogout = async () => {
     try {
+      trackClick(null, 'logout_button');
       await logout();
       navigate('/');
       setDropdownOpen(false);
@@ -165,6 +168,30 @@ const Navbar = memo(({ isHome = false }) => {
     } catch (error) {
       console.error('Logout failed:', error);
     }
+  };
+
+  // Handle navigation clicks
+  const handleNavClick = (linkTitle, linkPath) => {
+    trackClick(null, `nav_${linkTitle.toLowerCase().replace(' ', '_')}`);
+    navigate(linkPath);
+  };
+
+  // Handle get started button
+  const handleGetStarted = () => {
+    trackClick(null, 'get_started_button');
+    navigate('/role-selection');
+  };
+
+  // Handle mobile menu toggle
+  const handleMobileMenuToggle = () => {
+    trackClick(null, 'mobile_menu_toggle');
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  // Handle user dropdown toggle
+  const handleUserDropdownToggle = () => {
+    trackClick(null, 'user_dropdown_toggle');
+    setDropdownOpen(!dropdownOpen);
   };
 
   const handleDashboardRedirect = () => {
@@ -269,6 +296,7 @@ const Navbar = memo(({ isHome = false }) => {
                   <NavLink
                     key={link.title}
                     to={link.path}
+                    onClick={() => trackClick(null, `nav_${link.title.toLowerCase().replace(' ', '_')}`)}
                     className={({ isActive }) =>
                       `relative px-4 py-2 rounded-full text-sm font-semibold font-body transition-all duration-300 transform hover:scale-105 overflow-hidden ${
                         isActive && !isDashboardRoute
@@ -293,7 +321,7 @@ const Navbar = memo(({ isHome = false }) => {
             {user ? (
               <div className="relative dropdown-container" ref={avatarRef}>
                 <button
-                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                  onClick={handleUserDropdownToggle}
                   className={`flex items-center space-x-3 p-2 rounded-2xl backdrop-blur-xl border transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl ${
                     isDarkBackgroundPage
                       ? 'bg-white/20 border-white/30 hover:bg-white/30'
@@ -316,7 +344,7 @@ const Navbar = memo(({ isHome = false }) => {
               </div>
             ) : (
               <button
-                onClick={() => navigate('/role-selection')}
+                onClick={handleGetStarted}
                 className="bg-gradient-to-r from-primary-600 to-secondary-600 text-white px-6 py-2 rounded-full text-sm font-semibold font-body hover:from-primary-700 hover:to-secondary-700 transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl"
               >
                 Get Started
@@ -325,7 +353,7 @@ const Navbar = memo(({ isHome = false }) => {
 
             {/* Mobile Menu Button */}
             <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              onClick={handleMobileMenuToggle}
               className={`lg:hidden p-2 rounded-xl backdrop-blur-xl border transition-all duration-300 shadow-xl ${
                 isDarkBackgroundPage
                   ? 'bg-white/20 border-white/30 hover:bg-white/30'
@@ -362,6 +390,10 @@ const Navbar = memo(({ isHome = false }) => {
                   <NavLink
                     key={link.title}
                     to={link.path}
+                    onClick={() => {
+                      trackClick(null, `mobile_nav_${link.title.toLowerCase().replace(' ', '_')}`);
+                      setIsMenuOpen(false);
+                    }}
                     className={({ isActive }) =>
                       `flex items-center px-6 py-3 text-sm font-semibold font-body transition-all duration-200 ${
                         isActive && !isDashboardRoute
@@ -370,7 +402,6 @@ const Navbar = memo(({ isHome = false }) => {
                       }`
                     }
                     end={link.path === '/'}
-                    onClick={() => setIsMenuOpen(false)}
                   >
                     {link.title}
                   </NavLink>

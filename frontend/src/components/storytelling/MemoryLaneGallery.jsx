@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import OptimizedImage from '../OptimizedImage';
 import { galleryAPI } from '../../services/galleryService';
+import { useInteractionTracking, useAnalytics } from '../../hooks/useAnalytics';
 
 const MemoryLaneGallery = () => {
   const navigate = useNavigate();
@@ -13,6 +14,10 @@ const MemoryLaneGallery = () => {
   const [galleryImages, setGalleryImages] = useState([]);
   const [galleryLoading, setGalleryLoading] = useState(true);
   const [galleryError, setGalleryError] = useState(null);
+  
+  // Analytics tracking
+  const { trackClick, trackHover } = useInteractionTracking('storytelling');
+  const { trackEngagement } = useAnalytics();
 
   // College memories data
   const collegeMemories = [
@@ -102,20 +107,41 @@ const MemoryLaneGallery = () => {
   }, [galleryImages.length]);
 
   const handleCollegeSlideChange = (index) => {
+    trackClick(null, `college_slide_${index}`);
+    trackEngagement('gallery_slide_change', {
+      gallery_type: 'college',
+      slide_index: index,
+      slide_title: collegeMemories[index]?.title
+    });
     setActiveCollegeSlide(index);
   };
 
   const handleAlumniSlideChange = (index) => {
+    trackClick(null, `alumni_slide_${index}`);
+    trackEngagement('gallery_slide_change', {
+      gallery_type: 'alumni',
+      slide_index: index
+    });
     setActiveAlumniSlide(index);
   };
 
   const handleMemoryClick = (memory) => {
+    trackClick(null, `memory_${memory.id}_click`);
+    trackEngagement('memory_interaction', {
+      memory_id: memory.id,
+      memory_title: memory.title,
+      memory_category: memory.category
+    });
     setSelectedMemory(memory);
     // Auto-close after 6 seconds
     setTimeout(() => setSelectedMemory(null), 6000);
   };
 
   const handleExploreMemories = () => {
+    trackClick(null, 'explore_memories_button');
+    trackEngagement('gallery_explore', {
+      destination: '/gallery'
+    });
     navigate('/gallery');
   };
 

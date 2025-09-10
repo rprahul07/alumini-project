@@ -4,6 +4,7 @@ import { FiUser, FiMail, FiPhone, FiLock, FiEye, FiEyeOff, FiBriefcase, FiCalend
 import toast from 'react-hot-toast';
 import { useAuth } from '../contexts/AuthContext';
 import { authAPI } from '../middleware/api';
+import { useInteractionTracking, useAnalytics } from '../hooks/useAnalytics';
 
 const roleLabels = {
   student: 'Student',
@@ -24,6 +25,10 @@ const AuthPage = () => {
   const { user, selectedRole, login, register, loading, error, clearError } = useAuth();
   const [authType, setAuthType] = useState('login');
   const [showPassword, setShowPassword] = useState(false);
+  
+  // Analytics tracking
+  const { trackClick, trackSubmit, trackFocus } = useInteractionTracking('auth');
+  const { trackEngagement, trackConversion } = useAnalytics();
   
   // Forgot Password States
   const [forgotStep, setForgotStep] = useState(1); // 1=email, 2=otp+password
@@ -86,6 +91,9 @@ const handleSubmit = async (e) => {
   setFormError('');
   clearError();
 
+  // Track form submission attempt
+  trackSubmit(e.target, `auth_${authType}_form`);
+
   const emailRegex = /^\S+@\S+\.\S+$/;
   if (!emailRegex.test(formData.email)) {
     toast.error("Please enter a valid email address");
@@ -99,12 +107,23 @@ const handleSubmit = async (e) => {
 
   try {
     if (authType === 'login') {
+      // Track login attempt
+      trackConversion('login_attempt', {
+        user_role: selectedRole,
+        email_domain: formData.email.split('@')[1]
+      });
+      
       const result = await login({
         email: formData.email,
         password: formData.password,
         role: selectedRole
       });
       if (result.success) {
+        // Track successful login
+        trackConversion('login_success', {
+          user_role: selectedRole,
+          user_id: result.user?.id
+        });
         toast.success('Login successful!');
       }
     } else {
@@ -112,6 +131,12 @@ const handleSubmit = async (e) => {
         toast.error('Passwords do not match');
         return;
       }
+
+      // Track registration attempt
+      trackConversion('registration_attempt', {
+        user_role: selectedRole,
+        email_domain: formData.email.split('@')[1]
+      });
 
       const regData = {
         ...formData,
@@ -130,6 +155,11 @@ const handleSubmit = async (e) => {
 
       const result = await register(regData);
       if (result.success) {
+        // Track successful registration
+        trackConversion('registration_success', {
+          user_role: selectedRole,
+          user_id: result.user?.id
+        });
         toast.success('Registration successful! Please login.');
         setAuthType('login');
       }
@@ -787,6 +817,7 @@ const handleSubmit = async (e) => {
               <button
                 type="submit"
                 disabled={loading}
+                onClick={() => trackClick(null, `auth_${authType}_submit_button`)}
                 className="w-full bg-gradient-to-r from-primary-500 to-secondary-500 hover:from-primary-600 hover:to-secondary-600 disabled:from-primary-400 disabled:to-secondary-400 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-2xl transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-105 disabled:transform-none disabled:hover:scale-100 font-body"
               >
                 {loading ? (
@@ -804,6 +835,7 @@ const handleSubmit = async (e) => {
                   <button
                     type="button"
                     onClick={() => {
+                      trackClick(null, 'forgot_password_button');
                       setAuthType('forgot');
                       setForgotStep(1);
                       setFormError('');

@@ -6,6 +6,7 @@ import { dashboardAPI } from "../services/dashboardService";
 import { announcementAPI } from "../services/announcementService";
 import { spotlightAPI } from "../services/spotlightService";
 import { useParallax, useParallaxTransform } from "../hooks/useParallax";
+import { useInteractionTracking, useAnalytics } from "../hooks/useAnalytics";
 import Navbar from '../components/Navbar';
 import OptimizedImage from '../components/OptimizedImage';
 import AccessibleBadge from '../components/AccessibleBadge';
@@ -94,6 +95,8 @@ const filters = [
 const HomePage = memo(() => {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
+  const { trackClick, trackHover, trackSubmit } = useInteractionTracking('homepage');
+  const { trackEngagement } = useAnalytics();
   const [activeFilter, setActiveFilter] = useState("All Features");
   const [stats, setStats] = useState({
     alumniMembers: 0,
@@ -115,6 +118,36 @@ const HomePage = memo(() => {
   const parallaxFast = useParallax(0.7);
   const parallaxX = useParallaxTransform(0.4, 'x');
   const parallaxY = useParallaxTransform(0.6, 'y');
+
+  // Analytics tracking functions
+  const handleFeatureClick = (featureTitle) => {
+    trackClick(null, `feature_${featureTitle.toLowerCase().replace(' ', '_')}`);
+  };
+
+  const handleHeroAction = (actionType) => {
+    trackEngagement(`hero_${actionType}`, {
+      user_type: user?.role || 'guest',
+      page_section: 'hero'
+    });
+  };
+
+  const handleTestimonialInteraction = (interactionType, testimonialId) => {
+    trackEngagement(`testimonial_${interactionType}`, {
+      testimonial_id: testimonialId,
+      page_section: 'testimonials'
+    });
+  };
+
+  const handleAnnouncementClick = (announcementId) => {
+    trackClick(null, `announcement_${announcementId}`);
+  };
+
+  const handleSpotlightInteraction = (interactionType, spotlightId) => {
+    trackEngagement(`spotlight_${interactionType}`, {
+      spotlight_id: spotlightId,
+      page_section: 'spotlight'
+    });
+  };
 
 
   // Fetch and animate network stats

@@ -1,0 +1,52 @@
+/**
+ * Analytics Configuration
+ * Centralized configuration for Google Analytics 4
+ */
+
+export const ANALYTICS_CONFIG = {
+  // Enable in both development and production, but only track in production
+  enabled: import.meta.env.VITE_GA_MEASUREMENT_ID,
+  
+  // GA4 Measurement ID
+  measurementId: import.meta.env.VITE_GA_MEASUREMENT_ID,
+  
+  // Performance settings
+  debug: import.meta.env.DEV,
+  
+  // Privacy settings
+  anonymizeIp: true,
+  allowGoogleAds: false,
+  
+  // Performance optimizations
+  sendPageView: true,
+  transport: 'beacon', // Use beacon for better performance
+  
+  // Custom dimensions (if needed)
+  customMap: {
+    // Add custom dimensions here
+  }
+};
+
+/**
+ * Check if analytics should be loaded
+ * @returns {boolean}
+ */
+export const shouldLoadAnalytics = () => {
+  return ANALYTICS_CONFIG.enabled && ANALYTICS_CONFIG.measurementId;
+};
+
+/**
+ * Get analytics configuration for initialization
+ * @returns {object|null}
+ */
+export const getAnalyticsConfig = () => {
+  if (!shouldLoadAnalytics()) return null;
+  
+  return {
+    measurementId: ANALYTICS_CONFIG.measurementId,
+    debug: ANALYTICS_CONFIG.debug,
+    anonymizeIp: ANALYTICS_CONFIG.anonymizeIp,
+    allowGoogleAds: ANALYTICS_CONFIG.allowGoogleAds,
+    transport: ANALYTICS_CONFIG.transport
+  };
+};

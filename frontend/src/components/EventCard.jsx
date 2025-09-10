@@ -6,6 +6,7 @@ import OptimizedImage from './OptimizedImage';
 import axios from '../config/axios';
 import { toast } from 'react-toastify';
 import ConfirmDialog from './ConfirmDialog';
+import { useInteractionTracking, useAnalytics } from '../hooks/useAnalytics';
 
 const EventCard = memo(({ event, user, onEventUpdate, showEdit, showDelete, onEdit, onDelete, sm }) => {
   const [isRegistering, setIsRegistering] = useState(false);
@@ -16,6 +17,10 @@ const EventCard = memo(({ event, user, onEventUpdate, showEdit, showDelete, onEd
   const [confirmOpen, setConfirmOpen] = React.useState(false);
   const [confirmAction, setConfirmAction] = React.useState(null);
   const [confirmMessage, setConfirmMessage] = React.useState('');
+  
+  // Analytics tracking
+  const { trackClick, trackHover } = useInteractionTracking('events');
+  const { trackEngagement, trackConversion } = useAnalytics();
 
 
   // Format date - memoized for performance
@@ -44,10 +49,27 @@ const EventCard = memo(({ event, user, onEventUpdate, showEdit, showDelete, onEd
 
     try {
       setIsRegistering(true);
+      
+      // Track registration attempt
+      trackConversion('event_registration_attempt', {
+        event_id: event.id,
+        event_title: event.title,
+        user_role: user.role,
+        event_type: event.eventType
+      });
+      
       const endpoint = `/api/${user.role}/event/${event.id}`;
       const response = await axios.post(endpoint);
 
       if (response.data.success) {
+        // Track successful registration
+        trackConversion('event_registration_success', {
+          event_id: event.id,
+          event_title: event.title,
+          user_role: user.role,
+          event_type: event.eventType
+        });
+        
         toast.success(response.data.message || 'Action successful!');
         // Refetch events to update UI with new isRegistered and registeredCount
         if (onEventUpdate) {
@@ -75,6 +97,12 @@ const EventCard = memo(({ event, user, onEventUpdate, showEdit, showDelete, onEd
 
   // Handle card click to open modal
   const handleCardClick = () => {
+    trackClick(null, `event_card_${event.id}`);
+    trackEngagement('event_view', {
+      event_id: event.id,
+      event_title: event.title,
+      event_type: event.eventType
+    });
     setIsModalOpen(true);
   };
 
@@ -246,7 +274,10 @@ const EventCard = memo(({ event, user, onEventUpdate, showEdit, showDelete, onEd
                 <div className="flex gap-3">
                   <button
                     onClick={isLoggedIn && !isRegistered && !isFaculty && !registrationClosed ? handleRegistration : undefined}
-                    onMouseEnter={() => setIsHovering(true)}
+                    onMouseEnter={() => {
+                      setIsHovering(true);
+                      trackHover(null, `event_register_${event.id}`);
+                    }}
                     onMouseLeave={() => setIsHovering(false)}
                     disabled={buttonDisabled}
                     className={`px-4 py-2 rounded-full text-xs font-semibold shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center font-body ${
@@ -262,6 +293,7 @@ const EventCard = memo(({ event, user, onEventUpdate, showEdit, showDelete, onEd
                   </button>
                   <button
                     onClick={handleCardClick}
+                    onMouseEnter={() => trackHover(null, `event_read_more_${event.id}`)}
                     className="px-4 py-2 bg-white/20 backdrop-blur-xl text-white rounded-full font-semibold text-xs shadow-xl hover:bg-white/30 hover:shadow-2xl transition-all duration-300 transform hover:scale-105 border border-white/30 font-body"
                   >
                     Read More

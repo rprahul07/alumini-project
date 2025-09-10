@@ -10,13 +10,56 @@ import MyActivityCard from '../../components/MyActivityCard';
 import axios from '../../config/axios';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { useInteractionTracking, useAnalytics } from '../../hooks/useAnalytics';
 
 const StudentDashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   
+  // Analytics tracking
+  const { trackClick, trackHover, trackFocus } = useInteractionTracking('student_dashboard');
+  const { trackEngagement, trackConversion } = useAnalytics();
+  
   // Mobile tab state
   const [mainTab, setMainTab] = useState('mentorship');
+  
+  // Analytics tracking functions
+  const handleTabChange = (tabName) => {
+    trackClick(null, `dashboard_tab_${tabName}`);
+    trackEngagement('dashboard_tab_change', {
+      tab_name: tabName,
+      user_role: 'student',
+      dashboard_type: 'student_dashboard'
+    });
+    setMainTab(tabName);
+  };
+
+  const handleStatCardClick = (statTitle) => {
+    trackClick(null, `stat_card_${statTitle.toLowerCase().replace(' ', '_')}`);
+    trackEngagement('dashboard_stat_interaction', {
+      stat_title: statTitle,
+      user_role: 'student',
+      dashboard_type: 'student_dashboard'
+    });
+  };
+
+  const handleQuickActionClick = (actionName) => {
+    trackClick(null, `quick_action_${actionName.toLowerCase().replace(' ', '_')}`);
+    trackEngagement('dashboard_quick_action', {
+      action_name: actionName,
+      user_role: 'student',
+      dashboard_type: 'student_dashboard'
+    });
+  };
+
+  const handleMentorshipInteraction = (interactionType, mentorId) => {
+    trackEngagement('mentorship_interaction', {
+      interaction_type: interactionType,
+      mentor_id: mentorId,
+      user_role: 'student',
+      dashboard_type: 'student_dashboard'
+    });
+  };
   
   // ✅ State for dynamic stats
   const [stats, setStats] = useState([
@@ -153,6 +196,8 @@ const StudentDashboard = () => {
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 0.3, delay: i * 0.1 }}
+                        onClick={() => handleStatCardClick(stat.title)}
+                        onMouseEnter={() => trackHover(null, `stat_card_${stat.title.toLowerCase().replace(' ', '_')}`)}
                         className="bg-white/10 backdrop-blur-sm rounded-xl p-3 border border-white/20 hover:bg-white/20 transition-all duration-200 group cursor-pointer"
                       >
                         <div className={`w-6 h-6 flex items-center justify-center rounded-lg ${stat.iconBg} mb-2 group-hover:scale-105 transition-transform duration-150`}>
@@ -268,7 +313,7 @@ const StudentDashboard = () => {
                             ? 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white shadow-lg' 
                             : 'text-white/70 hover:text-white hover:bg-white/10'
                         }`}
-                        onClick={() => setMainTab(feature.key)}
+                        onClick={() => handleTabChange(feature.key)}
                       >
                         <feature.icon className="w-4 h-4" />
                         <span>{feature.label}</span>
@@ -403,6 +448,8 @@ const StudentDashboard = () => {
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ duration: 0.3, delay: i * 0.1 }}
+                            onClick={() => handleStatCardClick(stat.title)}
+                            onMouseEnter={() => trackHover(null, `stat_card_${stat.title.toLowerCase().replace(' ', '_')}`)}
                             className="bg-white/10 backdrop-blur-sm rounded-xl p-3 border border-white/20 hover:bg-white/20 transition-all duration-200 group cursor-pointer"
                           >
                             <div className={`w-6 h-6 flex items-center justify-center rounded-lg ${stat.iconBg} mb-2 group-hover:scale-105 transition-transform duration-150`}>

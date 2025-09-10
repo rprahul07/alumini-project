@@ -4,6 +4,14 @@ import App from './App';
 import './index.css';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+// Initialize analytics in both development and production
+// Analytics will handle its own environment checks internally
+import('./services/analytics').then(analytics => {
+  analytics.default.initialize();
+}).catch(error => {
+  console.warn('Analytics initialization failed:', error);
+});
+
 // Performance optimizations - only in production
 if (import.meta.env.PROD) {
   // Lazy load optimization utilities

@@ -3,6 +3,7 @@ import axios from '../config/axios';
 import Navbar from '../components/Navbar';
 import { motion, AnimatePresence } from 'framer-motion';
 import '@fortawesome/fontawesome-free/css/all.min.css';
+import { useInteractionTracking, useAnalytics } from '../hooks/useAnalytics';
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
@@ -15,6 +16,10 @@ const ContactPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [expandedFaq, setExpandedFaq] = useState(null);
+  
+  // Analytics tracking
+  const { trackClick, trackSubmit, trackFocus } = useInteractionTracking('contact');
+  const { trackEngagement, trackConversion } = useAnalytics();
 
   // FAQ data
   const faqs = [
@@ -95,6 +100,10 @@ const ContactPage = () => {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Track form submission attempt
+    trackSubmit(e.target, 'contact_form');
+    
     const newErrors = validateForm();
 
     if (Object.keys(newErrors).length > 0) {
@@ -105,6 +114,12 @@ const ContactPage = () => {
     setIsSubmitting(true);
 
     try {
+      // Track contact form submission
+      trackConversion('contact_form_submission', {
+        subject: formData.subject,
+        email_domain: formData.email.split('@')[1]
+      });
+      
       const response = await axios.post('/api/contactus', {
         name: formData.name,
         email: formData.email,
@@ -113,6 +128,12 @@ const ContactPage = () => {
       });
 
       if (response.data.success) {
+        // Track successful contact form submission
+        trackConversion('contact_form_success', {
+          subject: formData.subject,
+          email_domain: formData.email.split('@')[1]
+        });
+        
         setIsSubmitted(true);
         setFormData({
           name: '',
@@ -134,6 +155,12 @@ const ContactPage = () => {
 
   // Toggle FAQ expansion
   const toggleFaq = (index) => {
+    trackClick(null, `faq_${index}_toggle`);
+    trackEngagement('faq_interaction', {
+      faq_index: index,
+      faq_question: faqs[index]?.question,
+      action: expandedFaq === index ? 'close' : 'open'
+    });
     setExpandedFaq(expandedFaq === index ? null : index);
   };
 

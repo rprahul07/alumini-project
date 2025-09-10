@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { useInteractionTracking, useAnalytics } from '../hooks/useAnalytics';
 
 const VideoPlayer = ({ 
   videoId = "R_hQzJ0jRqE", // Default to the provided YouTube video
@@ -18,6 +19,10 @@ const VideoPlayer = ({
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [isMuted, setIsMuted] = useState(muted);
+  
+  // Analytics tracking
+  const { trackClick, trackHover } = useInteractionTracking('video');
+  const { trackEngagement } = useAnalytics();
   const [isInView, setIsInView] = useState(false);
   const videoRef = useRef(null);
   const iframeRef = useRef(null);
@@ -44,19 +49,40 @@ const VideoPlayer = ({
   }, []);
 
   const handlePlay = useCallback(() => {
+    // Track video play
+    trackEngagement('video_play', {
+      video_id: videoId,
+      video_title: title,
+      video_duration: duration
+    });
+    
     setIsPlaying(true);
     setIsLoading(true);
     setHasError(false);
     if (onPlay) onPlay();
-  }, [onPlay]);
+  }, [onPlay, videoId, title, duration, trackEngagement]);
 
   const handlePause = useCallback(() => {
+    // Track video pause
+    trackEngagement('video_pause', {
+      video_id: videoId,
+      video_title: title,
+      video_duration: duration
+    });
+    
     setIsPlaying(false);
-  }, []);
+  }, [videoId, title, duration, trackEngagement]);
 
   const handleMuteToggle = useCallback(() => {
+    // Track mute toggle
+    trackEngagement('video_mute_toggle', {
+      video_id: videoId,
+      video_title: title,
+      muted: !isMuted
+    });
+    
     setIsMuted(!isMuted);
-  }, [isMuted]);
+  }, [isMuted, videoId, title, trackEngagement]);
 
   const handleLoad = useCallback(() => {
     setIsLoading(false);
@@ -69,6 +95,13 @@ const VideoPlayer = ({
   }, []);
 
   const handleShare = useCallback(() => {
+    // Track video share
+    trackEngagement('video_share', {
+      video_id: videoId,
+      video_title: title,
+      share_method: navigator.share ? 'native' : 'clipboard'
+    });
+    
     if (onShare) onShare();
     
     // Share functionality
@@ -83,7 +116,7 @@ const VideoPlayer = ({
       navigator.clipboard.writeText(`https://youtu.be/${videoId}`);
       alert('Video link copied to clipboard!');
     }
-  }, [onShare, title, description, videoId]);
+  }, [onShare, title, description, videoId, trackEngagement]);
 
   // Generate YouTube embed URL with parameters
   const getYouTubeEmbedUrl = useCallback(() => {

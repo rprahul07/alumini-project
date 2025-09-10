@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import ConfirmDialog from './ConfirmDialog';
 import { useAuth } from '../contexts/AuthContext';
 import ReactDOM from 'react-dom';
+import { useInteractionTracking, useAnalytics } from '../hooks/useAnalytics';
 
 const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
   // Use auth context as primary source, fallback to prop for backward compatibility
@@ -18,6 +19,10 @@ const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
   );
   // Add state for confirm dialog if needed
   const [confirmOpen, setConfirmOpen] = React.useState(false);
+  
+  // Analytics tracking
+  const { trackClick, trackHover } = useInteractionTracking('modal');
+  const { trackEngagement, trackConversion } = useAnalytics();
   const [confirmAction, setConfirmAction] = React.useState(null);
   const [confirmMessage, setConfirmMessage] = React.useState('');
 
@@ -148,7 +153,15 @@ const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
 
             {/* Close Button */}
             <button
-              onClick={onClose}
+              onClick={() => {
+                trackClick(null, 'event_modal_close');
+                trackEngagement('modal_close', {
+                  modal_type: 'event_details',
+                  event_id: event?.id,
+                  event_title: event?.title
+                });
+                onClose();
+              }}
               className="w-8 h-8 bg-white/20 backdrop-blur-xl text-white rounded-full flex items-center justify-center hover:bg-white/30 transition-all duration-200 border border-white/30"
             >
               <XMarkIcon className="h-4 w-4" />
@@ -286,7 +299,16 @@ const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
             ) : (
               <div className="flex flex-col sm:flex-row gap-3">
                 <button
-                  onClick={onClose}
+                  onClick={() => {
+                    trackClick(null, 'event_modal_close_bottom');
+                    trackEngagement('modal_close', {
+                      modal_type: 'event_details',
+                      event_id: event?.id,
+                      event_title: event?.title,
+                      close_location: 'bottom'
+                    });
+                    onClose();
+                  }}
                   className="px-6 py-3 rounded-2xl font-semibold border-2 border-white/30 text-white/80 hover:bg-white/10 hover:border-white/50 transition-all duration-300 text-sm font-body"
                 >
                   Close
