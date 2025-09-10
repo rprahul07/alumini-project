@@ -1,15 +1,16 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 
 export const useParallax = (speed = 0.5) => {
   const [offset, setOffset] = useState(0);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setOffset(window.pageYOffset * speed);
-    };
+  const handleScroll = useCallback(() => {
+    setOffset(window.pageYOffset * speed);
+  }, [speed]);
 
-    // Throttle scroll events for better performance
+  useEffect(() => {
+    // Use passive listeners for better performance
     let ticking = false;
+    
     const throttledHandleScroll = () => {
       if (!ticking) {
         requestAnimationFrame(() => {
@@ -20,12 +21,16 @@ export const useParallax = (speed = 0.5) => {
       }
     };
 
-    window.addEventListener('scroll', throttledHandleScroll, { passive: true });
+    // Add passive listener for better performance
+    window.addEventListener('scroll', throttledHandleScroll, { 
+      passive: true,
+      capture: false 
+    });
     
     return () => {
       window.removeEventListener('scroll', throttledHandleScroll);
     };
-  }, [speed]);
+  }, [handleScroll]);
 
   return offset;
 };
@@ -34,8 +39,8 @@ export const useParallaxTransform = (speed = 0.5, direction = 'y') => {
   const offset = useParallax(speed);
   
   if (direction === 'x') {
-    return `translateX(${offset}px)`;
+    return `translate3d(${offset}px, 0, 0)`;
   }
   
-  return `translateY(${offset}px)`;
+  return `translate3d(0, ${offset}px, 0)`;
 };

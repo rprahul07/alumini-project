@@ -8,6 +8,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { BookmarkProvider } from './contexts/BookmarkContext';
 import { useAnalytics } from './hooks/useAnalytics';
 import ConsentBanner from './components/ConsentBanner';
+import ScrollToTop from './components/ScrollToTop';
 
 // Route tracking component for analytics
 function RouteTracker() {
@@ -29,6 +30,7 @@ function AppContent() {
   return (
     <BookmarkProvider user={user}>
       <Router>
+        <ScrollToTop />
         <RouteTracker />
         <Toaster position="top-right" />
         <Routes>

@@ -112,12 +112,12 @@ const HomePage = memo(() => {
   const [spotlightsLoading, setSpotlightsLoading] = useState(true);
   const [currentSpotlightIndex, setCurrentSpotlightIndex] = useState(0);
 
-  // Parallax effects
-  const parallaxSlow = useParallax(0.3);
-  const parallaxMedium = useParallax(0.5);
-  const parallaxFast = useParallax(0.7);
-  const parallaxX = useParallaxTransform(0.4, 'x');
-  const parallaxY = useParallaxTransform(0.6, 'y');
+  // Parallax effects - optimized for better performance
+  const parallaxSlow = useParallax(0.2); // Reduced speed for smoother effect
+  const parallaxMedium = useParallax(0.3);
+  const parallaxFast = useParallax(0.4);
+  const parallaxX = useParallaxTransform(0.2, 'x');
+  const parallaxY = useParallaxTransform(0.3, 'y');
 
   // Analytics tracking functions
   const handleFeatureClick = (featureTitle) => {
