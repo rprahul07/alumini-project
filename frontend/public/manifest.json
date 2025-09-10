@@ -15,13 +15,13 @@
       "name": "Events",
       "short_name": "Events",
       "description": "View and manage events",
-      "url": "/events",
+      "url": "/events"
     },
     {
       "name": "Alumni",
       "short_name": "Alumni",
       "description": "Connect with alumni",
-      "url": "/alumni",
+      "url": "/alumni"
     }
   ],
   "related_applications": [],
