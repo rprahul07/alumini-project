@@ -45,6 +45,20 @@ const AlumniDetailsModal = ({ open, onClose, alumni, onRequestMentorship, onRefr
   };
 
   const getContactSection = () => {
+    // Hide mentorship functionality for admin users
+    if (user && user.role === 'admin') {
+      return (
+        <div className="mb-6">
+          <h4 className="text-lg font-semibold text-white mb-3 font-display">Contact Information</h4>
+          <div className="text-center pt-2">
+            <p className="text-sm text-gray-300 mb-3">
+              Admin users cannot request mentorship.
+            </p>
+          </div>
+        </div>
+      );
+    }
+
     // Prevent self-request: if viewing own profile, show message instead of button
     if (user && alumni?.userId === user.id) {
       return (

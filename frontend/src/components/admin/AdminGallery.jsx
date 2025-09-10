@@ -1,11 +1,27 @@
-import React, { useState, useEffect } from 'react';
-import { FiLoader, FiUpload, FiEdit2, FiTrash2, FiX, FiImage } from 'react-icons/fi';
+import React, { useState, useEffect, useMemo, memo, useCallback } from 'react';
+import { 
+  FiLoader, 
+  FiUpload, 
+  FiEdit2, 
+  FiTrash2, 
+  FiX, 
+  FiImage,
+  FiRefreshCw,
+  FiFilter,
+  FiClock,
+  FiAlertCircle,
+  FiCheckCircle,
+  FiTrendingUp,
+  FiPlus,
+  FiEye,
+  FiSearch
+} from 'react-icons/fi';
 import { toast } from 'react-toastify';
 import { galleryAPI } from '../../services/galleryService';
 import { useAuth } from '../../contexts/AuthContext';
 import ConfirmDialog from '../ConfirmDialog';
 
-const AdminGallery = () => {
+const AdminGallery = memo(() => {
   const { canManageGallery, isAdmin, user, role } = useAuth();
   
   const [gallery, setGallery] = useState([]);
@@ -21,6 +37,7 @@ const AdminGallery = () => {
   const [editingItem, setEditingItem] = useState(null);
   const [deleteItemId, setDeleteItemId] = useState(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
 
   // Form states
   const [formData, setFormData] = useState({
@@ -30,11 +47,28 @@ const AdminGallery = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [preview, setPreview] = useState(null);
 
-  useEffect(() => {
-    fetchGallery();
-  }, []);
+  // Calculate stats
+  const stats = useMemo(() => {
+    const total = gallery.length;
+    const recent = gallery.filter(item => {
+      const created = new Date(item.createdAt);
+      const weekAgo = new Date();
+      weekAgo.setDate(weekAgo.getDate() - 7);
+      return created > weekAgo;
+    }).length;
+    return { total, recent };
+  }, [gallery]);
 
-  const fetchGallery = async () => {
+  // Filter gallery based on search
+  const filteredGallery = useMemo(() => {
+    if (!searchTerm.trim()) return gallery;
+    return gallery.filter(item =>
+      item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (item.description && item.description.toLowerCase().includes(searchTerm.toLowerCase()))
+    );
+  }, [gallery, searchTerm]);
+
+  const fetchGallery = useCallback(async () => {
     setLoading(prev => ({ ...prev, fetch: true }));
     try {
       const result = await galleryAPI.getGallery();
@@ -47,7 +81,11 @@ const AdminGallery = () => {
       toast.error('Failed to fetch gallery');
     }
     setLoading(prev => ({ ...prev, fetch: false }));
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchGallery();
+  }, [fetchGallery]);
 
   const handleFileSelect = (file) => {
     if (file) {
@@ -234,7 +272,7 @@ const AdminGallery = () => {
   // Check if user has permission to manage gallery
   if (!canManageGallery()) {
     return (
-      <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
         <FiImage className="h-16 w-16 text-gray-400 mx-auto mb-4" />
         <h2 className="text-xl font-semibold text-gray-900 mb-2">Access Denied</h2>
         <p className="text-gray-600">You don't have permission to manage gallery items.</p>
@@ -250,100 +288,171 @@ const AdminGallery = () => {
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-8">
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">Gallery Management</h2>
-          <p className="text-gray-600 mt-1">Manage campus photos</p>
+    <div className="space-y-6">
+      {/* Header Section */}
+      <div className="bg-gradient-to-r from-primary-600 to-secondary-600 rounded-2xl p-6 text-white">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold flex items-center gap-3">
+              <FiImage className="h-7 w-7" />
+              Gallery Management
+            </h1>
+            <p className="text-primary-100 mt-1">Manage campus photos and media</p>
+          </div>
+          <button
+            onClick={() => setShowUploadModal(true)}
+            className="flex items-center gap-2 px-6 py-3 bg-white/20 backdrop-blur-sm rounded-xl text-white font-semibold hover:bg-white/30 transition-all duration-200 border border-white/30"
+          >
+            <FiPlus className="h-5 w-5" />
+            Add Media
+          </button>
         </div>
-        <button
-          onClick={() => setShowUploadModal(true)}
-          className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 flex items-center space-x-2 shadow-lg"
-        >
-          <FiUpload className="h-5 w-5" />
-          <span>Add Media</span>
-        </button>
+      </div>
+
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Total Items</p>
+              <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+            </div>
+            <div className="p-3 bg-primary-100 rounded-lg">
+              <FiImage className="h-6 w-6 text-primary-600" />
+            </div>
+          </div>
+        </div>
+        
+        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Recent (7 days)</p>
+              <p className="text-2xl font-bold text-secondary-600">{stats.recent}</p>
+            </div>
+            <div className="p-3 bg-secondary-100 rounded-lg">
+              <FiTrendingUp className="h-6 w-6 text-secondary-600" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Search Section */}
+      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+          <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+            <FiFilter className="h-5 w-5" />
+            Search & Filter
+          </h3>
+          <button
+            onClick={fetchGallery}
+            className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+          >
+            <FiRefreshCw className="h-4 w-4" />
+            Refresh
+          </button>
+        </div>
+        
+        <div className="relative">
+          <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-4 w-4" />
+          <input
+            type="text"
+            placeholder="Search gallery by title or description..."
+            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+          />
+        </div>
       </div>
 
       {/* Gallery Grid */}
-      {loading.fetch ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {[...Array(8)].map((_, index) => (
-            <div key={index} className="bg-gray-200 animate-pulse rounded-xl h-64"></div>
-          ))}
-        </div>
-      ) : gallery.length === 0 ? (
-        <div className="text-center py-12">
-          <FiImage className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">No Gallery Items</h3>
-          <p className="text-gray-600 mb-6">Start building your gallery by adding some photos.</p>
-          <button
-            onClick={() => setShowUploadModal(true)}
-            className="bg-indigo-600 text-white px-6 py-3 rounded-xl hover:bg-indigo-700 transition-colors"
-          >
-            Add First Item
-          </button>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {gallery.map((item) => (
-            <div key={item.id} className="group relative bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300">
-              {/* Image Preview */}
-              <div className="relative h-48 overflow-hidden">
-                <img 
-                  src={item.imageUrl} 
-                  alt={item.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-                
-                {/* Action Buttons */}
-                <div className="absolute top-2 right-2 flex space-x-2 z-10">
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      handleEdit(item);
-                    }}
-                    className="bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 transition-colors shadow-lg"
-                    title="Edit gallery item"
-                  >
-                    <FiEdit2 className="h-4 w-4" />
-                  </button>
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      openDeleteDialog(item.id);
-                    }}
-                    className="bg-red-600 text-white p-2 rounded-lg hover:bg-red-700 transition-colors shadow-lg"
-                    title="Delete gallery item"
-                  >
-                    <FiTrash2 className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
-
-              {/* Content */}
-              <div className="p-4">
-                <h3 className="font-semibold text-gray-900 mb-1 truncate">{item.title}</h3>
-                {item.description && (
-                  <p className="text-sm text-gray-600 line-clamp-2">{item.description}</p>
-                )}
-                <div className="mt-2 text-xs text-gray-500">
-                  {new Date(item.createdAt).toLocaleDateString()}
-                </div>
-              </div>
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+        {loading.fetch ? (
+          <div className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {[...Array(8)].map((_, index) => (
+                <div key={index} className="bg-gray-200 animate-pulse rounded-xl h-64"></div>
+              ))}
             </div>
-          ))}
-        </div>
-      )}
+          </div>
+        ) : filteredGallery.length === 0 ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="text-center">
+              <FiImage className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-500 font-medium">
+                {searchTerm ? 'No gallery items found' : 'No gallery items yet'}
+              </p>
+              <p className="text-gray-400 text-sm mt-1">
+                {searchTerm ? 'Try adjusting your search terms' : 'Start building your gallery by adding some photos'}
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {filteredGallery.map((item) => (
+                <div key={item.id} className="group relative bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-200 hover:border-gray-300">
+                  {/* Image Preview */}
+                  <div className="relative h-48 overflow-hidden">
+                    <img 
+                      src={item.imageUrl} 
+                      alt={item.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    
+                    {/* Action Buttons */}
+                    <div className="absolute top-2 right-2 flex space-x-1 z-10">
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleEdit(item);
+                        }}
+                        className="bg-primary-600 text-white p-2 rounded-lg hover:bg-primary-700 transition-colors shadow-lg"
+                        title="Edit gallery item"
+                      >
+                        <FiEdit2 className="h-4 w-4" />
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          openDeleteDialog(item.id);
+                        }}
+                        className="bg-red-600 text-white p-2 rounded-lg hover:bg-red-700 transition-colors shadow-lg"
+                        title="Delete gallery item"
+                      >
+                        <FiTrash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Content */}
+                  <div className="p-4">
+                    <h3 className="font-semibold text-gray-900 mb-1 truncate">{item.title}</h3>
+                    {item.description && (
+                      <p className="text-sm text-gray-600 line-clamp-2 mb-2">{item.description}</p>
+                    )}
+                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                      <FiClock className="h-3 w-3" />
+                      <span>{new Date(item.createdAt).toLocaleDateString()}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* Upload Modal */}
       {showUploadModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl p-8 w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-lg max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-bold text-gray-900">Add New Gallery Item</h3>
+              <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                <FiImage className="h-6 w-6 text-primary-600" />
+                Add New Gallery Item
+              </h3>
               <button
                 onClick={() => {
                   setShowUploadModal(false);
@@ -419,7 +528,7 @@ const AdminGallery = () => {
               <button
                 type="submit"
                 disabled={loading.create}
-                className="w-full bg-indigo-600 text-white py-3 rounded-xl hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                className="w-full bg-primary-600 text-white py-3 rounded-xl hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 font-medium"
               >
                 {loading.create ? (
                   <>
@@ -437,10 +546,13 @@ const AdminGallery = () => {
 
       {/* Edit Modal */}
       {showEditModal && editingItem && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl p-8 w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-lg max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-bold text-gray-900">Edit Gallery Item</h3>
+              <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                <FiImage className="h-6 w-6 text-primary-600" />
+                Edit Gallery Item
+              </h3>
               <button
                 onClick={() => {
                   setShowEditModal(false);
@@ -526,7 +638,7 @@ const AdminGallery = () => {
               <button
                 type="submit"
                 disabled={loading.update}
-                className="w-full bg-indigo-600 text-white py-3 rounded-xl hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                className="w-full bg-primary-600 text-white py-3 rounded-xl hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 font-medium"
               >
                 {loading.update ? (
                   <>
@@ -552,6 +664,6 @@ const AdminGallery = () => {
       />
     </div>
   );
-};
+});
 
 export default AdminGallery;

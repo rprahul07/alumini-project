@@ -144,7 +144,6 @@ const ContactPage = () => {
         setErrors({});
       }
     } catch (error) {
-      console.error('Error submitting form:', error);
       setErrors({ 
         submit: error.response?.data?.message || 'Failed to send message. Please try again.' 
       });

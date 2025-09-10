@@ -67,7 +67,6 @@ const EventsPage = memo(() => {
         setError(response.data.message || 'Failed to fetch events');
       }
     } catch (err) {
-      console.error('Error fetching events:', err);
       
       if (err.response?.status === 401) {
         setError('Please log in to view events');

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, memo } from "react";
+import React, { useState, useEffect, memo, lazy, Suspense, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { testimonialsAPI } from "../services/testimonialsService";
@@ -11,16 +11,26 @@ import Navbar from '../components/Navbar';
 import OptimizedImage from '../components/OptimizedImage';
 import AccessibleBadge from '../components/AccessibleBadge';
 import SEOHead from '../components/SEOHead';
-import {
-  StorytellingHero,
-  MemoryLaneGallery,
-  CampusHotspots,
-  LiveStats
-} from '../components/storytelling';
-import AnimatedTestimonialRows from '../components/AnimatedTestimonialRows';
 import AnnouncementNotification from '../components/AnnouncementNotification';
 import NewlyJoinedAlumni from '../components/NewlyJoinedAlumni';
 import { motion, AnimatePresence } from 'framer-motion';
+
+// Lazy load heavy storytelling components for better performance
+const StorytellingHero = lazy(() => import('../components/storytelling/StorytellingHero'));
+const MemoryLaneGallery = lazy(() => import('../components/storytelling/MemoryLaneGallery'));
+const CampusHotspots = lazy(() => import('../components/storytelling/CampusHotspots'));
+const LiveStats = lazy(() => import('../components/storytelling/LiveStats'));
+const AnimatedTestimonialRows = lazy(() => import('../components/AnimatedTestimonialRows'));
+
+// Loading component for lazy-loaded components
+const ComponentLoader = () => (
+  <div className="flex items-center justify-center py-12">
+    <div className="text-center">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
+      <p className="text-gray-600 text-lg mt-4 font-medium">Loading...</p>
+    </div>
+  </div>
+);
 
 // Default images in case the remote images fail to load
 const defaultImages = {
@@ -112,6 +122,16 @@ const HomePage = memo(() => {
   const [spotlightsLoading, setSpotlightsLoading] = useState(true);
   const [currentSpotlightIndex, setCurrentSpotlightIndex] = useState(0);
 
+  // Memoized filtered features for better performance
+  const filteredFeatures = useMemo(() => {
+    if (activeFilter === "All Features") {
+      return featuresData;
+    }
+    return featuresData.filter(feature => 
+      feature.categories.some(category => category === activeFilter)
+    );
+  }, [activeFilter]);
+
   // Parallax effects - optimized for better performance
   const parallaxSlow = useParallax(0.2); // Reduced speed for smoother effect
   const parallaxMedium = useParallax(0.3);
@@ -119,35 +139,35 @@ const HomePage = memo(() => {
   const parallaxX = useParallaxTransform(0.2, 'x');
   const parallaxY = useParallaxTransform(0.3, 'y');
 
-  // Analytics tracking functions
-  const handleFeatureClick = (featureTitle) => {
+  // Memoized analytics tracking functions for better performance
+  const handleFeatureClick = useCallback((featureTitle) => {
     trackClick(null, `feature_${featureTitle.toLowerCase().replace(' ', '_')}`);
-  };
+  }, [trackClick]);
 
-  const handleHeroAction = (actionType) => {
+  const handleHeroAction = useCallback((actionType) => {
     trackEngagement(`hero_${actionType}`, {
       user_type: user?.role || 'guest',
       page_section: 'hero'
     });
-  };
+  }, [trackEngagement, user?.role]);
 
-  const handleTestimonialInteraction = (interactionType, testimonialId) => {
+  const handleTestimonialInteraction = useCallback((interactionType, testimonialId) => {
     trackEngagement(`testimonial_${interactionType}`, {
       testimonial_id: testimonialId,
       page_section: 'testimonials'
     });
-  };
+  }, [trackEngagement]);
 
-  const handleAnnouncementClick = (announcementId) => {
+  const handleAnnouncementClick = useCallback((announcementId) => {
     trackClick(null, `announcement_${announcementId}`);
-  };
+  }, [trackClick]);
 
-  const handleSpotlightInteraction = (interactionType, spotlightId) => {
+  const handleSpotlightInteraction = useCallback((interactionType, spotlightId) => {
     trackEngagement(`spotlight_${interactionType}`, {
       spotlight_id: spotlightId,
       page_section: 'spotlight'
     });
-  };
+  }, [trackEngagement]);
 
 
   // Fetch and animate network stats
@@ -172,7 +192,6 @@ const HomePage = memo(() => {
           });
         }
       } catch (error) {
-        console.error('Error fetching network stats:', error);
         // Set some default values for testing
         setStats({
           alumniMembers: 1250,
@@ -194,14 +213,27 @@ const HomePage = memo(() => {
 
   // Animation removed for better performance - stats display directly
 
-  // Fetch data
+  // Fetch all data in parallel for better performance
   useEffect(() => {
-    const fetchTestimonials = async () => {
+    const fetchAllData = async () => {
       try {
-        const result = await testimonialsAPI.getPublic();
-        
-        if (result.success && result.data.length > 0) {
-          const sortedTestimonials = result.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        // Set all loading states to true
+        setTestimonialsLoading(true);
+        setAnnouncementsLoading(true);
+        setSpotlightsLoading(true);
+        setStatsLoading(true);
+
+        // Fetch all data in parallel
+        const [testimonialsRes, announcementsRes, spotlightsRes, statsRes] = await Promise.allSettled([
+          testimonialsAPI.getPublic(),
+          announcementAPI.getAllAnnouncements(),
+          spotlightAPI.getAllSpotlights(),
+          dashboardAPI.getStats()
+        ]);
+
+        // Handle testimonials
+        if (testimonialsRes.status === 'fulfilled' && testimonialsRes.value.success) {
+          const sortedTestimonials = testimonialsRes.value.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
           const transformedTestimonials = sortedTestimonials.slice(0, 3).map(testimonial => ({
             id: testimonial.id,
             content: testimonial.content,
@@ -220,35 +252,17 @@ const HomePage = memo(() => {
         } else {
           setTestimonials([]);
         }
-      } catch (error) {
-        console.error('Failed to fetch testimonials:', error);
-        setTestimonials([]);
-      } finally {
-        setTestimonialsLoading(false);
-      }
-    };
 
-    const fetchAnnouncements = async () => {
-      try {
-        const result = await announcementAPI.getAllAnnouncements();
-        if (result.success && result.data.length > 0) {
-          setAnnouncements(result.data.slice(0, 3));
+        // Handle announcements
+        if (announcementsRes.status === 'fulfilled' && announcementsRes.value.success) {
+          setAnnouncements(announcementsRes.value.data.slice(0, 3));
         } else {
           setAnnouncements([]);
         }
-      } catch (error) {
-        console.error('Failed to fetch announcements:', error);
-        setAnnouncements([]);
-      } finally {
-        setAnnouncementsLoading(false);
-      }
-    };
 
-    const fetchSpotlights = async () => {
-      try {
-        const result = await spotlightAPI.getAllSpotlights();
-        if (result.success && result.data.length > 0) {
-          const transformedSpotlights = result.data.map(spotlight => ({
+        // Handle spotlights
+        if (spotlightsRes.status === 'fulfilled' && spotlightsRes.value.success) {
+          const transformedSpotlights = spotlightsRes.value.data.map(spotlight => ({
             id: spotlight.id,
             title: spotlight.title,
             description: spotlight.description,
@@ -268,17 +282,41 @@ const HomePage = memo(() => {
         } else {
           setSpotlights([]);
         }
+
+        // Handle stats
+        if (statsRes.status === 'fulfilled' && statsRes.value.success) {
+          const statsData = statsRes.value.data;
+          setStats({
+            alumniMembers: statsData.totalAlumni || 0,
+            activeUsers: statsData.totalUsers || 0,
+            eventsHosted: statsData.eventscount || 0,
+          });
+        } else {
+          setStats({
+            alumniMembers: 0,
+            activeUsers: 0,
+            eventsHosted: 0,
+          });
+        }
       } catch (error) {
-        console.error('Failed to fetch spotlights:', error);
+        // Set fallback data
+        setTestimonials([]);
+        setAnnouncements([]);
         setSpotlights([]);
+        setStats({
+          alumniMembers: 0,
+          activeUsers: 0,
+          eventsHosted: 0,
+        });
       } finally {
+        setTestimonialsLoading(false);
+        setAnnouncementsLoading(false);
         setSpotlightsLoading(false);
+        setStatsLoading(false);
       }
     };
 
-    fetchTestimonials();
-    fetchAnnouncements();
-    fetchSpotlights();
+    fetchAllData();
   }, []);
 
   // Auto-rotate spotlights
@@ -336,14 +374,18 @@ const HomePage = memo(() => {
         
         {/* Interactive Storytelling Hero Section */}
         <section id="hero">
-          <StorytellingHero />
+          <Suspense fallback={<ComponentLoader />}>
+            <StorytellingHero />
+          </Suspense>
         </section>
 
         {/* Latest Reconnect - Newly Joined Alumni */}
         <NewlyJoinedAlumni />
 
         {/* Memory Lane Gallery */}
-        <MemoryLaneGallery />
+        <Suspense fallback={<ComponentLoader />}>
+          <MemoryLaneGallery />
+        </Suspense>
 
         {/* Beautiful Testimonials Section */}
         <section id="testimonials" className="py-20 bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 relative overflow-hidden">
@@ -416,7 +458,9 @@ const HomePage = memo(() => {
               <div className="space-y-8">
                 {/* Both Desktop and Mobile: Animated Testimonial Rows */}
                 <div className="px-2 sm:px-4">
-                  <AnimatedTestimonialRows testimonials={testimonials} />
+                  <Suspense fallback={<ComponentLoader />}>
+                    <AnimatedTestimonialRows testimonials={testimonials} />
+                  </Suspense>
                 </div>
               </div>
             )}
@@ -424,7 +468,9 @@ const HomePage = memo(() => {
         </section>
 
         {/* Our Growth Impact - Live Stats */}
-        <LiveStats statsData={stats} loading={statsLoading} />
+        <Suspense fallback={<ComponentLoader />}>
+          <LiveStats statsData={stats} loading={statsLoading} />
+        </Suspense>
 
 
         {/* Enhanced Features Section */}

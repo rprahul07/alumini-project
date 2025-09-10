@@ -18,7 +18,6 @@ const ActivityLogs = () => {
     try {
       setLoading(true);
       setError(null);
-      console.log('Fetching admin logs...');
 
       const [activityResponse, passwordResponse, emailResponse] = await Promise.all([
         axios.get('/api/admin/activity-logs'),
@@ -26,7 +25,6 @@ const ActivityLogs = () => {
         axios.get('/api/admin/email-changes')
       ]);
 
-      console.log('Responses received:', { activityResponse, passwordResponse, emailResponse });
 
       setData({
         activityLogs: activityResponse.data || [],
@@ -34,7 +32,6 @@ const ActivityLogs = () => {
         emailChanges: emailResponse.data || []
       });
     } catch (err) {
-      console.error('Error fetching logs:', err);
       setError(err.message || 'Failed to fetch data');
       toast.error(err.message || 'Failed to fetch logs');
       

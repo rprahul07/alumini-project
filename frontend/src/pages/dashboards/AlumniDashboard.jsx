@@ -251,7 +251,6 @@ const AlumniDashboard = () => {
           ]);
         }
       } catch (error) {
-        console.error('Failed to fetch profile with stats:', error);
       } finally {
         setStatsLoading(false);
       }

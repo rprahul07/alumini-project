@@ -180,7 +180,7 @@ const AdminAllEventsButton = () => {
         </div>
       )}
 
-      {isDetailModalOpen && <EventDetailsModal isOpen={isDetailModalOpen} onClose={() => setIsDetailModalOpen(false)} event={selectedEvent} />}
+      {isDetailModalOpen && selectedEvent && <EventDetailsModal isOpen={isDetailModalOpen} onClose={() => setIsDetailModalOpen(false)} event={selectedEvent} />}
       {isEditModalOpen && <EditEventModal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} event={selectedEvent} onEventUpdated={handleEventUpdated} />}
       <ConfirmDialog
         open={confirmOpen}

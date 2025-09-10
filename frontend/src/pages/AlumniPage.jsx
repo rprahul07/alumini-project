@@ -80,6 +80,11 @@ const AlumniPage = () => {
 
   // Fetch support requests for current user
   const fetchSupportRequests = async () => {
+    // Only fetch support requests for students and alumni
+    if (!user || !['student', 'alumni'].includes(user.role)) {
+      return;
+    }
+    
     try {
       const response = await axios.get('/api/support/get');
       if (response.data.success) {
@@ -102,7 +107,6 @@ const AlumniPage = () => {
         setBookmarkedUserIds(new Set(userIds));
       }
     } catch (error) {
-      console.error('Error fetching bookmarks:', error);
     }
   };
 
@@ -474,6 +478,7 @@ const AlumniPage = () => {
                               isBookmarked={bookmarkedUserIds.has(a.userId)}
                               onBookmarkToggle={handleBookmarkToggle}
                               bookmarkLoading={bookmarkLoading}
+                              user={user}
                             />
                           </motion.div>
                         );
@@ -511,6 +516,7 @@ const AlumniPage = () => {
                             isBookmarked={bookmarkedUserIds.has(a.userId)}
                             onBookmarkToggle={handleBookmarkToggle}
                             bookmarkLoading={bookmarkLoading}
+                            user={user}
                           />
                         </motion.div>
                       );

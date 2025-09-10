@@ -17,7 +17,7 @@ const AlumniActiveFilters = ({
   if (!hasActiveFilters) return null;
 
   const getBatchLabel = () => {
-    return selectedGraduationYear || 'All Batches';
+    return selectedGraduationYear || 'All Batches';cd
   };
 
   const getSortLabel = () => {

@@ -46,6 +46,11 @@ const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
     });
   }, []);
 
+  // Early return if event is null or not open - AFTER all hooks
+  if (!event || !isOpen) {
+    return null;
+  }
+
   // Handle registration
   const handleRegistration = async () => {
     if (!currentUser) {
@@ -86,11 +91,12 @@ const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
 
   // Check if user can register - improved logic with auth loading handling
   const isLoggedIn = !authLoading && !!currentUser;
-  const isEventCreator = currentUser && event.user && currentUser.id === event.user.id;
+  const isEventCreator = currentUser && event?.user && currentUser.id === event.user.id;
   const isAdmin = currentUser?.role === 'admin';
   const isFaculty = currentUser?.role === 'faculty';
   
   const canRegister = isLoggedIn && 
+    currentUser && 
     (currentUser.role === 'student' || currentUser.role === 'alumni') && 
     !isEventCreator && 
     !isAdmin;
@@ -357,9 +363,6 @@ const EventDetailsModal = ({ event, user, isOpen, onClose, onEventUpdate }) => {
     </div>
   );
 
-  // Only render modal if it's open and event exists
-  if (!isOpen || !event) return null;
-  
   return ReactDOM.createPortal(modalContent, document.body);
 };
 

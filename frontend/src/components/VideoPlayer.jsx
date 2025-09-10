@@ -3,7 +3,7 @@ import { useInteractionTracking, useAnalytics } from '../hooks/useAnalytics';
 
 const VideoPlayer = ({ 
   videoId = "R_hQzJ0jRqE", // Default to the provided YouTube video
-  title = "CUCEK Alumni Network", 
+  title = "More than a college — it's family", 
   description = "Click to play our story",
   duration = "5:30 min",
   views = "2.5K views",
@@ -270,65 +270,43 @@ const VideoPlayer = ({
 
       {/* Compact Video Info Card */}
       <div className="mt-4">
-        <div className="bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-lg border border-white/40 hover:shadow-xl transition-all duration-300">
-          <div className="flex items-center justify-between gap-3">
+        <div className="bg-white/10 backdrop-blur-xl rounded-xl p-4 sm:p-6 shadow-2xl border border-white/20 hover:shadow-3xl hover:border-white/30 transition-all duration-300">
+          {/* Mobile: Stack vertically, Desktop: Side by side */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
             {/* Content Section */}
             <div className="flex-1 min-w-0">
-              <div className="flex items-center space-x-2 mb-1">
-                <div className="w-6 h-6 bg-gradient-to-r from-primary to-secondary rounded-md flex items-center justify-center">
-                  <i className="fas fa-graduation-cap text-white text-xs"></i>
-                </div>
-                <h3 className="text-base font-bold text-gray-900 truncate">{title}</h3>
-              </div>
-              <p className="text-gray-600 text-xs mb-2 line-clamp-1">
-                {description}
-              </p>
-              <div className="flex items-center space-x-3 text-xs text-gray-500">
-                <span className="flex items-center">
-                  <i className="fas fa-clock mr-1 text-primary"></i>
-                  {duration}
-                </span>
-                <span className="flex items-center">
-                  <i className="fas fa-eye mr-1 text-primary"></i>
-                  {views}
-                </span>
-                <span className="flex items-center">
-                  <i className="fas fa-calendar mr-1 text-primary"></i>
-                  {year}
-                </span>
-                {isMuted && (
-                  <span className="flex items-center text-orange-500">
-                    <i className="fas fa-volume-mute mr-1"></i>
-                    Muted
-                  </span>
-                )}
+              <div className="mb-2 sm:mb-1">
+                <h3 className="text-sm sm:text-base font-bold text-white leading-tight">{title}</h3>
               </div>
             </div>
             
             {/* Action Buttons */}
-            <div className="flex items-center space-x-1">
+            <div className="flex items-center justify-center sm:justify-end gap-2 sm:gap-1 flex-wrap">
               <button 
-                className="px-3 py-1.5 bg-primary text-white rounded-md font-semibold hover:bg-primary-700 transition-colors duration-200 flex items-center text-xs"
+                className="px-3 py-2 sm:px-3 sm:py-1.5 bg-white/20 backdrop-blur-sm text-white rounded-lg font-semibold hover:bg-white/30 transition-all duration-200 flex items-center text-xs sm:text-xs border border-white/20 min-w-[80px] sm:min-w-0"
                 onClick={isPlaying ? handlePause : handlePlay}
                 disabled={isLoading}
               >
-                <i className={`fas ${isLoading ? 'fa-spinner fa-spin' : isPlaying ? 'fa-pause' : 'fa-play'} mr-1`}></i>
-                {isLoading ? 'Loading...' : isPlaying ? 'Pause' : 'Play'}
+                <i className={`fas ${isLoading ? 'fa-spinner fa-spin' : isPlaying ? 'fa-pause' : 'fa-play'} mr-1 sm:mr-1`}></i>
+                <span className="hidden sm:inline">{isLoading ? 'Loading...' : isPlaying ? 'Pause' : 'Play'}</span>
+                <span className="sm:hidden">{isLoading ? '...' : isPlaying ? 'Pause' : 'Play'}</span>
               </button>
               <button 
-                className="px-3 py-1.5 border border-primary text-primary rounded-md font-semibold hover:bg-primary hover:text-white transition-colors duration-200 flex items-center text-xs"
+                className="px-3 py-2 sm:px-3 sm:py-1.5 bg-white/10 backdrop-blur-sm text-white rounded-lg font-semibold hover:bg-white/20 transition-all duration-200 flex items-center text-xs sm:text-xs border border-white/20 min-w-[80px] sm:min-w-0"
                 onClick={handleMuteToggle}
                 disabled={!isPlaying}
               >
-                <i className={`fas ${isMuted ? 'fa-volume-mute' : 'fa-volume-up'} mr-1`}></i>
-                {isMuted ? 'Unmute' : 'Mute'}
+                <i className={`fas ${isMuted ? 'fa-volume-mute' : 'fa-volume-up'} mr-1 sm:mr-1`}></i>
+                <span className="hidden sm:inline">{isMuted ? 'Unmute' : 'Mute'}</span>
+                <span className="sm:hidden">{isMuted ? 'Unmute' : 'Mute'}</span>
               </button>
               <button 
-                className="px-3 py-1.5 border border-gray-300 text-gray-600 rounded-md font-semibold hover:bg-gray-100 transition-colors duration-200 flex items-center text-xs"
+                className="px-3 py-2 sm:px-3 sm:py-1.5 bg-white/10 backdrop-blur-sm text-white rounded-lg font-semibold hover:bg-white/20 transition-all duration-200 flex items-center text-xs sm:text-xs border border-white/20 min-w-[80px] sm:min-w-0"
                 onClick={handleShare}
               >
-                <i className="fas fa-share mr-1"></i>
-                Share
+                <i className="fas fa-share mr-1 sm:mr-1"></i>
+                <span className="hidden sm:inline">Share</span>
+                <span className="sm:hidden">Share</span>
               </button>
             </div>
           </div>

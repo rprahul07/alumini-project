@@ -1,7 +1,23 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import axios from '../config/axios';
 import { toast } from 'react-toastify';
-import { FiPlus, FiSearch, FiEdit2, FiTrash2, FiCheckCircle, FiUsers, FiEye } from 'react-icons/fi';
+import { 
+  FiPlus, 
+  FiSearch, 
+  FiEdit2, 
+  FiTrash2, 
+  FiCheckCircle, 
+  FiUsers, 
+  FiEye, 
+  FiCalendar,
+  FiClock,
+  FiMapPin,
+  FiFilter,
+  FiRefreshCw,
+  FiTrendingUp,
+  FiUserCheck,
+  FiAlertCircle
+} from 'react-icons/fi';
 import CreateEventModal from './CreateEventModal';
 import EventDetailsModal from './EventDetailsModal';
 import EventRegistrationsModal from './EventRegistrationsModal';
@@ -9,9 +25,15 @@ import ConfirmDialog from './ConfirmDialog';
 import { EVENT_TYPES } from '../constants/eventTypes';
 
 const statusColors = {
-  approved: 'bg-green-100 text-green-800',
-  pending: 'bg-yellow-100 text-yellow-800',
-  rejected: 'bg-red-100 text-red-800',
+  approved: 'bg-green-50 text-green-700 border-green-200',
+  pending: 'bg-yellow-50 text-yellow-700 border-yellow-200',
+  rejected: 'bg-red-50 text-red-700 border-red-200',
+};
+
+const statusIcons = {
+  approved: FiCheckCircle,
+  pending: FiClock,
+  rejected: FiAlertCircle,
 };
 
 const AdminEventsPage = () => {
@@ -159,134 +181,264 @@ const AdminEventsPage = () => {
     { value: 'approved', label: 'Approved' },
   ];
 
+  // Calculate stats
+  const stats = useMemo(() => {
+    const total = events.length;
+    const approved = events.filter(e => e.status === 'approved').length;
+    const pending = events.filter(e => e.status === 'pending').length;
+    const rejected = events.filter(e => e.status === 'rejected').length;
+    return { total, approved, pending, rejected };
+  }, [events]);
+
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">Admin Events</h2>
-        <button
-          onClick={handleCreate}
-          className="flex items-center gap-2 px-4 py-2 rounded-full bg-primary text-white font-semibold shadow hover:bg-primary-700 transition-colors"
-        >
-          <FiPlus className="h-5 w-5" />
-          Create Event
-        </button>
+    <div className="space-y-6">
+      {/* Header Section */}
+      <div className="bg-gradient-to-r from-primary-600 to-secondary-600 rounded-2xl p-6 text-white">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold">Event Management</h1>
+            <p className="text-primary-100 mt-1">Manage and monitor all events in your platform</p>
+          </div>
+          <button
+            onClick={handleCreate}
+            className="flex items-center gap-2 px-6 py-3 bg-white/20 backdrop-blur-sm rounded-xl text-white font-semibold hover:bg-white/30 transition-all duration-200 border border-white/30"
+          >
+            <FiPlus className="h-5 w-5" />
+            Create Event
+          </button>
+        </div>
       </div>
-      {/* Filters */}
-      <div className="flex flex-wrap gap-2 mb-4 items-center">
-        <div className="relative">
-          <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
+
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Total Events</p>
+              <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+            </div>
+            <div className="p-3 bg-secondary-100 rounded-lg">
+              <FiCalendar className="h-6 w-6 text-secondary-600" />
+            </div>
+          </div>
+        </div>
+        
+        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Approved</p>
+              <p className="text-2xl font-bold text-primary-600">{stats.approved}</p>
+            </div>
+            <div className="p-3 bg-primary-100 rounded-lg">
+              <FiCheckCircle className="h-6 w-6 text-primary-600" />
+            </div>
+          </div>
+        </div>
+        
+        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Pending</p>
+              <p className="text-2xl font-bold text-yellow-600">{stats.pending}</p>
+            </div>
+            <div className="p-3 bg-yellow-100 rounded-lg">
+              <FiClock className="h-6 w-6 text-yellow-600" />
+            </div>
+          </div>
+        </div>
+        
+        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Rejected</p>
+              <p className="text-2xl font-bold text-red-600">{stats.rejected}</p>
+            </div>
+            <div className="p-3 bg-red-100 rounded-lg">
+              <FiAlertCircle className="h-6 w-6 text-red-600" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Filters Section */}
+      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+          <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+            <FiFilter className="h-5 w-5" />
+            Filters
+          </h3>
+          <button
+            onClick={fetchEvents}
+            className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+          >
+            <FiRefreshCw className="h-4 w-4" />
+            Refresh
+          </button>
+        </div>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="relative">
+            <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <input
+              type="text"
+              placeholder="Search events..."
+              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+            />
+          </div>
+          
+          <select
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+            value={filterType}
+            onChange={e => setFilterType(e.target.value)}
+          >
+            {eventTypeOptions.map(opt => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
+            ))}
+          </select>
+          
+          <select
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+            value={filterStatus}
+            onChange={e => setFilterStatus(e.target.value)}
+          >
+            {statusOptions.map(opt => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
+            ))}
+          </select>
+          
           <input
-            type="text"
-            placeholder="Search by name..."
-            className="pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent w-48"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
+            type="date"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+            value={filterDate}
+            onChange={e => setFilterDate(e.target.value)}
           />
         </div>
-        <select
-          className="px-3 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary"
-          value={filterType}
-          onChange={e => setFilterType(e.target.value)}
-        >
-          {eventTypeOptions.map(opt => (
-            <option key={opt.value} value={opt.value}>{opt.label}</option>
-          ))}
-        </select>
-        <select
-          className="px-3 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary"
-          value={filterStatus}
-          onChange={e => setFilterStatus(e.target.value)}
-        >
-          {statusOptions.map(opt => (
-            <option key={opt.value} value={opt.value}>{opt.label}</option>
-          ))}
-        </select>
-        <input
-          type="date"
-          className="px-3 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary"
-          value={filterDate}
-          onChange={e => setFilterDate(e.target.value)}
-        />
       </div>
-      {/* Table/Grid */}
-      {loading ? (
-        <div className="text-center text-gray-400 py-8">Loading events...</div>
-      ) : error ? (
-        <div className="text-center text-red-500 py-8">{error}</div>
-      ) : events.length === 0 ? (
-        <div className="text-center text-gray-400 py-8">No events found.</div>
-      ) : (
-        <div className="overflow-x-auto rounded-xl border border-gray-200">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {events.map(event => (
-                <tr key={event.id} className="hover:bg-gray-50">
-                  <td className="px-4 py-3 font-medium text-gray-900 max-w-xs truncate">{event.name}</td>
-                  <td className="px-4 py-3 text-gray-700">{event.type}</td>
-                  <td className="px-4 py-3 text-gray-700">{event.date}</td>
-                  <td className="px-4 py-3">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusColors[event.status] || 'bg-gray-100 text-gray-800'}`}>
-                      {event.status}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex flex-wrap gap-2">
-                      <button
-                        title="View Details"
-                        onClick={() => handleViewDetails(event)}
-                        className="p-2 rounded-full hover:bg-secondary-50 text-secondary"
-                      >
-                        <FiEye className="h-5 w-5" />
-                      </button>
-                      <button
-                        title="View Registered Users"
-                        onClick={() => handleViewRegistrations(event)}
-                        className="p-2 rounded-full hover:bg-secondary-50 text-blue-600"
-                      >
-                        <FiUsers className="h-5 w-5" />
-                      </button>
-                      <button
-                        title="Edit"
-                        onClick={() => handleEdit(event)}
-                        className="p-2 rounded-full hover:bg-accent-50 text-accent"
-                      >
-                        <FiEdit2 className="h-5 w-5" />
-                      </button>
-                      <button
-                        title="Delete"
-                        onClick={() => handleDelete(event)}
-                        className="p-2 rounded-full hover:bg-red-50 text-red-600"
-                        disabled={actionLoading === event.id}
-                      >
-                        <FiTrash2 className="h-5 w-5" />
-                      </button>
-                      {event.status === 'pending' && (
-                        <button
-                          title="Approve"
-                          onClick={() => handleApprove(event)}
-                          className="p-2 rounded-full hover:bg-green-50 text-green-700"
-                          disabled={actionLoading === event.id}
-                        >
-                          <FiCheckCircle className="h-5 w-5" />
-                        </button>
+
+      {/* Events Grid */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+        {loading ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="flex items-center gap-3 text-gray-500">
+              <FiRefreshCw className="h-5 w-5 animate-spin" />
+              <span>Loading events...</span>
+            </div>
+          </div>
+        ) : error ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="text-center">
+              <FiAlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+              <p className="text-red-600 font-medium">{error}</p>
+            </div>
+          </div>
+        ) : events.length === 0 ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="text-center">
+              <FiCalendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-500 font-medium">No events found</p>
+              <p className="text-gray-400 text-sm mt-1">Try adjusting your filters or create a new event</p>
+            </div>
+          </div>
+        ) : (
+          <div className="p-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+              {events.map(event => {
+                const StatusIcon = statusIcons[event.status] || FiClock;
+                return (
+                  <div key={event.id} className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-all duration-200 hover:border-gray-300">
+                    {/* Event Header */}
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex-1">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-1 line-clamp-2">{event.name}</h3>
+                        <p className="text-sm text-gray-600 capitalize">{event.type}</p>
+                      </div>
+                      <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border ${statusColors[event.status] || 'bg-gray-50 text-gray-700 border-gray-200'}`}>
+                        <StatusIcon className="h-3 w-3" />
+                        {event.status}
+                      </span>
+                    </div>
+
+                    {/* Event Details */}
+                    <div className="space-y-2 mb-4">
+                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <FiCalendar className="h-4 w-4" />
+                        <span>{event.date}</span>
+                      </div>
+                      {event.location && (
+                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                          <FiMapPin className="h-4 w-4" />
+                          <span className="truncate">{event.location}</span>
+                        </div>
+                      )}
+                      {event.time && (
+                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                          <FiClock className="h-4 w-4" />
+                          <span>{event.time}</span>
+                        </div>
                       )}
                     </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+
+                    {/* Event Description */}
+                    {event.description && (
+                      <p className="text-sm text-gray-600 mb-4 line-clamp-2">{event.description}</p>
+                    )}
+
+                    {/* Actions */}
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        onClick={() => handleViewDetails(event)}
+                        className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
+                      >
+                        <FiEye className="h-4 w-4" />
+                        View
+                      </button>
+                      
+                      <button
+                        onClick={() => handleViewRegistrations(event)}
+                        className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors"
+                      >
+                        <FiUsers className="h-4 w-4" />
+                        Registrations
+                      </button>
+                      
+                      <button
+                        onClick={() => handleEdit(event)}
+                        className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-green-600 bg-green-50 rounded-lg hover:bg-green-100 transition-colors"
+                      >
+                        <FiEdit2 className="h-4 w-4" />
+                        Edit
+                      </button>
+                      
+                      {event.status === 'pending' && (
+                        <button
+                          onClick={() => handleApprove(event)}
+                          className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-green-700 bg-green-100 rounded-lg hover:bg-green-200 transition-colors"
+                          disabled={actionLoading === event.id}
+                        >
+                          <FiCheckCircle className="h-4 w-4" />
+                          Approve
+                        </button>
+                      )}
+                      
+                      <button
+                        onClick={() => handleDelete(event)}
+                        className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors"
+                        disabled={actionLoading === event.id}
+                      >
+                        <FiTrash2 className="h-4 w-4" />
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* Modals */}
       <CreateEventModal
         isOpen={isCreateModalOpen}

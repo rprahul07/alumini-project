@@ -4,9 +4,11 @@ import { dashboardAPI } from '../services/dashboardService';
 import Navbar from '../components/Navbar';
 import VideoPlayer from '../components/VideoPlayer';
 import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 const AboutPage = memo(() => {
   const navigate = useNavigate();
+  const { user, loading } = useAuth();
   const [activeTab, setActiveTab] = useState('mission');
   const [currentTestimonialIndex, setCurrentTestimonialIndex] = useState(0);
   const [testimonials, setTestimonials] = useState([]);
@@ -15,7 +17,7 @@ const AboutPage = memo(() => {
     alumniCount: 0,
     activeUsers: 0,
     successStories: 0,
-    countries: 85
+    countries: 45
   });
   const [animatedStats, setAnimatedStats] = useState({
     alumniCount: 0,
@@ -92,7 +94,6 @@ const AboutPage = memo(() => {
           setTestimonials([]);
         }
       } catch (error) {
-        console.error('Failed to fetch testimonials:', error);
         // No testimonials on error
         setTestimonials([]);
       } finally {
@@ -111,7 +112,6 @@ const AboutPage = memo(() => {
           }));
         }
       } catch (error) {
-        console.error('Failed to fetch dashboard stats:', error);
       }
     };
 
@@ -236,15 +236,17 @@ const AboutPage = memo(() => {
               </p>
               
               <div className="flex flex-col sm:flex-row gap-6 justify-center items-center animate-fade-in" style={{ animationDelay: '0.6s' }}>
-                <button
-                  onClick={() => navigate('/role-selection')}
-                  className="group relative px-8 py-4 bg-white text-primary-600 rounded-2xl font-semibold overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:bg-primary-50"
-                >
-                  <span className="relative z-10 flex items-center">
-                    <i className="fas fa-users mr-2"></i>
-                    Join Our Community
-                  </span>
-                </button>
+                {!user && !loading && (
+                  <button
+                    onClick={() => navigate('/role-selection')}
+                    className="group relative px-8 py-4 bg-white text-primary-600 rounded-2xl font-semibold overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:bg-primary-50"
+                  >
+                    <span className="relative z-10 flex items-center">
+                      <i className="fas fa-users mr-2"></i>
+                      Join Our Community
+                    </span>
+                  </button>
+                )}
                 
                 <button
                   onClick={() => navigate('/events')}
@@ -624,20 +626,20 @@ const AboutPage = memo(() => {
               </div>
             </div>
 
-            {/* Video Player */}
-            <VideoPlayer
-              videoId="R_hQzJ0jRqE" // YouTube video ID from the provided URL
-              title="CUCEK Alumni Success Stories"
-              description="Discover how our graduates are making a difference in technology, innovation, and society worldwide"
-              duration="5:30 min"
-              views="2.5K views"
-              year="2024"
-              muted={true} // Play without sound by default
-              autoplay={false} // Don't autoplay, let user control
-              loop={false} // Don't loop the video
-              onPlay={() => console.log('Video play clicked')}
-              onShare={() => console.log('Video share clicked')}
-            />
+             {/* Video Player */}
+             <VideoPlayer
+               videoId="R_hQzJ0jRqE" // YouTube video ID from the provided URL
+               title="More than a college — it's family"
+               description="Discover how our graduates are making a difference in technology, innovation, and society worldwide"
+               duration="5:30 min"
+               views="2.5K views"
+               year="2024"
+               muted={true} // Play without sound by default
+               autoplay={false} // Don't autoplay, let user control
+               loop={false} // Don't loop the video
+               onPlay={() => {}}
+               onShare={() => {}}
+             />
 
             {/* Video Features */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
@@ -766,13 +768,15 @@ const AboutPage = memo(() => {
                     Be part of our legacy as we continue to shape the future of engineering education and innovation
                   </p>
                   <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                    <button
-                      onClick={() => navigate('/role-selection')}
-                      className="px-8 py-4 bg-white text-primary rounded-2xl font-semibold hover:bg-gray-50 transition-colors duration-200 flex items-center justify-center shadow-lg hover:shadow-xl"
-                    >
-                      <i className="fas fa-user-plus mr-2"></i>
-                      Join Our Community
-                    </button>
+                    {!user && !loading && (
+                      <button
+                        onClick={() => navigate('/role-selection')}
+                        className="px-8 py-4 bg-white text-primary rounded-2xl font-semibold hover:bg-gray-50 transition-colors duration-200 flex items-center justify-center shadow-lg hover:shadow-xl"
+                      >
+                        <i className="fas fa-user-plus mr-2"></i>
+                        Join Our Community
+                      </button>
+                    )}
                     <button
                       onClick={() => navigate('/events')}
                       className="px-8 py-4 border-2 border-white text-white rounded-2xl font-semibold hover:bg-white hover:text-primary transition-colors duration-200 flex items-center justify-center shadow-lg hover:shadow-xl"
@@ -818,16 +822,18 @@ const AboutPage = memo(() => {
               </p>
               
               <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-12">
-                <button
-                  onClick={() => navigate('/role-selection')}
-                  className="group relative px-10 py-4 bg-white text-primary rounded-2xl font-bold text-lg overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl"
-                >
-                  <span className="relative z-10 flex items-center">
-                    <i className="fas fa-user-plus mr-2"></i>
-                    Join Alumni Network
-                  </span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-primary-50 to-secondary-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                </button>
+                {!user && !loading && (
+                  <button
+                    onClick={() => navigate('/role-selection')}
+                    className="group relative px-10 py-4 bg-white text-primary rounded-2xl font-bold text-lg overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+                  >
+                    <span className="relative z-10 flex items-center">
+                      <i className="fas fa-user-plus mr-2"></i>
+                      Join Alumni Network
+                    </span>
+                    <div className="absolute inset-0 bg-gradient-to-r from-primary-50 to-secondary-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  </button>
+                )}
                 
                 <button
                   onClick={() => navigate('/events')}

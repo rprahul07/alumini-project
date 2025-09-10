@@ -35,7 +35,6 @@ const TestimonialsPage = () => {
         setTestimonials(result.data);
       }
     } catch (error) {
-      console.error('Failed to fetch testimonials:', error);
     } finally {
       setLoading(false);
     }
@@ -48,7 +47,6 @@ const TestimonialsPage = () => {
         setDashboardStats(result.data);
       }
     } catch (error) {
-      console.error('Failed to fetch dashboard stats:', error);
     }
   };
 

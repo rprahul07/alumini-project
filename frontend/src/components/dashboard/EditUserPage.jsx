@@ -189,16 +189,11 @@ const EditUserPage = () => {
         }
       });
       
-      console.log('EditUserPage: Prepared data for backend:', updateData);
-      console.log('EditUserPage: Making PATCH request to:', `/api/${apiType}/${id}`);
       const response = await apiService.raw.patch(`/api/${apiType}/${id}`, updateData);
-      console.log('EditUserPage: Update response:', response);
       
       toast.success('User updated successfully!');
       setTimeout(() => navigate('/admin/dashboard', { replace: true }), 1500);
     } catch (err) {
-      console.error('EditUserPage: Update error:', err);
-      console.error('EditUserPage: Error response:', err.response);
       setError(err.response?.data?.message || err.message || 'Failed to update user');
     } finally {
       setSaving(false);
@@ -209,10 +204,6 @@ const EditUserPage = () => {
   if (error) return <div className="p-8 text-center text-red-500">{error}</div>;
   if (!userData) return null;
 
-  console.log('EditUserPage: Rendering form with userData:', userData);
-  console.log('EditUserPage: Student data:', userData.student);
-  console.log('EditUserPage: Alumni data:', userData.alumni);
-  console.log('EditUserPage: Faculty data:', userData.faculty);
 
   return (
     <div className="max-w-xl mx-auto bg-white rounded-2xl shadow-lg p-8 mt-8">
@@ -226,7 +217,6 @@ const EditUserPage = () => {
           
           // Handle nested objects (like student, alumni, faculty)
           if (value && typeof value === 'object' && !Array.isArray(value)) {
-            console.log(`EditUserPage: Rendering nested object for key: ${key}`, value);
             return Object.entries(value).map(([nestedKey, nestedValue]) => {
               // Skip certain fields that shouldn't be edited
               if (nestedKey === 'id' || nestedKey === 'userId' || nestedKey === 'createdAt' || nestedKey === 'updatedAt') {
@@ -235,11 +225,9 @@ const EditUserPage = () => {
               
               // Skip fields that are not supported by the backend
               if (type === 'students' && (nestedKey === 'batch_startYear' || nestedKey === 'batch_endYear')) {
-                console.log(`EditUserPage: Skipping unsupported field for students: ${nestedKey}`);
                 return null;
               }
               
-              console.log(`EditUserPage: Rendering nested field: ${key}.${nestedKey} = ${nestedValue}`);
               
               return (
                 <div key={`${key}.${nestedKey}`}>

@@ -113,7 +113,6 @@ const StudentDashboard = () => {
           ]);
         }
       } catch (error) {
-        console.error('Failed to fetch profile with stats:', error);
       } finally {
         setStatsLoading(false);
       }

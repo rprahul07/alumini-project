@@ -23,29 +23,7 @@ const ApplicantDetailsModal = ({ open, onClose, applicant }) => {
 
   const data = applicant;
   
-  // Debug: Log the data to see what we're receiving
-  console.log('ApplicantDetailsModal data:', data);
-  console.log('Applicant fields check:', {
-    id: data.id,
-    name: data.name,
-    email: data.email,
-    phone: data.phone,
-    department: data.department,
-    bio: data.bio,
-    skills: data.skills,
-    cvUrl: data.cvUrl,
-    role: data.role,
-    currentJobTitle: data.currentJobTitle,
-    companyName: data.companyName,
-    highestQualification: data.highestQualification,
-    passoutYear: data.passoutYear,
-    currentSemester: data.currentSemester,
-    rollNumber: data.rollNumber,
-    linkedInProfile: data.linkedInProfile,
-    githubProfile: data.githubProfile,
-    twitterProfile: data.twitterProfile,
-    photoUrl: data.photoUrl
-  });
+  // Debug info removed for production
 
   const modalContent = (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-1 sm:p-2 z-50">

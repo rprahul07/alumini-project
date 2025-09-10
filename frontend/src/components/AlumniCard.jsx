@@ -11,6 +11,7 @@ const AlumniCard = memo(({
   isBookmarked = false,
   onBookmarkToggle,
   bookmarkLoading = false,
+  user = null,
 }) => {
   // Destructure alumni data with fallbacks
   const {
@@ -36,7 +37,11 @@ const AlumniCard = memo(({
 
   // Button logic for connection status
   let displayButton = null;
-  if (buttonLabel === "You can't send yourself") {
+  
+  // Hide mentorship button for admin users
+  if (user && user.role === 'admin') {
+    displayButton = null;
+  } else if (buttonLabel === "You can't send yourself") {
     displayButton = (
       <button
         className="rounded-full px-4 py-1.5 font-semibold w-full text-sm flex items-center justify-center transition-colors bg-gray-200 text-gray-400 cursor-not-allowed"

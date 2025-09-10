@@ -1,4 +1,4 @@
-import React, { useState, useEffect, memo, useCallback } from 'react';
+import React, { useState, useEffect, memo, useCallback, useMemo } from 'react';
 import { ToastContainer } from 'react-toastify';
 import { motion } from 'framer-motion';
 import Navbar from '../components/Navbar';
@@ -34,24 +34,29 @@ const JobsPage = memo(() => {
   const { showAlert } = useAlert();
   const [appliedJobIds, setAppliedJobIds] = useState(new Set());
 
-  // Fetch jobs from API
+  // Memoized API parameters to prevent unnecessary re-renders
+  const apiParams = useMemo(() => {
+    const params = {
+      page: currentPage,
+      limit: 12,
+      search: searchTerm,
+      jobType: selectedType,
+      sortBy: sortBy,
+      sortOrder: sortOrder,
+    };
+    // Remove empty params
+    Object.keys(params).forEach(key => {
+      if (!params[key]) delete params[key];
+    });
+    return params;
+  }, [currentPage, searchTerm, selectedType, sortBy, sortOrder]);
+
+  // Fetch jobs from API with optimized caching
   const fetchJobs = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const params = {
-        page: currentPage,
-        limit: 12,
-        search: searchTerm,
-        jobType: selectedType,
-        sortBy: sortBy,
-        sortOrder: sortOrder,
-      };
-      // Remove empty params
-      Object.keys(params).forEach(key => {
-        if (!params[key]) delete params[key];
-      });
-      const res = await axios.get('/api/job/', { params });
+      const res = await axios.get('/api/job/', { params: apiParams });
       setJobs(res.data.data.jobs);
       setTotalPages(res.data.data.totalPages || 1);
     } catch (err) {
@@ -59,70 +64,85 @@ const JobsPage = memo(() => {
     } finally {
       setLoading(false);
     }
-  }, [currentPage, searchTerm, selectedType, selectedCompany, sortBy, sortOrder]);
+  }, [apiParams]);
 
   // Fetch jobs when filters/search/page change
   useEffect(() => {
     fetchJobs();
   }, [fetchJobs]);
 
-  // Fetch applied jobs for logged-in user
-  useEffect(() => {
-    if (user && (user.role === 'student' || user.role === 'alumni')) {
-      axios.get('/api/job/applied').then(res => {
-        setAppliedJobIds(new Set((res.data.data || []).map(job => job.id)));
-      }).catch(() => setAppliedJobIds(new Set()));
-    } else {
-      setAppliedJobIds(new Set());
-    }
+  // Memoized user eligibility for applied jobs
+  const canApplyForJobs = useMemo(() => {
+    return user && (user.role === 'student' || user.role === 'alumni');
   }, [user]);
 
-  // Handlers
-  const handleSearch = (term) => {
+  // Fetch applied jobs for logged-in user with optimized caching
+  const fetchAppliedJobs = useCallback(async () => {
+    if (!canApplyForJobs) {
+      setAppliedJobIds(new Set());
+      return;
+    }
+
+    try {
+      const res = await axios.get('/api/job/applied');
+      setAppliedJobIds(new Set((res.data.data || []).map(job => job.id)));
+    } catch (err) {
+      setAppliedJobIds(new Set());
+    }
+  }, [canApplyForJobs]);
+
+  // Fetch applied jobs when user changes
+  useEffect(() => {
+    fetchAppliedJobs();
+  }, [fetchAppliedJobs]);
+
+  // Optimized handlers with useCallback
+  const handleSearch = useCallback((term) => {
     setSearchTerm(term);
     setCurrentPage(1);
-  };
-  const handleFilterChange = (type) => {
+  }, []);
+
+  const handleFilterChange = useCallback((type) => {
     setSelectedType(type);
     setCurrentPage(1);
-  };
-  const handleSortChange = (sortByValue, sortOrderValue) => {
+  }, []);
+
+  const handleSortChange = useCallback((sortByValue, sortOrderValue) => {
     setSortBy(sortByValue);
     setSortOrder(sortOrderValue);
     setCurrentPage(1);
-  };
+  }, []);
   
-  const handleClearType = () => {
+  const handleClearType = useCallback(() => {
     setSelectedType('');
     setCurrentPage(1);
-  };
+  }, []);
   
-  const handleClearSort = () => {
+  const handleClearSort = useCallback(() => {
     setSortBy('createdAt');
     setSortOrder('desc');
     setCurrentPage(1);
-  };
-  const handlePageChange = (page) => {
+  }, []);
+
+  const handlePageChange = useCallback((page) => {
     setCurrentPage(page);
-  };
-  const handleJobClick = (job) => {
+  }, []);
+
+  const handleJobClick = useCallback((job) => {
     setSelectedJob(job);
     setShowModal(true);
-  };
-  const handleApply = (job) => {
+  }, []);
+
+  const handleApply = useCallback((job) => {
     setSelectedJob(job);
     setShowApplyModal(true);
-  };
+  }, []);
 
-  // Refresh jobs and appliedJobIds after application
-  const refreshJobsAndApplied = async () => {
+  // Optimized refresh function
+  const refreshJobsAndApplied = useCallback(async () => {
     await fetchJobs();
-    if (user && (user.role === 'student' || user.role === 'alumni')) {
-      axios.get('/api/job/applied').then(res => {
-        setAppliedJobIds(new Set((res.data.data || []).map(job => job.id)));
-      }).catch(() => setAppliedJobIds(new Set()));
-    }
-  };
+    await fetchAppliedJobs();
+  }, [fetchJobs, fetchAppliedJobs]);
 
   return (
     <>
@@ -313,7 +333,14 @@ const JobsPage = memo(() => {
                   </div>
 
                   {/* Jobs Grid */}
-                  <JobGrid jobs={jobs} user={user} appliedJobIds={appliedJobIds} onJobClick={handleJobClick} onApply={handleApply} />
+                  <JobGrid 
+                    jobs={jobs} 
+                    user={user} 
+                    appliedJobIds={appliedJobIds} 
+                    onJobClick={handleJobClick} 
+                    onApply={handleApply}
+                    isLoading={loading}
+                  />
                 </div>
                 
                 <motion.div

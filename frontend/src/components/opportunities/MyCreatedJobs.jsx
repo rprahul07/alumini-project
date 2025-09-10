@@ -48,12 +48,8 @@ const MyCreatedJobs = ({ showAlert, refreshTrigger = 0 }) => {
     try {
       // Use new RESTful GET endpoint
       const res = await axios.get(`/api/job/${jobId}/applications`);
-      console.log('API response for applications:', res.data);
-      console.log('Applications data:', res.data.data);
-      console.log('First applicant (if any):', res.data.data?.[0]);
       setApplications(res.data.data || []);
     } catch (err) {
-      console.error('Error fetching applications:', err);
       setApplicationsError('Failed to load applications.');
     } finally {
       setApplicationsLoading(false);
@@ -79,7 +75,6 @@ const MyCreatedJobs = ({ showAlert, refreshTrigger = 0 }) => {
 
 
   const handleViewProfile = (applicant) => {
-    console.log('Selected applicant data:', applicant);
     setSelectedApplicant(applicant);
     setShowProfileModal(true);
   };
