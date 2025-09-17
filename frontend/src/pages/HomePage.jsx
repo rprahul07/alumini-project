@@ -462,18 +462,18 @@ const HomePage = memo(() => {
 
 
         {/* Enhanced Features Section */}
-        <section id="features" className="py-12 bg-gradient-to-br from-white via-slate-50 to-white relative overflow-hidden">
+        <section id="features" className="py-12 bg-gradient-to-br from-white via-slate-50 to-white relative overflow-hidden" style={{ minHeight: '600px' }}>
             {/* Enhanced Background decorative elements */}
-            <div className="absolute inset-0 overflow-hidden">
-            {/* Animated gradient orbs */}
-            <div className="absolute top-10 right-10 w-96 h-96 bg-gradient-to-br from-primary-100/40 to-secondary-100/40 rounded-full blur-3xl animate-pulse"></div>
-            <div className="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-tr from-secondary-100/40 to-primary-100/40 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-primary-50/30 to-secondary-50/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+            <div className="absolute inset-0 overflow-hidden" style={{ contain: 'layout' }}>
+            {/* Static gradient orbs - no animation to prevent CLS */}
+            <div className="gradient-orb absolute top-10 right-10 w-96 h-96 bg-gradient-to-br from-primary-100/40 to-secondary-100/40 rounded-full blur-3xl"></div>
+            <div className="gradient-orb absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-tr from-secondary-100/40 to-primary-100/40 rounded-full blur-3xl"></div>
+            <div className="gradient-orb absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-primary-50/30 to-secondary-50/30 rounded-full blur-3xl"></div>
             
-            {/* Floating particles */}
-            <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-primary-400/40 rounded-full animate-bounce" style={{ animationDelay: '0.5s' }}></div>
-            <div className="absolute top-3/4 right-1/4 w-1 h-1 bg-secondary-400/40 rounded-full animate-bounce" style={{ animationDelay: '1.5s' }}></div>
-            <div className="absolute top-1/2 right-1/3 w-1.5 h-1.5 bg-primary-300/40 rounded-full animate-bounce" style={{ animationDelay: '2.5s' }}></div>
+            {/* Static floating particles - no animation to prevent CLS */}
+            <div className="floating-particle absolute top-1/4 left-1/4 w-2 h-2 bg-primary-400/40 rounded-full"></div>
+            <div className="floating-particle absolute top-3/4 right-1/4 w-1 h-1 bg-secondary-400/40 rounded-full"></div>
+            <div className="floating-particle absolute top-1/2 right-1/3 w-1.5 h-1.5 bg-primary-300/40 rounded-full"></div>
             </div>
 
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">

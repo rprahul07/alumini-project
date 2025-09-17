@@ -66,13 +66,16 @@ const StorytellingHero = () => {
           }}
         >
           <OptimizedImage
-            src="https://i.postimg.cc/z8Yh8P4R/Thirike-1.jpg"
+            src="https://i.postimg.cc/z8Yh8P4R/Thirike-1.jpg?w=1200&q=60&format=webp&fit=max&compress=true"
             alt="Professional alumni network meeting and reconnecting - CUCEK Alumni Connect"
             className="w-full h-full object-cover"
             priority={true}
-            quality={85}
+            quality={60}
             fallbackSrc="/Thirike (1).jpg"
             wrapperClassName="w-full h-full"
+            sizes="100vw"
+            width={1200}
+            height={800}
             style={{ filter: 'brightness(0.75) saturate(1.1) contrast(1.15) hue-rotate(10deg)' }}
             onLoad={() => setImageLoaded(true)}
           />
@@ -98,7 +101,7 @@ const StorytellingHero = () => {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.3 }}
-            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold font-sans leading-relaxed relative z-40"
+            className="text-4xl sm:text-3xl md:text-3xl lg:text-4xl font-bold font-sans leading-tight relative z-40"
             style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.5)' }}
           >
             <span className="block text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-white drop-shadow-2xl font-sans">
@@ -122,7 +125,7 @@ const StorytellingHero = () => {
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={handleJoinNetwork}
-                className="px-8 py-3 bg-gradient-to-r from-primary-600 via-secondary-600 to-primary-600 text-white rounded-full font-semibold text-lg sm:text-xl shadow-2xl hover:shadow-primary-500/25 transition-all duration-300 transform backdrop-blur-sm border border-white/20 font-sans"
+                className="px-8 py-3 bg-gradient-to-r from-primary-600 via-secondary-600 to-primary-600 text-white rounded-full font-semibold text-xl sm:text-base shadow-2xl hover:shadow-primary-500/25 transition-all duration-300 transform backdrop-blur-sm border border-white/20 font-sans"
               >
                 Join Our Network
               </motion.button>
@@ -136,15 +139,15 @@ const StorytellingHero = () => {
             transition={{ duration: 1, delay: 1.2 }}
             className="flex justify-center gap-6 pt-6"
           >
-            <div className="flex items-center text-white/80 text-sm sm:text-base font-medium">
+            <div className="flex items-center text-white/80 text-base sm:text-xs font-medium">
               <div className="w-1 h-1 bg-primary-400 rounded-full mr-1.5"></div>
               <span>Cherished Memories</span>
             </div>
-            <div className="flex items-center text-white/80 text-sm sm:text-base font-medium">
+            <div className="flex items-center text-white/80 text-base sm:text-xs font-medium">
               <div className="w-1 h-1 bg-secondary-400 rounded-full mr-1.5"></div>
               <span>Lifelong Bonds</span>
             </div>
-            <div className="flex items-center text-white/80 text-sm sm:text-base font-medium">
+            <div className="flex items-center text-white/80 text-base sm:text-xs font-medium">
               <div className="w-1 h-1 bg-green-400 rounded-full mr-1.5"></div>
               <span>Shared Stories</span>
             </div>

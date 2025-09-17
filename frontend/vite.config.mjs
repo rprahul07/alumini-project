@@ -45,6 +45,9 @@ export default defineConfig(({ command, mode }) => {
       // CSS optimization
       cssCodeSplit: true,
       cssMinify: isProd,
+      // Reduce bundle size and improve loading
+      sourcemap: false,
+      reportCompressedSize: false,
       terserOptions: {
         compress: {
           drop_console: true,
@@ -102,9 +105,13 @@ export default defineConfig(({ command, mode }) => {
               if (id.includes('react-router-dom')) {
                 return 'router';
               }
-              // Animation libraries (large)
+              // Animation libraries (large) - defer loading
               if (id.includes('framer-motion')) {
                 return 'animations';
+              }
+              // Split large UI libraries
+              if (id.includes('@radix-ui')) {
+                return 'radix-ui';
               }
               // UI libraries - split by usage
               if (id.includes('@heroicons/react/24/outline')) {

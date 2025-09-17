@@ -12,23 +12,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="dns-prefetch" href="//alumniblob.blob.core.windows.net">
-    <!-- Critical JavaScript preloading -->
-    <link rel="modulepreload" href="/src/main.jsx">
-    <link rel="modulepreload" href="/src/App.jsx">
-    <link rel="modulepreload" href="/src/routes/index.jsx">
-    <link rel="modulepreload" href="/src/pages/EventsPage.jsx">
-    <link rel="modulepreload" href="/src/components/EventGrid.jsx">
-    <link rel="modulepreload" href="/src/components/EventCard.jsx">
-    <link rel="modulepreload" href="/src/components/OptimizedImage.jsx">
-    <link rel="modulepreload" href="/src/contexts/AuthContext.jsx">
-    <link rel="modulepreload" href="/src/config/axios.js">
-    <link rel="modulepreload" href="/src/components/Navbar.jsx">
-    
-    <!-- Critical CSS preloading -->
-    <link rel="preload" href="/src/index.css" as="style">
     
     <!-- Preload critical fonts -->
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" as="style">
+    <!-- Preload FontAwesome to reduce LCP -->
+    <link rel="preload" href="/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">
     <!-- Removed render-blocking Bootstrap Icons CSS to improve FCP/LCP -->
     <title>CUCEK Alumni Connect</title>
     <meta name="description" content="Connect with CUCEK alumni worldwide. Build meaningful connections, share experiences, and explore opportunities together.">
@@ -40,6 +28,15 @@
         font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
         background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
         color: white;
+      }
+      
+      /* Font loading optimization to prevent layout shifts */
+      @font-face {
+        font-family: 'Font Awesome 6 Free';
+        font-style: normal;
+        font-weight: 900;
+        font-display: swap;
+        src: url('/webfonts/fa-solid-900.woff2') format('woff2');
       }
       #root { 
         width: 100%; 
@@ -79,11 +76,98 @@
         border-radius: 12px; 
         border: 1px solid rgba(255, 255, 255, 0.2);
       }
+      
+      /* Prevent layout shifts during font loading */
+      .fa, .fas, .far, .fab {
+        font-family: 'Font Awesome 6 Free', system-ui, -apple-system, sans-serif;
+        font-weight: 900;
+        font-style: normal;
+        font-variant: normal;
+        text-rendering: auto;
+        line-height: 1;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+      
+      /* Reserve space for icons to prevent CLS */
+      .icon-placeholder {
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+        background: currentColor;
+        opacity: 0.1;
+      }
+      
+      /* Disable animations that cause CLS */
+      .animate-pulse, .animate-bounce {
+        animation: none !important;
+        will-change: auto;
+        transform: translateZ(0);
+        backface-visibility: hidden;
+      }
+      
+      /* Reserve space for animated orbs to prevent CLS */
+      .gradient-orb {
+        position: absolute;
+        will-change: auto;
+        transform: translateZ(0);
+        backface-visibility: hidden;
+        animation: none !important;
+      }
+      
+      /* Prevent layout shifts from floating particles */
+      .floating-particle {
+        position: absolute;
+        will-change: auto;
+        transform: translateZ(0);
+        backface-visibility: hidden;
+        animation: none !important;
+      }
+      
+      /* Force layout stability */
+      * {
+        box-sizing: border-box;
+      }
+      
+      /* Prevent layout shifts from images */
+      img {
+        height: auto;
+        max-width: 100%;
+        display: block;
+      }
+      
+      /* Reserve space for sections to prevent CLS */
+      section {
+        contain: layout style;
+      }
+      
+      /* Disable all animations during initial load to prevent CLS */
+      @media (prefers-reduced-motion: no-preference) {
+        .no-animation * {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+      
+      /* Force stable layout */
+      .stable-layout {
+        contain: layout style paint;
+        will-change: auto;
+      }
     </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root" class="stable-layout no-animation"></div>
     <div id="modal-root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    <script>
+      // Re-enable animations after initial load to prevent CLS
+      window.addEventListener('load', () => {
+        setTimeout(() => {
+          document.getElementById('root').classList.remove('no-animation');
+        }, 1000);
+      });
+    </script>
   </body>
 </html>

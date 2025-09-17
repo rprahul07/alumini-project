@@ -28,8 +28,9 @@ const PORT = process.env.PORT || 5001;
 const app = express();
 app.use(express.json());
 const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173"; // Updated to match Vite's default port
+const PREVIEW_URL = "http://localhost:4173"; // Vite preview server port
 
-console.log(`Server configuration: PORT=${PORT}, CLIENT_URL=${CLIENT_URL}`);
+console.log(`Server configuration: PORT=${PORT}, CLIENT_URL=${CLIENT_URL}, PREVIEW_URL=${PREVIEW_URL}`);
 
 // Request logging middleware
 app.use((req, res, next) => {
@@ -41,7 +42,7 @@ app.use((req, res, next) => {
 
 // CORS configuration
 const corsOptions = {
-  origin: CLIENT_URL,
+  origin: [CLIENT_URL, PREVIEW_URL], // Allow both dev and preview servers
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: [

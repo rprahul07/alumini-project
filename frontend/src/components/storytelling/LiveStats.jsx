@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 
 const LiveStats = ({ statsData, loading }) => {
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, threshold: 0.3 });
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   // Use real data from API or fallback to default values
   const stats = [
@@ -253,17 +255,19 @@ const LiveStats = ({ statsData, loading }) => {
               <p className="text-sm text-slate-600 mb-3 font-sans">
                 Join thousands of alumni making a difference worldwide.
               </p>
-              <motion.button
-                onClick={() => navigate('/role-selection')}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-semibold rounded-full hover:from-primary-600 hover:to-secondary-600 transition-all duration-300 shadow-lg hover:shadow-xl text-xs font-sans"
-              >
-                <span className="mr-2">Join Our Network</span>
-                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                </svg>
-              </motion.button>
+              {!user && (
+                <motion.button
+                  onClick={() => navigate('/role-selection')}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-semibold rounded-full hover:from-primary-600 hover:to-secondary-600 transition-all duration-300 shadow-lg hover:shadow-xl text-xs font-sans"
+                >
+                  <span className="mr-2">Join Our Network</span>
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  </svg>
+                </motion.button>
+              )}
             </div>
           </div>
         </motion.div>
