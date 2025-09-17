@@ -206,7 +206,7 @@ const Navbar = memo(({ isHome = false }) => {
 
   // Profile Dropdown Component
   const ProfileDropdown = () => (
-    <div className="absolute right-0 mt-2 w-56 max-w-[calc(100vw-2rem)] sm:max-w-xs rounded-xl shadow-2xl border border-white/20 py-1.5 z-50 bg-white/95 backdrop-blur-xl animate-in fade-in duration-200 overflow-hidden dropdown-menu">
+    <div className="absolute right-0 mt-2 w-56 max-w-[calc(100vw-2rem)] sm:max-w-xs rounded-xl shadow-2xl border border-white/20 py-1.5 z-[60] bg-white/95 backdrop-blur-xl animate-in fade-in duration-200 overflow-hidden dropdown-menu">
       <div className="px-3 py-2 border-b border-gray-100">
         <div className="flex items-center space-x-2">
           <ProfileImage user={user} size="w-8 h-8" textSize="text-xs" />
@@ -383,7 +383,7 @@ const Navbar = memo(({ isHome = false }) => {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className={`lg:hidden backdrop-blur-2xl mx-3 mt-1.5 rounded-2xl shadow-2xl border animate-in slide-in-from-top duration-300 ${
+        <div className={`lg:hidden backdrop-blur-2xl mx-3 mt-1.5 rounded-2xl shadow-2xl border animate-in slide-in-from-top duration-300 z-[60] ${
           isDarkBackgroundPage
             ? 'bg-white/95 border-slate-200'
             : 'bg-white/95 border-slate-200'

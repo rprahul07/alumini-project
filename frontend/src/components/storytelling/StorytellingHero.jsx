@@ -85,12 +85,12 @@ const StorytellingHero = () => {
       </div>
 
       {/* Content */}
-      <div className="relative z-50 max-w-5xl mx-auto px-6 py-8 text-center overflow-visible">
+      <div className="relative z-40 max-w-5xl mx-auto px-6 py-8 text-center overflow-visible">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: "easeOut" }}
-          className="space-y-6 relative z-50"
+          className="space-y-6 relative z-40"
         >
 
           {/* Main Heading - More Elegant */}
@@ -98,13 +98,13 @@ const StorytellingHero = () => {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.3 }}
-            className="text-3xl md:text-3xl lg:text-4xl font-bold font-sans leading-relaxed relative z-50"
+            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold font-sans leading-relaxed relative z-40"
             style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.5)' }}
           >
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-white drop-shadow-2xl font-sans relative z-50">
+            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-white drop-shadow-2xl font-sans">
               Reconnect, Inspire,
             </span>
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-primary-300 via-secondary-300 to-primary-300 drop-shadow-2xl mt-2 font-sans relative z-50">
+            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-primary-300 via-secondary-300 to-primary-300 drop-shadow-2xl mt-2 font-sans">
               and Grow Together
             </span>
           </motion.h1>
@@ -122,7 +122,7 @@ const StorytellingHero = () => {
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={handleJoinNetwork}
-                className="px-8 py-3 bg-gradient-to-r from-primary-600 via-secondary-600 to-primary-600 text-white rounded-full font-semibold text-base shadow-2xl hover:shadow-primary-500/25 transition-all duration-300 transform backdrop-blur-sm border border-white/20 font-sans"
+                className="px-8 py-3 bg-gradient-to-r from-primary-600 via-secondary-600 to-primary-600 text-white rounded-full font-semibold text-lg sm:text-xl shadow-2xl hover:shadow-primary-500/25 transition-all duration-300 transform backdrop-blur-sm border border-white/20 font-sans"
               >
                 Join Our Network
               </motion.button>
@@ -136,15 +136,15 @@ const StorytellingHero = () => {
             transition={{ duration: 1, delay: 1.2 }}
             className="flex justify-center gap-6 pt-6"
           >
-            <div className="flex items-center text-white/80 text-xs font-medium">
+            <div className="flex items-center text-white/80 text-sm sm:text-base font-medium">
               <div className="w-1 h-1 bg-primary-400 rounded-full mr-1.5"></div>
               <span>Cherished Memories</span>
             </div>
-            <div className="flex items-center text-white/80 text-xs font-medium">
+            <div className="flex items-center text-white/80 text-sm sm:text-base font-medium">
               <div className="w-1 h-1 bg-secondary-400 rounded-full mr-1.5"></div>
               <span>Lifelong Bonds</span>
             </div>
-            <div className="flex items-center text-white/80 text-xs font-medium">
+            <div className="flex items-center text-white/80 text-sm sm:text-base font-medium">
               <div className="w-1 h-1 bg-green-400 rounded-full mr-1.5"></div>
               <span>Shared Stories</span>
             </div>
