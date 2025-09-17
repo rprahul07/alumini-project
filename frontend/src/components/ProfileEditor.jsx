@@ -389,23 +389,23 @@ const ProfileEditor = memo(() => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center p-4 relative overflow-hidden">
+      <div className="min-h-screen bg-gradient-to-br from-white via-slate-50 to-white flex items-center justify-center p-4 relative overflow-hidden">
         {/* Animated background elements */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary-500/20 rounded-full blur-3xl animate-pulse"></div>
           <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-secondary-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
         </div>
         
-        <div className="relative z-10 bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl p-8 w-full max-w-md border border-white/20">
+        <div className="relative z-10 bg-white/80 backdrop-blur-xl rounded-2xl shadow-2xl p-8 w-full max-w-md border border-slate-200">
           <div className="animate-pulse">
-            <div className="h-12 bg-white/20 rounded-xl w-3/4 mx-auto mb-8"></div>
-            <div className="w-32 h-32 rounded-full bg-white/20 mx-auto mb-6"></div>
+            <div className="h-12 bg-slate-200 rounded-xl w-3/4 mx-auto mb-8"></div>
+            <div className="w-32 h-32 rounded-full bg-slate-200 mx-auto mb-6"></div>
             <div className="space-y-4">
-              <div className="h-10 bg-white/20 rounded-xl"></div>
-              <div className="h-10 bg-white/20 rounded-xl"></div>
-              <div className="h-10 bg-white/20 rounded-xl"></div>
-              <div className="h-24 bg-white/20 rounded-xl"></div>
-              <div className="h-10 bg-white/20 rounded-xl w-1/2 ml-auto"></div>
+              <div className="h-10 bg-slate-200 rounded-xl"></div>
+              <div className="h-10 bg-slate-200 rounded-xl"></div>
+              <div className="h-10 bg-slate-200 rounded-xl"></div>
+              <div className="h-24 bg-slate-200 rounded-xl"></div>
+              <div className="h-10 bg-slate-200 rounded-xl w-1/2 ml-auto"></div>
             </div>
           </div>
         </div>
@@ -415,21 +415,21 @@ const ProfileEditor = memo(() => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center p-4 relative overflow-hidden">
+      <div className="min-h-screen bg-gradient-to-br from-white via-slate-50 to-white flex items-center justify-center p-4 relative overflow-hidden">
         {/* Animated background elements */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-red-500/20 rounded-full blur-3xl animate-pulse"></div>
           <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-red-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
         </div>
         
-        <div className="relative z-10 bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl p-8 text-center border border-white/20">
+        <div className="relative z-10 bg-white/80 backdrop-blur-xl rounded-2xl shadow-2xl p-8 text-center border border-slate-200">
           <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
             <XMarkIcon className="w-8 h-8 text-red-400" />
           </div>
           <p className="text-red-400 font-semibold mb-6">Error: {error}</p>
           <button
             onClick={() => navigate('/profile')}
-            className="px-6 py-3 bg-gradient-to-r from-primary-500 to-secondary-500 text-white rounded-xl font-medium hover:from-primary-600 hover:to-secondary-600 transition-all duration-200 shadow-lg hover:shadow-xl"
+            className="px-6 py-3 bg-gradient-to-r from-primary-500 to-secondary-500 text-slate-900 rounded-full font-medium hover:from-primary-600 hover:to-secondary-600 transition-all duration-200 shadow-lg hover:shadow-xl"
           >
             Go Back to Profile
           </button>
@@ -439,25 +439,25 @@ const ProfileEditor = memo(() => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 py-6 px-2 flex items-center justify-center relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-white via-slate-50 to-white py-12 px-2 flex items-center justify-center relative overflow-hidden">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary-500/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-secondary-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-accent-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '4s' }}></div>
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary-100/40 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-secondary-100/40 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-accent-100/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '4s' }}></div>
       </div>
       
-      <div className="relative z-10 w-full max-w-4xl bg-white/10 backdrop-blur-xl p-4 sm:p-8 rounded-2xl shadow-2xl border border-white/20">
+      <div className="relative z-10 w-full max-w-4xl bg-white/80 backdrop-blur-xl p-4 sm:p-8 rounded-xl shadow-2xl border border-slate-200">
         <div className="flex items-center gap-3 mb-6">
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="rounded-full p-2 bg-white/10 hover:bg-white/20 text-white transition-all duration-200 shadow-lg border border-white/20"
+            className="rounded-full p-2 bg-slate-100 hover:bg-slate-200 text-slate-700 transition-all duration-200 shadow-lg border border-slate-200"
             title="Back to Profile"
           >
             <ArrowLeftIcon className="w-5 h-5" />
           </button>
-          <h2 className="text-2xl font-bold text-white tracking-tight">Edit Profile</h2>
+          <h2 className="text-2xl font-sans font-bold text-slate-900 tracking-tight">Edit Profile</h2>
         </div>
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Profile Photo */}
@@ -468,7 +468,7 @@ const ProfileEditor = memo(() => {
             className="flex flex-col items-center mb-6"
           >
             <div className="relative group">
-              <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-white/30 shadow-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center text-white/60 group-hover:ring-4 group-hover:ring-white/20 transition-all duration-200">
+              <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-white/30 shadow-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center text-slate-900/60 group-hover:ring-4 group-hover:ring-white/20 transition-all duration-200">
                 {formData.profilePhoto ? (
                   <img
                     src={formData.profilePhoto instanceof File ? URL.createObjectURL(formData.profilePhoto) : formData.profilePhoto}
@@ -476,13 +476,13 @@ const ProfileEditor = memo(() => {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <UserIcon className="w-12 h-12 text-white/60" />
+                  <UserIcon className="w-10 h-10 text-slate-900/60" />
                 )}
               </div>
               <div className="absolute bottom-0 right-0 flex gap-1">
                 <label
                   htmlFor="profilePhotoInput"
-                  className="bg-gradient-to-r from-primary-500 to-secondary-500 text-white p-1.5 rounded-full shadow-lg cursor-pointer hover:from-primary-600 hover:to-secondary-600 transition-all duration-200 transform hover:scale-105 border-2 border-white"
+                  className="bg-gradient-to-r from-primary-500 to-secondary-500 text-slate-900 p-1.5 rounded-full shadow-lg cursor-pointer hover:from-primary-600 hover:to-secondary-600 transition-all duration-200 transform hover:scale-105 border-2 border-white"
                   title="Upload profile photo"
                 >
                   <CameraIcon className="w-4 h-4" />
@@ -500,7 +500,7 @@ const ProfileEditor = memo(() => {
                     type="button"
                     onClick={handleDeletePhoto}
                     disabled={loading}
-                    className="bg-white/20 text-white p-1.5 rounded-full shadow-lg cursor-pointer hover:bg-white/30 transition-all duration-200 border-2 border-white"
+                    className="bg-white/20 text-slate-900 p-1.5 rounded-full shadow-lg cursor-pointer hover:bg-white/30 transition-all duration-200 border-2 border-white"
                     title="Delete profile photo"
                   >
                     <TrashIcon className="w-4 h-4" />
@@ -510,7 +510,7 @@ const ProfileEditor = memo(() => {
                   <button
                     type="button"
                     onClick={() => setFormData((prev) => ({ ...prev, profilePhoto: null }))}
-                    className="bg-white/20 text-white p-1.5 rounded-full shadow-lg cursor-pointer hover:bg-white/30 transition-all duration-200 border-2 border-white"
+                    className="bg-white/20 text-slate-900 p-1.5 rounded-full shadow-lg cursor-pointer hover:bg-white/30 transition-all duration-200 border-2 border-white"
                     title="Clear selected photo"
                   >
                     <XMarkIcon className="w-4 h-4" />
@@ -518,7 +518,7 @@ const ProfileEditor = memo(() => {
                 )}
               </div>
             </div>
-            <p className="mt-2 text-xs text-white/70 text-center">
+            <p className="mt-2 text-xs text-slate-900/70 text-center">
               {formData.profilePhoto
                 ? (formData.profilePhoto instanceof File ? 'New photo selected. Click save to upload.' : 'Click the camera icon to update or trash icon to remove your photo')
                 : 'Click the camera icon to add a profile photo'}
@@ -529,24 +529,24 @@ const ProfileEditor = memo(() => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="mb-6 bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 overflow-hidden"
+            className="mb-4 bg-white/10 backdrop-blur-xl rounded-xl shadow-2xl border border-white/20 overflow-hidden"
           >
             {/* Header */}
             <div className="px-6 py-4 bg-gradient-to-r from-primary-500/20 to-secondary-500/20 border-b border-white/20">
-              <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+              <h3 className="text-lg font-sans font-semibold text-slate-900 flex items-center gap-2">
                 <div className="w-2 h-2 bg-gradient-to-r from-primary-400 to-secondary-400 rounded-full"></div>
                 Basic Information
               </h3>
-              <p className="text-sm text-white/70 mt-1">Your personal and contact details</p>
+              <p className="text-xs font-sans text-slate-900/70 mt-1">Your personal and contact details</p>
             </div>
 
-            <div className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="p-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {/* Full Name */}
                 <div>
-                  <label htmlFor="fullName" className="block text-sm font-medium text-white/90 mb-2">Full Name</label>
+                  <label htmlFor="fullName" className="block text-xs font-sans font-medium text-slate-900/90 mb-2">Full Name</label>
                   <div className="relative">
-                    <div className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/60">
+                    <div className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-900/60">
                       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                       </svg>
@@ -557,7 +557,7 @@ const ProfileEditor = memo(() => {
                       name="fullName"
                       value={formData.fullName}
                       onChange={handleChange}
-                      className="w-full pl-10 pr-4 py-2.5 bg-white/10 border border-white/20 rounded-xl text-sm text-white placeholder-white/50 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 backdrop-blur-sm"
+                      className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-sans text-slate-900 placeholder-slate-500 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 backdrop-blur-sm"
                       placeholder="Enter your full name"
                       required
                     />
@@ -566,9 +566,9 @@ const ProfileEditor = memo(() => {
 
                 {/* Email Address */}
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-white/90 mb-2">Email Address</label>
+                  <label htmlFor="email" className="block text-xs font-sans font-medium text-slate-900/90 mb-2">Email Address</label>
                   <div className="relative">
-                    <div className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/60">
+                    <div className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-900/60">
                       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                       </svg>
@@ -579,7 +579,7 @@ const ProfileEditor = memo(() => {
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
-                      className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/20 rounded-xl text-sm text-white/70 cursor-not-allowed backdrop-blur-sm"
+                      className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/20 rounded-xl text-xs font-sans text-slate-900/70 cursor-not-allowed backdrop-blur-sm"
                       placeholder="your.email@example.com"
                       required
                       readOnly
@@ -589,9 +589,9 @@ const ProfileEditor = memo(() => {
 
                 {/* Phone Number */}
                 <div>
-                  <label htmlFor="phoneNumber" className="block text-sm font-medium text-white/90 mb-2">Phone Number</label>
+                  <label htmlFor="phoneNumber" className="block text-xs font-sans font-medium text-slate-900/90 mb-2">Phone Number</label>
                   <div className="relative">
-                    <div className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/60">
+                    <div className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-900/60">
                       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                       </svg>
@@ -602,7 +602,7 @@ const ProfileEditor = memo(() => {
                       name="phoneNumber"
                       value={formData.phoneNumber}
                       onChange={handleChange}
-                      className="w-full pl-10 pr-4 py-2.5 bg-white/10 border border-white/20 rounded-xl text-sm text-white placeholder-white/50 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 backdrop-blur-sm"
+                      className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-sans text-slate-900 placeholder-slate-500 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 backdrop-blur-sm"
                       placeholder="+91 9876543210"
                     />
                   </div>
@@ -610,9 +610,9 @@ const ProfileEditor = memo(() => {
 
                 {/* Department */}
                 <div>
-                  <label htmlFor="department" className="block text-sm font-medium text-white/90 mb-2">College Department</label>
+                  <label htmlFor="department" className="block text-xs font-sans font-medium text-slate-900/90 mb-2">College Department</label>
                   <div className="relative">
-                    <div className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/60">
+                    <div className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-900/60">
                       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                       </svg>
@@ -623,7 +623,7 @@ const ProfileEditor = memo(() => {
                       name="department"
                       value={formData.department}
                       onChange={handleChange}
-                      className="w-full pl-10 pr-4 py-2.5 bg-white/10 border border-white/20 rounded-xl text-sm text-white placeholder-white/50 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 backdrop-blur-sm"
+                      className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-sans text-slate-900 placeholder-slate-500 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 backdrop-blur-sm"
                       placeholder="e.g., Computer Science"
                     />
                   </div>
@@ -632,9 +632,9 @@ const ProfileEditor = memo(() => {
 
               {/* Bio Section */}
               <div className="mt-4">
-                <label htmlFor="bio" className="block text-sm font-medium text-white/90 mb-2">Bio</label>
+                <label htmlFor="bio" className="block text-xs font-sans font-medium text-slate-900/90 mb-2">Bio</label>
                 <div className="relative">
-                  <div className="absolute top-3 left-3 w-5 h-5 text-white/60">
+                  <div className="absolute top-3 left-3 w-4 h-4 text-slate-900/60">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                     </svg>
@@ -646,10 +646,10 @@ const ProfileEditor = memo(() => {
                     maxLength={400}
                     value={formData.bio || ''}
                     onChange={handleChange}
-                    className="w-full pl-10 pr-12 py-2.5 bg-white/10 border border-white/20 rounded-xl text-sm text-white placeholder-white/50 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 resize-none backdrop-blur-sm"
+                    className="w-full pl-10 pr-12 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-sans text-slate-900 placeholder-slate-500 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 resize-none backdrop-blur-sm"
                     placeholder="Tell us about yourself, your interests, and what you're passionate about..."
                   />
-                  <span className="absolute bottom-2 right-3 text-xs text-white/60 select-none">
+                  <span className="absolute bottom-2 right-3 text-xs font-sans text-slate-900/60 select-none">
                     {formData.bio?.length || 0}/400
                   </span>
                 </div>
@@ -663,24 +663,24 @@ const ProfileEditor = memo(() => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="mb-6 bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 overflow-hidden"
+              className="mb-4 bg-white/10 backdrop-blur-xl rounded-xl shadow-2xl border border-white/20 overflow-hidden"
             >
               {/* Header */}
               <div className="px-6 py-4 bg-gradient-to-r from-accent-500/20 to-primary-500/20 border-b border-white/20">
-                <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                <h3 className="text-lg font-sans font-semibold text-slate-900 flex items-center gap-2">
                   <div className="w-2 h-2 bg-gradient-to-r from-accent-400 to-primary-400 rounded-full"></div>
                   Professional Information
                 </h3>
-                <p className="text-sm text-white/70 mt-1">Your educational background and experience</p>
+                <p className="text-xs font-sans text-slate-900/70 mt-1">Your educational background and experience</p>
               </div>
 
-              <div className="p-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="p-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {/* Highest Qualification */}
                   <div>
-                    <label htmlFor="highestQualification" className="block text-sm font-medium text-white/90 mb-2">Highest Qualification</label>
+                    <label htmlFor="highestQualification" className="block text-xs font-sans font-medium text-slate-900/90 mb-2">Highest Qualification</label>
                     <div className="relative">
-                      <div className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/60">
+                      <div className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-900/60">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" />
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
@@ -693,7 +693,7 @@ const ProfileEditor = memo(() => {
                         value={formData.highestQualification}
                         onChange={handleChange}
                         maxLength={100}
-                        className="w-full pl-10 pr-4 py-2.5 bg-white/10 border border-white/20 rounded-xl text-sm text-white placeholder-white/50 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 backdrop-blur-sm"
+                        className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-sans text-slate-900 placeholder-slate-500 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 backdrop-blur-sm"
                         placeholder="e.g. B.Tech in Computer Science, MBA, PhD in Physics"
                       />
                     </div>
@@ -701,9 +701,9 @@ const ProfileEditor = memo(() => {
 
                   {/* Total Experience */}
                   <div>
-                    <label htmlFor="totalExperience" className="block text-sm font-medium text-white/90 mb-2">Total Experience (Years)</label>
+                    <label htmlFor="totalExperience" className="block text-xs font-sans font-medium text-slate-900/90 mb-2">Total Experience (Years)</label>
                     <div className="relative">
-                      <div className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/60">
+                      <div className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-900/60">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6a2 2 0 01-2 2H8a2 2 0 01-2-2V8a2 2 0 012-2V6" />
                         </svg>
@@ -716,7 +716,7 @@ const ProfileEditor = memo(() => {
                         onChange={handleChange}
                         min="0"
                         max="50"
-                        className="w-full pl-10 pr-4 py-2.5 bg-white/10 border border-white/20 rounded-xl text-sm text-white placeholder-white/50 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 backdrop-blur-sm"
+                        className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-sans text-slate-900 placeholder-slate-500 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 backdrop-blur-sm"
                         placeholder="0"
                       />
                     </div>
@@ -732,24 +732,24 @@ const ProfileEditor = memo(() => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="mb-6 bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 overflow-hidden"
+              className="mb-4 bg-white/10 backdrop-blur-xl rounded-xl shadow-2xl border border-white/20 overflow-hidden"
             >
               {/* Header */}
               <div className="px-6 py-4 bg-gradient-to-r from-secondary-500/20 to-accent-500/20 border-b border-white/20">
-                <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                <h3 className="text-lg font-sans font-semibold text-slate-900 flex items-center gap-2">
                   <div className="w-2 h-2 bg-gradient-to-r from-secondary-400 to-accent-400 rounded-full"></div>
                   {formData.userRole === 'student' ? 'Academic Information' :
                     formData.userRole === 'alumni' ? 'Professional Information' :
                       formData.userRole === 'faculty' ? 'Faculty Information' : 'Additional Information'}
                 </h3>
-                <p className="text-sm text-white/70 mt-1">
+                <p className="text-xs font-sans text-slate-900/70 mt-1">
                   {formData.userRole === 'student' ? 'Your academic details and current studies' :
                     formData.userRole === 'alumni' ? 'Your professional experience and career details' :
                       formData.userRole === 'faculty' ? 'Your faculty position and academic role' : 'Additional information about your profile'}
                 </p>
               </div>
 
-              <div className="p-6">
+              <div className="p-4">
                 <RoleSpecificProfileForm
                   role={formData.userRole}
                   formData={formData}
@@ -764,24 +764,24 @@ const ProfileEditor = memo(() => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="mb-6 bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 overflow-hidden"
+            className="mb-4 bg-white/10 backdrop-blur-xl rounded-xl shadow-2xl border border-white/20 overflow-hidden"
           >
             {/* Header */}
             <div className="px-6 py-4 bg-gradient-to-r from-primary-500/20 to-accent-500/20 border-b border-white/20">
-              <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+              <h3 className="text-lg font-sans font-semibold text-slate-900 flex items-center gap-2">
                 <div className="w-2 h-2 bg-gradient-to-r from-primary-400 to-accent-400 rounded-full"></div>
                 Social Media Links
               </h3>
-              <p className="text-sm text-white/70 mt-1">Connect your professional social media profiles</p>
+              <p className="text-xs font-sans text-slate-900/70 mt-1">Connect your professional social media profiles</p>
             </div>
 
-            <div className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="p-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 {/* LinkedIn */}
                 <div>
-                  <label htmlFor="linkedinUrl" className="block text-sm font-medium text-white/90 mb-2">LinkedIn</label>
+                  <label htmlFor="linkedinUrl" className="block text-xs font-sans font-medium text-slate-900/90 mb-2">LinkedIn</label>
                   <div className="relative">
-                    <div className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/60">
+                    <div className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-900/60">
                       <svg fill="currentColor" viewBox="0 0 24 24">
                         <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
                       </svg>
@@ -792,7 +792,7 @@ const ProfileEditor = memo(() => {
                       name="linkedinUrl"
                       value={formData.linkedinUrl || ''}
                       onChange={handleChange}
-                      className="w-full pl-10 pr-4 py-2.5 bg-white/10 border border-white/20 rounded-xl text-sm text-white placeholder-white/50 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 backdrop-blur-sm"
+                      className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-sans text-slate-900 placeholder-slate-500 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 backdrop-blur-sm"
                       placeholder="https://linkedin.com/in/yourprofile"
                     />
                   </div>
@@ -800,9 +800,9 @@ const ProfileEditor = memo(() => {
 
                 {/* Twitter */}
                 <div>
-                  <label htmlFor="twitterUrl" className="block text-sm font-medium text-white/90 mb-2">Twitter</label>
+                  <label htmlFor="twitterUrl" className="block text-xs font-sans font-medium text-slate-900/90 mb-2">Twitter</label>
                   <div className="relative">
-                    <div className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/60">
+                    <div className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-900/60">
                       <svg fill="currentColor" viewBox="0 0 24 24">
                         <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" />
                       </svg>
@@ -813,7 +813,7 @@ const ProfileEditor = memo(() => {
                       name="twitterUrl"
                       value={formData.twitterUrl || ''}
                       onChange={handleChange}
-                      className="w-full pl-10 pr-4 py-2.5 bg-white/10 border border-white/20 rounded-xl text-sm text-white placeholder-white/50 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 backdrop-blur-sm"
+                      className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-sans text-slate-900 placeholder-slate-500 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 backdrop-blur-sm"
                       placeholder="https://twitter.com/yourhandle"
                     />
                   </div>
@@ -821,9 +821,9 @@ const ProfileEditor = memo(() => {
 
                 {/* GitHub */}
                 <div>
-                  <label htmlFor="githubUrl" className="block text-sm font-medium text-white/90 mb-2">GitHub</label>
+                  <label htmlFor="githubUrl" className="block text-xs font-sans font-medium text-slate-900/90 mb-2">GitHub</label>
                   <div className="relative">
-                    <div className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/60">
+                    <div className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-900/60">
                       <svg fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
                       </svg>
@@ -834,7 +834,7 @@ const ProfileEditor = memo(() => {
                       name="githubUrl"
                       value={formData.githubUrl || ''}
                       onChange={handleChange}
-                      className="w-full pl-10 pr-4 py-2.5 bg-white/10 border border-white/20 rounded-xl text-sm text-white placeholder-white/50 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 backdrop-blur-sm"
+                      className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-sans text-slate-900 placeholder-slate-500 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 backdrop-blur-sm"
                       placeholder="https://github.com/yourusername"
                     />
                   </div>
@@ -848,23 +848,23 @@ const ProfileEditor = memo(() => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.5 }}
-              className="mb-6 bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 overflow-hidden"
+              className="mb-4 bg-white/10 backdrop-blur-xl rounded-xl shadow-2xl border border-white/20 overflow-hidden"
             >
               {/* Header */}
               <div className="px-6 py-4 bg-gradient-to-r from-accent-500/20 to-secondary-500/20 border-b border-white/20">
-                <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                <h3 className="text-lg font-sans font-semibold text-slate-900 flex items-center gap-2">
                   <div className="w-2 h-2 bg-gradient-to-r from-accent-400 to-secondary-400 rounded-full"></div>
                   Resume/CV & Skills
                 </h3>
-                <p className="text-sm text-white/70 mt-1">Upload your resume and showcase your skills</p>
+                <p className="text-xs font-sans text-slate-900/70 mt-1">Upload your resume and showcase your skills</p>
               </div>
 
-              <div className="p-6">
+              <div className="p-4">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   {/* Modern CV Upload Section */}
                   <div className="space-y-3">
                     <div>
-                      <label className="block text-sm font-medium text-white/90 mb-2">Resume/CV</label>
+                      <label className="block text-sm font-medium text-slate-900/90 mb-2">Resume/CV</label>
 
                       {/* Current CV Display */}
                       {resumeUrl ? (
@@ -888,13 +888,13 @@ const ProfileEditor = memo(() => {
                         <div className="mb-3 p-3 bg-white/10 border border-white/20 rounded-xl backdrop-blur-sm">
                           <div className="flex items-center gap-3">
                             <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
-                              <svg className="w-4 h-4 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <svg className="w-4 h-4 text-slate-900/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                               </svg>
                             </div>
                             <div>
-                              <p className="text-sm font-medium text-white/80">No CV uploaded</p>
-                              <p className="text-xs text-white/60">Upload your resume to get started</p>
+                              <p className="text-sm font-medium text-slate-900/80">No CV uploaded</p>
+                              <p className="text-xs text-slate-900/60">Upload your resume to get started</p>
                             </div>
                           </div>
                         </div>
@@ -925,12 +925,12 @@ const ProfileEditor = memo(() => {
                               </>
                             ) : (
                               <>
-                                <svg className="w-6 h-6 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-6 h-6 text-slate-900/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                                 </svg>
                                 <div>
-                                  <span className="text-sm font-medium text-white">Upload CV</span>
-                                  <p className="text-xs text-white/60 mt-1">PDF, DOC, or DOCX (max 5MB)</p>
+                                  <span className="text-sm font-medium text-slate-900">Upload CV</span>
+                                  <p className="text-xs text-slate-900/60 mt-1">PDF, DOC, or DOCX (max 5MB)</p>
                                 </div>
                               </>
                             )}
@@ -943,7 +943,7 @@ const ProfileEditor = memo(() => {
                   {/* Modern Skills Section */}
                   <div className="space-y-3">
                     <div>
-                      <label className="block text-sm font-medium text-white/90 mb-2">Skills</label>
+                      <label className="block text-sm font-medium text-slate-900/90 mb-2">Skills</label>
 
                       {/* Skills Input */}
                       <div className="flex gap-2 mb-3">
@@ -962,7 +962,7 @@ const ProfileEditor = memo(() => {
                                 }
                               }
                             }}
-                            className="w-full px-4 py-2.5 bg-white/10 border border-white/20 rounded-xl text-sm text-white placeholder-white/50 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 backdrop-blur-sm"
+                            className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm text-slate-900 placeholder-slate-500 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 backdrop-blur-sm"
                             placeholder="Type a skill and press Enter"
                           />
                         </div>
@@ -976,7 +976,7 @@ const ProfileEditor = memo(() => {
                             }
                           }}
                           disabled={!newSkill.trim() || skills.includes(newSkill.trim())}
-                          className="rounded-full px-4 py-1.5 font-semibold bg-gradient-to-r from-primary-500 to-secondary-500 text-white hover:from-primary-600 hover:to-secondary-600 disabled:bg-white/20 disabled:text-white/50 transition-all duration-200"
+                          className="rounded-full px-4 py-1.5 font-semibold bg-gradient-to-r from-primary-500 to-secondary-500 text-slate-900 hover:from-primary-600 hover:to-secondary-600 disabled:bg-white/20 disabled:text-slate-900/50 transition-all duration-200"
                         >
                           Add
                         </button>
@@ -1005,12 +1005,12 @@ const ProfileEditor = memo(() => {
                             ))}
                           </div>
                         ) : (
-                          <div className="text-center text-white/60 text-sm py-3">
-                            <svg className="w-6 h-6 mx-auto mb-2 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <div className="text-center text-slate-900/60 text-sm py-3">
+                            <svg className="w-6 h-6 mx-auto mb-2 text-slate-900/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                             </svg>
                             <p>No skills added yet</p>
-                            <p className="text-xs text-white/50 mt-1">Add your skills to showcase your expertise</p>
+                            <p className="text-xs text-slate-900/50 mt-1">Add your skills to showcase your expertise</p>
                           </div>
                         )}
                       </div>
@@ -1033,14 +1033,14 @@ const ProfileEditor = memo(() => {
                 const dashboardRoute = user?.role ? `/${user.role}/dashboard` : '/';
                 navigate(dashboardRoute);
               }}
-              className="rounded-full px-4 py-1.5 font-semibold border border-white/30 text-white/80 hover:bg-white/10 hover:text-white transition-all duration-200 backdrop-blur-sm"
+              className="rounded-xl px-6 py-3 font-sans font-semibold border border-white/30 text-slate-900/80 hover:bg-white/10 hover:text-slate-900 transition-all duration-200 backdrop-blur-sm"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="rounded-full px-4 py-1.5 font-semibold bg-gradient-to-r from-primary-500 to-secondary-500 text-white hover:from-primary-600 hover:to-secondary-600 shadow-lg transition-all duration-200 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="rounded-xl px-6 py-3 font-sans font-semibold bg-gradient-to-r from-primary-500 to-secondary-500 text-slate-900 hover:from-primary-600 hover:to-secondary-600 shadow-lg transition-all duration-200 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <>

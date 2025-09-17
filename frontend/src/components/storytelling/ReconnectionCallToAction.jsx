@@ -78,7 +78,7 @@ const ReconnectionCallToAction = () => {
   };
 
   return (
-    <section className="py-20 bg-gradient-to-br from-indigo-900 via-purple-900 to-indigo-900 relative overflow-hidden">
+    <section className="py-12 bg-gradient-to-br from-indigo-900 via-purple-900 to-indigo-900 relative overflow-hidden">
       {/* Background decorative elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-20 right-20 w-80 h-80 bg-gradient-to-br from-indigo-400/20 to-purple-400/20 rounded-full blur-3xl"></div>
@@ -122,7 +122,7 @@ const ReconnectionCallToAction = () => {
             Come Back to CUCEK
           </div>
           
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold font-sans text-white mb-4 leading-tight">
             We Miss You at{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-orange-300">
               CUCEK!

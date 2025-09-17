@@ -1,14 +1,46 @@
 import { useState } from 'react';
 
 const faqData = [
-  { question: 'How do I create an Account?', answer: 'Answer 1', category: 'Account' },
-  { question: 'How can I reset my password?', answer: 'Answer 2', category: 'Account' },
-  { question: 'What payment methods do you accept?', answer: 'Answer 3', category: 'Billing' },
-  { question: 'Can I change my user?', answer: 'Answer 4', category: 'Account' },
-  { question: 'What browsers are supported?', answer: 'Answer 5', category: 'Technical' },
-  { question: 'Is there an API available?', answer: 'Answer 6', category: 'Technical' },
-  { question: 'How do I contact customer support?', answer: 'Answer 7', category: 'Support' },
-  { question: 'What is your policy?', answer: 'Answer 8', category: 'Support' },
+  { 
+    question: 'How do I create an alumni account?', 
+    answer: 'Click on \'Sign Up\' and select \'Alumni\' as your role. Fill in your graduation details and current professional information to complete your profile.', 
+    category: 'Account' 
+  },
+  { 
+    question: 'How can I post job opportunities?', 
+    answer: 'As an alumni, you can post job opportunities by navigating to the Opportunities section in your dashboard. Click on "Create Opportunity" and fill in the job details including company name, job title, description, and requirements.', 
+    category: 'Opportunities' 
+  },
+  { 
+    question: 'How do I connect with other alumni?', 
+    answer: 'You can connect with other alumni through the Alumni page where you can search, filter, and view alumni profiles. You can also send mentorship requests or connect through events and networking opportunities.', 
+    category: 'Networking' 
+  },
+  { 
+    question: 'Can students apply for jobs posted by alumni?', 
+    answer: 'Yes, students can view and apply for job opportunities posted by alumni. They can access these opportunities through the Jobs page and apply directly through the platform.', 
+    category: 'Opportunities' 
+  },
+  { 
+    question: 'How do I update my profile information?', 
+    answer: 'You can update your profile information by going to your dashboard and clicking on "Edit Profile". From there, you can modify your personal details, professional information, and contact details.', 
+    category: 'Profile' 
+  },
+  { 
+    question: 'How can I reset my password?', 
+    answer: 'Click on "Forgot Password" on the login page and enter your email address. You\'ll receive a password reset link via email to create a new password.', 
+    category: 'Account' 
+  },
+  { 
+    question: 'How do I contact support?', 
+    answer: 'You can contact our support team through the Contact Us page, or reach out via email at support@cucekalumni.com. We typically respond within 24 hours.', 
+    category: 'Support' 
+  },
+  { 
+    question: 'What browsers are supported?', 
+    answer: 'Our platform works best with modern browsers including Chrome, Firefox, Safari, and Edge. We recommend using the latest version for the best experience.', 
+    category: 'Technical' 
+  },
 ];
 
 function FaqList({ selectedCategory }) {
@@ -31,9 +63,9 @@ function FaqList({ selectedCategory }) {
           <div
             key={index}
             onClick={() => toggle(item.question)}
-            className="bg-white rounded-xl p-4 mb-3 hover:bg-[#EFEFEF] transition-all duration-200 cursor-pointer"
+            className="bg-white rounded-xl p-4 mb-3 hover:bg-slate-50 transition-all duration-200 cursor-pointer border border-slate-200"
           >
-            <div className="flex justify-between items-center font-semibold text-[#5A32EA] mb-2">
+            <div className="flex justify-between items-center font-semibold text-slate-900 mb-2">
               <span>{item.question}</span>
               <span
                 className={`text-sm transition-transform duration-300 ${
@@ -44,7 +76,7 @@ function FaqList({ selectedCategory }) {
               </span>
             </div>
             <div
-              className={`text-black overflow-hidden transition-all duration-300 ease-in-out ${
+              className={`text-slate-700 overflow-hidden transition-all duration-300 ease-in-out ${
                 isOpen ? 'max-h-52 opacity-100' : 'max-h-0 opacity-0'
               }`}
             >

@@ -105,7 +105,7 @@ function ContactInput() {
         />
       </label>
 
-      <button type="submit"className="bg-purple-700 text-white px-5 py-2 rounded-lg transition duration-300 hover:bg-[rgba(74,35,218,1)]">
+      <button type="submit"className="bg-purple-700 text-white px-5 py-2 rounded-full transition duration-300 hover:bg-[rgba(74,35,218,1)]">
         Send Message
       </button>
 

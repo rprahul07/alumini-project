@@ -9,9 +9,9 @@ const CreateEventButton = ({ onEventCreated }) => {
     <>
       <button 
         onClick={() => setIsModalOpen(true)}
-        className="rounded-full px-4 py-1.5 font-semibold bg-primary text-white text-sm shadow hover:bg-primary-700 transition-colors"
+        className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-primary-500 to-secondary-500 text-white text-xs font-semibold border border-primary-500 hover:from-primary-600 hover:to-secondary-600 transition-all duration-200 shadow-lg"
       >
-        <PlusIcon className="h-5 w-5 mr-2" />
+        <PlusIcon className="h-4 w-4" />
         <span className="hidden xs:inline">Create Event</span>
       </button>
 

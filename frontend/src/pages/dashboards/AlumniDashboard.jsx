@@ -70,32 +70,32 @@ const EventCard = ({ date, title, time, location, tags }) => {
   const [month, day] = date.split(' ');
 
   return (
-    <article className="flex items-start space-x-5 p-4 hover:bg-gray-50 rounded-lg transition-colors duration-200">
+    <article className="flex items-start space-x-4 p-3 hover:bg-gray-50 rounded-lg transition-colors duration-200">
       <div
-        className="flex-shrink-0 w-20 h-20 bg-indigo-50 rounded-xl flex flex-col items-center justify-center border border-indigo-100"
+        className="flex-shrink-0 w-16 h-16 bg-indigo-50 rounded-lg flex flex-col items-center justify-center border border-indigo-100"
         aria-label={`Event date: ${month} ${day}`}
       >
-        <div className="text-sm font-semibold text-indigo-700 uppercase leading-none">{month}</div>
-        <div className="text-3xl font-bold text-indigo-900 leading-none mt-1">{day}</div>
+        <div className="text-xs font-semibold text-indigo-700 uppercase leading-none font-sans">{month}</div>
+        <div className="text-lg font-bold text-indigo-900 leading-none mt-1 font-sans">{day}</div>
       </div>
 
       <div className="flex-1">
-        <h3 className="text-lg font-semibold text-gray-900 mb-1">{title}</h3>
+        <h3 className="text-base font-semibold text-gray-900 mb-1 font-sans">{title}</h3>
         <div className="space-y-1 text-gray-600">
-          <div className="flex items-center text-sm" aria-label={`Time: ${time}`}>
-            <ClockIcon className="h-4 w-4 mr-2 text-gray-500" />
+          <div className="flex items-center text-xs font-sans" aria-label={`Time: ${time}`}>
+            <ClockIcon className="h-3 w-3 mr-2 text-gray-500" />
             <time>{time}</time>
           </div>
-          <div className="flex items-center text-sm" aria-label={`Location: ${location}`}>
-            <MapPinIcon className="h-4 w-4 mr-2 text-gray-500" />
+          <div className="flex items-center text-xs font-sans" aria-label={`Location: ${location}`}>
+            <MapPinIcon className="h-3 w-3 mr-2 text-gray-500" />
             <span>{location}</span>
           </div>
         </div>
-        <div className="flex flex-wrap gap-2 mt-3">
+        <div className="flex flex-wrap gap-1.5 mt-2">
           {tags.map((tag, index) => (
             <span
               key={index}
-              className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800"
+              className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 font-sans"
             >
               {tag}
             </span>
@@ -108,34 +108,34 @@ const EventCard = ({ date, title, time, location, tags }) => {
 
 // --- MentorshipRequestCard Component ---
 const MentorshipRequestCard = ({ studentName, department, semester, message, onAccept, onReject }) => (
-  <article className="flex items-start space-x-4 p-4 hover:bg-gray-50 rounded-lg transition-colors duration-200">
+  <article className="flex items-start space-x-3 p-3 hover:bg-gray-50 rounded-lg transition-colors duration-200">
     <div className="flex-shrink-0">
       <img
         src="/default-avatar.png"
         alt={`Photo of student ${studentName}`}
-        className="w-14 h-14 rounded-full object-cover border border-gray-200"
+        className="w-12 h-12 rounded-full object-cover border border-gray-200"
       />
     </div>
 
     <div className="flex-1">
-      <h3 className="text-base font-semibold text-gray-900">{studentName}</h3>
-      <p className="text-sm text-gray-500 mt-0.5">{department} • Semester {semester}</p>
-      <p className="text-sm text-gray-700 mt-2 leading-relaxed">{message}</p>
-      <div className="flex gap-3 mt-4">
+      <h3 className="text-sm font-semibold text-gray-900 font-sans">{studentName}</h3>
+      <p className="text-xs text-gray-500 mt-0.5 font-sans">{department} • Semester {semester}</p>
+      <p className="text-xs text-gray-700 mt-1 leading-relaxed font-sans">{message}</p>
+      <div className="flex gap-2 mt-3">
         <button
           onClick={onAccept}
-          className="flex items-center px-4 py-2 text-sm font-medium text-green-700 bg-green-100 rounded-full hover:bg-green-200 transition-colors duration-200 shadow-sm"
+          className="flex items-center px-3 py-1.5 text-xs font-medium text-green-700 bg-green-100 rounded-full hover:bg-green-200 transition-colors duration-200 shadow-sm font-sans"
           aria-label={`Accept mentorship request from ${studentName}`}
         >
-          <CheckCircleIcon className="h-4 w-4 mr-2" />
+          <CheckCircleIcon className="h-3 w-3 mr-1" />
           Accept
         </button>
         <button
           onClick={onReject}
-          className="flex items-center px-4 py-2 text-sm font-medium text-red-700 bg-red-100 rounded-full hover:bg-red-200 transition-colors duration-200 shadow-sm"
+          className="flex items-center px-3 py-1.5 text-xs font-medium text-red-700 bg-red-100 rounded-full hover:bg-red-200 transition-colors duration-200 shadow-sm font-sans"
           aria-label={`Reject mentorship request from ${studentName}`}
         >
-          <XCircleIcon className="h-4 w-4 mr-2" />
+          <XCircleIcon className="h-3 w-3 mr-1" />
           Reject
         </button>
       </div>
@@ -264,26 +264,26 @@ const AlumniDashboard = () => {
     <>
       <Navbar />
       <div className="min-h-screen font-roboto bg-gray-50 pt-16 relative overflow-hidden">
-        {/* Dark gradient background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900"></div>
+        {/* Light gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-white via-slate-50 to-white"></div>
         {/* Animated background elements */}
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary-500/20 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-secondary-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-accent-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '4s' }}></div>
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary-100/40 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-secondary-100/40 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-accent-100/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '4s' }}></div>
         </div>
         
         {/* Mobile-First Layout */}
         <div className="relative z-10">
           {/* Mobile Layout */}
           <div className="lg:hidden">
-            <div className="px-3 py-4 space-y-4">
+            <div className="px-2 py-3 space-y-3">
               {/* Mobile Header with Beautiful Title */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
-                className="bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-xl rounded-2xl shadow-2xl p-5 border border-white/20 relative overflow-hidden"
+                className="bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-xl rounded-xl shadow-2xl p-4 border border-slate-200 relative overflow-hidden"
               >
                 {/* Background Pattern */}
                 <div className="absolute inset-0 bg-gradient-to-br from-primary-500/10 to-secondary-500/10 rounded-2xl"></div>
@@ -293,12 +293,12 @@ const AlumniDashboard = () => {
                 <div className="relative z-10">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h1 className="text-xl font-bold text-white mb-1">
+                      <h1 className="text-base font-bold text-slate-900 mb-1 font-sans">
                         Welcome back, <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-secondary-400">{user?.fullName || 'Alumni'}</span>
                       </h1>
-                      <p className="text-sm text-white/70">Manage your activities and connections</p>
+                      <p className="text-xs text-slate-900/70 font-sans">Manage your activities and connections</p>
                     </div>
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary-500/20 to-secondary-500/20 flex items-center justify-center border-2 border-white/30">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary-500/20 to-secondary-500/20 flex items-center justify-center border-2 border-slate-300">
                       <UserIcon className="w-6 h-6 text-primary-400" />
                     </div>
                   </div>
@@ -310,25 +310,25 @@ const AlumniDashboard = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1 }}
-                className="bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-xl rounded-2xl shadow-2xl p-4 border border-white/20"
+                className="bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-xl rounded-xl shadow-2xl p-3 border border-slate-200"
               >
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-sm font-bold text-white/90 tracking-wider uppercase">Quick Stats</h3>
+                  <h3 className="text-xs font-bold text-slate-900/90 tracking-wider uppercase font-sans">Quick Stats</h3>
                   <div className="w-2 h-2 rounded-full bg-gradient-to-r from-primary-400 to-secondary-400 animate-pulse"></div>
                 </div>
                 
                 {statsLoading ? (
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-2 gap-2">
                     {Array.from({ length: 4 }).map((_, i) => (
-                      <div key={i} className="bg-white/10 rounded-xl p-3 animate-pulse">
-                        <div className="w-6 h-6 bg-white/20 rounded-lg mb-2"></div>
-                        <div className="h-4 bg-white/20 rounded mb-1"></div>
-                        <div className="h-3 bg-white/20 rounded w-3/4"></div>
+                      <div key={i} className="bg-slate-100 rounded-lg p-2 animate-pulse">
+                        <div className="w-6 h-6 bg-slate-200 rounded-lg mb-2"></div>
+                        <div className="h-4 bg-slate-200 rounded mb-1"></div>
+                        <div className="h-3 bg-slate-200 rounded w-3/4"></div>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-2 gap-2">
                     {stats.map((stat, i) => (
                       <motion.div
                         key={stat.title}
@@ -337,13 +337,13 @@ const AlumniDashboard = () => {
                         transition={{ duration: 0.3, delay: i * 0.1 }}
                         onClick={() => handleStatCardClick(stat.title)}
                         onMouseEnter={() => trackHover(null, `stat_card_${stat.title.toLowerCase().replace(' ', '_')}`)}
-                        className="bg-white/10 backdrop-blur-sm rounded-xl p-3 border border-white/20 hover:bg-white/20 transition-all duration-200 group cursor-pointer"
+                        className="bg-slate-100 backdrop-blur-sm rounded-lg p-2 border border-slate-200 hover:bg-slate-200 transition-all duration-200 group cursor-pointer"
                       >
                         <div className={`w-6 h-6 flex items-center justify-center rounded-lg ${stat.iconBg} mb-2 group-hover:scale-105 transition-transform duration-150`}>
-                          <stat.Icon className={`w-3 h-3 ${stat.iconColor}`} />
+                          <stat.Icon className={`w-2.5 h-2.5 ${stat.iconColor}`} />
                         </div>
-                        <div className="text-lg font-bold text-white mb-1 tracking-tight">{stat.value}</div>
-                        <div className="text-xs font-medium text-gray-300 leading-tight">{stat.title}</div>
+                        <div className="text-base font-bold text-slate-900 mb-1 tracking-tight font-sans">{stat.value}</div>
+                        <div className="text-xs font-medium text-slate-600 leading-tight">{stat.title}</div>
                       </motion.div>
                     ))}
                   </div>
@@ -355,7 +355,7 @@ const AlumniDashboard = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
-                className="bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-xl rounded-2xl shadow-2xl p-5 border border-white/20 relative overflow-hidden"
+                className="bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-xl rounded-xl shadow-2xl p-4 border border-slate-200 relative overflow-hidden"
               >
                 {/* Background Pattern */}
                 <div className="absolute inset-0 bg-gradient-to-br from-accent-500/10 to-primary-500/10 rounded-2xl"></div>
@@ -369,10 +369,10 @@ const AlumniDashboard = () => {
                           <img
                             src={user.photoUrl}
                             alt={user.fullName || 'User'}
-                            className="w-14 h-14 rounded-full object-cover border-2 border-white/30 shadow-lg"
+                            className="w-14 h-14 rounded-full object-cover border-2 border-slate-300 shadow-lg"
                           />
                         ) : (
-                          <div className="w-14 h-14 rounded-full bg-gradient-to-br from-primary-500/20 to-secondary-500/20 flex items-center justify-center border-2 border-white/30 shadow-lg">
+                          <div className="w-14 h-14 rounded-full bg-gradient-to-br from-primary-500/20 to-secondary-500/20 flex items-center justify-center border-2 border-slate-300 shadow-lg">
                             <UserIcon className="w-7 h-7 text-primary-400" />
                           </div>
                         )}
@@ -381,7 +381,7 @@ const AlumniDashboard = () => {
                         </div>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h2 className="text-lg font-bold text-white truncate">{user?.fullName || 'User'}</h2>
+                        <h2 className="text-base font-bold text-slate-900 truncate font-sans">{user?.fullName || 'User'}</h2>
                         <div className="flex items-center space-x-2">
                           <span className={`inline-block px-2 py-1 rounded-full text-xs font-semibold border ${
                             user?.role?.toLowerCase() === 'alumni'
@@ -390,8 +390,8 @@ const AlumniDashboard = () => {
                           }`}>
                             {user?.role || 'User'}
                           </span>
-                          <span className="text-xs text-white/60">•</span>
-                          <span className="text-xs text-white/60">Active</span>
+                          <span className="text-xs text-slate-900/60">•</span>
+                          <span className="text-xs text-slate-900/60">Active</span>
                         </div>
                       </div>
                     </div>
@@ -400,7 +400,7 @@ const AlumniDashboard = () => {
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="bg-gradient-to-r from-primary-500 to-secondary-500 text-white px-4 py-2 rounded-xl text-xs font-semibold shadow-lg hover:from-primary-600 hover:to-secondary-600 transition-all duration-200 flex items-center space-x-1"
+                      className="bg-gradient-to-r from-primary-500 to-secondary-500 text-slate-900 px-4 py-2 rounded-xl text-xs font-semibold shadow-lg hover:from-primary-600 hover:to-secondary-600 transition-all duration-200 flex items-center space-x-1"
                       onClick={() => navigate('/profile/edit')}
                     >
                       <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -411,17 +411,17 @@ const AlumniDashboard = () => {
                   </div>
                   
                   {/* Profile Details */}
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-2 gap-2">
                     {user?.alumni?.currentJobTitle && (
-                      <div className="bg-white/10 rounded-lg p-3">
-                        <div className="text-xs text-white/60 mb-1">Current Role</div>
-                        <div className="text-sm font-medium text-white truncate">{user.alumni.currentJobTitle}</div>
+                      <div className="bg-slate-100 rounded-lg p-3">
+                        <div className="text-xs text-slate-900/60 mb-1">Current Role</div>
+                        <div className="text-xs font-medium text-slate-900 truncate font-sans">{user.alumni.currentJobTitle}</div>
                       </div>
                     )}
                     {user?.alumni?.companyName && (
-                      <div className="bg-white/10 rounded-lg p-3">
-                        <div className="text-xs text-white/60 mb-1">Company</div>
-                        <div className="text-sm font-medium text-white truncate">{user.alumni.companyName}</div>
+                      <div className="bg-slate-100 rounded-lg p-3">
+                        <div className="text-xs text-slate-900/60 mb-1">Company</div>
+                        <div className="text-xs font-medium text-slate-900 truncate font-sans">{user.alumni.companyName}</div>
                       </div>
                     )}
                   </div>
@@ -433,10 +433,10 @@ const AlumniDashboard = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.3 }}
-                className="space-y-4"
+                className="space-y-3"
               >
                 {/* Tab Navigation */}
-                <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-2 border border-white/20">
+                <div className="bg-slate-100 backdrop-blur-xl rounded-2xl p-2 border border-slate-200">
                   <div className="flex gap-1">
                     {[
                       { key: 'opportunities', label: 'Opportunities', icon: BriefcaseIcon },
@@ -449,8 +449,8 @@ const AlumniDashboard = () => {
                         whileTap={{ scale: 0.98 }}
                         className={`flex-1 flex items-center justify-center space-x-2 px-3 py-3 rounded-xl text-xs font-medium transition-all duration-200 ${
                           mainTab === feature.key 
-                            ? 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white shadow-lg' 
-                            : 'text-white/70 hover:text-white hover:bg-white/10'
+                            ? 'bg-gradient-to-r from-primary-500 to-secondary-500 text-slate-900 shadow-lg' 
+                            : 'text-slate-900/70 hover:text-slate-900 hover:bg-slate-100'
                         }`}
                         onClick={() => handleTabChange(feature.key)}
                       >
@@ -462,7 +462,7 @@ const AlumniDashboard = () => {
                 </div>
 
                 {/* Tab Content */}
-                <div className="bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 min-h-[400px] overflow-hidden">
+                <div className="bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-200 min-h-[400px] overflow-hidden">
                   <div className="p-4 h-full overflow-y-auto scrollbar-hide">
                     {mainTab === 'opportunities' && <Opportunities />}
                     {mainTab === 'events' && <Events />}
@@ -484,7 +484,7 @@ const AlumniDashboard = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
-                    className="bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-xl rounded-2xl shadow-2xl p-6 border border-white/20 relative overflow-hidden mb-4"
+                    className="bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-xl rounded-2xl shadow-2xl p-6 border border-slate-200 relative overflow-hidden mb-4"
                   >
                     {/* Background Pattern */}
                     <div className="absolute inset-0 bg-gradient-to-br from-accent-500/10 to-primary-500/10 rounded-2xl"></div>
@@ -498,10 +498,10 @@ const AlumniDashboard = () => {
                               <img
                                 src={user.photoUrl}
                                 alt={user.fullName || 'User'}
-                                className="w-16 h-16 rounded-full object-cover border-2 border-white/30 shadow-lg"
+                                className="w-16 h-16 rounded-full object-cover border-2 border-slate-300 shadow-lg"
                               />
                             ) : (
-                              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary-500/20 to-secondary-500/20 flex items-center justify-center border-2 border-white/30 shadow-lg">
+                              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary-500/20 to-secondary-500/20 flex items-center justify-center border-2 border-slate-300 shadow-lg">
                                 <UserIcon className="w-8 h-8 text-primary-400" />
                               </div>
                             )}
@@ -510,7 +510,7 @@ const AlumniDashboard = () => {
                             </div>
                           </div>
                           <div className="flex-1 min-w-0">
-                            <h2 className="text-lg font-bold text-white truncate">{user?.fullName || 'User'}</h2>
+                            <h2 className="text-base font-bold text-slate-900 truncate font-sans">{user?.fullName || 'User'}</h2>
                             <div className="flex items-center space-x-2">
                               <span className={`inline-block px-2 py-1 rounded-full text-xs font-semibold border ${
                                 user?.role?.toLowerCase() === 'alumni'
@@ -519,8 +519,8 @@ const AlumniDashboard = () => {
                               }`}>
                                 {user?.role || 'User'}
                               </span>
-                              <span className="text-xs text-white/60">•</span>
-                              <span className="text-xs text-white/60">Active</span>
+                              <span className="text-xs text-slate-900/60">•</span>
+                              <span className="text-xs text-slate-900/60">Active</span>
                             </div>
                           </div>
                         </div>
@@ -529,7 +529,7 @@ const AlumniDashboard = () => {
                         <motion.button
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
-                          className="bg-gradient-to-r from-primary-500 to-secondary-500 text-white px-3 py-2 rounded-xl text-xs font-semibold shadow-lg hover:from-primary-600 hover:to-secondary-600 transition-all duration-200 flex items-center space-x-1"
+                          className="bg-gradient-to-r from-primary-500 to-secondary-500 text-slate-900 px-3 py-2 rounded-xl text-xs font-semibold shadow-lg hover:from-primary-600 hover:to-secondary-600 transition-all duration-200 flex items-center space-x-1"
                           onClick={() => navigate('/profile/edit')}
                         >
                           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -540,17 +540,17 @@ const AlumniDashboard = () => {
                       </div>
                       
                       {/* Profile Details */}
-                      <div className="grid grid-cols-2 gap-3">
+                      <div className="grid grid-cols-2 gap-2">
                         {user?.alumni?.currentJobTitle && (
-                          <div className="bg-white/10 rounded-lg p-3">
-                            <div className="text-xs text-white/60 mb-1">Current Role</div>
-                            <div className="text-sm font-medium text-white truncate">{user.alumni.currentJobTitle}</div>
+                          <div className="bg-slate-100 rounded-lg p-3">
+                            <div className="text-xs text-slate-900/60 mb-1">Current Role</div>
+                            <div className="text-xs font-medium text-slate-900 truncate font-sans">{user.alumni.currentJobTitle}</div>
                           </div>
                         )}
                         {user?.alumni?.companyName && (
-                          <div className="bg-white/10 rounded-lg p-3">
-                            <div className="text-xs text-white/60 mb-1">Company</div>
-                            <div className="text-sm font-medium text-white truncate">{user.alumni.companyName}</div>
+                          <div className="bg-slate-100 rounded-lg p-3">
+                            <div className="text-xs text-slate-900/60 mb-1">Company</div>
+                            <div className="text-xs font-medium text-slate-900 truncate font-sans">{user.alumni.companyName}</div>
                           </div>
                         )}
                       </div>
@@ -562,25 +562,25 @@ const AlumniDashboard = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6, delay: 0.1 }}
-                    className="bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-xl rounded-2xl shadow-2xl p-5 border border-white/20"
+                    className="bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-xl rounded-2xl shadow-2xl p-5 border border-slate-200"
                   >
                     <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-sm font-bold text-white/90 tracking-wider uppercase">Quick Stats</h3>
+                      <h3 className="text-xs font-bold text-slate-900/90 tracking-wider uppercase font-sans">Quick Stats</h3>
                       <div className="w-2 h-2 rounded-full bg-gradient-to-r from-primary-400 to-secondary-400 animate-pulse"></div>
                     </div>
                     
                     {statsLoading ? (
-                      <div className="grid grid-cols-2 gap-3">
+                      <div className="grid grid-cols-2 gap-2">
                         {Array.from({ length: 4 }).map((_, i) => (
-                          <div key={i} className="bg-white/10 rounded-xl p-3 animate-pulse">
-                            <div className="w-6 h-6 bg-white/20 rounded-lg mb-2"></div>
-                            <div className="h-4 bg-white/20 rounded mb-1"></div>
-                            <div className="h-3 bg-white/20 rounded w-3/4"></div>
+                          <div key={i} className="bg-slate-100 rounded-lg p-2 animate-pulse">
+                            <div className="w-6 h-6 bg-slate-200 rounded-lg mb-2"></div>
+                            <div className="h-4 bg-slate-200 rounded mb-1"></div>
+                            <div className="h-3 bg-slate-200 rounded w-3/4"></div>
                       </div>
                     ))}
                   </div>
                 ) : (
-                      <div className="grid grid-cols-2 gap-3">
+                      <div className="grid grid-cols-2 gap-2">
                     {stats.map((stat, i) => (
                       <motion.div
                         key={stat.title}
@@ -589,13 +589,13 @@ const AlumniDashboard = () => {
                         transition={{ duration: 0.3, delay: i * 0.1 }}
                         onClick={() => handleStatCardClick(stat.title)}
                         onMouseEnter={() => trackHover(null, `stat_card_${stat.title.toLowerCase().replace(' ', '_')}`)}
-                            className="bg-white/10 backdrop-blur-sm rounded-xl p-3 border border-white/20 hover:bg-white/20 transition-all duration-200 group cursor-pointer"
+                            className="bg-slate-100 backdrop-blur-sm rounded-lg p-2 border border-slate-200 hover:bg-slate-200 transition-all duration-200 group cursor-pointer"
                       >
                             <div className={`w-6 h-6 flex items-center justify-center rounded-lg ${stat.iconBg} mb-2 group-hover:scale-105 transition-transform duration-150`}>
-                          <stat.Icon className={`w-3 h-3 ${stat.iconColor}`} />
+                          <stat.Icon className={`w-2.5 h-2.5 ${stat.iconColor}`} />
                         </div>
-                            <div className="text-lg font-bold text-white mb-1 tracking-tight">{stat.value}</div>
-                        <div className="text-xs font-medium text-gray-300 leading-tight">{stat.title}</div>
+                            <div className="text-base font-bold text-slate-900 mb-1 tracking-tight font-sans">{stat.value}</div>
+                        <div className="text-xs font-medium text-slate-600 leading-tight">{stat.title}</div>
                       </motion.div>
                     ))}
                   </div>
@@ -610,7 +610,7 @@ const AlumniDashboard = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
-                    className="bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-xl rounded-2xl shadow-2xl p-6 border border-white/20 relative overflow-hidden"
+                    className="bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-xl rounded-2xl shadow-2xl p-6 border border-slate-200 relative overflow-hidden"
                   >
                     {/* Background Pattern */}
                     <div className="absolute inset-0 bg-gradient-to-br from-primary-500/10 to-secondary-500/10 rounded-2xl"></div>
@@ -619,18 +619,13 @@ const AlumniDashboard = () => {
                     
                     <div className="relative z-10 flex items-center justify-between">
                 <div className="flex-1 min-w-0">
-                  <h1 className="text-2xl font-bold text-white mb-2">
+                  <h1 className="text-lg font-bold text-slate-900 mb-2 font-sans">
                     Welcome back, <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-secondary-400">{user?.fullName || 'Alumni'}</span>
                   </h1>
-                        <p className="text-sm text-white/70 mb-4">Manage your activities and connections</p>
-                  <div className="w-full max-w-sm">
-                    <div className="w-full h-2 bg-white/20 rounded-full">
-                      <div className="h-2 rounded-full bg-gradient-to-r from-primary-400 to-secondary-400 transition-all duration-300" style={{ width: '100%' }}></div>
-                    </div>
-                  </div>
+                        <p className="text-xs text-slate-900/70 font-sans">Manage your activities and connections</p>
                 </div>
                 <div className="hidden md:flex flex-shrink-0">
-                        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary-500/20 to-secondary-500/20 flex items-center justify-center border-2 border-white/30 shadow-lg">
+                        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary-500/20 to-secondary-500/20 flex items-center justify-center border-2 border-slate-300 shadow-lg">
                           <UserIcon className="w-8 h-8 text-primary-400" />
                         </div>
                   </div>
@@ -642,7 +637,7 @@ const AlumniDashboard = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
-                    className="bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 flex-1 p-5 flex flex-col overflow-hidden"
+                    className="bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-200 flex-1 p-5 flex flex-col overflow-hidden"
               >
                 <MyActivityCard
                   features={[

@@ -810,7 +810,7 @@ export const getRegisteredEvents = async (userId, userRole) => {
       imageUrl: registration.events.imageUrl,
       status: registration.events.status,
       maxCapacity: registration.events.maxCapacity,
-      currentRegistrations: registration.events._count.event_registrations,
+      registeredCount: registration.events._count.event_registrations,
       createdAt: registration.events.createdAt,
       updatedAt: registration.events.updatedAt,
       eventCreator: {

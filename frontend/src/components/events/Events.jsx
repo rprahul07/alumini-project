@@ -34,10 +34,10 @@ const Events = ({ showAlert }) => {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className={`flex-shrink-0 px-2 py-1.5 rounded-lg text-xs font-medium border transition-all duration-200 ${
+              className={`flex-shrink-0 px-2 py-1 rounded-full text-xs font-medium border transition-all duration-200 ${
                 activeTab === 'myevents'
                   ? 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white border-primary-500'
-                  : 'bg-white/10 text-white border-white/30 hover:bg-white/20'
+                  : 'bg-slate-100 text-slate-700 border-slate-300 hover:bg-slate-200'
               }`}
               onClick={() => {
                 setActiveTab('myevents');
@@ -50,10 +50,10 @@ const Events = ({ showAlert }) => {
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className={`flex-shrink-0 px-2 py-1.5 rounded-lg text-xs font-medium border transition-all duration-200 ${
+            className={`flex-shrink-0 px-2 py-1 rounded-full text-xs font-medium border transition-all duration-200 ${
               activeTab === 'registered'
                 ? 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white border-primary-500'
-                : 'bg-white/10 text-white border-white/30 hover:bg-white/20'
+                : 'bg-slate-100 text-slate-700 border-slate-300 hover:bg-slate-200'
             }`}
             onClick={() => {
               setActiveTab('registered');
@@ -70,7 +70,7 @@ const Events = ({ showAlert }) => {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-primary-500 to-secondary-500 text-white text-xs font-semibold border border-primary-500 hover:from-primary-600 hover:to-secondary-600 transition-all duration-200 shadow-lg"
+              className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-primary-500 to-secondary-500 text-white text-xs font-semibold border border-primary-500 hover:from-primary-600 hover:to-secondary-600 transition-all duration-200 shadow-lg"
               onClick={() => {
                 setIsCreateSelected(true);
                 setShowCreateModal(true);

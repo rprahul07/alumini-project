@@ -228,22 +228,22 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated, isMobileModal, edit
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.9, y: 20 }}
         transition={{ duration: 0.3 }}
-        className="bg-white/10 backdrop-blur-2xl rounded-2xl shadow-2xl w-full max-w-sm sm:max-w-md md:max-w-lg max-h-[85vh] overflow-y-auto scrollbar-hide border border-white/20"
+        className="bg-white/80 backdrop-blur-2xl rounded-2xl shadow-2xl w-full max-w-sm sm:max-w-md md:max-w-lg max-h-[85vh] overflow-y-auto scrollbar-hide border border-slate-200"
       >
         {/* Header */}
-        <div className="px-6 py-4 border-b border-white/20">
+        <div className="px-6 py-4 border-b border-slate-200">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold text-white">{editMode ? 'Edit Event' : 'Create New Event'}</h2>
+            <h2 className="text-lg font-bold text-slate-900 font-sans">{editMode ? 'Edit Event' : 'Create New Event'}</h2>
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               onClick={handleClose}
-              className="text-gray-300 hover:text-white transition-colors"
+              className="text-slate-500 hover:text-slate-900 transition-colors"
             >
               <XMarkIcon className="h-6 w-6" />
             </motion.button>
           </div>
-          <p className="text-sm text-gray-300 mt-1">
+          <p className="text-sm text-slate-600 mt-1">
             {editMode ? 'Update the details of your event' : 'Fill in the details to create a new event'}
           </p>
         </div>
@@ -253,141 +253,141 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated, isMobileModal, edit
           {/* Basic Information Section */}
           <div className="space-y-4">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-8 h-8 bg-secondary-500/20 rounded-full flex items-center justify-center border border-secondary-500/30">
-                <CalendarIcon className="h-4 w-4 text-secondary-400" />
+              <div className="w-8 h-8 bg-secondary-100 rounded-full flex items-center justify-center border border-secondary-200">
+                <CalendarIcon className="h-4 w-4 text-secondary-600" />
               </div>
-              <h3 className="font-semibold text-white">Basic Information</h3>
+              <h3 className="font-semibold text-slate-900">Basic Information</h3>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="sm:col-span-2">
-                <label className="block text-sm font-medium text-gray-300 mb-2">Event Name</label>
+                <label className="block text-sm font-medium text-slate-700 mb-2">Event Name</label>
                 <input
                   type="text"
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  className={`block w-full border rounded-lg px-3 py-2 bg-white/10 text-white placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-primary focus:outline-none transition-colors ${errors.name ? 'border-red-500' : 'border-white/30'}`}
+                  className={`block w-full border rounded-lg px-3 py-2 bg-slate-50 text-slate-900 placeholder-slate-500 focus:ring-2 focus:ring-primary focus:border-primary focus:outline-none transition-colors ${errors.name ? 'border-red-500' : 'border-slate-300'}`}
                   placeholder="Enter event name"
                   required
                 />
-                {errors.name && <p className="mt-1 text-sm text-red-400">{errors.name}</p>}
+                {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Event Date</label>
+                <label className="block text-sm font-medium text-slate-700 mb-2">Event Date</label>
                 <input
                   type="date"
                   name="date"
                   value={formData.date}
                   onChange={handleInputChange}
                   min={today}
-                  className={`block w-full border rounded-lg px-3 py-2 bg-white/10 text-white focus:ring-2 focus:ring-primary focus:border-primary focus:outline-none transition-colors ${errors.date ? 'border-red-500' : 'border-white/30'}`}
+                  className={`block w-full border rounded-lg px-3 py-2 bg-slate-50 text-slate-900 focus:ring-2 focus:ring-primary focus:border-primary focus:outline-none transition-colors ${errors.date ? 'border-red-500' : 'border-slate-300'}`}
                   required
                 />
-                {errors.date && <p className="mt-1 text-sm text-red-400">{errors.date}</p>}
+                {errors.date && <p className="mt-1 text-sm text-red-600">{errors.date}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Event Time</label>
+                <label className="block text-sm font-medium text-slate-700 mb-2">Event Time</label>
                 <input
                   type="time"
                   name="time"
                   value={formData.time}
                   onChange={handleInputChange}
-                  className={`block w-full border rounded-lg px-3 py-2 bg-white/10 text-white focus:ring-2 focus:ring-primary focus:border-primary focus:outline-none transition-colors ${errors.time ? 'border-red-500' : 'border-white/30'}`}
+                  className={`block w-full border rounded-lg px-3 py-2 bg-slate-50 text-slate-900 focus:ring-2 focus:ring-primary focus:border-primary focus:outline-none transition-colors ${errors.time ? 'border-red-500' : 'border-slate-300'}`}
                   required
                 />
-                {errors.time && <p className="mt-1 text-sm text-red-400">{errors.time}</p>}
+                {errors.time && <p className="mt-1 text-sm text-red-600">{errors.time}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Event Type</label>
+                <label className="block text-sm font-medium text-slate-700 mb-2">Event Type</label>
                 <select
                   name="type"
                   value={formData.type}
                   onChange={handleInputChange}
-                  className={`block w-full border rounded-lg px-3 py-2 bg-white/10 text-white focus:ring-2 focus:ring-primary focus:border-primary focus:outline-none transition-colors ${errors.type ? 'border-red-500' : 'border-white/30'}`}
+                  className={`block w-full border rounded-lg px-3 py-2 bg-slate-50 text-slate-900 focus:ring-2 focus:ring-primary focus:border-primary focus:outline-none transition-colors ${errors.type ? 'border-red-500' : 'border-slate-300'}`}
                   required
                 >
                   {EVENT_TYPES.filter(t => t.value !== '').map((type) => (
-                    <option key={type.value} value={type.value} className="bg-gray-800 text-white">
+                    <option key={type.value} value={type.value} className="bg-slate-50 text-slate-900">
                       {type.label}
                     </option>
                   ))}
                 </select>
-                {errors.type && <p className="mt-1 text-sm text-red-400">{errors.type}</p>}
+                {errors.type && <p className="mt-1 text-sm text-red-600">{errors.type}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Location</label>
+                <label className="block text-sm font-medium text-slate-700 mb-2">Location</label>
                 <select
                   name="location"
                   value={formData.location}
                   onChange={handleInputChange}
-                  className={`block w-full border rounded-lg px-3 py-2 bg-white/10 text-white focus:ring-2 focus:ring-primary focus:border-primary focus:outline-none transition-colors ${errors.location ? 'border-red-500' : 'border-white/30'}`}
+                  className={`block w-full border rounded-lg px-3 py-2 bg-slate-50 text-slate-900 focus:ring-2 focus:ring-primary focus:border-primary focus:outline-none transition-colors ${errors.location ? 'border-red-500' : 'border-slate-300'}`}
                   required
                 >
                   {locations.map((location) => (
-                    <option key={location.value} value={location.value} className="bg-gray-800 text-white">
+                    <option key={location.value} value={location.value} className="bg-slate-50 text-slate-900">
                       {location.label}
                     </option>
                   ))}
                 </select>
-                {errors.location && <p className="mt-1 text-sm text-red-400">{errors.location}</p>}
+                {errors.location && <p className="mt-1 text-sm text-red-600">{errors.location}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Organizer</label>
+                <label className="block text-sm font-medium text-slate-700 mb-2">Organizer</label>
                 <input
                   type="text"
                   name="organizer"
                   value={formData.organizer}
                   onChange={handleInputChange}
-                  className={`block w-full border rounded-lg px-3 py-2 bg-white/10 text-white placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-primary focus:outline-none transition-colors ${errors.organizer ? 'border-red-500' : 'border-white/30'}`}
+                  className={`block w-full border rounded-lg px-3 py-2 bg-slate-50 text-slate-900 placeholder-slate-500 focus:ring-2 focus:ring-primary focus:border-primary focus:outline-none transition-colors ${errors.organizer ? 'border-red-500' : 'border-slate-300'}`}
                   required
                   placeholder="Enter organizer name"
                   maxLength={100}
                 />
-                {errors.organizer && <p className="mt-1 text-sm text-red-400">{errors.organizer}</p>}
+                {errors.organizer && <p className="mt-1 text-sm text-red-600">{errors.organizer}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Max Capacity (Optional)</label>
+                <label className="block text-sm font-medium text-slate-700 mb-2">Max Capacity (Optional)</label>
                 <input
                   type="number"
                   name="maxCapacity"
                   value={formData.maxCapacity}
                   onChange={handleInputChange}
-                  className={`block w-full border rounded-lg px-3 py-2 bg-white/10 text-white placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-primary focus:outline-none transition-colors ${errors.maxCapacity ? 'border-red-500' : 'border-white/30'}`}
+                  className={`block w-full border rounded-lg px-3 py-2 bg-slate-50 text-slate-900 placeholder-slate-500 focus:ring-2 focus:ring-primary focus:border-primary focus:outline-none transition-colors ${errors.maxCapacity ? 'border-red-500' : 'border-slate-300'}`}
                   placeholder="Enter max capacity"
                   min="1"
                   max="1000"
                 />
-                {errors.maxCapacity && <p className="mt-1 text-sm text-red-400">{errors.maxCapacity}</p>}
+                {errors.maxCapacity && <p className="mt-1 text-sm text-red-600">{errors.maxCapacity}</p>}
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Description (Optional)</label>
+              <label className="block text-sm font-medium text-slate-700 mb-2">Description (Optional)</label>
               <textarea
                 name="description"
                 value={formData.description}
                 onChange={handleInputChange}
                 rows={3}
-                className="block w-full border rounded-lg px-3 py-2 bg-white/10 text-white placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-primary focus:outline-none transition-colors border-white/30"
+                className="block w-full border rounded-lg px-3 py-2 bg-slate-50 text-slate-900 placeholder-slate-500 focus:ring-2 focus:ring-primary focus:border-primary focus:outline-none transition-colors border-slate-300"
                 placeholder="Enter event description"
                 maxLength={500}
               />
-              <p className="mt-1 text-xs text-gray-400">
+              <p className="mt-1 text-xs text-slate-500">
                 {formData.description.length}/500 characters
               </p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Event Image (Optional)</label>
-              <div className="mt-1 flex justify-center px-2 pt-3 pb-4 border-2 border-white/30 border-dashed rounded-lg hover:border-white/50 transition-colors">
+              <label className="block text-sm font-medium text-slate-700 mb-2">Event Image (Optional)</label>
+              <div className="mt-1 flex justify-center px-2 pt-3 pb-4 border-2 border-slate-300 border-dashed rounded-lg hover:border-slate-400 transition-colors">
                 <div className="space-y-1 text-center">
                   {photoPreview ? (
                     <img src={photoPreview} alt="Event" className="mx-auto h-20 w-20 object-cover rounded-lg mb-2" />
                   ) : (
-                    <PhotoIcon className="mx-auto h-10 w-10 text-gray-400" />
+                    <PhotoIcon className="mx-auto h-10 w-10 text-slate-500" />
                   )}
-                  <div className="flex text-xs text-gray-300">
+                  <div className="flex text-xs text-slate-600">
                     <label
                       htmlFor="imageFile"
-                      className="relative cursor-pointer bg-white/10 rounded-md font-medium text-primary-400 hover:text-primary-300 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-primary px-2 py-1"
+                      className="relative cursor-pointer bg-slate-100 rounded-md font-medium text-primary-600 hover:text-primary-700 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-primary px-2 py-1"
                     >
                       <span>Upload a file</span>
                       <input
@@ -401,26 +401,26 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated, isMobileModal, edit
                     </label>
                     <p className="pl-1">or drag and drop</p>
                   </div>
-                  <p className="text-xs text-gray-400">
+                  <p className="text-xs text-slate-500">
                     PNG, JPG, WebP up to 5MB
                   </p>
                   {formData.imageFile && (
-                    <p className="text-xs text-green-400">
+                    <p className="text-xs text-green-600">
                       Selected: {formData.imageFile.name}
                     </p>
                   )}
                 </div>
               </div>
-              {errors.imageFile && <p className="mt-1 text-xs text-red-400">{errors.imageFile}</p>}
+              {errors.imageFile && <p className="mt-1 text-xs text-red-600">{errors.imageFile}</p>}
             </div>
           </div>
           {/* Action Buttons */}
-          <div className="flex justify-between gap-3 pt-4 border-t border-white/20">
+          <div className="flex justify-between gap-3 pt-4 border-t border-slate-200">
             <motion.button
               type="button"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="rounded-full px-4 py-1.5 font-semibold border border-white/30 text-white hover:bg-white/10 transition-all duration-200"
+              className="rounded-full px-4 py-1.5 font-semibold border border-slate-300 text-slate-700 hover:bg-slate-100 transition-all duration-200"
               onClick={handleClose}
               disabled={isSubmitting}
             >
@@ -435,7 +435,7 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated, isMobileModal, edit
             >
               {isSubmitting ? (
                 <>
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <div className="w-5 h-5 border-2 border-slate-900 border-t-transparent rounded-full animate-spin"></div>
                   {editMode ? 'Updating...' : 'Creating...'}
                 </>
               ) : (

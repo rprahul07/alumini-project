@@ -166,25 +166,25 @@ const ContactPage = () => {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gradient-to-br from-white via-slate-50 to-white relative overflow-hidden pt-16">
       {isSubmitted ? (
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl p-8 text-center border border-white/20"
+            className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-2xl p-6 text-center border border-slate-200"
           >
-            <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
-              <i className="fas fa-check text-white text-2xl"></i>
+            <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+              <i className="fas fa-check text-white text-lg"></i>
             </div>
-            <h1 className="text-3xl font-bold text-white mb-4">Message Sent Successfully!</h1>
-            <p className="text-lg text-gray-300 mb-8">
+            <h1 className="text-2xl font-bold font-sans text-slate-900 mb-3">Message Sent Successfully!</h1>
+            <p className="text-sm font-sans text-slate-600 mb-6">
               Thank you for contacting us. We've received your message and will get back to you within 24-48 hours.
             </p>
             <button
               onClick={() => setIsSubmitted(false)}
-              className="bg-gradient-to-r from-primary-500 to-secondary-500 text-white px-8 py-3 rounded-xl font-semibold hover:from-primary-600 hover:to-secondary-600 transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
+              className="bg-gradient-to-r from-primary-500 to-secondary-500 text-white px-6 py-2 rounded-lg font-semibold font-sans hover:from-primary-600 hover:to-secondary-600 transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
             >
               Send Another Message
             </button>
@@ -193,18 +193,18 @@ const ContactPage = () => {
       ) : (
         <>
         {/* Hero Section */}
-        <section id="support" className="py-20 bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 relative overflow-hidden">
+        <section id="support" className="py-12 bg-gradient-to-br from-white via-slate-50 to-white relative overflow-hidden">
           {/* Enhanced Background decorative elements */}
           <div className="absolute inset-0 overflow-hidden">
             {/* Animated gradient orbs */}
-            <div className="absolute top-10 right-10 w-96 h-96 bg-gradient-to-br from-primary-400/30 to-secondary-400/30 rounded-full blur-3xl animate-pulse"></div>
-            <div className="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-tr from-secondary-400/30 to-primary-400/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-primary-300/20 to-secondary-300/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+            <div className="absolute top-10 right-10 w-96 h-96 bg-gradient-to-br from-primary-100/40 to-secondary-100/40 rounded-full blur-3xl animate-pulse"></div>
+            <div className="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-tr from-secondary-100/40 to-primary-100/40 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-primary-100/30 to-secondary-100/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
             
             {/* Floating particles */}
-            <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-primary-400/60 rounded-full animate-bounce" style={{ animationDelay: '0.5s' }}></div>
-            <div className="absolute top-3/4 right-1/4 w-1 h-1 bg-secondary-400/60 rounded-full animate-bounce" style={{ animationDelay: '1.5s' }}></div>
-            <div className="absolute top-1/2 right-1/3 w-1.5 h-1.5 bg-primary-300/60 rounded-full animate-bounce" style={{ animationDelay: '2.5s' }}></div>
+            <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-primary-400/40 rounded-full animate-bounce" style={{ animationDelay: '0.5s' }}></div>
+            <div className="absolute top-3/4 right-1/4 w-1 h-1 bg-secondary-400/40 rounded-full animate-bounce" style={{ animationDelay: '1.5s' }}></div>
+            <div className="absolute top-1/2 right-1/3 w-1.5 h-1.5 bg-primary-400/40 rounded-full animate-bounce" style={{ animationDelay: '2.5s' }}></div>
           </div>
 
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
@@ -213,17 +213,17 @@ const ContactPage = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <div className="inline-flex items-center px-6 py-3 rounded-full text-sm font-semibold bg-gradient-to-r from-primary-500/20 to-secondary-500/20 backdrop-blur-sm text-white border border-white/20 mb-8 shadow-lg">
-                <span className="w-3 h-3 bg-gradient-to-r from-primary-400 to-secondary-400 rounded-full mr-3 animate-pulse"></span>
+              <div className="inline-flex items-center px-4 py-2 rounded-full text-xs font-semibold font-sans bg-gradient-to-r from-primary-50 to-secondary-50 backdrop-blur-sm text-slate-700 border border-slate-200 mb-4 shadow-lg">
+                <span className="w-2 h-2 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full mr-2 animate-pulse"></span>
                 <span>💬 Contact Us</span>
               </div>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-display text-white mb-6 leading-tight">
+              <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold font-sans text-slate-900 mb-4 leading-tight">
                 Get in{' '}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 via-secondary-400 to-primary-400 animate-pulse">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 via-secondary-600 to-primary-600 animate-pulse">
                   Touch
                 </span>
               </h1>
-              <p className="text-base md:text-lg text-gray-300 max-w-2xl mx-auto leading-relaxed font-body">
+              <p className="text-sm md:text-base text-slate-600 max-w-2xl mx-auto leading-relaxed font-sans">
                 Have questions about CUCEK Alumni Connect? Need help with your account? We're here to support our alumni community.
               </p>
             </motion.div>
@@ -231,15 +231,15 @@ const ContactPage = () => {
         </section>
 
         {/* Main Content */}
-        <section className="py-16 sm:py-20 bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 relative overflow-hidden">
+        <section className="py-12 bg-gradient-to-br from-white via-slate-50 to-white relative overflow-hidden">
           {/* Background decorative elements */}
           <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute top-10 right-10 w-96 h-96 bg-gradient-to-br from-primary-400/20 to-secondary-400/20 rounded-full blur-3xl animate-pulse"></div>
-            <div className="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-tr from-secondary-400/20 to-primary-400/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+            <div className="absolute top-10 right-10 w-96 h-96 bg-gradient-to-br from-primary-100/40 to-secondary-100/40 rounded-full blur-3xl animate-pulse"></div>
+            <div className="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-tr from-secondary-100/40 to-primary-100/40 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
           </div>
 
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
               {/* Contact Form */}
               <div className="lg:col-span-2">
@@ -248,14 +248,14 @@ const ContactPage = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8 }}
                   viewport={{ once: true }}
-                  className="bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl p-8 border border-white/20"
+                  className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-2xl p-8 border border-slate-200"
                 >
-                  <h2 className="text-2xl font-bold text-white mb-6">Send us a Message</h2>
+                  <h2 className="text-xl font-bold font-sans text-slate-900 mb-4">Send us a Message</h2>
 
-                  <form onSubmit={handleSubmit} className="space-y-6">
+                  <form onSubmit={handleSubmit} className="space-y-4">
                     {/* Full Name */}
                     <div>
-                      <label htmlFor="name" className="block text-sm font-medium text-white/90 mb-2">
+                      <label htmlFor="name" className="block text-xs font-medium font-sans text-slate-700 mb-2">
                         Full Name *
                       </label>
                       <input
@@ -264,18 +264,18 @@ const ContactPage = () => {
                         name="name"
                         value={formData.name}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 bg-white/10 backdrop-blur-xl border rounded-xl focus:ring-2 focus:ring-primary-400/50 focus:border-primary-400/50 transition-all text-white placeholder-gray-300 ${errors.name ? 'border-red-500' : 'border-white/30'
+                        className={`w-full px-3 py-2 bg-white/80 backdrop-blur-xl border rounded-lg focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 transition-all text-sm font-sans text-slate-900 placeholder-slate-500 ${errors.name ? 'border-red-500' : 'border-slate-300'
                           }`}
                         placeholder="Enter your full name"
                       />
                       {errors.name && (
-                        <p className="mt-1 text-sm text-red-400">{errors.name}</p>
+                        <p className="mt-1 text-xs font-sans text-red-600">{errors.name}</p>
                       )}
                     </div>
 
                     {/* Email */}
                     <div>
-                      <label htmlFor="email" className="block text-sm font-medium text-white/90 mb-2">
+                      <label htmlFor="email" className="block text-xs font-medium font-sans text-slate-700 mb-2">
                         Email Address *
                       </label>
                       <input
@@ -284,18 +284,18 @@ const ContactPage = () => {
                         name="email"
                         value={formData.email}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 bg-white/10 backdrop-blur-xl border rounded-xl focus:ring-2 focus:ring-primary-400/50 focus:border-primary-400/50 transition-all text-white placeholder-gray-300 ${errors.email ? 'border-red-500' : 'border-white/30'
+                        className={`w-full px-3 py-2 bg-white/80 backdrop-blur-xl border rounded-lg focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 transition-all text-sm font-sans text-slate-900 placeholder-slate-500 ${errors.email ? 'border-red-500' : 'border-slate-300'
                           }`}
                         placeholder="Enter your email address"
                       />
                       {errors.email && (
-                        <p className="mt-1 text-sm text-red-400">{errors.email}</p>
+                        <p className="mt-1 text-xs font-sans text-red-600">{errors.email}</p>
                       )}
                     </div>
 
                     {/* Subject */}
                     <div>
-                      <label htmlFor="subject" className="block text-sm font-medium text-white/90 mb-2">
+                      <label htmlFor="subject" className="block text-xs font-medium font-sans text-slate-700 mb-2">
                         Subject *
                       </label>
                       <input
@@ -304,18 +304,18 @@ const ContactPage = () => {
                         name="subject"
                         value={formData.subject}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 bg-white/10 backdrop-blur-xl border rounded-xl focus:ring-2 focus:ring-primary-400/50 focus:border-primary-400/50 transition-all text-white placeholder-gray-300 ${errors.subject ? 'border-red-500' : 'border-white/30'
+                        className={`w-full px-3 py-2 bg-white/80 backdrop-blur-xl border rounded-lg focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 transition-all text-sm font-sans text-slate-900 placeholder-slate-500 ${errors.subject ? 'border-red-500' : 'border-slate-300'
                           }`}
                         placeholder="What's this about?"
                       />
                       {errors.subject && (
-                        <p className="mt-1 text-sm text-red-400">{errors.subject}</p>
+                        <p className="mt-1 text-xs font-sans text-red-600">{errors.subject}</p>
                       )}
                     </div>
 
                     {/* Message */}
                     <div>
-                      <label htmlFor="message" className="block text-sm font-medium text-white/90 mb-2">
+                      <label htmlFor="message" className="block text-xs font-medium font-sans text-slate-700 mb-2">
                         Message *
                       </label>
                       <textarea
@@ -324,12 +324,12 @@ const ContactPage = () => {
                         rows="6"
                         value={formData.message}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 bg-white/10 backdrop-blur-xl border rounded-xl focus:ring-2 focus:ring-primary-400/50 focus:border-primary-400/50 transition-all resize-none text-white placeholder-gray-300 ${errors.message ? 'border-red-500' : 'border-white/30'
+                        className={`w-full px-3 py-2 bg-white/80 backdrop-blur-xl border rounded-lg focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 transition-all resize-none text-sm font-sans text-slate-900 placeholder-slate-500 ${errors.message ? 'border-red-500' : 'border-slate-300'
                           }`}
                         placeholder="How can we help you? Please provide as much detail as possible..."
                       />
                       {errors.message && (
-                        <p className="mt-1 text-sm text-red-400">{errors.message}</p>
+                        <p className="mt-1 text-xs font-sans text-red-600">{errors.message}</p>
                       )}
                     </div>
 
@@ -338,7 +338,7 @@ const ContactPage = () => {
                       <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="w-full bg-gradient-to-r from-primary-500 to-secondary-500 text-white py-3 px-6 rounded-xl font-semibold hover:from-primary-600 hover:to-secondary-600 transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105"
+                        className="w-full bg-gradient-to-r from-primary-500 to-secondary-500 text-white py-2 px-4 rounded-lg font-semibold font-sans hover:from-primary-600 hover:to-secondary-600 transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105"
                       >
                         {isSubmitting ? (
                           <span className="flex items-center justify-center">
@@ -356,7 +356,7 @@ const ContactPage = () => {
 
                     {errors.submit && (
                       <div className="text-center">
-                        <p className="text-sm text-red-400">{errors.submit}</p>
+                        <p className="text-sm text-red-600">{errors.submit}</p>
                       </div>
                     )}
                   </form>
@@ -371,51 +371,51 @@ const ContactPage = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.2 }}
                   viewport={{ once: true }}
-                  className="bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl p-6 border border-white/20"
+                  className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-2xl p-6 border border-slate-200"
                 >
-                  <h3 className="text-xl font-bold text-white mb-6">Contact Information</h3>
+                  <h3 className="text-lg font-bold font-sans text-slate-900 mb-4">Contact Information</h3>
 
-                  <div className="space-y-6">
+                  <div className="space-y-4">
                     {/* Email Support */}
-                    <div className="flex items-start space-x-4">
-                      <div className="w-12 h-12 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
-                        <i className="fas fa-envelope text-white text-lg"></i>
+                    <div className="flex items-start space-x-3">
+                      <div className="w-10 h-10 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center flex-shrink-0 shadow-lg">
+                        <i className="fas fa-envelope text-white text-sm"></i>
                       </div>
                       <div>
-                        <h4 className="font-semibold text-white">Email Support</h4>
-                        <p className="text-gray-300">alumni@cucek.ac.in</p>
-                        <span className="inline-block bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-300 text-xs px-3 py-1 rounded-full mt-2 border border-green-500/30">
+                        <h4 className="font-semibold font-sans text-sm text-slate-900">Email Support</h4>
+                        <p className="text-xs font-sans text-slate-600">alumni@cucek.ac.in</p>
+                        <span className="inline-block bg-gradient-to-r from-green-100 to-emerald-100 text-green-700 text-xs px-2 py-1 rounded-full mt-1 border border-green-200">
                           24/7 Support
                         </span>
                       </div>
                     </div>
 
                     {/* Phone Support */}
-                    <div className="flex items-start space-x-4">
-                      <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
-                        <i className="fas fa-phone text-white text-lg"></i>
+                    <div className="flex items-start space-x-3">
+                      <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center flex-shrink-0 shadow-lg">
+                        <i className="fas fa-phone text-white text-sm"></i>
                       </div>
                       <div>
-                        <h4 className="font-semibold text-white">Phone Support</h4>
-                        <p className="text-gray-300">+91 484 286 2173</p>
-                        <span className="inline-block bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-blue-300 text-xs px-3 py-1 rounded-full mt-2 border border-blue-500/30">
+                        <h4 className="font-semibold font-sans text-sm text-slate-900">Phone Support</h4>
+                        <p className="text-xs font-sans text-slate-600">+91 484 286 2173</p>
+                        <span className="inline-block bg-gradient-to-r from-blue-100 to-cyan-100 text-blue-700 text-xs px-2 py-1 rounded-full mt-1 border border-blue-200">
                           Mon-Fri 9AM-6PM
                         </span>
                       </div>
                     </div>
 
                     {/* Office Location */}
-                    <div className="flex items-start space-x-4">
-                      <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-red-500 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
-                        <i className="fas fa-map-marker-alt text-white text-lg"></i>
+                    <div className="flex items-start space-x-3">
+                      <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center justify-center flex-shrink-0 shadow-lg">
+                        <i className="fas fa-map-marker-alt text-white text-sm"></i>
                       </div>
                       <div>
-                        <h4 className="font-semibold text-white">Campus Address</h4>
-                        <p className="text-gray-300">
+                        <h4 className="font-semibold font-sans text-sm text-slate-900">Campus Address</h4>
+                        <p className="text-xs font-sans text-slate-600">
                           Cochin University of Science and Technology<br />
                           Pulincunnu, Kerala 688504, India
                         </p>
-                        <span className="inline-block bg-gradient-to-r from-orange-500/20 to-red-500/20 text-orange-300 text-xs px-3 py-1 rounded-full mt-2 border border-orange-500/30">
+                        <span className="inline-block bg-gradient-to-r from-orange-100 to-red-100 text-orange-700 text-xs px-2 py-1 rounded-full mt-1 border border-orange-200">
                           Visitors Welcome
                         </span>
                       </div>
@@ -429,20 +429,20 @@ const ContactPage = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.4 }}
                   viewport={{ once: true }}
-                  className="bg-gradient-to-r from-primary-500/20 via-secondary-500/20 to-primary-500/20 backdrop-blur-xl rounded-2xl shadow-2xl p-6 text-white border border-white/30 relative overflow-hidden"
+                  className="bg-gradient-to-r from-primary-100 to-secondary-100 backdrop-blur-xl rounded-2xl shadow-2xl p-6 text-slate-900 border border-slate-200 relative overflow-hidden"
                 >
                   {/* Animated background */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-primary-400/10 to-secondary-400/10 rounded-2xl animate-pulse"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary-100/40 to-secondary-100/40 rounded-2xl animate-pulse"></div>
                   
                   <div className="relative z-10">
-                    <div className="flex items-center mb-4">
-                      <i className="fas fa-clock text-2xl mr-3"></i>
-                      <h3 className="text-xl font-bold">Response Time</h3>
+                    <div className="flex items-center mb-3">
+                      <i className="fas fa-clock text-lg mr-2"></i>
+                      <h3 className="text-lg font-bold font-sans text-slate-900">Response Time</h3>
                     </div>
-                    <p className="text-white/80 mb-4">
+                    <p className="text-sm font-sans text-slate-600 mb-3">
                       We typically respond to all inquiries within 24-48 hours during business days.
                     </p>
-                    <div className="flex items-center text-sm text-white/70">
+                    <div className="flex items-center text-xs font-sans text-slate-500">
                       <i className="fas fa-info-circle mr-2"></i>
                       For urgent matters, please call our phone support line
                     </div>
@@ -454,11 +454,11 @@ const ContactPage = () => {
         </section>
 
         {/* FAQ Section */}
-        <section id="faq" className="py-16 bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 relative overflow-hidden">
+        <section id="faq" className="py-12 bg-gradient-to-br from-white via-slate-50 to-white relative overflow-hidden">
           {/* Background decorative elements */}
           <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute top-10 right-10 w-96 h-96 bg-gradient-to-br from-primary-400/20 to-secondary-400/20 rounded-full blur-3xl animate-pulse"></div>
-            <div className="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-tr from-secondary-400/20 to-primary-400/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+            <div className="absolute top-10 right-10 w-96 h-96 bg-gradient-to-br from-primary-100/40 to-secondary-100/40 rounded-full blur-3xl animate-pulse"></div>
+            <div className="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-tr from-secondary-100/40 to-primary-100/40 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
           </div>
 
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -469,17 +469,17 @@ const ContactPage = () => {
               viewport={{ once: true }}
               className="text-center mb-12"
             >
-              <div className="inline-flex items-center px-6 py-3 rounded-full text-sm font-semibold bg-gradient-to-r from-primary-500/20 to-secondary-500/20 backdrop-blur-sm text-white border border-white/20 mb-8 shadow-lg">
-                <span className="w-3 h-3 bg-gradient-to-r from-primary-400 to-secondary-400 rounded-full mr-3 animate-pulse"></span>
+              <div className="inline-flex items-center px-4 py-2 rounded-full text-xs font-semibold font-sans bg-gradient-to-r from-primary-50 to-secondary-50 backdrop-blur-sm text-slate-700 border border-slate-200 mb-4 shadow-lg">
+                <span className="w-2 h-2 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full mr-2 animate-pulse"></span>
                 <span>❓ FAQ</span>
               </div>
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              <h2 className="text-2xl md:text-3xl font-bold font-sans text-slate-900 mb-3">
                 Frequently Asked{' '}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 via-secondary-400 to-primary-400">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 via-secondary-600 to-primary-600">
                   Questions
                 </span>
               </h2>
-              <p className="text-lg text-gray-300">
+              <p className="text-sm md:text-base font-sans text-slate-600">
                 Find quick answers to common questions about CUCEK Alumni Connect
               </p>
             </motion.div>
@@ -489,7 +489,7 @@ const ContactPage = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
               viewport={{ once: true }}
-              className="space-y-4"
+              className="space-y-3"
             >
               {faqs.map((faq, index) => (
                 <motion.div
@@ -498,13 +498,13 @@ const ContactPage = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: index * 0.1 }}
                   viewport={{ once: true }}
-                  className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl overflow-hidden shadow-2xl hover:border-white/30 transition-all duration-300"
+                  className="bg-white/80 backdrop-blur-xl border border-slate-200 rounded-xl overflow-hidden shadow-2xl hover:border-slate-300 transition-all duration-300"
                 >
                   <button
                     onClick={() => toggleFaq(index)}
-                    className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-white/5 transition-colors"
+                    className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-slate-50 transition-colors"
                   >
-                    <span className="font-semibold text-white">{faq.question}</span>
+                    <span className="font-semibold font-sans text-sm text-slate-900">{faq.question}</span>
                     <i className={`fas fa-chevron-down transition-transform text-primary-400 ${expandedFaq === index ? 'rotate-180' : ''
                       }`}></i>
                   </button>
@@ -515,9 +515,9 @@ const ContactPage = () => {
                         animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
                         transition={{ duration: 0.3 }}
-                        className="px-6 pb-4 border-t border-white/10"
+                        className="px-6 pb-4 border-t border-slate-200"
                       >
-                        <p className="text-gray-300 leading-relaxed pt-4">{faq.answer}</p>
+                        <p className="text-sm font-sans text-slate-600 leading-relaxed pt-3">{faq.answer}</p>
                       </motion.div>
                     )}
                   </AnimatePresence>

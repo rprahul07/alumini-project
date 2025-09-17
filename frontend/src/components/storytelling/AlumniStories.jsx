@@ -97,7 +97,7 @@ const AlumniStories = () => {
   };
 
   return (
-    <section id="alumni-stories" className="py-20 bg-gradient-to-br from-gray-50 via-white to-indigo-50 relative overflow-hidden">
+    <section id="alumni-stories" className="py-12 bg-gradient-to-br from-gray-50 via-white to-indigo-50 relative overflow-hidden">
       {/* Background decorative elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full opacity-50 blur-3xl"></div>
@@ -111,19 +111,19 @@ const AlumniStories = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-center mb-12"
         >
-          <div className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-indigo-50 text-indigo-800 mb-4">
-            <span className="w-2 h-2 bg-indigo-500 rounded-full mr-2"></span>
+          <div className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-indigo-50 text-indigo-800 mb-3 font-sans">
+            <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full mr-1.5"></span>
             Success Stories
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3 font-sans">
             Alumni{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">
               Success Stories
             </span>
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-sm text-gray-600 max-w-2xl mx-auto font-sans">
             Discover how our graduates are making an impact across industries worldwide
           </p>
         </motion.div>

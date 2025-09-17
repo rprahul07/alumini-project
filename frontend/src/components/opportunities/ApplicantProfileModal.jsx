@@ -132,7 +132,7 @@ const ApplicantProfileModal = ({ open, onClose, applicant }) => {
 
           {/* Action Button */}
           <div className="flex justify-end gap-2 mt-6">
-            <button type="button" className="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300" onClick={onClose}>Close</button>
+            <button type="button" className="px-4 py-2 rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300" onClick={onClose}>Close</button>
           </div>
         </div>
       </div>

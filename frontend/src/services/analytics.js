@@ -12,6 +12,15 @@ class AnalyticsService {
     this.isLoading = false;
     this.pendingEvents = [];
     this.config = getAnalyticsConfig();
+    
+    // Debug logging (can be removed in production)
+    if (import.meta.env.DEV) {
+      console.log('Analytics Service Constructor:', {
+        hasConfig: !!this.config,
+        measurementId: this.config?.measurementId,
+        envVar: import.meta.env.VITE_GA_MEASUREMENT_ID
+      });
+    }
   }
 
   /**
@@ -21,6 +30,7 @@ class AnalyticsService {
   async initialize() {
     // Don't initialize if already done or not needed
     if (this.isInitialized || this.isLoading) {
+      console.log('Analytics already initialized or loading');
       return;
     }
 
@@ -31,30 +41,40 @@ class AnalyticsService {
       return;
     }
 
+    if (import.meta.env.DEV) {
+      console.log('Starting analytics initialization with config:', this.config);
+    }
     this.isLoading = true;
 
     try {
       // Dynamic import for better code splitting
-      const { initialize, gtag } = await import('react-ga4');
+      const ReactGA = await import('react-ga4');
       
-      // Initialize GA4
-      initialize(this.config.measurementId, {
+      // react-ga4 v2+ exports default as the main object
+      const ReactGAInstance = ReactGA.default || ReactGA;
+      
+      // Initialize GA4 using the correct method
+      ReactGAInstance.initialize(this.config.measurementId, {
         debug: this.config.debug,
         anonymizeIp: this.config.anonymizeIp,
         allowGoogleAds: this.config.allowGoogleAds,
         transport: this.config.transport
       });
 
-      this.ga = { initialize, gtag };
+      // Store the ReactGA instance for tracking
+      this.ga = ReactGAInstance;
+
       this.isInitialized = true;
       this.isLoading = false;
 
       // Process any pending events
       this.processPendingEvents();
 
-      console.log('Analytics initialized successfully');
+      if (import.meta.env.DEV) {
+        console.log('Analytics initialized successfully with GA instance:', !!this.ga);
+      }
     } catch (error) {
-      console.warn('Analytics initialization failed:', error);
+      console.error('Analytics initialization failed:', error);
       this.isLoading = false;
       this.isInitialized = true; // Mark as initialized to prevent retries
     }
@@ -105,10 +125,9 @@ class AnalyticsService {
     }
 
     try {
-      this.ga.gtag('config', this.config.measurementId, {
-        page_path: pagePath,
-        page_title: pageTitle
-      });
+      // Use ReactGA.send for page views
+      this.ga.send({ hitType: 'pageview', page: pagePath, title: pageTitle });
+      console.log('Page view tracked:', pagePath, pageTitle);
     } catch (error) {
       console.warn('Page view tracking failed:', error);
     }
@@ -134,11 +153,14 @@ class AnalyticsService {
     }
 
     try {
-      this.ga.gtag('event', action, {
-        event_category: category,
-        event_label: label,
+      // Use ReactGA.event for custom events
+      this.ga.event({
+        action: action,
+        category: category,
+        label: label,
         value: value
       });
+      console.log('Event tracked:', action, category, label, value);
     } catch (error) {
       console.warn('Event tracking failed:', error);
     }
@@ -161,10 +183,12 @@ class AnalyticsService {
     }
 
     try {
-      this.ga.gtag('event', engagementType, {
-        ...parameters,
-        event_category: 'engagement'
+      this.ga.event({
+        action: engagementType,
+        category: 'engagement',
+        ...parameters
       });
+      console.log('Engagement tracked:', engagementType, parameters);
     } catch (error) {
       console.warn('Engagement tracking failed:', error);
     }
@@ -187,10 +211,12 @@ class AnalyticsService {
     }
 
     try {
-      this.ga.gtag('event', conversionType, {
-        ...parameters,
-        event_category: 'conversion'
+      this.ga.event({
+        action: conversionType,
+        category: 'conversion',
+        ...parameters
       });
+      console.log('Conversion tracked:', conversionType, parameters);
     } catch (error) {
       console.warn('Conversion tracking failed:', error);
     }
@@ -212,9 +238,9 @@ class AnalyticsService {
     }
 
     try {
-      this.ga.gtag('config', this.config.measurementId, {
-        user_properties: properties
-      });
+      // ReactGA v4 uses set for user properties
+      this.ga.set(properties);
+      console.log('User properties set:', properties);
     } catch (error) {
       console.warn('User properties setting failed:', error);
     }

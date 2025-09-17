@@ -13,6 +13,7 @@ const OptimizedImage = memo(({
   height = undefined,
   priority = false,
   quality = 75,
+  onLoad = null,
   ...props 
 }) => {
   const [imageSrc, setImageSrc] = useState(src);
@@ -26,6 +27,9 @@ const OptimizedImage = memo(({
   const handleLoad = () => {
     setIsLoaded(true);
     setHasError(false);
+    if (onLoad) {
+      onLoad();
+    }
   };
 
   // Handle image load error

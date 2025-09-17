@@ -270,22 +270,22 @@ const AlumniPage = () => {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 relative overflow-hidden">
-        {/* Enhanced Background decorative elements */}
-        <div className="absolute inset-0 overflow-hidden">
-          {/* Animated gradient orbs */}
-          <div className="absolute top-10 right-10 w-96 h-96 bg-gradient-to-br from-primary-400/30 to-secondary-400/30 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-tr from-secondary-400/30 to-primary-400/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-primary-300/20 to-secondary-300/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
-          
-          {/* Floating particles */}
-          <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-primary-400/60 rounded-full animate-bounce" style={{ animationDelay: '0.5s' }}></div>
-          <div className="absolute top-3/4 right-1/4 w-1 h-1 bg-secondary-400/60 rounded-full animate-bounce" style={{ animationDelay: '1.5s' }}></div>
-          <div className="absolute top-1/2 right-1/3 w-1.5 h-1.5 bg-primary-300/60 rounded-full animate-bounce" style={{ animationDelay: '2.5s' }}></div>
-        </div>
+       <div className="min-h-screen bg-gradient-to-br from-white via-slate-50 to-white relative overflow-hidden pt-16">
+         {/* Enhanced Background decorative elements */}
+         <div className="absolute inset-0 overflow-hidden">
+           {/* Animated gradient orbs */}
+           <div className="absolute top-10 right-10 w-96 h-96 bg-gradient-to-br from-primary-100/40 to-secondary-100/40 rounded-full blur-3xl animate-pulse"></div>
+           <div className="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-tr from-secondary-100/40 to-primary-100/40 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-primary-100/30 to-secondary-100/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+           
+           {/* Floating particles */}
+           <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-primary-400/40 rounded-full animate-bounce" style={{ animationDelay: '0.5s' }}></div>
+           <div className="absolute top-3/4 right-1/4 w-1 h-1 bg-secondary-400/40 rounded-full animate-bounce" style={{ animationDelay: '1.5s' }}></div>
+           <div className="absolute top-1/2 right-1/3 w-1.5 h-1.5 bg-primary-300/40 rounded-full animate-bounce" style={{ animationDelay: '2.5s' }}></div>
+         </div>
 
         {/* Hero Section */}
-        <section className="relative z-10 py-20">
+        <section className="relative z-10 py-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -293,66 +293,66 @@ const AlumniPage = () => {
               transition={{ duration: 0.8 }}
               className="text-center"
             >
-              <div className="inline-flex items-center px-6 py-3 rounded-full text-sm font-semibold bg-gradient-to-r from-primary-500/20 to-secondary-500/20 backdrop-blur-sm text-white border border-white/20 mb-8 shadow-lg">
-                <span className="w-3 h-3 bg-gradient-to-r from-primary-400 to-secondary-400 rounded-full mr-3 animate-pulse"></span>
-                <span>Alumni Network</span>
-              </div>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-display text-white mb-6 leading-tight">
-                Connect with{' '}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 via-secondary-400 to-primary-400 animate-pulse">
-                  Successful Graduates
-                </span>
-              </h1>
-              <p className="text-base md:text-lg text-gray-300 max-w-3xl mx-auto leading-relaxed font-body">
-                Find mentors, build meaningful professional relationships, and unlock new opportunities through our vibrant alumni community
-              </p>
+               <div className="inline-flex items-center px-4 py-2 rounded-full text-xs font-semibold bg-gradient-to-r from-primary-50 to-secondary-50 backdrop-blur-sm text-slate-700 border border-slate-200 mb-4 shadow-lg font-sans">
+                 <span className="w-2 h-2 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full mr-2 animate-pulse"></span>
+                 <span>Alumni Network</span>
+               </div>
+               <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold font-sans text-slate-900 mb-4 leading-tight">
+                 Connect with{' '}
+                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 via-secondary-600 to-primary-600 animate-pulse">
+                   Successful Graduates
+                 </span>
+               </h1>
+               <p className="text-sm md:text-base text-slate-600 max-w-3xl mx-auto leading-relaxed font-sans">
+                 Find mentors, build meaningful professional relationships, and unlock new opportunities through our vibrant alumni community
+               </p>
             </motion.div>
           </div>
         </section>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 relative z-10">
           {/* Search and Filters */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 p-6 mb-8 relative z-40"
-          >
-            {/* Animated background */}
-            <div className="absolute inset-0 bg-gradient-to-r from-primary-400/10 to-secondary-400/10 rounded-2xl animate-pulse"></div>
-            
-            <div className="relative z-10">
-              <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center w-full">
-                <div className="flex-1 w-full">
-                  <label className="block text-sm font-medium text-white mb-2">Search Alumni</label>
-                  <AlumniSearch onSearch={handleSearch} isLoading={loading} />
-                </div>
-                <div className="flex gap-3 w-full lg:w-auto">
-                  <div className="flex-1 lg:flex-none">
-                    <label className="block text-sm font-medium text-white mb-2">Filter & Sort</label>
-                    <AlumniFilterButton 
-                      selectedGraduationYear={selectedGraduationYear}
-                      selectedCompany={selectedCompany}
-                      selectedRole={selectedRole}
-                      sortBy={sortBy}
-                      sortOrder={sortOrder}
-                      onFilterChange={handleFilterChange}
-                      onSortChange={handleSortChange}
-                    />
-                  </div>
-                  <div className="flex-1 lg:flex-none">
-                    <label className="block text-sm font-medium text-white mb-2">Bookmarks</label>
-                    <BookmarkFilterButton
-                      showBookmarkedOnly={showBookmarkedOnly}
-                      onToggle={() => setShowBookmarkedOnly(!showBookmarkedOnly)}
-                      bookmarkCount={bookmarkedUserIds.size}
-                      loading={bookmarkLoading}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
+           <motion.div
+             initial={{ opacity: 0, y: 30 }}
+             animate={{ opacity: 1, y: 0 }}
+             transition={{ duration: 0.8, delay: 0.2 }}
+             className="bg-white/80 backdrop-blur-xl rounded-xl shadow-2xl border border-slate-200 p-4 mb-6 relative z-40"
+           >
+             {/* Animated background */}
+             <div className="absolute inset-0 bg-gradient-to-r from-primary-100/40 to-secondary-100/40 rounded-xl"></div>
+             
+             <div className="relative z-10">
+               <div className="flex flex-col lg:flex-row gap-3 items-start lg:items-center w-full">
+                 <div className="flex-1 w-full">
+                   <label className="block text-xs font-medium text-slate-700 mb-2 font-sans">Search Alumni</label>
+                   <AlumniSearch onSearch={handleSearch} isLoading={loading} />
+                 </div>
+                 <div className="flex gap-2 w-full lg:w-auto">
+                   <div className="flex-1 lg:flex-none">
+                     <label className="block text-xs font-medium text-slate-700 mb-2 font-sans">Filter & Sort</label>
+                     <AlumniFilterButton 
+                       selectedGraduationYear={selectedGraduationYear}
+                       selectedCompany={selectedCompany}
+                       selectedRole={selectedRole}
+                       sortBy={sortBy}
+                       sortOrder={sortOrder}
+                       onFilterChange={handleFilterChange}
+                       onSortChange={handleSortChange}
+                     />
+                   </div>
+                   <div className="flex-1 lg:flex-none">
+                     <label className="block text-xs font-medium text-slate-700 mb-2 font-sans">Bookmarks</label>
+                     <BookmarkFilterButton
+                       showBookmarkedOnly={showBookmarkedOnly}
+                       onToggle={() => setShowBookmarkedOnly(!showBookmarkedOnly)}
+                       bookmarkCount={bookmarkedUserIds.size}
+                       loading={bookmarkLoading}
+                     />
+                   </div>
+                 </div>
+               </div>
+             </div>
+           </motion.div>
 
           {/* Active Filters */}
           <AlumniActiveFilters
@@ -372,91 +372,91 @@ const AlumniPage = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="mt-8"
+            className="mt-6"
           >
-            {loading ? (
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8 }}
-                className="flex flex-col items-center justify-center py-20"
-              >
-                <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary-400 mb-4"></div>
-                <p className="text-gray-300 text-lg font-medium">Loading alumni...</p>
-              </motion.div>
-            ) : error ? (
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8 }}
-                className="flex flex-col items-center py-20"
-              >
-                <div className="w-16 h-16 bg-red-500/20 backdrop-blur-sm rounded-full flex items-center justify-center mb-4 border border-red-500/30">
-                  <i className="fas fa-exclamation-triangle text-red-400 text-2xl"></i>
-                </div>
-                <h3 className="text-xl font-bold text-white mb-2">Something went wrong</h3>
-                <p className="text-gray-300 text-center mb-6 max-w-md">{error}</p>
-                <button
-                  onClick={fetchAlumni}
-                  className="px-6 py-3 bg-gradient-to-r from-primary-500 to-secondary-500 text-white rounded-lg font-semibold hover:from-primary-600 hover:to-secondary-600 transition-all duration-300 flex items-center shadow-lg hover:shadow-xl"
-                >
-                  <i className="fas fa-refresh mr-2"></i>
-                  Try Again
-                </button>
-              </motion.div>
-            ) : alumni.length === 0 ? (
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8 }}
-                className="flex flex-col items-center py-20"
-              >
-                <div className="w-16 h-16 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center mb-4 border border-white/20">
-                  <i className="fas fa-users text-primary-400 text-2xl"></i>
-                </div>
-                <h3 className="text-xl font-bold text-white mb-2">No alumni found</h3>
-                <p className="text-gray-300 text-center mb-6 max-w-md">
-                  Try adjusting your search terms or filters to find more alumni.
-                </p>
-                <button
-                  onClick={() => {
-                    setSearchTerm('');
-                    setSelectedGraduationYear('');
-                    setSelectedCompany('');
-                    setSelectedRole('');
-                    setCurrentPage(1);
-                  }}
-                  className="px-6 py-3 bg-gradient-to-r from-primary-500 to-secondary-500 text-white rounded-lg font-semibold hover:from-primary-600 hover:to-secondary-600 transition-all duration-300 flex items-center shadow-lg hover:shadow-xl"
-                >
-                  <i className="fas fa-refresh mr-2"></i>
-                  Clear Filters
-                </button>
-              </motion.div>
-            ) : filteredAlumni.length === 0 ? (
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8 }}
-                className="flex flex-col items-center py-20"
-              >
-                <div className="w-16 h-16 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center mb-4 border border-white/20">
-                  <i className="fas fa-bookmark text-secondary-400 text-2xl"></i>
-                </div>
-                <h3 className="text-xl font-bold text-white mb-2">No bookmarked alumni</h3>
-                <p className="text-gray-300 text-center mb-6 max-w-md">
-                  Bookmark some alumni to see them here. Click the bookmark icon on any alumni card.
-                </p>
-                <button
-                  onClick={() => setShowBookmarkedOnly(false)}
-                  className="px-6 py-3 bg-gradient-to-r from-primary-500 to-secondary-500 text-white rounded-lg font-semibold hover:from-primary-600 hover:to-secondary-600 transition-all duration-300 flex items-center shadow-lg hover:shadow-xl"
-                >
-                  <i className="fas fa-eye mr-2"></i>
-                  View All Alumni
-                </button>
-              </motion.div>
+             {loading ? (
+               <motion.div
+                 initial={{ opacity: 0, y: 30 }}
+                 animate={{ opacity: 1, y: 0 }}
+                 transition={{ duration: 0.8 }}
+                 className="flex flex-col items-center justify-center py-12"
+               >
+                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mb-3"></div>
+                 <p className="text-slate-600 text-sm font-medium font-sans">Loading alumni...</p>
+               </motion.div>
+             ) : error ? (
+               <motion.div
+                 initial={{ opacity: 0, y: 30 }}
+                 animate={{ opacity: 1, y: 0 }}
+                 transition={{ duration: 0.8 }}
+                 className="flex flex-col items-center py-12"
+               >
+                 <div className="w-12 h-12 bg-red-100 backdrop-blur-sm rounded-full flex items-center justify-center mb-3 border border-red-200">
+                   <i className="fas fa-exclamation-triangle text-red-500 text-lg"></i>
+                 </div>
+                 <h3 className="text-lg font-bold text-slate-900 mb-2 font-sans">Something went wrong</h3>
+                 <p className="text-slate-600 text-center mb-4 max-w-md text-sm font-sans">{error}</p>
+                 <button
+                   onClick={fetchAlumni}
+                   className="px-4 py-2 bg-gradient-to-r from-primary-500 to-secondary-500 text-white rounded-lg font-semibold hover:from-primary-600 hover:to-secondary-600 transition-all duration-300 flex items-center shadow-lg hover:shadow-xl text-sm font-sans"
+                 >
+                   <i className="fas fa-refresh mr-2 text-xs"></i>
+                   Try Again
+                 </button>
+               </motion.div>
+             ) : alumni.length === 0 ? (
+               <motion.div
+                 initial={{ opacity: 0, y: 30 }}
+                 animate={{ opacity: 1, y: 0 }}
+                 transition={{ duration: 0.8 }}
+                 className="flex flex-col items-center py-12"
+               >
+                 <div className="w-12 h-12 bg-primary-100 backdrop-blur-sm rounded-full flex items-center justify-center mb-3 border border-primary-200">
+                   <i className="fas fa-users text-primary-600 text-lg"></i>
+                 </div>
+                 <h3 className="text-lg font-bold text-slate-900 mb-2 font-sans">No alumni found</h3>
+                 <p className="text-slate-600 text-center mb-4 max-w-md text-sm font-sans">
+                   Try adjusting your search terms or filters to find more alumni.
+                 </p>
+                 <button
+                   onClick={() => {
+                     setSearchTerm('');
+                     setSelectedGraduationYear('');
+                     setSelectedCompany('');
+                     setSelectedRole('');
+                     setCurrentPage(1);
+                   }}
+                   className="px-4 py-2 bg-gradient-to-r from-primary-500 to-secondary-500 text-white rounded-lg font-semibold hover:from-primary-600 hover:to-secondary-600 transition-all duration-300 flex items-center shadow-lg hover:shadow-xl text-sm font-sans"
+                 >
+                   <i className="fas fa-refresh mr-2 text-xs"></i>
+                   Clear Filters
+                 </button>
+               </motion.div>
+             ) : filteredAlumni.length === 0 ? (
+               <motion.div
+                 initial={{ opacity: 0, y: 30 }}
+                 animate={{ opacity: 1, y: 0 }}
+                 transition={{ duration: 0.8 }}
+                 className="flex flex-col items-center py-12"
+               >
+                 <div className="w-12 h-12 bg-secondary-100 backdrop-blur-sm rounded-full flex items-center justify-center mb-3 border border-secondary-200">
+                   <i className="fas fa-bookmark text-secondary-600 text-lg"></i>
+                 </div>
+                 <h3 className="text-lg font-bold text-slate-900 mb-2 font-sans">No bookmarked alumni</h3>
+                 <p className="text-slate-600 text-center mb-4 max-w-md text-sm font-sans">
+                   Bookmark some alumni to see them here. Click the bookmark icon on any alumni card.
+                 </p>
+                 <button
+                   onClick={() => setShowBookmarkedOnly(false)}
+                   className="px-4 py-2 bg-gradient-to-r from-primary-500 to-secondary-500 text-white rounded-lg font-semibold hover:from-primary-600 hover:to-secondary-600 transition-all duration-300 flex items-center shadow-lg hover:shadow-xl text-sm font-sans"
+                 >
+                   <i className="fas fa-eye mr-2 text-xs"></i>
+                   View All Alumni
+                 </button>
+               </motion.div>
             ) : (
               <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 justify-center">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-center">
                   <AnimatePresence>
                     {filteredAlumni.map((a, index) => {
                       // Disable for self
@@ -528,7 +528,7 @@ const AlumniPage = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.8 }}
-                  className="mt-10"
+                  className="mt-8"
                 >
                   <EventPagination
                     currentPage={currentPage}

@@ -145,7 +145,7 @@ const TestimonialsPage = () => {
       <div className="min-h-screen bg-gray-50">
       
       {/* Hero Section */}
-      <section className="relative py-16 sm:py-20 overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-purple-50">
+      <section className="relative py-12 overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-purple-50">
           <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/5 to-purple-600/5"></div>
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center">
@@ -153,7 +153,7 @@ const TestimonialsPage = () => {
                 <StarIcon className="h-4 w-4 mr-2" />
                 Success Stories from Our Alumni
               </div>
-              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+              <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold font-sans text-gray-900 mb-4">
                 Alumni{' '}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">
                   Testimonials
@@ -225,7 +225,7 @@ const TestimonialsPage = () => {
           {/* Testimonials Content */}
           <div className="mt-8">
             {loading ? (
-              <div className="flex justify-center items-center py-16">
+              <div className="flex justify-center items-center py-12">
                 <div className="relative inline-block">
                   <div className="animate-spin rounded-full h-16 w-16 border-4 border-indigo-200 border-t-indigo-600 mx-auto"></div>
                   <div className="absolute inset-0 flex items-center justify-center">
@@ -234,7 +234,7 @@ const TestimonialsPage = () => {
                 </div>
               </div>
             ) : filteredAndSortedTestimonials.length === 0 ? (
-              <div className="text-center py-16">
+              <div className="text-center py-12">
                 <div className="w-24 h-24 bg-gradient-to-r from-indigo-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
                   <StarIcon className="h-8 w-8 text-indigo-500" />
                 </div>
@@ -330,7 +330,7 @@ const TestimonialsPage = () => {
                     <button
                       onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                       disabled={currentPage === 1}
-                      className="flex items-center px-6 py-3 bg-white/80 backdrop-blur-sm border border-gray-200 text-gray-700 rounded-xl font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white hover:shadow-md transition-all duration-200"
+                      className="flex items-center px-4 py-2 bg-white/80 backdrop-blur-sm border border-gray-200 text-gray-700 rounded-lg font-medium font-sans disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white hover:shadow-md transition-all duration-200"
                     >
                       <svg className="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -360,7 +360,7 @@ const TestimonialsPage = () => {
                     <button
                       onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                       disabled={currentPage === totalPages}
-                      className="flex items-center px-6 py-3 bg-white/80 backdrop-blur-sm border border-gray-200 text-gray-700 rounded-xl font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white hover:shadow-md transition-all duration-200"
+                      className="flex items-center px-4 py-2 bg-white/80 backdrop-blur-sm border border-gray-200 text-gray-700 rounded-lg font-medium font-sans disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white hover:shadow-md transition-all duration-200"
                     >
                       Next
                       <svg className="h-4 w-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -375,7 +375,7 @@ const TestimonialsPage = () => {
         </div>
 
         {/* Call to Action */}
-        <section className="py-16 sm:py-20 relative overflow-hidden">
+        <section className="py-12 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-800"></div>
           <div className="absolute inset-0 bg-black/10"></div>
           <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

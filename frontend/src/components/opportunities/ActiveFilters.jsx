@@ -34,11 +34,11 @@ const ActiveFilters = ({
   return (
     <div className="flex flex-wrap gap-3 mb-6">
       {selectedType && (
-        <div className="flex items-center gap-1 px-4 py-2 bg-accent-100 text-accent-700 rounded-full text-sm font-medium shadow-lg animate-fade-in">
+        <div className="flex items-center gap-1 px-4 py-2 bg-primary-100 text-primary-700 rounded-full text-sm font-medium shadow-lg animate-fade-in">
           <span className="text-sm">Type: {getTypeLabel()}</span>
           <button
             onClick={onClearType}
-            className="ml-1 hover:text-accent-800 transition-colors p-1 rounded-full hover:bg-accent-200"
+            className="ml-1 hover:text-primary-800 transition-colors p-1 rounded-full hover:bg-primary-200"
             aria-label="Clear type filter"
           >
             <XMarkIcon className="h-3 w-3" />

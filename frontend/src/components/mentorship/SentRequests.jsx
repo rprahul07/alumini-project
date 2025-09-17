@@ -172,11 +172,11 @@ const SentRequests = ({ requests, loading, error, setRequests, showAlert }) => {
   return (
     <div className="flex flex-col h-full">
       {loading ? (
-        <div className="text-center text-gray-300 py-8">Loading...</div>
+        <div className="text-center text-slate-600 py-8">Loading...</div>
       ) : error ? (
-        <div className="text-center text-red-400 py-8">{error}</div>
+        <div className="text-center text-red-600 py-8">{error}</div>
       ) : requests.length === 0 ? (
-        <div className="text-center text-gray-300 py-8">No mentorship requests sent yet.</div>
+        <div className="text-center text-slate-600 py-8">No mentorship requests sent yet.</div>
       ) : (
         <>
           {/* Mobile Card View */}
@@ -187,7 +187,7 @@ const SentRequests = ({ requests, loading, error, setRequests, showAlert }) => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.1 }}
-                className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl p-3 hover:bg-white/20 transition-colors duration-200"
+                className="bg-slate-50 backdrop-blur-xl border border-slate-200 rounded-xl p-3 hover:bg-slate-100 transition-colors duration-200"
               >
                 <div className="space-y-2">
                   <div className="flex items-start justify-between">
@@ -195,21 +195,21 @@ const SentRequests = ({ requests, loading, error, setRequests, showAlert }) => {
                       <img 
                         src={req.alumni?.photoUrl} 
                         alt={req.alumni?.fullName || 'Alumni'} 
-                        className="w-8 h-8 rounded-full object-cover border border-white/30 flex-shrink-0" 
+                        className="w-8 h-8 rounded-full object-cover border border-slate-300 flex-shrink-0" 
                       />
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-semibold text-white text-sm truncate">
+                        <h4 className="font-semibold text-slate-900 text-sm truncate">
                           {req.alumni?.fullName || 'Alumni'}
                         </h4>
-                        <span className="inline-block px-2 py-0.5 rounded-full text-xs font-semibold bg-green-500/20 text-green-300 border border-green-500/30">
+                        <span className="inline-block px-2 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-700 border border-green-300">
                           alumni
                         </span>
                       </div>
                     </div>
                     <span className={`inline-block px-2 py-1 rounded-full font-semibold border text-xs ${
-                      req.status === 'pending' ? 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30' :
-                      req.status === 'accepted' ? 'bg-green-500/20 text-green-300 border-green-500/30' :
-                      'bg-gray-500/20 text-gray-300 border-gray-500/30'
+                      req.status === 'pending' ? 'bg-yellow-100 text-yellow-700 border-yellow-300' :
+                      req.status === 'accepted' ? 'bg-green-100 text-green-700 border-green-300' :
+                      'bg-gray-100 text-gray-700 border-gray-300'
                     }`}>
                       {req.status}
                     </span>
@@ -242,24 +242,24 @@ const SentRequests = ({ requests, loading, error, setRequests, showAlert }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="hidden lg:block overflow-x-auto rounded-xl shadow-2xl bg-white/10 backdrop-blur-xl border border-white/20"
+            className="hidden lg:block overflow-x-auto rounded-xl shadow-2xl bg-slate-50 backdrop-blur-xl border border-slate-200"
           >
-      <table className="w-full table-fixed divide-y divide-white/20 text-xs" role="grid" aria-label="Sent mentorship requests table">
-        <thead className="bg-white/10">
+      <table className="w-full table-fixed divide-y divide-slate-200 text-xs" role="grid" aria-label="Sent mentorship requests table">
+        <thead className="bg-slate-100">
           <tr>
-            <th className="px-2 py-2 w-40 text-left font-medium text-white/90 uppercase tracking-wider">Name</th>
-            <th className="px-2 py-2 w-20 text-left font-medium text-white/90 uppercase tracking-wider">Role</th>
-            <th className="px-2 py-2 w-20 text-left font-medium text-white/90 uppercase tracking-wider">Status</th>
-            <th className="px-2 py-2 w-32 text-right font-medium text-white/90 uppercase tracking-wider">Actions</th>
+            <th className="px-2 py-2 w-40 text-left font-medium text-slate-700 uppercase tracking-wider">Name</th>
+            <th className="px-2 py-2 w-20 text-left font-medium text-slate-700 uppercase tracking-wider">Role</th>
+            <th className="px-2 py-2 w-20 text-left font-medium text-slate-700 uppercase tracking-wider">Status</th>
+            <th className="px-2 py-2 w-32 text-right font-medium text-slate-700 uppercase tracking-wider">Actions</th>
           </tr>
         </thead>
-        <tbody className="bg-white/5 divide-y divide-white/20">
+        <tbody className="bg-white divide-y divide-slate-200">
           {loading ? (
-            <tr key="sent-loading"><td colSpan={4} className="text-center text-gray-300 py-6">Loading...</td></tr>
+            <tr key="sent-loading"><td colSpan={4} className="text-center text-slate-600 py-6">Loading...</td></tr>
           ) : error ? (
-            <tr key="sent-error"><td colSpan={4} className="text-center text-red-400 py-6">{error}</td></tr>
+            <tr key="sent-error"><td colSpan={4} className="text-center text-red-600 py-6">{error}</td></tr>
           ) : requests.length === 0 ? (
-            <tr key="sent-empty"><td colSpan={4} className="text-center text-gray-300 py-6">No mentorship requests sent yet.</td></tr>
+            <tr key="sent-empty"><td colSpan={4} className="text-center text-slate-600 py-6">No mentorship requests sent yet.</td></tr>
           ) : (
             requests.map((req, index) => (
               <motion.tr
@@ -267,28 +267,28 @@ const SentRequests = ({ requests, loading, error, setRequests, showAlert }) => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.1 }}
-                className="hover:bg-white/10 cursor-pointer transition-colors duration-200"
+                className="hover:bg-slate-50 cursor-pointer transition-colors duration-200"
               >
                 <td className="px-2 py-2 whitespace-nowrap font-semibold">
                   <div className="flex items-center gap-2">
                     <img 
                       src={req.alumni?.photoUrl} 
                       alt={req.alumni?.fullName || 'Alumni'} 
-                      className="w-7 h-7 rounded-full object-cover border border-white/30" 
+                      className="w-7 h-7 rounded-full object-cover border border-slate-300" 
                     />
-                    <span className="truncate max-w-[120px] block text-white">
+                    <span className="truncate max-w-[120px] block text-slate-900">
                       {req.alumni?.fullName || 'Alumni'}
                     </span>
                   </div>
                 </td>
                 <td className="px-2 py-2 whitespace-nowrap">
-                  <span className="inline-block px-2 py-1 rounded-full text-xs font-semibold bg-green-500/20 text-green-300 border border-green-500/30">alumni</span>
+                  <span className="inline-block px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700 border border-green-300">alumni</span>
                 </td>
                 <td className="px-2 py-2 whitespace-nowrap text-xs font-medium">
                   <span className={`inline-block px-2 py-1 rounded-full font-semibold border ${
-                    req.status === 'pending' ? 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30' :
-                    req.status === 'accepted' ? 'bg-green-500/20 text-green-300 border-green-500/30' :
-                    'bg-gray-500/20 text-gray-300 border-gray-500/30'
+                    req.status === 'pending' ? 'bg-yellow-100 text-yellow-700 border-yellow-300' :
+                    req.status === 'accepted' ? 'bg-green-100 text-green-700 border-green-300' :
+                    'bg-gray-100 text-gray-700 border-gray-300'
                   }`}>{req.status}</span>
                 </td>
                 <td className="px-2 py-2 whitespace-nowrap text-right relative flex gap-2 justify-end">

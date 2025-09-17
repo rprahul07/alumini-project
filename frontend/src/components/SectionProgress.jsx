@@ -50,10 +50,10 @@ const SectionProgress = ({ sections = [], className = '' }) => {
               <motion.div
                 initial={{ opacity: 0, x: 20, scale: 0.8 }}
                 whileHover={{ opacity: 1, x: 0, scale: 1 }}
-                className="absolute right-6 bg-gray-900 text-white text-xs px-3 py-2 rounded-lg whitespace-nowrap pointer-events-none"
+                className="absolute right-6 bg-slate-800 text-white text-xs px-3 py-2 rounded-lg whitespace-nowrap pointer-events-none"
               >
                 {section.label}
-                <div className="absolute right-0 top-1/2 transform translate-x-1 -translate-y-1/2 w-2 h-2 bg-gray-900 rotate-45"></div>
+                <div className="absolute right-0 top-1/2 transform translate-x-1 -translate-y-1/2 w-2 h-2 bg-slate-800 rotate-45"></div>
               </motion.div>
 
               {/* Active indicator */}

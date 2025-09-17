@@ -201,7 +201,7 @@ const AdminEventsPage = () => {
           </div>
           <button
             onClick={handleCreate}
-            className="flex items-center gap-2 px-6 py-3 bg-white/20 backdrop-blur-sm rounded-xl text-white font-semibold hover:bg-white/30 transition-all duration-200 border border-white/30"
+            className="flex items-center gap-2 px-6 py-3 bg-white/80 backdrop-blur-sm rounded-xl text-slate-900 font-semibold hover:bg-white transition-all duration-200 border border-slate-200"
           >
             <FiPlus className="h-5 w-5" />
             Create Event

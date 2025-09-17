@@ -47,7 +47,7 @@ const RoleSelection = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 py-12 px-4 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-white via-slate-50 to-white py-8 px-4 relative overflow-hidden">
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-primary-500/10 rounded-full blur-3xl animate-pulse"></div>
@@ -58,30 +58,30 @@ const RoleSelection = () => {
       <div className="w-full max-w-md relative z-10">
         {/* Already logged in message */}
         {user && (
-          <div className="mb-6 bg-gradient-to-br from-black/80 via-gray-900/90 to-black/80 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/30 p-6 animate-slide-up">
-            <div className="text-center mb-4">
-              <div className="w-16 h-16 bg-gradient-to-r from-primary-500/20 to-secondary-500/20 rounded-full flex items-center justify-center mx-auto mb-3 border border-white/30">
-                <svg className="w-8 h-8 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="mb-4 bg-white/80 backdrop-blur-2xl rounded-3xl shadow-2xl border border-slate-200 p-5 animate-slide-up">
+            <div className="text-center mb-3">
+              <div className="w-14 h-14 bg-gradient-to-r from-primary-500/20 to-secondary-500/20 rounded-full flex items-center justify-center mx-auto mb-2 border border-slate-200">
+                <svg className="w-7 h-7 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
               </div>
-              <p className="text-lg text-white mb-2 font-display">
+              <p className="text-sm text-slate-900 mb-1 font-sans">
                 Welcome back!
               </p>
-              <p className="text-white/80 mb-4">
-                You are logged in as <span className="font-semibold text-primary-400">{user.fullName || user.email || user.role}</span>
+              <p className="text-xs text-slate-600 mb-3 font-sans">
+                You are logged in as <span className="font-semibold text-primary-600">{user.fullName || user.email || user.role}</span>
               </p>
             </div>
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-2">
               <button
                 onClick={handleContinue}
-                className="w-full bg-gradient-to-r from-primary-500 to-secondary-500 hover:from-primary-600 hover:to-secondary-600 text-white font-semibold py-3 px-6 rounded-2xl transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-105 font-body"
+                className="w-full bg-gradient-to-r from-primary-500 to-secondary-500 hover:from-primary-600 hover:to-secondary-600 text-white font-semibold py-2.5 px-5 rounded-2xl transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-105 font-sans text-sm"
               >
                 Continue to Dashboard
               </button>
               <button
                 onClick={handleLogout}
-                className="w-full bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 text-white font-semibold py-3 px-6 rounded-2xl transition-all duration-300 font-body"
+                className="w-full bg-slate-50 backdrop-blur-xl border border-slate-200 hover:bg-slate-100 text-slate-700 font-semibold py-2.5 px-5 rounded-2xl transition-all duration-300 font-sans text-sm"
               >
                 Logout & Switch Account
               </button>
@@ -90,46 +90,46 @@ const RoleSelection = () => {
         )}
 
         {/* Main Card */}
-        <div className="bg-gradient-to-br from-black/80 via-gray-900/90 to-black/80 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/30 p-8 animate-slide-up">
+        <div className="bg-white/80 backdrop-blur-2xl rounded-3xl shadow-2xl border border-slate-200 p-6 animate-slide-up">
           {/* Header */}
-          <div className="text-center mb-8">
-            <div className="w-20 h-20 bg-gradient-to-r from-primary-500/20 to-secondary-500/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-white/30">
-              <svg className="w-10 h-10 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="text-center mb-6">
+            <div className="w-16 h-16 bg-gradient-to-r from-primary-500/20 to-secondary-500/20 rounded-full flex items-center justify-center mx-auto mb-3 border border-slate-200">
+              <svg className="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
               </svg>
             </div>
-            <h1 className="text-2xl font-bold text-white mb-2 font-display">
+            <h1 className="text-lg font-bold text-slate-900 mb-2 font-sans">
               Choose Your Role
             </h1>
-            <p className="text-white/80 font-body">
-              Select your role to get started with the platform
+            <p className="text-sm text-slate-600 font-sans">
+Select your role to get started with the platform
             </p>
           </div>
 
           {/* Role Selection */}
-          <div className="space-y-4">
+          <div className="space-y-3">
             {roles.map((role) => {
               const Icon = role.icon;
               return (
                 <button
                   key={role.id}
                   onClick={() => handleRoleSelect(role.id)}
-                  className="w-full bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 hover:bg-white/20 hover:border-white/30 transition-all duration-300 text-left group hover:shadow-xl transform hover:scale-105"
+                  className="w-full bg-slate-50 backdrop-blur-xl border border-slate-200 rounded-2xl p-4 hover:bg-slate-100 hover:border-slate-300 transition-all duration-300 text-left group hover:shadow-xl transform hover:scale-105"
                 >
-                  <div className="flex items-center space-x-4">
-                    <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${role.color} flex items-center justify-center text-white group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
-                      <Icon className="w-7 h-7" />
+                  <div className="flex items-center space-x-3">
+                    <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${role.color} flex items-center justify-center text-white group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
+                      <Icon className="w-6 h-6" />
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-white mb-1 font-display">
+                      <h3 className="text-sm font-semibold text-slate-900 mb-1 font-sans">
                         {role.title}
                       </h3>
-                      <p className="text-sm text-white/70 font-body">
+                      <p className="text-xs text-slate-600 font-sans">
                         {role.description}
                       </p>
                     </div>
-                    <div className="text-white/60 group-hover:text-white group-hover:translate-x-1 transition-all duration-300">
-                      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <div className="text-slate-400 group-hover:text-slate-600 group-hover:translate-x-1 transition-all duration-300">
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
                     </div>
@@ -140,8 +140,8 @@ const RoleSelection = () => {
           </div>
 
           {/* Footer */}
-          <div className="mt-8 text-center">
-            <p className="text-white/60 text-sm font-body">
+          <div className="mt-6 text-center">
+            <p className="text-slate-500 text-xs font-sans">
               Need help? Contact our support team
             </p>
           </div>

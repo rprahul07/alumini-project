@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 function FaqButtons({ onSelect }) {
-  const categories = ['All', 'Account', 'Billing', 'Technical', 'Support'];
+  const categories = ['All', 'Account', 'Opportunities', 'Networking', 'Profile', 'Support', 'Technical'];
   const [active, setActive] = useState('All');
 
   const handleClick = (cat) => {
@@ -17,8 +17,8 @@ function FaqButtons({ onSelect }) {
           onClick={() => handleClick(cat)}
           className={`px-4 py-2 rounded-full transition-all duration-300 ${
             active === cat
-              ? 'bg-[#5A32EA] text-white'
-              : 'bg-[#eaeaea] hover:bg-[#E0E0E0]'
+              ? 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white'
+              : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
           }`}
         >
           {cat}

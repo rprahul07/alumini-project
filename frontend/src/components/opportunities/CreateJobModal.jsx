@@ -149,19 +149,19 @@ const CreateJobModal = ({ onClose, onSuccess, showAlert, editMode = false, jobTo
   if (!onClose) return null;
 
   const modalContent = (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto border border-white/20">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9999] p-4">
+      <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto scrollbar-hide border border-slate-200" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-white/10">
-          <h3 className="text-xl font-bold text-white flex items-center gap-3">
-            <div className="w-8 h-8 bg-gradient-to-br from-primary-500/20 to-secondary-500/20 rounded-xl flex items-center justify-center">
-              <BriefcaseIcon className="h-5 w-5 text-primary-400" />
+        <div className="flex items-center justify-between p-6 border-b border-slate-200">
+          <h3 className="text-xl font-bold text-slate-900 flex items-center gap-3">
+            <div className="w-8 h-8 bg-gradient-to-br from-primary-100 to-secondary-100 rounded-xl flex items-center justify-center">
+              <BriefcaseIcon className="h-5 w-5 text-primary-600" />
             </div>
             {editMode ? 'Edit Opportunity' : 'Create New Opportunity'}
           </h3>
           <button
             onClick={onClose}
-            className="text-white/60 hover:text-white transition-colors p-2 rounded-full hover:bg-white/10"
+            className="text-slate-500 hover:text-slate-900 transition-colors p-2 rounded-full hover:bg-slate-100"
           >
             <XMarkIcon className="h-6 w-6" />
           </button>
@@ -170,7 +170,7 @@ const CreateJobModal = ({ onClose, onSuccess, showAlert, editMode = false, jobTo
         {/* Form Content */}
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {/* Location/Remote Section */}
-          <div className="bg-white/5 backdrop-blur-xl rounded-xl p-4 border border-white/10">
+          <div className="bg-slate-50 backdrop-blur-xl rounded-xl p-4 border border-slate-200">
             <div className="flex items-center gap-4">
               <input
                 type="checkbox"
@@ -184,22 +184,22 @@ const CreateJobModal = ({ onClose, onSuccess, showAlert, editMode = false, jobTo
                     setErrors(prev => ({ ...prev, location: undefined }));
                   }
                 }}
-                className="h-4 w-4 text-primary-400 focus:ring-primary-500 border-white/30 rounded bg-white/10"
+                className="h-4 w-4 text-primary-400 focus:ring-primary-500 border-slate-300 rounded bg-slate-50"
               />
-              <label htmlFor="remote-checkbox" className="text-sm text-white/90 select-none cursor-pointer font-medium">
+              <label htmlFor="remote-checkbox" className="text-sm text-slate-700 select-none cursor-pointer font-medium">
                 This is a remote opportunity
               </label>
             </div>
           </div>
           {!isRemote && (
             <div>
-              <label className="block text-sm font-semibold text-white/90 mb-3">
+              <label className="block text-sm font-semibold text-slate-700 mb-3">
                 Location
               </label>
               <input
                 type="text"
-                className={`w-full px-4 py-3 bg-white/10 backdrop-blur-xl border rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-400/50 text-white placeholder-white/50 ${
-                  errors.location ? 'border-red-400/50 bg-red-500/10' : 'border-white/20'
+                className={`w-full px-4 py-3 bg-slate-50 backdrop-blur-xl border rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-400/50 text-slate-900 placeholder-slate-500 ${
+                  errors.location ? 'border-red-400/50 bg-red-500/10' : 'border-slate-300'
                 }`}
                 value={location || ''}
                 onChange={e => setLocation(e.target.value)}
@@ -207,8 +207,8 @@ const CreateJobModal = ({ onClose, onSuccess, showAlert, editMode = false, jobTo
                 required={!isRemote}
               />
               {errors.location && (
-                <p className="mt-2 text-sm text-red-400 flex items-center gap-2">
-                  <span className="w-1 h-1 bg-red-400 rounded-full"></span>
+                <p className="mt-2 text-sm text-red-600 flex items-center gap-2">
+                  <span className="w-1 h-1 bg-red-600 rounded-full"></span>
                   {errors.location}
                 </p>
               )}
@@ -217,13 +217,13 @@ const CreateJobModal = ({ onClose, onSuccess, showAlert, editMode = false, jobTo
             
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-semibold text-white/90 mb-3">
+              <label className="block text-sm font-semibold text-slate-700 mb-3">
                 Company Name
               </label>
               <input 
                 type="text" 
-                className={`w-full px-4 py-3 bg-white/10 backdrop-blur-xl border rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-400/50 text-white placeholder-white/50 ${
-                  errors.companyName ? 'border-red-400/50 bg-red-500/10' : 'border-white/20'
+                className={`w-full px-4 py-3 bg-slate-50 backdrop-blur-xl border rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-400/50 text-slate-900 placeholder-slate-500 ${
+                  errors.companyName ? 'border-red-400/50 bg-red-500/10' : 'border-slate-300'
                 }`}
                 value={companyName} 
                 onChange={e => setCompanyName(e.target.value)} 
@@ -231,20 +231,20 @@ const CreateJobModal = ({ onClose, onSuccess, showAlert, editMode = false, jobTo
                 required 
               />
               {errors.companyName && (
-                <p className="mt-2 text-sm text-red-400 flex items-center gap-2">
-                  <span className="w-1 h-1 bg-red-400 rounded-full"></span>
+                <p className="mt-2 text-sm text-red-600 flex items-center gap-2">
+                  <span className="w-1 h-1 bg-red-600 rounded-full"></span>
                   {errors.companyName}
                 </p>
               )}
             </div>
             <div>
-              <label className="block text-sm font-semibold text-white/90 mb-3">
+              <label className="block text-sm font-semibold text-slate-700 mb-3">
                 Job Title
               </label>
               <input 
                 type="text" 
-                className={`w-full px-4 py-3 bg-white/10 backdrop-blur-xl border rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-400/50 text-white placeholder-white/50 ${
-                  errors.jobTitle ? 'border-red-400/50 bg-red-500/10' : 'border-white/20'
+                className={`w-full px-4 py-3 bg-slate-50 backdrop-blur-xl border rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-400/50 text-slate-900 placeholder-slate-500 ${
+                  errors.jobTitle ? 'border-red-400/50 bg-red-500/10' : 'border-slate-300'
                 }`}
                 value={jobTitle} 
                 onChange={e => setJobTitle(e.target.value)} 
@@ -252,8 +252,8 @@ const CreateJobModal = ({ onClose, onSuccess, showAlert, editMode = false, jobTo
                 required 
               />
               {errors.jobTitle && (
-                <p className="mt-2 text-sm text-red-400 flex items-center gap-2">
-                  <span className="w-1 h-1 bg-red-400 rounded-full"></span>
+                <p className="mt-2 text-sm text-red-600 flex items-center gap-2">
+                  <span className="w-1 h-1 bg-red-600 rounded-full"></span>
                   {errors.jobTitle}
                 </p>
               )}
@@ -261,12 +261,12 @@ const CreateJobModal = ({ onClose, onSuccess, showAlert, editMode = false, jobTo
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-white/90 mb-3">
+            <label className="block text-sm font-semibold text-slate-700 mb-3">
               Description
             </label>
             <textarea 
-              className={`w-full px-4 py-3 bg-white/10 backdrop-blur-xl border rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-400/50 text-white placeholder-white/50 resize-none min-h-[120px] ${
-                errors.description ? 'border-red-400/50 bg-red-500/10' : 'border-white/20'
+              className={`w-full px-4 py-3 bg-slate-50 backdrop-blur-xl border rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-400/50 text-slate-900 placeholder-slate-500 resize-none min-h-[120px] ${
+                errors.description ? 'border-red-400/50 bg-red-500/10' : 'border-slate-300'
               }`}
               value={description} 
               onChange={e => setDescription(e.target.value)} 
@@ -274,8 +274,8 @@ const CreateJobModal = ({ onClose, onSuccess, showAlert, editMode = false, jobTo
               required 
             />
             {errors.description && (
-              <p className="mt-2 text-sm text-red-400 flex items-center gap-2">
-                <span className="w-1 h-1 bg-red-400 rounded-full"></span>
+              <p className="mt-2 text-sm text-red-600 flex items-center gap-2">
+                <span className="w-1 h-1 bg-red-600 rounded-full"></span>
                 {errors.description}
               </p>
             )}
@@ -283,12 +283,12 @@ const CreateJobModal = ({ onClose, onSuccess, showAlert, editMode = false, jobTo
 
           {/* Opportunity Type Section */}
           <div>
-            <label className="block text-sm font-semibold text-white/90 mb-3">
+            <label className="block text-sm font-semibold text-slate-700 mb-3">
               Opportunity Type
             </label>
             <div className="flex gap-4">
               <label className={`flex items-center gap-3 px-6 py-4 rounded-xl border cursor-pointer transition-all duration-300 font-medium text-sm shadow-lg flex-1 backdrop-blur-xl
-                ${jobType === 'job' ? 'bg-gradient-to-r from-primary-500/20 to-secondary-500/20 border-primary-400/50 text-primary-400 ring-2 ring-primary-400/30' : 'bg-white/10 border-white/20 text-white/80 hover:bg-white/20 hover:border-white/30'}`}
+                ${jobType === 'job' ? 'bg-gradient-to-r from-primary-100 to-secondary-100 border-primary-300 text-primary-700 ring-2 ring-primary-300' : 'bg-slate-50 border-slate-300 text-slate-700 hover:bg-slate-100 hover:border-slate-400'}`}
               >
                 <input
                   type="radio"
@@ -296,13 +296,13 @@ const CreateJobModal = ({ onClose, onSuccess, showAlert, editMode = false, jobTo
                   value="job"
                   checked={jobType === 'job'}
                   onChange={() => setJobType('job')}
-                  className="form-radio text-primary-400 focus:ring-primary-500 accent-primary-400"
+                  className="form-radio text-primary-600 focus:ring-primary-500 accent-primary-600"
                 />
                 <BriefcaseIcon className="h-5 w-5" />
                 <span>Job</span>
               </label>
               <label className={`flex items-center gap-3 px-6 py-4 rounded-xl border cursor-pointer transition-all duration-300 font-medium text-sm shadow-lg flex-1 backdrop-blur-xl
-                ${jobType === 'internship' ? 'bg-gradient-to-r from-green-500/20 to-emerald-500/20 border-green-400/50 text-green-400 ring-2 ring-green-400/30' : 'bg-white/10 border-white/20 text-white/80 hover:bg-white/20 hover:border-white/30'}`}
+                ${jobType === 'internship' ? 'bg-gradient-to-r from-green-100 to-emerald-100 border-green-300 text-green-700 ring-2 ring-green-300' : 'bg-slate-50 border-slate-300 text-slate-700 hover:bg-slate-100 hover:border-slate-400'}`}
               >
                 <input
                   type="radio"
@@ -310,7 +310,7 @@ const CreateJobModal = ({ onClose, onSuccess, showAlert, editMode = false, jobTo
                   value="internship"
                   checked={jobType === 'internship'}
                   onChange={() => setJobType('internship')}
-                  className="form-radio text-green-400 focus:ring-green-500 accent-green-400"
+                  className="form-radio text-green-600 focus:ring-green-500 accent-green-600"
                 />
                 <AcademicCapIcon className="h-5 w-5" />
                 <span>Internship</span>
@@ -321,35 +321,35 @@ const CreateJobModal = ({ onClose, onSuccess, showAlert, editMode = false, jobTo
           {/* Application Settings Section */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-semibold text-white/90 mb-3">
+              <label className="block text-sm font-semibold text-slate-700 mb-3">
                 Deadline
               </label>
               <div className="relative">
                 <input
                   type="date"
-                  className={`w-full px-4 py-3 bg-white/10 backdrop-blur-xl border rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-400/50 text-white pr-10 ${
-                    errors.deadline ? 'border-red-400/50 bg-red-500/10' : 'border-white/20'
+                  className={`w-full px-4 py-3 bg-slate-50 backdrop-blur-xl border rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-400/50 text-slate-900 placeholder-slate-500 pr-10 ${
+                    errors.deadline ? 'border-red-400/50 bg-red-500/10' : 'border-slate-300'
                   }`}
                   value={deadline}
                   onChange={e => setDeadline(e.target.value)}
                   min={today}
                 />
-                <CalendarIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-white/60 pointer-events-none" />
+                <CalendarIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-500 pointer-events-none" />
               </div>
               {errors.deadline && (
-                <p className="mt-2 text-sm text-red-400 flex items-center gap-2">
-                  <span className="w-1 h-1 bg-red-400 rounded-full"></span>
+                <p className="mt-2 text-sm text-red-600 flex items-center gap-2">
+                  <span className="w-1 h-1 bg-red-600 rounded-full"></span>
                   {errors.deadline}
                 </p>
               )}
             </div>
             <div>
-              <label className="block text-sm font-semibold text-white/90 mb-3">
+              <label className="block text-sm font-semibold text-slate-700 mb-3">
                 Registration Type
               </label>
               <div className="relative">
                 <select
-                  className="w-full px-4 py-3 bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-400/50 text-white appearance-none pr-10"
+                  className="w-full px-4 py-3 bg-slate-50 backdrop-blur-xl border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-400/50 text-slate-900 appearance-none pr-10"
                   value={registrationType}
                   onChange={e => {
                     setRegistrationType(e.target.value);
@@ -357,23 +357,23 @@ const CreateJobModal = ({ onClose, onSuccess, showAlert, editMode = false, jobTo
                     setErrors(prev => ({ ...prev, registrationLink: undefined }));
                   }}
                 >
-                  <option value="internal" className="bg-gray-800 text-white">Internal (Apply on site)</option>
-                  <option value="external" className="bg-gray-800 text-white">External (Redirect to company site)</option>
+                  <option value="internal" className="bg-slate-50 text-slate-900">Internal (Apply on site)</option>
+                  <option value="external" className="bg-slate-50 text-slate-900">External (Redirect to company site)</option>
                 </select>
-                <GlobeAltIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-white/60 pointer-events-none" />
+                <GlobeAltIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-500 pointer-events-none" />
               </div>
             </div>
           </div>
           {/* Registration Link (if external) */}
           {registrationType === 'external' && (
             <div>
-              <label className="block text-sm font-semibold text-white/90 mb-3">
+              <label className="block text-sm font-semibold text-slate-700 mb-3">
                 Registration Link
               </label>
               <input 
                 type="url" 
-                className={`w-full px-4 py-3 bg-white/10 backdrop-blur-xl border rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-400/50 text-white placeholder-white/50 ${
-                  errors.registrationLink ? 'border-red-400/50 bg-red-500/10' : 'border-white/20'
+                className={`w-full px-4 py-3 bg-slate-50 backdrop-blur-xl border rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-400/50 text-slate-900 placeholder-slate-500 ${
+                  errors.registrationLink ? 'border-red-400/50 bg-red-500/10' : 'border-slate-300'
                 }`}
                 value={registrationLink} 
                 onChange={e => setRegistrationLink(e.target.value)} 
@@ -381,8 +381,8 @@ const CreateJobModal = ({ onClose, onSuccess, showAlert, editMode = false, jobTo
                 placeholder="https://company.com/apply"
               />
               {errors.registrationLink && (
-                <p className="mt-2 text-sm text-red-400 flex items-center gap-2">
-                  <span className="w-1 h-1 bg-red-400 rounded-full"></span>
+                <p className="mt-2 text-sm text-red-600 flex items-center gap-2">
+                  <span className="w-1 h-1 bg-red-600 rounded-full"></span>
                   {errors.registrationLink}
                 </p>
               )}
@@ -391,9 +391,9 @@ const CreateJobModal = ({ onClose, onSuccess, showAlert, editMode = false, jobTo
 
           {/* Email Notification Section */}
           {registrationType === 'internal' && (
-            <div className="bg-white/5 backdrop-blur-xl rounded-xl p-4 border border-white/10">
+            <div className="bg-slate-50 backdrop-blur-xl rounded-xl p-4 border border-slate-200">
               <div className="flex items-center gap-4">
-                <label htmlFor="emailNotification" className="text-sm text-white/90 cursor-pointer select-none font-medium flex-1">
+                <label htmlFor="emailNotification" className="text-sm text-slate-700 cursor-pointer select-none font-medium flex-1">
                   Notify me by email when someone applies
                 </label>
                 <button
@@ -413,10 +413,10 @@ const CreateJobModal = ({ onClose, onSuccess, showAlert, editMode = false, jobTo
           )}
 
           {/* Action Buttons */}
-          <div className="flex justify-between gap-4 pt-6 border-t border-white/10">
+          <div className="flex justify-between gap-4 pt-6 border-t border-slate-200">
             <button 
               type="button" 
-              className="px-6 py-3 font-semibold bg-white/10 backdrop-blur-xl border border-white/20 text-white hover:bg-white/20 transition-all duration-300 rounded-xl shadow-lg hover:shadow-xl" 
+              className="px-6 py-3 font-semibold bg-slate-100 backdrop-blur-xl border border-slate-300 text-slate-700 hover:bg-slate-200 transition-all duration-300 rounded-xl shadow-lg hover:shadow-xl" 
               onClick={onClose} 
               disabled={loading}
             >
@@ -429,7 +429,7 @@ const CreateJobModal = ({ onClose, onSuccess, showAlert, editMode = false, jobTo
             >
               {loading ? (
                 <>
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <div className="w-5 h-5 border-2 border-slate-900 border-t-transparent rounded-full animate-spin"></div>
                   {editMode ? 'Updating...' : 'Creating...'}
                 </>
               ) : (

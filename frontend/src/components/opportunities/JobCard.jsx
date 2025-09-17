@@ -96,16 +96,16 @@ const JobCard = memo(({ job, user, isApplied, onClick, onApply, onJobDeleted }) 
 
   return (
     <div
-      className="group bg-white/10 backdrop-blur-xl rounded-2xl border border-white/20 hover:border-white/30 shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden cursor-pointer transform hover:-translate-y-2 flex flex-col h-full relative"
+      className="group bg-white/80 backdrop-blur-xl rounded-xl border border-slate-200 hover:border-slate-300 shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden cursor-pointer transform hover:-translate-y-1 flex flex-col h-full relative"
       onClick={onClick}
     >
       {/* Animated background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 via-transparent to-secondary-500/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-primary-100/40 via-transparent to-secondary-100/40 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
       
       {/* Job Type Badge */}
-      <div className="absolute top-4 right-4 z-10">
+      <div className="absolute top-3 right-3 z-10">
         <span
-          className={`px-3 py-1 rounded-full text-xs font-semibold shadow-lg backdrop-blur-sm border
+          className={`px-2.5 py-1 rounded-full text-xs font-semibold shadow-lg backdrop-blur-sm border font-sans
             ${job.type === 'internship' 
               ? 'bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-400 border-green-400/30' 
               : 'bg-gradient-to-r from-primary-500/20 to-secondary-500/20 text-primary-400 border-primary-400/30'
@@ -116,50 +116,50 @@ const JobCard = memo(({ job, user, isApplied, onClick, onApply, onJobDeleted }) 
       </div>
 
       {/* Job Content */}
-      <div className="p-6 flex flex-col flex-grow relative z-10">
+      <div className="p-5 flex flex-col flex-grow relative z-10">
         {/* Job Title */}
-        <h3 className="font-bold text-white mb-3 line-clamp-2 text-xl leading-tight group-hover:text-primary-400 transition-colors duration-300">
+        <h3 className="font-bold text-slate-900 mb-2 line-clamp-2 text-base leading-tight group-hover:text-primary-600 transition-colors duration-300 font-sans">
           {job.jobTitle}
         </h3>
         
         {/* Job Details */}
-        <div className="space-y-2 mb-4">
-          <div className="flex items-center text-sm text-gray-300">
-            <CalendarIcon className="h-4 w-4 mr-3 text-primary-400 flex-shrink-0" />
-            <span className="font-medium text-gray-400">Deadline:</span>
-            <span className="ml-2 text-white">{formatDate(job.deadline)}</span>
+        <div className="space-y-1.5 mb-3">
+          <div className="flex items-center text-xs text-slate-600">
+            <CalendarIcon className="h-3 w-3 mr-2 text-primary-500 flex-shrink-0" />
+            <span className="font-medium text-slate-500">Deadline:</span>
+            <span className="ml-2 text-slate-900 font-sans">{formatDate(job.deadline)}</span>
           </div>
-          <div className="flex items-center text-sm text-gray-300">
-            <BuildingOffice2Icon className="h-4 w-4 mr-3 text-secondary-400 flex-shrink-0" />
-            <span className="text-white font-medium">{job.companyName}</span>
+          <div className="flex items-center text-xs text-slate-600">
+            <BuildingOffice2Icon className="h-3 w-3 mr-2 text-secondary-500 flex-shrink-0" />
+            <span className="text-slate-900 font-medium font-sans">{job.companyName}</span>
           </div>
           {/* Location/Remote */}
           {job.location && (
-            <div className="flex items-center text-sm text-gray-300">
-              <svg className="h-4 w-4 mr-3 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="flex items-center text-xs text-slate-600">
+              <svg className="h-3 w-3 mr-2 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
-              <span className="font-medium text-gray-400">Location:</span>
-              <span className="ml-2 text-white">{job.location === 'Remote' ? 'Remote' : job.location}</span>
+              <span className="font-medium text-slate-500">Location:</span>
+              <span className="ml-2 text-slate-900 font-sans">{job.location === 'Remote' ? 'Remote' : job.location}</span>
             </div>
           )}
         </div>
         
         {/* Creator Information */}
         {job.user && (
-          <div className="border-t border-white/10 pt-4 mb-4">
-            <div className="flex items-center text-sm text-gray-300 mb-2">
-              <UserIcon className="h-4 w-4 mr-3 text-blue-400 flex-shrink-0" />
-              <span className="font-medium text-white">{job.user.fullName}</span>
+          <div className="border-t border-slate-200 pt-3 mb-3">
+            <div className="flex items-center text-xs text-slate-600 mb-2">
+              <UserIcon className="h-3 w-3 mr-2 text-blue-500 flex-shrink-0" />
+              <span className="font-medium text-slate-900 font-sans">{job.user.fullName}</span>
             </div>
             {job.user.alumni && (
-              <div className="text-sm text-gray-400 ml-7 mb-1">
+              <div className="text-xs text-slate-500 ml-5 mb-1 font-sans">
                 {job.user.alumni.currentJobTitle} at {job.user.alumni.companyName}
               </div>
             )}
-            <div className="flex items-center text-xs text-gray-500 ml-7">
-              <ClockIcon className="h-3 w-3 mr-2" />
+            <div className="flex items-center text-xs text-slate-400 ml-5 font-sans">
+              <ClockIcon className="h-3 w-3 mr-1.5" />
               {formatPostedDate(job.createdAt)}
             </div>
           </div>
@@ -170,9 +170,9 @@ const JobCard = memo(({ job, user, isApplied, onClick, onApply, onJobDeleted }) 
         
         {/* Apply Button */}
         <button
-          className={`mt-4 px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg ${
+          className={`mt-3 px-5 py-2.5 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg text-sm font-sans ${
             buttonState.disabled
-              ? 'bg-gray-500/20 text-gray-400 cursor-not-allowed border border-gray-500/30'
+              ? 'bg-slate-200 text-slate-400 cursor-not-allowed border border-slate-300'
               : 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white hover:from-primary-600 hover:to-secondary-600 hover:shadow-xl'
           }`}
           onClick={e => { if (!buttonState.disabled) { e.stopPropagation(); onApply && onApply(job); } }}

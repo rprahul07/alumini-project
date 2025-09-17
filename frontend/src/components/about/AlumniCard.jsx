@@ -24,10 +24,10 @@ export default function AlumniCard({
   profileImg,
 }) {
   return (
-    <div className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden cursor-pointer transform hover:scale-[1.02] flex flex-col w-full max-w-[270px] sm:w-[270px] mx-auto my-4 sm:my-2 p-4 sm:p-0 border border-gray-100">
+    <div className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden cursor-pointer transform hover:scale-[1.02] flex flex-col w-full max-w-[240px] sm:w-[240px] mx-auto my-3 sm:my-2 p-3 sm:p-0 border border-gray-100">
       {/* Centered Circle Avatar */}
-      <div className="flex justify-center items-center pt-6 pb-2">
-        <div className="w-20 h-20 rounded-full bg-gray-200 overflow-hidden border-4 border-white shadow-md">
+      <div className="flex justify-center items-center pt-4 pb-1">
+        <div className="w-16 h-16 rounded-full bg-gray-200 overflow-hidden border-3 border-white shadow-md">
           <img
             src={profileImg}
             alt={name}
@@ -40,19 +40,19 @@ export default function AlumniCard({
         </div>
       </div>
       {/* Content */}
-      <div className="flex flex-col flex-grow px-0 sm:px-4 pt-2 pb-2">
-        <h4 className="font-bold text-gray-900 mb-1 text-base sm:text-base md:text-lg leading-tight line-clamp-1 text-center">{name}</h4>
-        <div className="flex flex-wrap gap-2 mb-1 justify-center">
-          <span className="text-xs text-gray-500 font-medium">{batch}</span>
-          <span className="text-xs text-gray-400 font-medium">{department}</span>
+      <div className="flex flex-col flex-grow px-0 sm:px-3 pt-1 pb-1">
+        <h4 className="font-bold text-gray-900 mb-1 text-sm sm:text-sm md:text-base leading-tight line-clamp-1 text-center font-sans">{name}</h4>
+        <div className="flex flex-wrap gap-1.5 mb-1 justify-center">
+          <span className="text-xs text-gray-500 font-medium font-sans">{batch}</span>
+          <span className="text-xs text-gray-400 font-medium font-sans">{department}</span>
         </div>
-        <div className="font-semibold text-gray-800 text-xs mb-1 line-clamp-1 text-center">{position}</div>
-        <div className="text-xs text-gray-600 mb-2 line-clamp-1 text-center">{company}</div>
-        <div className="flex flex-wrap gap-1 mb-2 justify-center">
+        <div className="font-semibold text-gray-800 text-xs mb-1 line-clamp-1 text-center font-sans">{position}</div>
+        <div className="text-xs text-gray-600 mb-2 line-clamp-1 text-center font-sans">{company}</div>
+        <div className="flex flex-wrap gap-0.5 mb-2 justify-center">
           {tags && tags.map((tag, i) => (
             <span
               key={i}
-              className="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-xs font-medium"
+              className="bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded-full text-xs font-medium font-sans"
             >
               {tag}
             </span>
@@ -60,18 +60,18 @@ export default function AlumniCard({
         </div>
       </div>
       {/* Footer */}
-      <div className="flex justify-between items-center w-full px-0 sm:px-4 pb-3 pt-2 mt-auto gap-2">
+      <div className="flex justify-between items-center w-full px-0 sm:px-3 pb-2 pt-1 mt-auto gap-1.5">
         <a
           href="#"
-          className="flex items-center gap-2 text-[#0A66C2] font-medium text-xs hover:underline transition-colors"
+          className="flex items-center gap-1.5 text-[#0A66C2] font-medium text-xs hover:underline transition-colors font-sans"
         >
           <LinkedInIcon />
           Profile
         </a>
-        <button className="bg-[#5A32EA] text-white px-4 py-2 rounded-full font-medium flex items-center gap-2 text-xs hover:bg-[#4321b8] transition-colors group-hover:shadow-lg">
+        <button className="bg-[#5A32EA] text-white px-3 py-1.5 rounded-full font-medium flex items-center gap-1.5 text-xs hover:bg-[#4321b8] transition-colors group-hover:shadow-lg font-sans">
           View Story
-          <span className="font-bold text-lg transition-transform duration-300 group-hover:translate-x-1">
-            <FiArrowRight className="inline-block align-middle text-xl" />
+          <span className="font-bold text-sm transition-transform duration-300 group-hover:translate-x-1">
+            <FiArrowRight className="inline-block align-middle text-sm" />
           </span>
         </button>
       </div>

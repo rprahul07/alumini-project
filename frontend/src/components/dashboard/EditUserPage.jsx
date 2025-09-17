@@ -206,9 +206,9 @@ const EditUserPage = () => {
 
 
   return (
-    <div className="max-w-xl mx-auto bg-white rounded-2xl shadow-lg p-8 mt-8">
-      <h2 className="text-2xl font-bold mb-6">Edit {type.slice(0, -1).charAt(0).toUpperCase() + type.slice(1, -1)} Details</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="max-w-xl mx-auto bg-white rounded-xl shadow-lg p-6 mt-8">
+      <h2 className="text-2xl font-sans font-bold mb-4">Edit {type.slice(0, -1).charAt(0).toUpperCase() + type.slice(1, -1)} Details</h2>
+      <form onSubmit={handleSubmit} className="space-y-3">
         {Object.entries(userData).map(([key, value]) => {
           // Skip certain fields
           if (key === 'id' || key === 'userId' || key === 'createdAt' || key === 'user' || key === 'updatedAt') {
@@ -231,7 +231,7 @@ const EditUserPage = () => {
               
               return (
                 <div key={`${key}.${nestedKey}`}>
-                  <label className="block text-sm font-medium text-gray-700 capitalize">
+                  <label className="block text-xs font-sans font-medium text-slate-700 capitalize">
                     {nestedKey.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ')}
                   </label>
                   <input
@@ -239,7 +239,7 @@ const EditUserPage = () => {
                     name={`${key}.${nestedKey}`}
                     value={nestedValue !== null && nestedValue !== undefined ? nestedValue : ''}
                     onChange={handleChange}
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    className="mt-1 block w-full border border-slate-300 rounded-xl shadow-sm px-3 py-2.5 focus:ring-primary-500 focus:border-primary-500 text-xs font-sans"
                     placeholder={`Enter ${nestedKey.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ').toLowerCase()}`}
                   />
                 </div>
@@ -250,7 +250,7 @@ const EditUserPage = () => {
           // Handle regular fields
           return (
             <div key={key}>
-              <label className="block text-sm font-medium text-gray-700 capitalize">
+              <label className="block text-xs font-sans font-medium text-slate-700 capitalize">
                 {key.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ')}
               </label>
               <input
@@ -258,16 +258,16 @@ const EditUserPage = () => {
                 name={key}
                 value={value !== null && value !== undefined ? value : ''}
                 onChange={handleChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                className="mt-1 block w-full border border-slate-300 rounded-xl shadow-sm px-3 py-2.5 focus:ring-primary-500 focus:border-primary-500 text-xs font-sans"
                 placeholder={`Enter ${key.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ').toLowerCase()}`}
               />
             </div>
           );
         })}
-        <div className="flex justify-end space-x-2">
+        <div className="flex justify-end space-x-3">
           <button
             type="button"
-            className="px-4 py-2 rounded bg-gray-200 text-gray-700 hover:bg-gray-300"
+            className="px-6 py-3 rounded-xl font-sans font-semibold bg-slate-200 text-slate-700 hover:bg-slate-300 transition-all duration-200"
             onClick={() => navigate(-1)}
             disabled={saving}
           >
@@ -275,7 +275,7 @@ const EditUserPage = () => {
           </button>
           <button
             type="submit"
-            className="px-4 py-2 rounded bg-indigo-600 text-white hover:bg-indigo-700"
+            className="px-6 py-3 rounded-xl font-sans font-semibold bg-gradient-to-r from-primary-500 to-secondary-500 text-slate-900 hover:from-primary-600 hover:to-secondary-600 transition-all duration-200"
             disabled={saving}
           >
             {saving ? 'Saving...' : 'Save Changes'}

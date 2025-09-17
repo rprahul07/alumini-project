@@ -104,19 +104,19 @@ const SimpleApplyModal = ({ open, onClose, job, showAlert, onSuccess }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-4">
-      <div className="bg-white/10 backdrop-blur-2xl rounded-3xl w-full max-w-md shadow-2xl border border-white/20 relative animate-slide-up">
+      <div className="bg-white/95 backdrop-blur-2xl rounded-3xl w-full max-w-md shadow-2xl border border-slate-200 relative animate-slide-up">
         {/* Header */}
-        <div className="bg-gradient-to-r from-primary-500/20 to-secondary-500/20 backdrop-blur-xl px-6 py-4 border-b border-white/20 rounded-t-3xl">
+        <div className="bg-gradient-to-r from-primary-100/40 to-secondary-100/40 backdrop-blur-xl px-6 py-4 border-b border-slate-200 rounded-t-3xl">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold text-white font-display">Apply for Job</h2>
+            <h2 className="text-xl font-bold text-slate-900 font-display">Apply for Job</h2>
             <button
               onClick={onClose}
-              className="w-8 h-8 bg-white/20 backdrop-blur-xl text-white rounded-full flex items-center justify-center hover:bg-white/30 transition-all duration-200 border border-white/30"
+              className="w-8 h-8 bg-slate-100 backdrop-blur-xl text-slate-600 rounded-full flex items-center justify-center hover:bg-slate-200 transition-all duration-200 border border-slate-300"
             >
               <XMarkIcon className="h-4 w-4" />
             </button>
           </div>
-          <p className="text-sm text-white/80 mt-1 font-body">{job.jobTitle} at {job.companyName}</p>
+          <p className="text-sm text-slate-600 mt-1 font-body">{job.jobTitle} at {job.companyName}</p>
         </div>
 
         {/* Content */}
@@ -126,19 +126,19 @@ const SimpleApplyModal = ({ open, onClose, job, showAlert, onSuccess }) => {
             <>
               <div className="space-y-4">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-gradient-to-r from-primary-500/20 to-secondary-500/20 rounded-2xl flex items-center justify-center border border-primary-400/30">
-                    <UserIcon className="h-6 w-6 text-primary-400" />
+                  <div className="w-12 h-12 bg-gradient-to-r from-primary-100/40 to-secondary-100/40 rounded-2xl flex items-center justify-center border border-primary-200/50">
+                    <UserIcon className="h-6 w-6 text-primary-600" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-bold text-white text-lg font-display">External Application</h3>
-                    <p className="text-sm text-white/80 font-body">This job requires external application</p>
+                    <h3 className="font-bold text-slate-900 text-lg font-display">External Application</h3>
+                    <p className="text-sm text-slate-600 font-body">This job requires external application</p>
                   </div>
                 </div>
-                <div className="bg-gradient-to-r from-primary-500/10 to-secondary-500/10 backdrop-blur-xl rounded-2xl p-4 border border-white/20">
-                  <p className="text-sm text-white/90 mb-2 font-body">
+                <div className="bg-gradient-to-r from-primary-100/40 to-secondary-100/40 backdrop-blur-xl rounded-2xl p-4 border border-slate-200">
+                  <p className="text-sm text-slate-700 mb-2 font-body">
                     You will be redirected to the company's application portal.
                   </p>
-                  <p className="text-xs text-white/70 font-body">
+                  <p className="text-xs text-slate-500 font-body">
                     You can complete your profile later if needed.
                   </p>
                 </div>
@@ -171,12 +171,12 @@ const SimpleApplyModal = ({ open, onClose, job, showAlert, onSuccess }) => {
               {/* Profile Edit Section */}
               <div className="space-y-4">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-gradient-to-r from-primary-500/20 to-secondary-500/20 rounded-2xl flex items-center justify-center border border-primary-400/30">
-                    <UserIcon className="h-6 w-6 text-primary-400" />
+                  <div className="w-12 h-12 bg-gradient-to-r from-primary-100/40 to-secondary-100/40 rounded-2xl flex items-center justify-center border border-primary-200/50">
+                    <UserIcon className="h-6 w-6 text-primary-600" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-bold text-white text-lg font-display">Update Your Profile</h3>
-                    <p className="text-sm text-white/80 font-body">Ensure your profile is complete before applying</p>
+                    <h3 className="font-bold text-slate-900 text-lg font-display">Update Your Profile</h3>
+                    <p className="text-sm text-slate-600 font-body">Ensure your profile is complete before applying</p>
                   </div>
                 </div>
                 <button
@@ -190,27 +190,27 @@ const SimpleApplyModal = ({ open, onClose, job, showAlert, onSuccess }) => {
               {/* CV Upload Section */}
               <div className="space-y-4">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-gradient-to-r from-green-500/20 to-emerald-500/20 rounded-2xl flex items-center justify-center border border-green-400/30">
-                    <DocumentTextIcon className="h-6 w-6 text-green-400" />
+                  <div className="w-12 h-12 bg-gradient-to-r from-green-100/40 to-emerald-100/40 rounded-2xl flex items-center justify-center border border-green-200/50">
+                    <DocumentTextIcon className="h-6 w-6 text-green-600" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-bold text-white text-lg font-display">Upload CV</h3>
-                    <p className="text-sm text-white/80 font-body">Upload your resume for this application</p>
+                    <h3 className="font-bold text-slate-900 text-lg font-display">Upload CV</h3>
+                    <p className="text-sm text-slate-600 font-body">Upload your resume for this application</p>
                   </div>
                 </div>
 
                 {/* Current CV Display */}
                 {user.resumeUrl && !cvFile && (
-                  <div className="bg-gradient-to-r from-green-500/10 to-emerald-500/10 backdrop-blur-xl rounded-2xl p-4 border border-white/20">
+                  <div className="bg-gradient-to-r from-green-100/40 to-emerald-100/40 backdrop-blur-xl rounded-2xl p-4 border border-slate-200">
                     <div className="flex items-center gap-3">
-                      <PaperClipIcon className="h-5 w-5 text-green-400" />
+                      <PaperClipIcon className="h-5 w-5 text-green-600" />
                       <div className="flex-1">
-                        <p className="text-sm font-medium text-white font-body">Current CV</p>
+                        <p className="text-sm font-medium text-slate-900 font-body">Current CV</p>
                         <a 
                           href={user.resumeUrl} 
                           target="_blank" 
                           rel="noopener noreferrer" 
-                          className="text-xs text-green-400 hover:text-green-300 underline font-body"
+                          className="text-xs text-green-600 hover:text-green-700 underline font-body"
                         >
                           View CV
                         </a>
@@ -221,16 +221,16 @@ const SimpleApplyModal = ({ open, onClose, job, showAlert, onSuccess }) => {
 
                 {/* New CV Upload */}
                 {cvFile && (
-                  <div className="bg-gradient-to-r from-primary-500/10 to-secondary-500/10 backdrop-blur-xl rounded-2xl p-4 border border-white/20">
+                  <div className="bg-gradient-to-r from-primary-100/40 to-secondary-100/40 backdrop-blur-xl rounded-2xl p-4 border border-slate-200">
                     <div className="flex items-center gap-3">
-                      <PaperClipIcon className="h-5 w-5 text-primary-400" />
+                      <PaperClipIcon className="h-5 w-5 text-primary-600" />
                       <div className="flex-1">
-                        <p className="text-sm font-medium text-white font-body">New CV Uploaded</p>
-                        <p className="text-xs text-white/70 font-body">{cvFile.file.name}</p>
+                        <p className="text-sm font-medium text-slate-900 font-body">New CV Uploaded</p>
+                        <p className="text-xs text-slate-600 font-body">{cvFile.file.name}</p>
                       </div>
                       <button
                         onClick={() => setCvFile(null)}
-                        className="text-white/60 hover:text-white transition-colors"
+                        className="text-slate-500 hover:text-slate-700 transition-colors"
                       >
                         <XMarkIcon className="h-4 w-4" />
                       </button>
@@ -252,24 +252,24 @@ const SimpleApplyModal = ({ open, onClose, job, showAlert, onSuccess }) => {
                     htmlFor="cv-upload"
                     className={`block w-full p-6 border-2 border-dashed rounded-2xl text-center transition-all duration-300 ${
                       cvUploading 
-                        ? 'border-primary-400/50 bg-primary-500/10 cursor-not-allowed' 
-                        : 'border-white/30 bg-white/5 hover:border-primary-400/50 hover:bg-primary-500/10 cursor-pointer'
+                        ? 'border-primary-400/50 bg-primary-100/40 cursor-not-allowed' 
+                        : 'border-slate-300 bg-slate-50/50 hover:border-primary-400/50 hover:bg-primary-100/40 cursor-pointer'
                     }`}
                   >
                     <div className="flex flex-col items-center gap-3">
                       {cvUploading ? (
                         <>
-                          <div className="w-8 h-8 border-2 border-primary-400 border-t-transparent rounded-full animate-spin"></div>
-                          <span className="text-sm text-primary-400 font-medium font-body">Uploading...</span>
+                          <div className="w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
+                          <span className="text-sm text-primary-600 font-medium font-body">Uploading...</span>
                         </>
                       ) : (
                         <>
-                          <svg className="w-8 h-8 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-8 h-8 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                           </svg>
                           <div>
-                            <span className="text-sm font-medium text-white font-body">Upload New CV</span>
-                            <p className="text-xs text-white/60 mt-1 font-body">PDF, DOC, or DOCX (max 5MB)</p>
+                            <span className="text-sm font-medium text-slate-900 font-body">Upload New CV</span>
+                            <p className="text-xs text-slate-500 mt-1 font-body">PDF, DOC, or DOCX (max 5MB)</p>
                           </div>
                         </>
                       )}

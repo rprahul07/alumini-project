@@ -62,14 +62,14 @@ const ProfileCard = ({ compact = false }) => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className={`bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 ${compact ? 'p-4 max-w-xs my-2' : 'p-8 max-w-sm my-10'} mx-auto animate-pulse`}
+        className={`bg-white/80 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-200 ${compact ? 'p-4 max-w-xs my-2' : 'p-8 max-w-sm my-10'} mx-auto animate-pulse`}
       >
         <div className="flex flex-col items-center space-y-2">
-          <div className={compact ? 'w-14 h-14 bg-white/20 rounded-full' : 'w-24 h-24 bg-white/20 rounded-full'} />
-          <div className={compact ? 'h-5 bg-white/20 rounded w-20' : 'h-6 bg-white/20 rounded w-32'} />
-          <div className={compact ? 'h-3 bg-white/20 rounded w-16' : 'h-4 bg-white/20 rounded w-20'} />
-          <div className={compact ? 'h-3 bg-white/20 rounded w-18' : 'h-4 bg-white/20 rounded w-24'} />
-          <div className={compact ? 'h-8 bg-white/20 rounded w-20 mt-2' : 'h-10 bg-white/20 rounded w-32 mt-4'} />
+          <div className={compact ? 'w-14 h-14 bg-slate-200 rounded-full' : 'w-24 h-24 bg-slate-200 rounded-full'} />
+          <div className={compact ? 'h-5 bg-slate-200 rounded w-20' : 'h-6 bg-slate-200 rounded w-32'} />
+          <div className={compact ? 'h-3 bg-slate-200 rounded w-16' : 'h-4 bg-slate-200 rounded w-20'} />
+          <div className={compact ? 'h-3 bg-slate-200 rounded w-18' : 'h-4 bg-slate-200 rounded w-24'} />
+          <div className={compact ? 'h-8 bg-slate-200 rounded w-20 mt-2' : 'h-10 bg-slate-200 rounded w-32 mt-4'} />
         </div>
       </motion.div>
     );
@@ -81,9 +81,9 @@ const ProfileCard = ({ compact = false }) => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className={`bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 p-6 max-w-xs my-6 text-center mx-auto`}
+        className={`bg-white/80 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-200 p-6 max-w-xs my-6 text-center mx-auto`}
       >
-        <p className="text-gray-300">Could not load profile. Please log in again.</p>
+        <p className="text-slate-600">Could not load profile. Please log in again.</p>
       </motion.div>
     );
   }
@@ -95,7 +95,7 @@ const ProfileCard = ({ compact = false }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className="bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 p-6 max-w-xs w-full flex flex-col items-center mx-auto"
+      className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-200 p-6 max-w-xs w-full flex flex-col items-center mx-auto"
     >
       {/* Photo with edit button */}
       <div className="relative">
@@ -104,14 +104,14 @@ const ProfileCard = ({ compact = false }) => {
             <OptimizedImage
               src={user.photoUrl}
               alt={user.fullName || 'User'}
-              wrapperClassName="w-24 h-24 rounded-full overflow-hidden border-2 border-white/30 shadow-lg"
+              wrapperClassName="w-24 h-24 rounded-full overflow-hidden border-2 border-slate-300 shadow-lg"
               className="w-full h-full object-cover"
               sizes="96px"
               loading="eager"
             />
           ) : (
-            <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-white/30 shadow-lg bg-gradient-to-br from-primary-500/20 to-secondary-500/20 flex items-center justify-center">
-              <svg className="w-12 h-12 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-slate-300 shadow-lg bg-gradient-to-br from-primary-100 to-secondary-100 flex items-center justify-center">
+              <svg className="w-12 h-12 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
             </div>
@@ -119,30 +119,30 @@ const ProfileCard = ({ compact = false }) => {
         </div>
         <button
           onClick={() => navigate('/profile/edit')}
-          className="absolute bottom-1 right-1 bg-gradient-to-r from-primary-500 to-secondary-500 text-white p-1.5 rounded-full shadow-lg cursor-pointer hover:from-primary-600 hover:to-secondary-600 transition-all duration-200 border-2 border-white transform hover:scale-105"
+          className="absolute bottom-1 right-1 bg-gradient-to-r from-primary-500 to-secondary-500 text-white p-1.5 rounded-lg shadow-lg cursor-pointer hover:from-primary-600 hover:to-secondary-600 transition-all duration-200 border-2 border-slate-200 transform hover:scale-105"
           title="Edit Profile"
         >
           <FiEdit2 className="h-4 w-4" />
         </button>
       </div>
       {/* Name */}
-      <h2 className="text-xl font-bold text-white mt-1 mb-1 text-center">{user.fullName || 'User'}</h2>
+      <h2 className="text-lg font-bold text-slate-900 mt-1 mb-1 text-center font-sans">{user.fullName || 'User'}</h2>
       {/* Role badge */}
-      <span className={`px-3 py-1 rounded-full text-xs font-semibold mb-2 text-center border ${
+      <span className={`px-3 py-1 rounded-full text-xs font-semibold mb-2 text-center border shadow-sm ${
         user.role?.toLowerCase() === 'alumni'
-          ? 'bg-green-500/20 text-green-300 border-green-500/30'
+          ? 'bg-green-500 text-white border-green-600'
           : user.role?.toLowerCase() === 'student'
-          ? 'bg-blue-500/20 text-blue-300 border-blue-500/30'
+          ? 'bg-blue-500 text-white border-blue-600'
           : user.role?.toLowerCase() === 'faculty'
-          ? 'bg-purple-500/20 text-purple-300 border-purple-500/30'
-          : 'bg-gray-500/20 text-gray-300 border-gray-500/30'
+          ? 'bg-purple-500 text-white border-purple-600'
+          : 'bg-gray-500 text-white border-gray-600'
       }`}>
         {getRoleDisplay(user.role)}
       </span>
       {/* Details */}
       <div className="flex flex-col items-center w-full mb-2">
         {twoFields.map((field, idx) => (
-          <div key={idx} className="text-sm text-gray-300 mb-1 text-center">
+          <div key={idx} className="text-sm text-slate-600 mb-1 text-center">
             <span className="font-medium">{field.label}:</span> {field.value || 'N/A'}
           </div>
         ))}
@@ -152,17 +152,17 @@ const ProfileCard = ({ compact = false }) => {
         <div className="flex space-x-2 mt-3 justify-center">
           {user.linkedinUrl && (
             <a href={user.linkedinUrl} target="_blank" rel="noopener noreferrer" title="LinkedIn">
-              <FiLinkedin className="h-5 w-5 text-gray-400 hover:text-primary-400 transition-colors transform hover:scale-110" />
+              <FiLinkedin className="h-5 w-5 text-slate-500 hover:text-primary-500 transition-colors transform hover:scale-110" />
             </a>
           )}
           {user.twitterUrl && (
             <a href={user.twitterUrl} target="_blank" rel="noopener noreferrer" title="Twitter">
-              <FiTwitter className="h-5 w-5 text-gray-400 hover:text-primary-400 transition-colors transform hover:scale-110" />
+              <FiTwitter className="h-5 w-5 text-slate-500 hover:text-primary-500 transition-colors transform hover:scale-110" />
             </a>
           )}
           {user.githubUrl && (
             <a href={user.githubUrl} target="_blank" rel="noopener noreferrer" title="GitHub">
-              <FiGithub className="h-5 w-5 text-gray-400 hover:text-primary-400 transition-colors transform hover:scale-110" />
+              <FiGithub className="h-5 w-5 text-slate-500 hover:text-primary-500 transition-colors transform hover:scale-110" />
             </a>
           )}
         </div>

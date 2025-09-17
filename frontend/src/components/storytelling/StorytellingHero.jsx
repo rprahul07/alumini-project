@@ -1,49 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import OptimizedImage from '../OptimizedImage';
 
 const StorytellingHero = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [showWelcome, setShowWelcome] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
-  // Show welcome message after initial load
-  useEffect(() => {
-    const timer = setTimeout(() => setShowWelcome(true), 1000);
-    return () => clearTimeout(timer);
-  }, []);
-
-
-  const getMainHeading = () => {
-    if (user) {
-      return `Back to where it all began, ${user.fullName || 'Alumni'}...`;
-    }
-    return 'Back to where it all began...';
-  };
-
-  const getSubtitle = () => {
-    if (user) {
-      return 'Together Again at CUCEK';
-    }
-    return 'Together Again at CUCEK';
-  };
-
-  const getDescription = () => {
-    if (user) {
-      return 'Relive. Reconnect. Remember.';
-    }
-    return 'Relive. Reconnect. Remember.';
-  };
-
-  const getCallToAction = () => {
-    if (user) {
-      return 'Reconnect Now';
-    }
-    return 'Join Our Community';
-  };
-
-  const handleCallToAction = () => {
+  const handleJoinNetwork = () => {
     if (user) {
       // Navigate to user's dashboard or network page
       navigate(`/${user.role}/dashboard`);
@@ -52,143 +18,138 @@ const StorytellingHero = () => {
     }
   };
 
+  const handleReliveMemories = () => {
+    // Scroll to the Memory Lane Gallery section
+    const memoriesSection = document.getElementById('memory-lane');
+    if (memoriesSection) {
+      memoriesSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   return (
-    <section className="bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 pt-16 pb-12 relative overflow-hidden min-h-[80vh]">
-      {/* Enhanced Background decorative elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        {/* Animated gradient orbs */}
-        <div className="absolute top-10 right-10 w-96 h-96 bg-gradient-to-br from-primary-400/30 to-secondary-400/30 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-tr from-secondary-400/30 to-primary-400/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-primary-300/20 to-secondary-300/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+    <section className="relative min-h-screen flex items-center justify-center overflow-visible">
+      {/* Image Background */}
+      <div className="absolute inset-0 w-full h-full">
+        {/* Background Color Fallback */}
+        <motion.div 
+          className="absolute inset-0 bg-gradient-to-br from-slate-800 via-slate-700 to-slate-900"
+          animate={{
+            background: [
+              "linear-gradient(135deg, #1e293b 0%, #334155 50%, #0f172a 100%)",
+              "linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)",
+              "linear-gradient(135deg, #334155 0%, #0f172a 50%, #1e293b 100%)",
+              "linear-gradient(135deg, #1e293b 0%, #334155 50%, #0f172a 100%)"
+            ]
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        ></motion.div>
         
-        {/* Floating particles */}
-        <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-primary-400/60 rounded-full animate-bounce" style={{ animationDelay: '0.5s' }}></div>
-        <div className="absolute top-3/4 right-1/4 w-1 h-1 bg-secondary-400/60 rounded-full animate-bounce" style={{ animationDelay: '1.5s' }}></div>
-        <div className="absolute top-1/2 right-1/3 w-1.5 h-1.5 bg-primary-300/60 rounded-full animate-bounce" style={{ animationDelay: '2.5s' }}></div>
+        <motion.div
+          className="w-full h-full"
+          initial={{ scale: 1.1, opacity: 0 }}
+          animate={{ 
+            scale: imageLoaded ? 1 : 1.1, 
+            opacity: imageLoaded ? 1 : 0 
+          }}
+          transition={{ 
+            duration: 1.2, 
+            ease: "easeOut",
+            scale: { duration: 1.5, ease: "easeOut" }
+          }}
+          whileHover={{ 
+            scale: 1.02,
+            transition: { duration: 0.6, ease: "easeOut" }
+          }}
+        >
+          <OptimizedImage
+            src="https://i.postimg.cc/z8Yh8P4R/Thirike-1.jpg"
+            alt="Professional alumni network meeting and reconnecting - CUCEK Alumni Connect"
+            className="w-full h-full object-cover"
+            priority={true}
+            quality={85}
+            fallbackSrc="/Thirike (1).jpg"
+            wrapperClassName="w-full h-full"
+            style={{ filter: 'brightness(0.75) saturate(1.1) contrast(1.15) hue-rotate(10deg)' }}
+            onLoad={() => setImageLoaded(true)}
+          />
+        </motion.div>
+        {/* Elegant gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-black/30 to-black/50"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+        {/* Bottom gradient for smooth transition to white section */}
+        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white/30 via-white/10 to-transparent"></div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full h-full">
-        <div className="flex justify-center items-center pt-8 lg:pt-12">
-          {/* Main Content */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
+      {/* Content */}
+      <div className="relative z-50 max-w-5xl mx-auto px-6 py-8 text-center overflow-visible">
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, ease: "easeOut" }}
+          className="space-y-6 relative z-50"
+        >
+
+          {/* Main Heading - More Elegant */}
+          <motion.h1
+            initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="space-y-6 max-w-4xl text-center"
+            transition={{ duration: 1, delay: 0.3 }}
+            className="text-3xl md:text-3xl lg:text-4xl font-bold font-sans leading-relaxed relative z-50"
+            style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.5)' }}
           >
-            {/* Enhanced Container with glass morphism */}
-            <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/20 shadow-2xl relative">
-              {/* Inner glow effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-primary-500/10 via-transparent to-secondary-500/10 rounded-3xl"></div>
-              
-              <div className="relative z-10 space-y-6">
-                {/* Main Heading */}
-                <motion.h1
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.2 }}
-                  className="text-4xl md:text-5xl lg:text-6xl font-bold font-display leading-tight"
-                >
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 via-secondary-400 to-primary-400 animate-pulse">
-                    {getMainHeading()}
-                  </span>
-                </motion.h1>
+            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-white drop-shadow-2xl font-sans relative z-50">
+              Reconnect, Inspire,
+            </span>
+            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-primary-300 via-secondary-300 to-primary-300 drop-shadow-2xl mt-2 font-sans relative z-50">
+              and Grow Together
+            </span>
+          </motion.h1>
 
-                {/* Subtitle */}
-                <motion.p
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.4 }}
-                  className="text-base md:text-lg text-white leading-relaxed max-w-3xl font-medium font-body"
-                >
-                  {getSubtitle()}
-                </motion.p>
 
-                {/* Description */}
-                <motion.p
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.6 }}
-                  className="text-base md:text-lg text-gray-300 leading-relaxed max-w-3xl"
-                >
-                  {getDescription()}
-                </motion.p>
-
-                {/* Enhanced Emotional Quote */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.8 }}
-                  className="relative bg-gradient-to-r from-primary-500/20 via-secondary-500/20 to-primary-500/20 backdrop-blur-xl rounded-2xl p-6 border border-white/30 shadow-2xl"
-                >
-                  {/* Animated background */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-primary-400/10 to-secondary-400/10 rounded-2xl animate-pulse"></div>
-                  
-                  <div className="relative z-10">
-                    <div className="absolute left-0 top-0 w-1 h-full bg-gradient-to-b from-primary-400 to-secondary-400 rounded-full"></div>
-                    <blockquote className="pl-6 italic text-base md:text-lg text-white leading-relaxed font-medium font-body">
-                      "We build our dream at CUCEK, and now we return with stories of success"
-                    </blockquote>
-                  </div>
-                </motion.div>
-              </div>
-            </div>
-
-            {/* Enhanced Call to Action Buttons */}
+          {/* CTA Button - Only show for non-joined users */}
+          {!user && (
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 1.0 }}
-              className="flex flex-col sm:flex-row gap-6 pt-8 justify-center items-center"
+              transition={{ duration: 1, delay: 0.9 }}
+              className="pt-4"
             >
-              <button
-                onClick={handleCallToAction}
-                className="group relative inline-flex items-center justify-center px-10 py-4 bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-semibold rounded-full hover:from-primary-600 hover:to-secondary-600 transition-all duration-300 transform hover:scale-105 shadow-2xl hover:shadow-primary-500/25 text-base min-w-[200px]"
+              <motion.button
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={handleJoinNetwork}
+                className="px-8 py-3 bg-gradient-to-r from-primary-600 via-secondary-600 to-primary-600 text-white rounded-full font-semibold text-base shadow-2xl hover:shadow-primary-500/25 transition-all duration-300 transform backdrop-blur-sm border border-white/20 font-sans"
               >
-                <span className="mr-3">{getCallToAction()}</span>
-                <motion.svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  animate={{ x: [0, 5, 0] }}
-                  transition={{ duration: 1.5, repeat: Infinity }}
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                </motion.svg>
-                {/* Glow effect */}
-                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-primary-400/30 to-secondary-400/30 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10"></div>
-              </button>
-
-              <button
-                onClick={() => {
-                  const featuresSection = document.querySelector('#features');
-                  if (featuresSection) {
-                    featuresSection.scrollIntoView({ behavior: 'smooth' });
-                  }
-                }}
-                className="group relative inline-flex items-center justify-center px-8 py-4 bg-white/10 backdrop-blur-sm text-white font-semibold rounded-full border-2 border-white/30 hover:border-white/50 hover:bg-white/20 transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-white/25 text-base min-w-[180px]"
-              >
-                <span className="mr-3">Explore Features</span>
-                <motion.svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  animate={{ y: [0, -3, 0] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                </motion.svg>
-                {/* Glow effect */}
-                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-white/20 to-white/10 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10"></div>
-              </button>
+                Join Our Network
+              </motion.button>
             </motion.div>
+          )}
 
+          {/* Minimal Feature Indicators - Less Crowded */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 1.2 }}
+            className="flex justify-center gap-6 pt-6"
+          >
+            <div className="flex items-center text-white/80 text-xs font-medium">
+              <div className="w-1 h-1 bg-primary-400 rounded-full mr-1.5"></div>
+              <span>Cherished Memories</span>
+            </div>
+            <div className="flex items-center text-white/80 text-xs font-medium">
+              <div className="w-1 h-1 bg-secondary-400 rounded-full mr-1.5"></div>
+              <span>Lifelong Bonds</span>
+            </div>
+            <div className="flex items-center text-white/80 text-xs font-medium">
+              <div className="w-1 h-1 bg-green-400 rounded-full mr-1.5"></div>
+              <span>Shared Stories</span>
+            </div>
           </motion.div>
-
-        </div>
+        </motion.div>
       </div>
     </section>
   );

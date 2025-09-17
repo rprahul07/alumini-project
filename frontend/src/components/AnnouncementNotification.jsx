@@ -132,17 +132,17 @@ const AnnouncementNotification = ({ announcements, loading }) => {
             damping: 25,
             duration: 0.4 
           }}
-          className="fixed top-4 right-4 z-50 max-w-xs w-full"
+          className="fixed top-3 right-3 z-50 max-w-xs w-full"
         >
-          <div className="bg-white/10 backdrop-blur-2xl rounded-2xl shadow-2xl border border-white/20 overflow-hidden relative">
+          <div className="bg-white/80 backdrop-blur-2xl rounded-xl shadow-2xl border border-slate-200 overflow-hidden relative">
             {/* Animated background gradient */}
-            <div className="absolute inset-0 bg-gradient-to-br from-primary-500/10 via-secondary-500/10 to-primary-500/10 rounded-2xl animate-pulse"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-primary-500/10 via-secondary-500/10 to-primary-500/10 rounded-xl animate-pulse"></div>
             
             {/* Loading content */}
-            <div className="p-4 relative z-10">
+            <div className="p-3 relative z-10">
               <div className="flex items-center justify-center space-x-3">
-                <div className="animate-spin rounded-full h-6 w-6 border-2 border-primary-400 border-t-transparent"></div>
-                <span className="text-white font-medium">Loading announcements...</span>
+                <div className="animate-spin rounded-full h-5 w-5 border-2 border-primary-400 border-t-transparent"></div>
+                <span className="text-slate-900 font-medium text-sm font-sans">Loading announcements...</span>
               </div>
             </div>
           </div>
@@ -167,29 +167,29 @@ const AnnouncementNotification = ({ announcements, loading }) => {
             damping: 25,
             duration: 0.4 
           }}
-          className="fixed top-4 right-4 z-50 max-w-xs w-full"
+          className="fixed top-3 right-3 z-50 max-w-xs w-full"
         >
-          <div className="bg-white/10 backdrop-blur-2xl rounded-2xl shadow-2xl border border-white/20 overflow-hidden hover:shadow-3xl hover:border-white/30 transition-all duration-300 relative">
+          <div className="bg-white/80 backdrop-blur-2xl rounded-xl shadow-2xl border border-slate-200 overflow-hidden hover:shadow-3xl hover:border-slate-300 transition-all duration-300 relative">
             {/* Animated background gradient */}
-            <div className="absolute inset-0 bg-gradient-to-br from-primary-500/10 via-secondary-500/10 to-primary-500/10 rounded-2xl animate-pulse"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-primary-500/10 via-secondary-500/10 to-primary-500/10 rounded-xl animate-pulse"></div>
             
             {/* Floating particles */}
             <div className="absolute top-2 right-2 w-1 h-1 bg-primary-400/60 rounded-full animate-bounce" style={{ animationDelay: '0.5s' }}></div>
             <div className="absolute bottom-2 left-2 w-0.5 h-0.5 bg-secondary-400/60 rounded-full animate-bounce" style={{ animationDelay: '1.5s' }}></div>
             {/* Compact Header */}
-            <div className="flex items-center justify-between p-3 relative z-10">
+            <div className="flex items-center justify-between p-2.5 relative z-10">
               <div className="flex items-center space-x-2.5 flex-1 min-w-0">
                 {/* Compact Icon */}
-                <div className={`w-8 h-8 bg-gradient-to-r ${priority.color} rounded-lg flex items-center justify-center shadow-lg flex-shrink-0`}>
-                  <span className="text-white text-sm">🔔</span>
+                <div className={`w-7 h-7 bg-gradient-to-r ${priority.color} rounded-md flex items-center justify-center shadow-lg flex-shrink-0`}>
+                  <span className="text-white text-xs">🔔</span>
                 </div>
                 
                 {/* Title and Priority */}
                 <div className="flex items-center space-x-2 flex-1 min-w-0">
-                  <span className="font-semibold text-white text-sm truncate">New Announcement</span>
-                  <div className={`w-1.5 h-1.5 rounded-full ${priority.dotColor} flex-shrink-0 animate-pulse`}></div>
+                  <span className="font-semibold text-slate-900 text-xs truncate font-sans">New Announcement</span>
+                  <div className={`w-1 h-1 rounded-full ${priority.dotColor} flex-shrink-0 animate-pulse`}></div>
                   {announcements.length > 1 && (
-                    <span className={`px-1.5 py-0.5 ${priority.bgColor} ${priority.textColor} text-xs font-medium rounded-full flex-shrink-0 border ${priority.borderColor}`}>
+                    <span className={`px-1 py-0.5 ${priority.bgColor} ${priority.textColor} text-xs font-medium rounded-full flex-shrink-0 border ${priority.borderColor} font-sans`}>
                       {currentIndex + 1}/{announcements.length}
                     </span>
                   )}
@@ -199,16 +199,16 @@ const AnnouncementNotification = ({ announcements, loading }) => {
               {/* Close Button */}
               <button
                 onClick={handleDismiss}
-                className="text-gray-400 hover:text-white transition-colors duration-200 p-1 hover:bg-white/10 rounded-md flex-shrink-0"
+                className="text-slate-500 hover:text-slate-900 transition-colors duration-200 p-0.5 hover:bg-slate-100 rounded-md flex-shrink-0"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
 
             {/* Compact Content */}
-            <div className="px-3 pb-2 relative z-10">
+            <div className="px-2.5 pb-2 relative z-10">
               <motion.div
                 key={currentAnnouncement.id}
                 initial={{ opacity: 0, y: 8 }}
@@ -216,14 +216,14 @@ const AnnouncementNotification = ({ announcements, loading }) => {
                 exit={{ opacity: 0, y: -8 }}
                 transition={{ duration: 0.25 }}
               >
-                <h3 className="font-semibold text-white text-sm mb-1 line-clamp-1">
+                <h3 className="font-semibold text-slate-900 text-xs mb-1 line-clamp-1 font-sans">
                   {currentAnnouncement.title}
                 </h3>
-                <p className="text-xs text-gray-300 line-clamp-2 leading-relaxed">
+                <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed font-sans">
                   {currentAnnouncement.content}
                 </p>
                 <div className="flex items-center justify-between mt-2">
-                  <span className="text-xs text-gray-400">{getTimeAgo(currentAnnouncement.createdAt)}</span>
+                  <span className="text-xs text-slate-500 font-sans">{getTimeAgo(currentAnnouncement.createdAt)}</span>
                   
                   {/* Compact Actions */}
                   <div className="flex items-center space-x-2">
@@ -231,10 +231,10 @@ const AnnouncementNotification = ({ announcements, loading }) => {
                     {announcements.length > 1 && (
                       <button
                         onClick={handleNext}
-                        className="w-6 h-6 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-105 border border-white/20"
+                        className="w-5 h-5 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-105 border border-slate-200"
                         title="Next announcement"
                       >
-                        <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-2.5 h-2.5 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                         </svg>
                       </button>
@@ -246,10 +246,10 @@ const AnnouncementNotification = ({ announcements, loading }) => {
                         {announcements.map((_, index) => (
                           <div
                             key={index}
-                            className={`w-1 h-1 rounded-full transition-all duration-300 ${
+                            className={`w-0.5 h-0.5 rounded-full transition-all duration-300 ${
                               index === currentIndex 
-                                ? 'bg-primary-400' 
-                                : 'bg-white/30'
+                                ? 'bg-primary-500' 
+                                : 'bg-slate-300'
                             }`}
                           />
                         ))}
@@ -261,7 +261,7 @@ const AnnouncementNotification = ({ announcements, loading }) => {
             </div>
 
             {/* Sleek Progress bar */}
-            <div className="h-0.5 bg-white/10 relative z-10">
+            <div className="h-0.5 bg-slate-200 relative z-10">
               <motion.div
                 className="h-full bg-gradient-to-r from-primary-400 via-secondary-400 to-primary-400 rounded-full"
                 initial={{ width: "0%" }}

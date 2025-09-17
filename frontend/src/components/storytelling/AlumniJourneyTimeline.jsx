@@ -128,7 +128,7 @@ const AlumniJourneyTimeline = () => {
   };
 
   return (
-    <section className="py-16 bg-white relative overflow-hidden">
+    <section className="py-12 bg-white relative overflow-hidden">
       {/* Background decorative elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-20 left-20 w-64 h-64 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full opacity-30 blur-3xl"></div>
@@ -142,19 +142,19 @@ const AlumniJourneyTimeline = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-center mb-12"
         >
-          <div className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-blue-50 text-blue-800 mb-4">
-            <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+          <div className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-blue-50 text-blue-800 mb-3 font-sans">
+            <span className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-1.5"></span>
             Success Stories
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3 font-sans">
             Alumni{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
               Success Journey
             </span>
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-sm text-gray-600 max-w-2xl mx-auto font-sans">
             Discover inspiring career paths and success stories from our alumni network
           </p>
         </motion.div>
@@ -165,14 +165,14 @@ const AlumniJourneyTimeline = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="mb-16"
+          className="mb-12"
         >
           <div className="relative">
             {/* Timeline Line */}
             <div className="absolute top-1/2 left-0 right-0 h-1 bg-gray-200 transform -translate-y-1/2"></div>
             
             {/* Timeline Stages */}
-            <div className="relative grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div className="relative grid grid-cols-1 md:grid-cols-4 gap-6">
               {careerStages.map((stage, index) => (
                 <motion.div
                   key={stage.id}
@@ -185,7 +185,7 @@ const AlumniJourneyTimeline = () => {
                   {/* Stage Icon */}
                   <div className="relative z-10">
                     <motion.div
-                      className={`w-16 h-16 mx-auto bg-gradient-to-r ${stage.color} rounded-full flex items-center justify-center text-white text-2xl shadow-lg mb-4`}
+                      className={`w-12 h-12 mx-auto bg-gradient-to-r ${stage.color} rounded-full flex items-center justify-center text-white text-lg shadow-lg mb-3`}
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
                     >
@@ -195,8 +195,8 @@ const AlumniJourneyTimeline = () => {
                   
                   {/* Stage Content */}
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">{stage.stage}</h3>
-                    <p className="text-sm text-gray-600">{stage.description}</p>
+                    <h3 className="text-base font-semibold text-gray-900 mb-1 font-sans">{stage.stage}</h3>
+                    <p className="text-xs text-gray-600 font-sans">{stage.description}</p>
                   </div>
                   
                   {/* Connection Line */}
@@ -215,9 +215,9 @@ const AlumniJourneyTimeline = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="mb-12"
+          className="mb-8"
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {successStories.map((story, index) => (
               <motion.div
                 key={story.id}
@@ -228,7 +228,7 @@ const AlumniJourneyTimeline = () => {
                 className="group cursor-pointer"
                 onClick={() => handleStoryClick(story)}
               >
-                <div className="bg-white rounded-2xl p-6 border border-gray-200 hover:border-blue-300 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+                <div className="bg-white rounded-xl p-4 border border-gray-200 hover:border-blue-300 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                   {/* Story Header */}
                   <div className="flex items-center mb-4">
                     <img

@@ -79,7 +79,7 @@ const Sidebar = ({ compact = false }) => {
 
         <button
           onClick={handleLogout}
-          className={`w-full flex items-center ${compact ? 'px-2 py-1 text-xs' : 'px-3 py-2 text-sm'} font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-md`}
+          className={`w-full flex items-center ${compact ? 'px-2 py-1 text-xs' : 'px-3 py-2 text-sm'} font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-full`}
         >
           <ArrowRightOnRectangleIcon className={`mr-2 ${compact ? 'h-4 w-4' : 'h-5 w-5'} text-gray-400`} />
           Logout

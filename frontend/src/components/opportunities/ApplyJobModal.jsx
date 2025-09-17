@@ -183,8 +183,8 @@ const ApplyJobModal = ({ open, onClose, job, onSuccess }) => {
               )}
             </div>
             <div className="flex justify-end gap-2 mt-6">
-              <button type="button" className="px-4 py-2 rounded bg-gray-200 text-gray-700 hover:bg-gray-300" onClick={onClose} disabled={loading}>Cancel</button>
-              <button type="submit" className="px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700" disabled={loading}>{loading ? 'Submitting...' : 'Submit Application'}</button>
+              <button type="button" className="px-4 py-2 rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300" onClick={onClose} disabled={loading}>Cancel</button>
+              <button type="submit" className="px-4 py-2 rounded-full bg-green-600 text-white hover:bg-green-700" disabled={loading}>{loading ? 'Submitting...' : 'Submit Application'}</button>
             </div>
           </form>
         )}

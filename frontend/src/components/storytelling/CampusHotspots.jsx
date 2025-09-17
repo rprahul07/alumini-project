@@ -58,7 +58,7 @@ const CampusHotspots = () => {
   ];
 
   return (
-    <section id="campus-highlights" className="py-20 bg-gradient-to-br from-indigo-50 via-white to-purple-50 relative overflow-hidden">
+    <section id="campus-highlights" className="py-12 bg-gradient-to-br from-indigo-50 via-white to-purple-50 relative overflow-hidden">
       {/* Background decorative elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full opacity-50 blur-3xl"></div>
@@ -78,7 +78,7 @@ const CampusHotspots = () => {
             <span className="w-2 h-2 bg-indigo-500 rounded-full mr-2"></span>
             Campus Memories
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-2xl md:text-3xl font-bold font-sans text-gray-900 mb-3">
             Explore{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">
               Campus Hotspots

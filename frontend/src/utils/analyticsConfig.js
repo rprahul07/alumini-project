@@ -3,6 +3,15 @@
  * Centralized configuration for Google Analytics 4
  */
 
+// Debug environment variables (only in development)
+if (import.meta.env.DEV) {
+  console.log('Environment Variables Debug:', {
+    VITE_GA_MEASUREMENT_ID: import.meta.env.VITE_GA_MEASUREMENT_ID,
+    DEV: import.meta.env.DEV,
+    MODE: import.meta.env.MODE
+  });
+}
+
 export const ANALYTICS_CONFIG = {
   // Enable in both development and production, but only track in production
   enabled: import.meta.env.VITE_GA_MEASUREMENT_ID,
@@ -40,7 +49,22 @@ export const shouldLoadAnalytics = () => {
  * @returns {object|null}
  */
 export const getAnalyticsConfig = () => {
-  if (!shouldLoadAnalytics()) return null;
+  // Debug logging (only in development)
+  if (import.meta.env.DEV) {
+    console.log('Analytics Config Debug:', {
+      enabled: ANALYTICS_CONFIG.enabled,
+      measurementId: ANALYTICS_CONFIG.measurementId,
+      shouldLoad: shouldLoadAnalytics(),
+      envVar: import.meta.env.VITE_GA_MEASUREMENT_ID
+    });
+  }
+  
+  if (!shouldLoadAnalytics()) {
+    if (import.meta.env.DEV) {
+      console.log('Analytics not loaded - missing measurement ID or disabled');
+    }
+    return null;
+  }
   
   return {
     measurementId: ANALYTICS_CONFIG.measurementId,

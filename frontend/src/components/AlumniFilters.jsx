@@ -7,14 +7,14 @@ const AlumniFilters = ({ selectedGraduationYear, onFilterChange }) => {
   const years = Array.from({ length: 30 }, (_, i) => currentYear - i);
 
   return (
-    <div className="flex flex-col sm:flex-row gap-4">
+    <div className="flex flex-col sm:flex-row gap-3">
       <div className="flex-1">
         <div className="relative">
           <select
             id="graduationYear"
             value={selectedGraduationYear}
             onChange={e => onFilterChange(e.target.value)}
-            className="rounded-full px-4 py-1.5 font-semibold border-2 border-indigo-400 bg-white/60 backdrop-blur text-sm text-indigo-700 hover:bg-white/80 shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400"
+            className="rounded-full px-3 py-1 font-semibold border-2 border-indigo-400 bg-white/60 backdrop-blur text-xs text-indigo-700 hover:bg-white/80 shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 font-sans"
           >
             <option value="">All Years</option>
             {years.map(year => (

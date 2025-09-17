@@ -33,7 +33,7 @@ const MyActivityCard = memo(({ features, defaultTab }) => {
         {/* Title and Toggle - Enhanced Design */}
         <div className="flex items-center justify-between px-2">
           <div className="flex items-center space-x-2">
-            <h2 className="text-sm sm:text-base lg:text-lg font-bold text-white">My Activity</h2>
+            <h2 className="text-xs sm:text-sm lg:text-base font-bold text-slate-900 font-sans">My Activity</h2>
             <div className="w-2 h-2 rounded-full bg-gradient-to-r from-primary-400 to-secondary-400 animate-pulse"></div>
           </div>
           
@@ -42,7 +42,7 @@ const MyActivityCard = memo(({ features, defaultTab }) => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="lg:hidden p-2 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20 transition-all duration-200 shadow-lg"
+            className="lg:hidden p-1.5 rounded-lg bg-slate-100 backdrop-blur-sm border border-slate-200 text-slate-900 hover:bg-slate-200 transition-all duration-200 shadow-lg"
             aria-label="Toggle menu"
           >
             {isMobileMenuOpen ? (
@@ -63,16 +63,16 @@ const MyActivityCard = memo(({ features, defaultTab }) => {
               transition={{ duration: 0.2 }}
               className="lg:hidden overflow-hidden"
             >
-              <div className="bg-white/10 backdrop-blur-xl rounded-xl p-2 border border-white/20 space-y-1">
+              <div className="bg-slate-100 backdrop-blur-xl rounded-xl p-2 border border-slate-200 space-y-1">
                 {features.map(feature => (
                   <motion.button
                     key={feature.key}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium border transition-all duration-200 ${
+                    className={`w-full text-left px-4 py-2.5 rounded-full text-sm font-semibold transition-all duration-200 ${
                       mainTab === feature.key 
-                        ? 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white border-primary-500 shadow-lg' 
-                        : 'bg-white/10 text-white border-white/30 hover:bg-white/20 hover:border-white/50'
+                        ? 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white shadow-xl' 
+                        : 'bg-white text-slate-700 hover:bg-slate-50 hover:shadow-lg'
                     }`}
                     onClick={() => {
                       setMainTab(feature.key);
@@ -96,17 +96,17 @@ const MyActivityCard = memo(({ features, defaultTab }) => {
           )}
         </AnimatePresence>
 
-        {/* Enhanced Desktop Tab Navigation */}
-        <div className="hidden lg:flex gap-2 flex-wrap">
+        {/* Enhanced Desktop Tab Navigation - Main Activity Buttons */}
+        <div className="hidden lg:flex gap-3 flex-wrap">
           {features.map(feature => (
             <motion.button
               key={feature.key}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className={`px-4 py-2 rounded-xl text-sm font-semibold border transition-all duration-200 ${
+              className={`px-4 py-2.5 rounded-full text-sm font-semibold transition-all duration-200 ${
                 mainTab === feature.key 
-                  ? 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white border-primary-500 shadow-lg' 
-                  : 'bg-white/10 backdrop-blur-sm text-white border-white/30 hover:bg-white/20 hover:border-white/50'
+                  ? 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white shadow-xl' 
+                  : 'bg-white backdrop-blur-sm text-slate-700 hover:bg-slate-50 hover:shadow-lg'
               }`}
               onClick={() => setMainTab(feature.key)}
             >
@@ -115,18 +115,18 @@ const MyActivityCard = memo(({ features, defaultTab }) => {
           ))}
         </div>
 
-        {/* Enhanced Mobile Tab Pills */}
+        {/* Enhanced Mobile Tab Pills - Main Activity Buttons */}
         {!isMobileMenuOpen && (
-          <div className="lg:hidden flex gap-1 overflow-x-auto scrollbar-hide px-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+          <div className="lg:hidden flex gap-2 overflow-x-auto scrollbar-hide px-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             {features.map((feature, index) => (
               <motion.button
                 key={feature.key}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className={`flex-shrink-0 px-3 py-2 rounded-xl text-xs font-medium border transition-all duration-200 ${
+                className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 ${
                   mainTab === feature.key 
-                    ? 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white border-primary-500 shadow-lg' 
-                    : 'bg-white/10 backdrop-blur-sm text-white border-white/30 hover:bg-white/20'
+                    ? 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white shadow-xl' 
+                    : 'bg-white backdrop-blur-sm text-slate-700 hover:bg-slate-50 hover:shadow-lg'
                 }`}
                 onClick={() => setMainTab(feature.key)}
               >
@@ -166,7 +166,7 @@ const MyActivityCard = memo(({ features, defaultTab }) => {
               className={`w-2 h-2 rounded-full transition-all duration-200 cursor-pointer ${
                 mainTab === feature.key 
                   ? 'bg-gradient-to-r from-primary-400 to-secondary-400 scale-125 shadow-lg' 
-                  : 'bg-white/30 hover:bg-white/50'
+                  : 'bg-slate-300 hover:bg-slate-400'
               }`}
               onClick={() => setMainTab(feature.key)}
             />

@@ -14,6 +14,7 @@ const MemoryLaneGallery = () => {
   const [galleryImages, setGalleryImages] = useState([]);
   const [galleryLoading, setGalleryLoading] = useState(true);
   const [galleryError, setGalleryError] = useState(null);
+  const [preloadedImages, setPreloadedImages] = useState(new Set());
   
   // Analytics tracking
   const { trackClick, trackHover } = useInteractionTracking('storytelling');
@@ -34,7 +35,7 @@ const MemoryLaneGallery = () => {
       id: 2,
       year: '2025',
       title: 'Aerial Campus View',
-      description: 'Bird’s eye view capturing the entire CUCEK campus',
+      description: 'Bird\'s eye view capturing the entire CUCEK campus',
       image: 'https://i.postimg.cc/fbFBCCzd/pixelcut-export-01-jpeg.jpg',
       category: 'Infrastructure',
       memories: ['College buildings', 'Green landscapes', 'Campus pride']
@@ -50,6 +51,40 @@ const MemoryLaneGallery = () => {
     }
   ];
   
+
+  // Image preloading function
+  const preloadImage = (src) => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(src);
+      img.onerror = reject;
+      img.src = src;
+    });
+  };
+
+  // Preload images to prevent white flash
+  useEffect(() => {
+    const preloadImages = async () => {
+      const allImages = [
+        ...collegeMemories.map(memory => memory.image),
+        ...galleryImages.map(image => image.image)
+      ].filter(Boolean);
+
+      const preloadPromises = allImages.map(src => 
+        preloadImage(src).catch(() => null)
+      );
+
+      try {
+        await Promise.all(preloadPromises);
+        setPreloadedImages(new Set(allImages));
+      } catch (error) {
+      }
+    };
+
+    if (galleryImages.length > 0) {
+      preloadImages();
+    }
+  }, [galleryImages]);
 
   // Fetch gallery images from API
   useEffect(() => {
@@ -78,7 +113,6 @@ const MemoryLaneGallery = () => {
           setGalleryImages([]);
         }
       } catch (error) {
-        console.error('Failed to fetch gallery images:', error);
         setGalleryError('Failed to load gallery images');
         // No fallback data - show empty state
         setGalleryImages([]);
@@ -146,18 +180,18 @@ const MemoryLaneGallery = () => {
   };
 
   return (
-    <section className="py-20 bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 relative overflow-hidden">
+    <section className="py-12 bg-gradient-to-br from-white via-slate-50 to-white relative overflow-hidden">
       {/* Enhanced Background decorative elements */}
       <div className="absolute inset-0 overflow-hidden">
         {/* Animated gradient orbs */}
-        <div className="absolute top-10 right-10 w-96 h-96 bg-gradient-to-br from-primary-400/30 to-secondary-400/30 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-tr from-secondary-400/30 to-primary-400/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-primary-300/20 to-secondary-300/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-10 right-10 w-96 h-96 bg-gradient-to-br from-primary-100/40 to-secondary-100/40 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-tr from-secondary-100/40 to-primary-100/40 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-primary-50/30 to-secondary-50/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
         
         {/* Floating particles */}
-        <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-primary-400/60 rounded-full animate-bounce" style={{ animationDelay: '0.5s' }}></div>
-        <div className="absolute top-3/4 right-1/4 w-1 h-1 bg-secondary-400/60 rounded-full animate-bounce" style={{ animationDelay: '1.5s' }}></div>
-        <div className="absolute top-1/2 right-1/3 w-1.5 h-1.5 bg-primary-300/60 rounded-full animate-bounce" style={{ animationDelay: '2.5s' }}></div>
+        <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-primary-400/40 rounded-full animate-bounce" style={{ animationDelay: '0.5s' }}></div>
+        <div className="absolute top-3/4 right-1/4 w-1 h-1 bg-secondary-400/40 rounded-full animate-bounce" style={{ animationDelay: '1.5s' }}></div>
+        <div className="absolute top-1/2 right-1/3 w-1.5 h-1.5 bg-primary-300/40 rounded-full animate-bounce" style={{ animationDelay: '2.5s' }}></div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -167,19 +201,19 @@ const MemoryLaneGallery = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-center mb-8"
         >
-          <div className="inline-flex items-center px-6 py-3 rounded-full text-sm font-semibold bg-gradient-to-r from-primary-500/20 to-secondary-500/20 backdrop-blur-sm text-white border border-white/20 mb-8 shadow-lg">
-            <span className="w-3 h-3 bg-gradient-to-r from-primary-400 to-secondary-400 rounded-full mr-3 animate-pulse"></span>
+          <div className="inline-flex items-center px-4 py-2 rounded-full text-xs font-semibold bg-gradient-to-r from-primary-50 to-secondary-50 backdrop-blur-sm text-slate-700 border border-slate-200 mb-4 shadow-lg font-sans">
+            <span className="w-2 h-2 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full mr-2 animate-pulse"></span>
             <span>Memory Lane Gallery</span>
           </div>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-slate-900 mb-4 leading-tight font-sans">
             Our Journey Through{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 via-secondary-400 to-primary-400 animate-pulse">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 via-secondary-600 to-primary-600">
               Time & Achievement
             </span>
           </h2>
-          <p className="text-base md:text-lg text-gray-300 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-sm md:text-base text-slate-600 max-w-3xl mx-auto leading-relaxed font-sans">
             Discover the cherished memories of our college days and celebrate the remarkable achievements of our alumni community
           </p>
         </motion.div>
@@ -194,66 +228,145 @@ const MemoryLaneGallery = () => {
             className="relative"
           >
             {/* Gallery Title */}
-            <div className="text-center mb-6">
-              <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-full text-sm font-semibold mb-3 shadow-lg">
-                <span className="w-2 h-2 bg-white rounded-full mr-2"></span>
+            <div className="text-center mb-4">
+              <div className="inline-flex items-center px-3 py-1.5 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-full text-xs font-semibold mb-2 shadow-lg font-sans">
+                <span className="w-1.5 h-1.5 bg-white rounded-full mr-1.5"></span>
                 CUCEK Gallery
               </div>
-              <h3 className="text-xl md:text-2xl font-bold text-white mb-2">College Memories</h3>
-              <p className="text-gray-300 text-sm md:text-base">Moments that shaped our journey</p>
+              <h3 className="text-lg md:text-xl font-bold text-slate-900 mb-1 font-sans">College Memories</h3>
+              <p className="text-slate-600 text-xs md:text-sm font-sans">Moments that shaped our journey</p>
             </div>
 
-            <div className="bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden border border-white/20">
+            <div className="bg-white/90 backdrop-blur-xl rounded-3xl shadow-lg overflow-hidden border border-slate-200/50" style={{
+              boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.05)'
+            }}>
               {/* Image Slider */}
-              <div className="relative h-80 overflow-hidden">
-                <AnimatePresence mode="wait">
+              <div className="relative h-80 overflow-hidden bg-slate-100">
+                <AnimatePresence mode="popLayout">
                   <motion.div
                     key={activeCollegeSlide}
-                    initial={{ opacity: 0, scale: 1.1 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                    transition={{ duration: 0.6 }}
+                    initial={{ 
+                      opacity: 0, 
+                      scale: 1.05,
+                      x: 20,
+                      rotateY: 5
+                    }}
+                    animate={{ 
+                      opacity: 1, 
+                      scale: 1,
+                      x: 0,
+                      rotateY: 0
+                    }}
+                    exit={{ 
+                      opacity: 0, 
+                      scale: 0.95,
+                      x: -20,
+                      rotateY: -5
+                    }}
+                    transition={{ 
+                      duration: 0.6,
+                      ease: [0.25, 0.46, 0.45, 0.94],
+                      type: "tween"
+                    }}
                     className="absolute inset-0"
                   >
-                    <OptimizedImage
-                      src={collegeMemories[activeCollegeSlide].image}
-                      alt={`${collegeMemories[activeCollegeSlide].title} - ${collegeMemories[activeCollegeSlide].year}`}
-                      className="w-full h-full object-cover"
-                      fallbackSrc="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&h=600&fit=crop"
-                      loading="lazy"
-                    />
+                    <motion.div
+                      className="w-full h-full"
+                      animate={{
+                        scale: [1, 1.02, 1],
+                      }}
+                      transition={{
+                        duration: 8,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                    >
+                      <OptimizedImage
+                        src={collegeMemories[activeCollegeSlide].image}
+                        alt={`${collegeMemories[activeCollegeSlide].title} - ${collegeMemories[activeCollegeSlide].year}`}
+                        className="w-full h-full object-cover"
+                        fallbackSrc="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&h=600&fit=crop"
+                        loading="eager"
+                      />
+                    </motion.div>
                     
-                    {/* Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent">
-                      <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                        <h4 className="text-2xl font-bold mb-2">{collegeMemories[activeCollegeSlide].title}</h4>
-                        <p className="text-primary-100 mb-4">{collegeMemories[activeCollegeSlide].description}</p>
-                      </div>
-                    </div>
+                    {/* Enhanced Overlay with Animation */}
+                    <motion.div 
+                      className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.6, delay: 0.2 }}
+                    >
+                      <motion.div 
+                        className="absolute bottom-0 left-0 right-0 p-6 text-white"
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ duration: 0.6, delay: 0.4 }}
+                      >
+                        <motion.h4 
+                          className="text-lg font-bold mb-2 font-sans"
+                          initial={{ y: 10, opacity: 0 }}
+                          animate={{ y: 0, opacity: 1 }}
+                          transition={{ duration: 0.5, delay: 0.6 }}
+                        >
+                          {collegeMemories[activeCollegeSlide].title}
+                        </motion.h4>
+                        <motion.p 
+                          className="text-primary-100 mb-3 text-sm font-sans"
+                          initial={{ y: 10, opacity: 0 }}
+                          animate={{ y: 0, opacity: 1 }}
+                          transition={{ duration: 0.5, delay: 0.8 }}
+                        >
+                          {collegeMemories[activeCollegeSlide].description}
+                        </motion.p>
+                      </motion.div>
+                    </motion.div>
                   </motion.div>
                 </AnimatePresence>
               </div>
 
-              {/* Navigation Arrows */}
-              <button
+              {/* Enhanced Navigation Arrows */}
+              <motion.button
                 onClick={() => handleCollegeSlideChange((activeCollegeSlide - 1 + collegeMemories.length) % collegeMemories.length)}
-                className="absolute left-4 top-1/3 transform -translate-y-1/2 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110 backdrop-blur-sm"
+                className="absolute left-4 top-1/3 transform -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-xl transition-all duration-300 backdrop-blur-sm border border-slate-200/50"
                 aria-label="Previous slide"
+                whileHover={{ scale: 1.1, x: -2 }}
+                whileTap={{ scale: 0.95 }}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
               >
-                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <motion.svg 
+                  className="w-6 h-6 text-slate-700" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                  whileHover={{ x: -2 }}
+                >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
+                </motion.svg>
+              </motion.button>
               
-              <button
+              <motion.button
                 onClick={() => handleCollegeSlideChange((activeCollegeSlide + 1) % collegeMemories.length)}
-                className="absolute right-4 top-1/3 transform -translate-y-1/2 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110 backdrop-blur-sm"
+                className="absolute right-4 top-1/3 transform -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-xl transition-all duration-300 backdrop-blur-sm border border-slate-200/50"
                 aria-label="Next slide"
+                whileHover={{ scale: 1.1, x: 2 }}
+                whileTap={{ scale: 0.95 }}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
               >
-                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <motion.svg 
+                  className="w-6 h-6 text-slate-700" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                  whileHover={{ x: 2 }}
+                >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
+                </motion.svg>
+              </motion.button>
 
               {/* Slide Indicators */}
               <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
@@ -263,8 +376,8 @@ const MemoryLaneGallery = () => {
                     onClick={() => handleCollegeSlideChange(index)}
                     className={`w-3 h-3 rounded-full transition-all duration-300 ${
                       index === activeCollegeSlide
-                        ? 'bg-white scale-125'
-                        : 'bg-white/50 hover:bg-white/75'
+                        ? 'bg-primary-500 scale-125'
+                        : 'bg-slate-300 hover:bg-slate-400'
                     }`}
                     aria-label={`Go to slide ${index + 1}`}
                   />
@@ -282,105 +395,197 @@ const MemoryLaneGallery = () => {
             className="relative"
           >
             {/* Gallery Title */}
-            <div className="text-center mb-6">
-              <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-secondary-500 to-secondary-600 text-white rounded-full text-sm font-semibold mb-3 shadow-lg">
-                <span className="w-2 h-2 bg-white rounded-full mr-2"></span>
+            <div className="text-center mb-4">
+              <div className="inline-flex items-center px-3 py-1.5 bg-gradient-to-r from-secondary-500 to-secondary-600 text-white rounded-full text-xs font-semibold mb-2 shadow-lg font-sans">
+                <span className="w-1.5 h-1.5 bg-white rounded-full mr-1.5"></span>
                 {galleryLoading ? 'Loading...' : 'Alumni Memories'}
               </div>
-              <h3 className="text-xl md:text-2xl font-bold text-white mb-2">
+              <h3 className="text-lg md:text-xl font-bold text-slate-900 mb-1 font-sans">
                 {galleryLoading ? 'Loading Gallery...' : 'Alumni Memories'}
               </h3>
-              <p className="text-gray-300 text-sm md:text-base">
+              <p className="text-slate-600 text-xs md:text-sm font-sans">
                 {galleryLoading ? 'Fetching memories from our alumni' : 'Cherished moments shared by our alumni community'}
               </p>
             </div>
 
-            <div className="bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden border border-white/20">
+            <div className="bg-white/90 backdrop-blur-xl rounded-3xl shadow-lg overflow-hidden border border-slate-200/50" style={{
+              boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.05)'
+            }}>
               {/* Image Slider */}
-              <div className="relative h-80 overflow-hidden">
+              <div className="relative h-80 overflow-hidden bg-slate-100">
                 {galleryLoading ? (
-                  <div className="absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
+                  <div className="absolute inset-0 bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
                     <div className="text-center">
-                      <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mb-4 mx-auto animate-pulse">
-                        <i className="fas fa-spinner fa-spin text-white text-2xl"></i>
+                      <div className="w-12 h-12 bg-primary-100 backdrop-blur-sm rounded-full flex items-center justify-center mb-3 mx-auto animate-pulse shadow-lg" style={{
+                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+                      }}>
+                        <i className="fas fa-spinner fa-spin text-primary-600 text-lg"></i>
                       </div>
-                      <h4 className="text-lg font-bold text-white mb-2">Loading Gallery...</h4>
-                      <p className="text-white/80 text-sm">Please wait</p>
+                      <h4 className="text-sm font-bold text-slate-900 mb-2 font-sans">Loading Gallery...</h4>
+                      <p className="text-slate-600 text-xs font-sans">Please wait</p>
                     </div>
                   </div>
                 ) : galleryError ? (
-                  <div className="absolute inset-0 bg-gradient-to-br from-red-500/30 to-red-600/30 flex items-center justify-center">
+                  <div className="absolute inset-0 bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center">
                     <div className="text-center">
-                      <div className="w-16 h-16 bg-red-500/30 backdrop-blur-sm rounded-full flex items-center justify-center mb-4 mx-auto">
-                        <i className="fas fa-exclamation-triangle text-white text-2xl"></i>
+                      <div className="w-12 h-12 bg-red-100 backdrop-blur-sm rounded-full flex items-center justify-center mb-3 mx-auto shadow-lg" style={{
+                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+                      }}>
+                        <i className="fas fa-exclamation-triangle text-red-600 text-lg"></i>
                       </div>
-                      <h4 className="text-lg font-bold text-white mb-2">Gallery Unavailable</h4>
-                      <p className="text-white/80 text-sm mb-4">Unable to load gallery images</p>
+                      <h4 className="text-sm font-bold text-slate-900 mb-2 font-sans">Gallery Unavailable</h4>
+                      <p className="text-slate-600 text-xs mb-3 font-sans">Unable to load gallery images</p>
                     </div>
                   </div>
                 ) : galleryImages.length > 0 ? (
-                  <AnimatePresence mode="wait">
+                  <AnimatePresence mode="popLayout">
                     <motion.div
                       key={activeAlumniSlide}
-                      initial={{ opacity: 0, scale: 1.1 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.9 }}
-                      transition={{ duration: 0.6 }}
+                      initial={{ 
+                        opacity: 0, 
+                        scale: 1.05,
+                        x: -20,
+                        rotateY: -5
+                      }}
+                      animate={{ 
+                        opacity: 1, 
+                        scale: 1,
+                        x: 0,
+                        rotateY: 0
+                      }}
+                      exit={{ 
+                        opacity: 0, 
+                        scale: 0.95,
+                        x: 20,
+                        rotateY: 5
+                      }}
+                      transition={{ 
+                        duration: 0.6,
+                        ease: [0.25, 0.46, 0.45, 0.94],
+                        type: "tween"
+                      }}
                       className="absolute inset-0"
                     >
-                      <OptimizedImage
-                        src={galleryImages[activeAlumniSlide].image}
-                        alt={`${galleryImages[activeAlumniSlide].title} - ${galleryImages[activeAlumniSlide].year}`}
-                        className="w-full h-full object-cover"
-                        fallbackSrc=""
-                        loading="lazy"
-                      />
+                      <motion.div
+                        className="w-full h-full"
+                        animate={{
+                          scale: [1, 1.02, 1],
+                        }}
+                        transition={{
+                          duration: 10,
+                          repeat: Infinity,
+                          ease: "easeInOut"
+                        }}
+                      >
+                        <OptimizedImage
+                          src={galleryImages[activeAlumniSlide].image}
+                          alt={`${galleryImages[activeAlumniSlide].title} - ${galleryImages[activeAlumniSlide].year}`}
+                          className="w-full h-full object-cover"
+                          fallbackSrc=""
+                          loading="eager"
+                        />
+                      </motion.div>
                       
-                      {/* Overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent">
-                        <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                          <h4 className="text-2xl font-bold mb-2">{galleryImages[activeAlumniSlide].title}</h4>
-                          <p className="text-secondary-100 mb-2">{galleryImages[activeAlumniSlide].description}</p>
-                          <p className="text-sm text-secondary-200 mb-4">by {galleryImages[activeAlumniSlide].founder} (Class of {galleryImages[activeAlumniSlide].class})</p>
-                        </div>
-                      </div>
+                      {/* Enhanced Overlay with Animation */}
+                      <motion.div 
+                        className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.6, delay: 0.2 }}
+                      >
+                        <motion.div 
+                          className="absolute bottom-0 left-0 right-0 p-6 text-white"
+                          initial={{ y: 20, opacity: 0 }}
+                          animate={{ y: 0, opacity: 1 }}
+                          transition={{ duration: 0.6, delay: 0.4 }}
+                        >
+                          <motion.h4 
+                            className="text-lg font-bold mb-2 font-sans"
+                            initial={{ y: 10, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            transition={{ duration: 0.5, delay: 0.6 }}
+                          >
+                            {galleryImages[activeAlumniSlide].title}
+                          </motion.h4>
+                          <motion.p 
+                            className="text-secondary-100 mb-2 text-sm font-sans"
+                            initial={{ y: 10, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            transition={{ duration: 0.5, delay: 0.8 }}
+                          >
+                            {galleryImages[activeAlumniSlide].description}
+                          </motion.p>
+                          <motion.p 
+                            className="text-xs text-secondary-200 mb-3 font-sans"
+                            initial={{ y: 10, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            transition={{ duration: 0.5, delay: 1.0 }}
+                          >
+                            by {galleryImages[activeAlumniSlide].founder} (Class of {galleryImages[activeAlumniSlide].class})
+                          </motion.p>
+                        </motion.div>
+                      </motion.div>
                     </motion.div>
                   </AnimatePresence>
                 ) : (
-                  <div className="absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
+                  <div className="absolute inset-0 bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
                     <div className="text-center">
-                      <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mb-4 mx-auto">
-                        <i className="fas fa-images text-white text-2xl"></i>
+                      <div className="w-12 h-12 bg-slate-100 backdrop-blur-sm rounded-full flex items-center justify-center mb-3 mx-auto shadow-lg" style={{
+                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+                      }}>
+                        <i className="fas fa-images text-slate-600 text-lg"></i>
                       </div>
-                      <h4 className="text-lg font-bold text-white mb-2">No Gallery Images</h4>
-                      <p className="text-white/80 text-sm">Gallery images will appear here</p>
+                      <h4 className="text-sm font-bold text-slate-900 mb-2 font-sans">No Gallery Images</h4>
+                      <p className="text-slate-600 text-xs font-sans">Gallery images will appear here</p>
                     </div>
                   </div>
                 )}
               </div>
 
-              {/* Navigation Arrows - Only show if gallery has images */}
+              {/* Enhanced Navigation Arrows - Only show if gallery has images */}
               {galleryImages.length > 1 && (
                 <>
-                  <button
+                  <motion.button
                     onClick={() => handleAlumniSlideChange((activeAlumniSlide - 1 + galleryImages.length) % galleryImages.length)}
-                    className="absolute left-4 top-1/3 transform -translate-y-1/2 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110 backdrop-blur-sm"
+                    className="absolute left-4 top-1/3 transform -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-xl transition-all duration-300 backdrop-blur-sm border border-slate-200/50"
                     aria-label="Previous slide"
+                    whileHover={{ scale: 1.1, x: -2 }}
+                    whileTap={{ scale: 0.95 }}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
                   >
-                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <motion.svg 
+                      className="w-6 h-6 text-slate-700" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      viewBox="0 0 24 24"
+                      whileHover={{ x: -2 }}
+                    >
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                    </svg>
-                  </button>
+                    </motion.svg>
+                  </motion.button>
                   
-                  <button
+                  <motion.button
                     onClick={() => handleAlumniSlideChange((activeAlumniSlide + 1) % galleryImages.length)}
-                    className="absolute right-4 top-1/3 transform -translate-y-1/2 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110 backdrop-blur-sm"
+                    className="absolute right-4 top-1/3 transform -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-xl transition-all duration-300 backdrop-blur-sm border border-slate-200/50"
                     aria-label="Next slide"
+                    whileHover={{ scale: 1.1, x: 2 }}
+                    whileTap={{ scale: 0.95 }}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
                   >
-                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <motion.svg 
+                      className="w-6 h-6 text-slate-700" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      viewBox="0 0 24 24"
+                      whileHover={{ x: 2 }}
+                    >
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </button>
+                    </motion.svg>
+                  </motion.button>
                 </>
               )}
 
@@ -393,8 +598,8 @@ const MemoryLaneGallery = () => {
                       onClick={() => handleAlumniSlideChange(index)}
                       className={`w-3 h-3 rounded-full transition-all duration-300 ${
                         index === activeAlumniSlide
-                          ? 'bg-white scale-125'
-                          : 'bg-white/50 hover:bg-white/75'
+                          ? 'bg-secondary-500 scale-125'
+                          : 'bg-slate-300 hover:bg-slate-400'
                       }`}
                       aria-label={`Go to slide ${index + 1}`}
                     />
@@ -404,7 +609,6 @@ const MemoryLaneGallery = () => {
             </div>
           </motion.div>
         </div>
-
 
         {/* Memory Detail Modal */}
         <AnimatePresence>
@@ -421,38 +625,40 @@ const MemoryLaneGallery = () => {
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.8, opacity: 0 }}
                 transition={{ duration: 0.3 }}
-                className="bg-white rounded-3xl p-8 max-w-2xl w-full shadow-2xl border border-gray-100"
+                className="bg-white rounded-3xl p-6 max-w-2xl w-full shadow-lg border border-gray-100" style={{
+                  boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.05)'
+                }}
                 onClick={(e) => e.stopPropagation()}
               >
-                <div className="text-center mb-6">
-                  <div className="text-5xl mb-4">
+                <div className="text-center mb-4">
+                  <div className="text-3xl mb-3">
                     {selectedMemory.category === 'Startup' ? '🚀' : 
                      selectedMemory.category === 'Company' ? '🏢' : 
                      selectedMemory.category === 'Reunion' ? '👥' : 
                      selectedMemory.category === 'Event' ? '🎉' : '🏛️'}
                   </div>
-                  <h3 className="text-3xl font-bold text-gray-900 mb-2">
+                  <h3 className="text-xl font-bold text-gray-900 mb-2 font-sans">
                     {selectedMemory.title}
                   </h3>
-                  <p className="text-lg text-gray-600 mb-4">
+                  <p className="text-sm text-gray-600 mb-3 font-sans">
                     {selectedMemory.description}
                   </p>
                   {selectedMemory.founder && (
-                    <p className="text-sm text-primary-600 font-medium">
+                    <p className="text-xs text-primary-600 font-medium font-sans">
                       by {selectedMemory.founder} (Class of {selectedMemory.class})
                     </p>
                   )}
                 </div>
 
-                <div className="space-y-4 mb-8">
-                  <h4 className="text-xl font-semibold text-gray-900 mb-3">
+                <div className="space-y-3 mb-6">
+                  <h4 className="text-sm font-semibold text-gray-900 mb-2 font-sans">
                     {selectedMemory.achievements ? 'Key Achievements:' : 'Memories:'}
                   </h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                     {(selectedMemory.achievements || selectedMemory.memories).map((item, index) => (
                     <div key={index} className="flex items-start">
-                        <span className="text-primary-500 mr-3 mt-1">•</span>
-                        <span className="text-gray-700">{item}</span>
+                        <span className="text-primary-500 mr-2 mt-1 text-xs">•</span>
+                        <span className="text-gray-700 text-xs font-sans">{item}</span>
                     </div>
                   ))}
                   </div>
@@ -460,7 +666,7 @@ const MemoryLaneGallery = () => {
 
                 <button
                   onClick={() => setSelectedMemory(null)}
-                  className="w-full bg-gradient-to-r from-primary-600 to-secondary-600 text-white py-3 rounded-xl font-medium hover:from-primary-700 hover:to-secondary-700 transition-all duration-300"
+                  className="w-full bg-gradient-to-r from-primary-600 to-secondary-600 text-white py-2 rounded-xl font-medium hover:from-primary-700 hover:to-secondary-700 transition-all duration-300 text-sm font-sans"
                 >
                   Close
                 </button>

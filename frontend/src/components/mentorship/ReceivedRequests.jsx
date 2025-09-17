@@ -48,7 +48,6 @@ const ReceivedRequests = ({ requests, loading, error, setRequests, showAlert }) 
     const counts = {
       pending: requests.filter(req => req.status === 'pending').length,
       accepted: requests.filter(req => req.status === 'accepted').length,
-      rejected: requests.filter(req => req.status === 'rejected').length,
     };
     return counts;
   };
@@ -109,21 +108,6 @@ const ReceivedRequests = ({ requests, loading, error, setRequests, showAlert }) 
     }
   };
 
-  const handleRejectRequest = async (req) => {
-    setConfirmMessage('Are you sure you want to reject this request?');
-    setConfirmAction(() => () => {
-      setActionLoading(true);
-      axios.put(`/api/support/reject/${req.id}`).then(() => {
-        setRequests(prev => prev.map(r => r.id === req.id ? { ...r, status: 'rejected' } : r));
-        toast.success('Request rejected successfully!');
-      }).catch(() => {
-        toast.error('Failed to reject request.');
-      }).finally(() => {
-        setActionLoading(false);
-      });
-    });
-    setConfirmOpen(true);
-  };
 
   const handleDeleteRequest = async (req) => {
     setConfirmMessage('Are you sure you want to permanently delete this request? This cannot be undone.');
@@ -147,18 +131,19 @@ const ReceivedRequests = ({ requests, loading, error, setRequests, showAlert }) 
       <div className="flex gap-1 overflow-x-auto scrollbar-hide">
         {[
           { key: 'pending', label: 'Pending', color: 'yellow' },
-          { key: 'accepted', label: 'Accepted', color: 'green' },
-          { key: 'rejected', label: 'Rejected', color: 'red' }
+          { key: 'accepted', label: 'Accepted', color: 'green' }
         ].map(({ key, label, color }) => {
           return (
             <motion.button
               key={key}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className={`flex-shrink-0 px-2 py-1.5 rounded-lg text-xs font-medium border transition-all duration-200 ${
+              className={`flex-shrink-0 px-1.5 py-0.5 rounded-full text-xs font-medium border transition-all duration-200 ${
                 receivedSubTab === key 
-                  ? `bg-gradient-to-r from-${color}-500 to-${color}-600 text-white border-${color}-500` 
-                  : `bg-white/10 text-${color}-300 border-${color}-500/30 hover:bg-${color}-500/20`
+                  ? color === 'yellow'
+                    ? 'bg-yellow-500 text-white border-yellow-500 shadow-sm'
+                    : 'bg-green-500 text-white border-green-500 shadow-sm'
+                  : 'bg-slate-100 text-slate-700 border-slate-300 hover:bg-slate-200 hover:border-slate-400'
               }`}
               onClick={() => setReceivedSubTab(key)}
             >
@@ -171,11 +156,11 @@ const ReceivedRequests = ({ requests, loading, error, setRequests, showAlert }) 
       {/* Requests Content */}
       <div className="h-full">
         {loading ? (
-          <div className="text-center text-gray-300 py-8">Loading...</div>
+          <div className="text-center text-slate-600 py-8">Loading...</div>
         ) : error ? (
-          <div className="text-center text-red-400 py-8">{error}</div>
+          <div className="text-center text-red-600 py-8">{error}</div>
         ) : getFilteredRequests().length === 0 ? (
-          <div className="text-center text-gray-300 py-8">No {receivedSubTab} mentorship requests.</div>
+          <div className="text-center text-slate-600 py-8">No {receivedSubTab} mentorship requests.</div>
         ) : (
           <>
             {/* Mobile Card View */}
@@ -188,19 +173,19 @@ const ReceivedRequests = ({ requests, loading, error, setRequests, showAlert }) 
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3, delay: index * 0.1 }}
-                    className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl p-3 hover:bg-white/20 transition-colors duration-200"
+                    className="bg-slate-50 backdrop-blur-xl border border-slate-200 rounded-xl p-3 hover:bg-slate-100 transition-colors duration-200"
                   >
                     <div className="space-y-2">
                       <div className="flex items-start justify-between">
                         <div className="flex items-center gap-2 flex-1 min-w-0">
-                          <img src={u.photoUrl} alt={u.fullName} className="w-8 h-8 rounded-full object-cover border border-white/30 flex-shrink-0" />
+                          <img src={u.photoUrl} alt={u.fullName} className="w-8 h-8 rounded-full object-cover border border-slate-300 flex-shrink-0" />
                           <div className="flex-1 min-w-0">
-                            <h4 className="font-semibold text-white text-sm truncate">{u.fullName}</h4>
+                            <h4 className="font-semibold text-slate-900 text-sm truncate">{u.fullName}</h4>
                             <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-semibold border ${
-                              u.role === 'student' ? 'bg-blue-500/20 text-blue-300 border-blue-500/30' :
-                              u.role === 'alumni' ? 'bg-green-500/20 text-green-300 border-green-500/30' :
-                              u.role === 'faculty' ? 'bg-purple-500/20 text-purple-300 border-purple-500/30' :
-                              'bg-gray-500/20 text-gray-300 border-gray-500/30'
+                              u.role === 'student' ? 'bg-blue-100 text-blue-700 border-blue-300' :
+                              u.role === 'alumni' ? 'bg-green-100 text-green-700 border-green-300' :
+                              u.role === 'faculty' ? 'bg-purple-100 text-purple-700 border-purple-300' :
+                              'bg-gray-100 text-gray-700 border-gray-300'
                             }`}>
                               {u.role}
                             </span>
@@ -238,23 +223,23 @@ const ReceivedRequests = ({ requests, loading, error, setRequests, showAlert }) 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="hidden lg:block overflow-x-auto rounded-xl shadow-2xl bg-white/10 backdrop-blur-xl border border-white/20 h-full"
+              className="hidden lg:block overflow-x-auto rounded-xl shadow-2xl bg-slate-50 backdrop-blur-xl border border-slate-200 h-full"
             >
-          <table className="w-full table-fixed divide-y divide-white/20 text-xs h-full" role="grid" aria-label="Mentorship requests table">
-            <thead className="bg-white/10">
+          <table className="w-full table-fixed divide-y divide-slate-200 text-xs h-full" role="grid" aria-label="Mentorship requests table">
+            <thead className="bg-slate-100">
               <tr>
-                <th className="px-2 py-2 w-48 text-left font-medium text-white/90 uppercase tracking-wider">Name</th>
-                <th className="px-2 py-2 w-24 text-left font-medium text-white/90 uppercase tracking-wider">Role</th>
-                <th className="px-2 py-2 w-40 text-right font-medium text-white/90 uppercase tracking-wider">Actions</th>
+                <th className="px-2 py-2 w-48 text-left font-medium text-slate-700 uppercase tracking-wider">Name</th>
+                <th className="px-2 py-2 w-24 text-left font-medium text-slate-700 uppercase tracking-wider">Role</th>
+                <th className="px-2 py-2 w-40 text-right font-medium text-slate-700 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
-            <tbody className="bg-white/5 divide-y divide-white/20">
+            <tbody className="bg-white divide-y divide-slate-200">
               {loading ? (
-                <tr><td colSpan={3} className="text-center text-gray-300 py-6">Loading...</td></tr>
+                <tr><td colSpan={3} className="text-center text-slate-600 py-6">Loading...</td></tr>
               ) : error ? (
-                <tr><td colSpan={3} className="text-center text-red-400 py-6">{error}</td></tr>
+                <tr><td colSpan={3} className="text-center text-red-600 py-6">{error}</td></tr>
               ) : getFilteredRequests().length === 0 ? (
-                <tr><td colSpan={3} className="text-center text-gray-300 py-6">No {receivedSubTab} mentorship requests.</td></tr>
+                <tr><td colSpan={3} className="text-center text-slate-600 py-6">No {receivedSubTab} mentorship requests.</td></tr>
               ) : (
                 getFilteredRequests().map((req, index) => {
                   const u = req.requester;
@@ -264,20 +249,20 @@ const ReceivedRequests = ({ requests, loading, error, setRequests, showAlert }) 
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.3, delay: index * 0.1 }}
-                      className="hover:bg-white/10 cursor-pointer transition-colors duration-200"
+                      className="hover:bg-slate-50 cursor-pointer transition-colors duration-200"
                     >
                       <td className="px-2 py-2 whitespace-nowrap font-semibold">
                         <div className="flex items-center gap-2">
-                          <img src={u.photoUrl} alt={u.fullName} className="w-7 h-7 rounded-full object-cover border border-white/30" />
-                          <span className="truncate max-w-[120px] block text-white">{u.fullName}</span>
+                          <img src={u.photoUrl} alt={u.fullName} className="w-7 h-7 rounded-full object-cover border border-slate-300" />
+                          <span className="truncate max-w-[120px] block text-slate-900">{u.fullName}</span>
                         </div>
                       </td>
                       <td className="px-2 py-2 whitespace-nowrap">
                         <span className={`inline-block px-2 py-1 rounded-full text-xs font-semibold border ${
-                          u.role === 'student' ? 'bg-blue-500/20 text-blue-300 border-blue-500/30' :
-                          u.role === 'alumni' ? 'bg-green-500/20 text-green-300 border-green-500/30' :
-                          u.role === 'faculty' ? 'bg-purple-500/20 text-purple-300 border-purple-500/30' :
-                          'bg-gray-500/20 text-gray-300 border-gray-500/30'
+                          u.role === 'student' ? 'bg-blue-100 text-blue-700 border-blue-300' :
+                          u.role === 'alumni' ? 'bg-green-100 text-green-700 border-green-300' :
+                          u.role === 'faculty' ? 'bg-purple-100 text-purple-700 border-purple-300' :
+                          'bg-gray-100 text-gray-700 border-gray-300'
                         }`}>{u.role}</span>
                       </td>
                       <td className="px-2 py-2 whitespace-nowrap text-right relative flex gap-2 justify-end">
@@ -360,161 +345,156 @@ const ReceivedRequests = ({ requests, loading, error, setRequests, showAlert }) 
       </div>
       {/* View Profile Modal */}
       {showProfileModal && selectedRequest && ReactDOM.createPortal(
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-1 sm:p-2 z-50">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-1 sm:p-2 z-50">
           <motion.div
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             transition={{ duration: 0.3 }}
-            className="bg-white/10 backdrop-blur-2xl rounded-2xl w-full max-w-sm sm:max-w-md md:max-w-lg max-h-[80vh] overflow-y-auto scrollbar-hide p-3 relative border border-white/20 shadow-2xl" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            className="bg-white/95 backdrop-blur-xl rounded-xl lg:rounded-2xl w-full max-w-sm sm:max-w-md md:max-w-lg max-h-[90vh] overflow-y-auto scrollbar-hide p-3 sm:p-4 lg:p-6 border border-slate-200 shadow-2xl" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
-            <div className="flex items-center justify-between mb-2">
-              <h2 className="text-base sm:text-lg font-bold text-white">Profile Details</h2>
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
+            <div className="flex items-center justify-between mb-4 sm:mb-6">
+              <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-slate-900 font-display">Profile Details</h2>
+              <button
                 onClick={() => setShowProfileModal(false)}
-                className="text-gray-300 hover:text-white transition-colors"
+                className="text-slate-500 hover:text-slate-700 transition-colors p-1 sm:p-2 rounded-full hover:bg-slate-100"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-6 w-6">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </motion.button>
+                <XMarkIcon className="h-5 w-5 sm:h-6 sm:w-6" />
+              </button>
             </div>
-            <div className="relative h-28 sm:h-36 bg-white/10 rounded-2xl mb-2 flex items-center justify-center overflow-hidden border border-white/20">
-              {selectedRequest.requester?.photoUrl ? (
-                <img
-                  src={selectedRequest.requester.photoUrl}
-                  alt={selectedRequest.requester.fullName}
-                  className="w-full h-full object-cover rounded-2xl"
-                  loading="lazy"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary-500/20 to-secondary-500/20 rounded-2xl">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-12 w-12 text-primary-400">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118A7.5 7.5 0 0112 15.75a7.5 7.5 0 017.5 4.368" />
-                  </svg>
+            <div className="bg-white/80 backdrop-blur-xl rounded-xl lg:rounded-2xl p-3 sm:p-4 lg:p-6 mb-4 sm:mb-6 border border-slate-200">
+              <div className="relative h-28 sm:h-36 bg-slate-100 rounded-2xl mb-4 flex items-center justify-center overflow-hidden border border-slate-200">
+                {selectedRequest.requester?.photoUrl ? (
+                  <img
+                    src={selectedRequest.requester.photoUrl}
+                    alt={selectedRequest.requester.fullName}
+                    className="w-full h-full object-cover rounded-2xl"
+                    loading="lazy"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary-500/20 to-secondary-500/20 rounded-2xl">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-12 w-12 text-primary-400">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118A7.5 7.5 0 0112 15.75a7.5 7.5 0 017.5 4.368" />
+                    </svg>
+                  </div>
+                )}
+                <div className="absolute top-2 left-2">
+                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium border ${
+                    selectedRequest.requester?.role === 'student' ? 'bg-blue-100 text-blue-700 border-blue-300' :
+                    selectedRequest.requester?.role === 'alumni' ? 'bg-green-100 text-green-700 border-green-300' :
+                    selectedRequest.requester?.role === 'faculty' ? 'bg-purple-100 text-purple-700 border-purple-300' :
+                    'bg-gray-100 text-gray-700 border-gray-300'
+                  }`}>{selectedRequest.requester?.role}</span>
                 </div>
-              )}
-              <div className="absolute top-2 left-2">
-                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium border ${
-                  selectedRequest.requester?.role === 'student' ? 'bg-blue-500/20 text-blue-300 border-blue-500/30' :
-                  selectedRequest.requester?.role === 'alumni' ? 'bg-green-500/20 text-green-300 border-green-500/30' :
-                  selectedRequest.requester?.role === 'faculty' ? 'bg-purple-500/20 text-purple-300 border-purple-500/30' :
-                  'bg-gray-500/20 text-gray-300 border-gray-500/30'
-                }`}>{selectedRequest.requester?.role}</span>
               </div>
-            </div>
-            <div className="p-2 sm:p-3 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-              <h3 className="font-bold text-white mb-2 text-xl sm:text-2xl leading-tight">{selectedRequest.requester?.fullName}</h3>
-              <div className="space-y-2 mb-3">
+              <h3 className="font-bold text-slate-900 mb-4 text-xl sm:text-2xl leading-tight">{selectedRequest.requester?.fullName}</h3>
+              <div className="space-y-3 mb-4">
                 {selectedRequest.requester?.department && (
-                  <div className="flex items-center gap-2 text-sm text-gray-300">
-                    <AcademicCapIcon className="h-4 w-4 text-primary-400" />
+                  <div className="flex items-center gap-2 text-sm text-slate-600">
+                    <AcademicCapIcon className="h-4 w-4 text-primary-500" />
                     <span>{selectedRequest.requester.department}</span>
                   </div>
                 )}
                 {selectedRequest.requester?.email && (
-                  <div className="flex items-center gap-2 text-sm text-gray-300">
-                    <UserIcon className="h-4 w-4 text-primary-400" />
+                  <div className="flex items-center gap-2 text-sm text-slate-600">
+                    <UserIcon className="h-4 w-4 text-primary-500" />
                     <span>{selectedRequest.requester.email}</span>
                   </div>
                 )}
                 {selectedRequest.requester?.phoneNumber && (
-                  <div className="flex items-center gap-2 text-sm text-gray-300">
-                    <PhoneIcon className="h-4 w-4 text-primary-400" />
+                  <div className="flex items-center gap-2 text-sm text-slate-600">
+                    <PhoneIcon className="h-4 w-4 text-primary-500" />
                     <span>{selectedRequest.requester.phoneNumber}</span>
                   </div>
                 )}
                 {selectedRequest.requester?.linkedinUrl && (
-                  <div className="flex items-center gap-2 text-sm text-gray-300">
-                    <GlobeAltIcon className="h-4 w-4 text-primary-400" />
-                    <a href={selectedRequest.requester.linkedinUrl} target="_blank" rel="noopener noreferrer" className="text-primary-400 hover:text-primary-300 hover:underline">LinkedIn</a>
+                  <div className="flex items-center gap-2 text-sm text-slate-600">
+                    <GlobeAltIcon className="h-4 w-4 text-primary-500" />
+                    <a href={selectedRequest.requester.linkedinUrl} target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:text-primary-700 hover:underline">LinkedIn</a>
                   </div>
                 )}
-                {/* Add more fields as needed */}
               </div>
-              {selectedRequest.descriptionbyUser && (
-                <div className="mb-3">
-                  <div className="text-xs text-gray-400 font-semibold mb-1">Request Message</div>
-                  <div className="bg-primary-500/10 border-l-4 border-primary-400 rounded-md p-3 text-gray-300 text-xs sm:text-sm leading-relaxed whitespace-pre-line">
-                    {selectedRequest.descriptionbyUser}
-                  </div>
+            </div>
+            
+            {selectedRequest.descriptionbyUser && (
+              <div className="bg-white/80 backdrop-blur-xl rounded-xl lg:rounded-2xl p-3 sm:p-4 lg:p-6 mb-4 sm:mb-6 border border-slate-200">
+                <div className="text-sm text-slate-700 font-semibold mb-2">Request Message</div>
+                <div className="bg-blue-50 border-l-4 border-blue-400 rounded-md p-3 text-slate-700 text-sm leading-relaxed whitespace-pre-line">
+                  {selectedRequest.descriptionbyUser}
                 </div>
-              )}
-              {selectedRequest.requester?.bio && (
-                <div className="mb-3">
-                  <h4 className="text-base font-semibold text-white mb-1">Bio</h4>
-                  <div className="bg-white/10 rounded-lg p-3 text-gray-300 text-sm leading-relaxed whitespace-pre-line break-words">
-                    {selectedRequest.requester.bio}
-                  </div>
+              </div>
+            )}
+            
+            {selectedRequest.requester?.bio && (
+              <div className="bg-white/80 backdrop-blur-xl rounded-xl lg:rounded-2xl p-3 sm:p-4 lg:p-6 mb-4 sm:mb-6 border border-slate-200">
+                <h4 className="text-base font-semibold text-slate-900 mb-2">Bio</h4>
+                <div className="bg-slate-50 rounded-lg p-3 text-slate-700 text-sm leading-relaxed whitespace-pre-line break-words">
+                  {selectedRequest.requester.bio}
                 </div>
-              )}
-              {selectedRequest.status === 'accepted' && selectedRequest.tier && (
-                <div className="mb-4">
+              </div>
+            )}
+            
+            {selectedRequest.status === 'accepted' && selectedRequest.tier && (
+              <div className="bg-white/80 backdrop-blur-xl rounded-xl lg:rounded-2xl p-3 sm:p-4 lg:p-6 mb-4 sm:mb-6 border border-slate-200">
+                <div className="flex items-center gap-2">
                   <span className={`inline-block px-2 py-1 rounded-full font-semibold border ${
-                    selectedRequest.status === 'accepted' ? 'bg-green-500/20 text-green-300 border-green-500/30' :
-                    selectedRequest.status === 'pending' ? 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30' :
-                    'bg-gray-500/20 text-gray-300 border-gray-500/30'
+                    selectedRequest.status === 'accepted' ? 'bg-green-100 text-green-700 border-green-300' :
+                    selectedRequest.status === 'pending' ? 'bg-yellow-100 text-yellow-700 border-yellow-300' :
+                    'bg-gray-100 text-gray-700 border-gray-300'
                   }`}>{selectedRequest.status}</span>
-                  <span className="ml-2 text-xs text-primary-400 font-semibold">({tierLabels[selectedRequest.tier]})</span>
+                  <span className="text-sm text-primary-600 font-semibold">({tierLabels[selectedRequest.tier]})</span>
                 </div>
-              )}
-              <div className="mt-4 flex flex-col sm:flex-row justify-end gap-2">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setShowProfileModal(false)}
-                  className="rounded-full px-4 py-1.5 font-semibold border border-white/30 text-white hover:bg-white/10 transition-all duration-200 w-full sm:w-auto"
-                >
-                  Close
-                </motion.button>
               </div>
+            )}
+            
+            <div className="mt-4 flex justify-end">
+              <button
+                onClick={() => setShowProfileModal(false)}
+                className="rounded-full px-4 py-1.5 font-semibold border border-slate-300 text-slate-700 hover:bg-slate-100 transition-all duration-200"
+              >
+                Close
+              </button>
             </div>
           </motion.div>
         </div>, document.body)}
       {/* Accept Modal */}
       {showAccept && selectedRequest && ReactDOM.createPortal(
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm p-2 sm:p-4">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-1 sm:p-2 z-50">
           <motion.div 
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             transition={{ duration: 0.3 }}
-            className="bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl w-full max-w-sm sm:max-w-md max-h-[80vh] overflow-y-auto scrollbar-hide border border-white/20" 
+            className="bg-white/95 backdrop-blur-xl rounded-xl lg:rounded-2xl w-full max-w-sm sm:max-w-md max-h-[90vh] overflow-y-auto scrollbar-hide p-3 sm:p-4 lg:p-6 border border-slate-200 shadow-2xl" 
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
             {/* Header */}
-            <div className="sticky top-0 bg-white/10 backdrop-blur-sm border-b border-white/20 px-4 sm:px-6 py-4 rounded-t-2xl">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-base sm:text-lg font-bold text-white">Accept Mentorship Request</h3>
-                  <p className="text-xs text-white/70 mt-1">Accept the mentorship request and choose contact tier</p>
-                </div>
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={() => setShowAccept(false)}
-                  className="text-white/60 hover:text-white transition-colors p-1 rounded-lg hover:bg-white/10"
-                >
-                  <XMarkIcon className="h-4 w-4 sm:h-5 sm:w-5" />
-                </motion.button>
+            <div className="flex items-center justify-between mb-4 sm:mb-6">
+              <div>
+                <h3 className="text-lg sm:text-xl font-bold text-slate-900 font-display">Accept Mentorship Request</h3>
+                <p className="text-sm text-slate-600 mt-1">Accept the mentorship request and choose contact tier</p>
               </div>
+              <button
+                onClick={() => setShowAccept(false)}
+                className="text-slate-500 hover:text-slate-700 transition-colors p-1 sm:p-2 rounded-full hover:bg-slate-100"
+              >
+                <XMarkIcon className="h-5 w-5 sm:h-6 sm:w-6" />
+              </button>
             </div>
             {/* Content */}
-            <div className="p-4 sm:p-6 space-y-4 sm:space-y-5">
+            <div className="space-y-4 sm:space-y-5">
               {/* Message from Student as Label and Box */}
               {selectedRequest?.descriptionbyUser && (
-                <div className="mb-4">
-                  <h4 className="text-sm font-semibold text-white mb-2">Message from Student</h4>
-                  <div className="bg-white/10 border-l-4 border-primary-500 rounded-lg p-3 text-white/80 text-xs sm:text-sm leading-relaxed whitespace-pre-line">
+                <div className="bg-white/80 backdrop-blur-xl rounded-xl lg:rounded-2xl p-3 sm:p-4 lg:p-6 mb-4 sm:mb-6 border border-slate-200">
+                  <h4 className="text-sm font-semibold text-slate-900 mb-2">Message from Student</h4>
+                  <div className="bg-blue-50 border-l-4 border-blue-400 rounded-lg p-3 text-slate-700 text-xs sm:text-sm leading-relaxed whitespace-pre-line">
                     {selectedRequest.descriptionbyUser}
                   </div>
                 </div>
               )}
               {/* Tier Selection */}
-              <div>
-                <label className="block font-semibold text-white mb-3 text-sm">Choose Contact Tier:</label>
+              <div className="bg-white/80 backdrop-blur-xl rounded-xl lg:rounded-2xl p-3 sm:p-4 lg:p-6 mb-4 sm:mb-6 border border-slate-200">
+                <label className="block font-semibold text-slate-900 mb-3 text-sm">Choose Contact Tier:</label>
                 <div className="space-y-2">
                   {TIERS.map(tier => (
                     <motion.label
@@ -523,8 +503,8 @@ const ReceivedRequests = ({ requests, loading, error, setRequests, showAlert }) 
                       whileTap={{ scale: 0.98 }}
                       className={`flex items-center rounded-xl border px-3 py-3 cursor-pointer transition-all duration-200 ${
                         acceptTier === tier.value 
-                          ? 'border-green-500/50 bg-green-500/20 shadow-lg' 
-                          : 'border-white/30 bg-white/10 hover:border-white/50 hover:bg-white/20'
+                          ? 'border-green-500 bg-green-50 shadow-lg' 
+                          : 'border-slate-300 bg-slate-50 hover:border-slate-400 hover:bg-slate-100'
                       }`}
                     >
                       <input
@@ -533,26 +513,26 @@ const ReceivedRequests = ({ requests, loading, error, setRequests, showAlert }) 
                         value={tier.value}
                         checked={acceptTier === tier.value}
                         onChange={() => setAcceptTier(tier.value)}
-                        className="form-radio text-green-400 mr-3 flex-shrink-0"
+                        className="form-radio text-green-500 mr-3 flex-shrink-0"
                       />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center space-x-2">
-                          <span className="font-semibold text-white text-xs">{tier.name}</span>
+                          <span className="font-semibold text-slate-900 text-xs">{tier.name}</span>
                           {acceptTier === tier.value && (
-                            <span className="inline-flex items-center px-2 py-1 rounded-lg text-[10px] font-medium bg-green-500/30 text-green-300 border border-green-500/50">
+                            <span className="inline-flex items-center px-2 py-1 rounded-lg text-[10px] font-medium bg-green-100 text-green-700 border border-green-300">
                               Selected
                             </span>
                           )}
                         </div>
-                        <p className="text-[10px] text-white/70 mt-1">{tier.description}</p>
+                        <p className="text-[10px] text-slate-600 mt-1">{tier.description}</p>
                       </div>
                     </motion.label>
                   ))}
                 </div>
               </div>
               {/* Message Input */}
-              <div>
-                <label className="block font-semibold text-white mb-2 text-sm">Message to Student:</label>
+              <div className="bg-white/80 backdrop-blur-xl rounded-xl lg:rounded-2xl p-3 sm:p-4 lg:p-6 mb-4 sm:mb-6 border border-slate-200">
+                <label className="block font-semibold text-slate-900 mb-2 text-sm">Message to Student:</label>
                 <div className="relative">
                   <textarea
                     value={acceptMsg}
@@ -560,48 +540,42 @@ const ReceivedRequests = ({ requests, loading, error, setRequests, showAlert }) 
                     rows={3}
                     maxLength={200}
                     placeholder="Write a message to the student..."
-                    className="w-full bg-white/10 border border-white/30 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-green-400/50 focus:border-green-400/50 resize-none text-xs text-white placeholder-white/50 transition-all duration-200 backdrop-blur-sm"
+                    className="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-green-400 resize-none text-xs text-slate-900 placeholder-slate-500 transition-all duration-200"
                     disabled={actionLoading}
                   />
                   {/* Character count */}
                   <div className="absolute bottom-2 right-3">
-                    <span className="text-[10px] text-white/60">{acceptMsg.length}/200</span>
+                    <span className="text-[10px] text-slate-500">{acceptMsg.length}/200</span>
                   </div>
                 </div>
               </div>
             </div>
-            {/* Action Buttons - Sticky Bottom */}
-            <div className="sticky bottom-0 bg-white/10 backdrop-blur-sm border-t border-white/20 px-4 sm:px-6 py-4 rounded-b-2xl">
-              <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setShowAccept(false)}
-                  disabled={actionLoading}
-                  className="w-full sm:flex-1 px-4 py-2 border border-white/30 text-white/80 rounded-xl hover:bg-white/10 hover:text-white transition-all duration-200 disabled:opacity-50 font-semibold text-sm"
-                >
-                  Cancel
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={submitAccept}
-                  disabled={actionLoading || !acceptMsg.trim()}
-                  className="w-full sm:flex-1 px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white border border-green-500/50 hover:from-green-600 hover:to-emerald-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed font-semibold text-sm rounded-xl shadow-lg"
-                >
-                  {actionLoading ? (
-                    <div className="flex items-center justify-center space-x-2">
-                      <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      <span>Accepting...</span>
-                    </div>
-                  ) : (
-                    <div className="flex items-center justify-center space-x-2">
-                      <CheckIcon className="h-3 w-3" />
-                      <span>Accept Request</span>
-                    </div>
-                  )}
-                </motion.button>
-              </div>
+            {/* Action Buttons */}
+            <div className="mt-4 flex flex-col sm:flex-row justify-end gap-3">
+              <button
+                onClick={() => setShowAccept(false)}
+                disabled={actionLoading}
+                className="rounded-full px-4 py-2 font-semibold border border-slate-300 text-slate-700 hover:bg-slate-100 transition-all duration-200 w-full sm:w-auto disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={submitAccept}
+                disabled={actionLoading || !acceptMsg.trim()}
+                className="rounded-full px-4 py-2 font-semibold bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-lg w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                {actionLoading ? (
+                  <>
+                    <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <span>Accepting...</span>
+                  </>
+                ) : (
+                  <>
+                    <CheckIcon className="h-3 w-3" />
+                    <span>Accept Request</span>
+                  </>
+                )}
+              </button>
             </div>
           </motion.div>
         </div>, document.body)}

@@ -149,7 +149,7 @@ const EventCard = memo(({ event, user, onEventUpdate, showEdit, showDelete, onEd
   return (
     <>
       <div 
-        className={`group relative bg-white/10 backdrop-blur-xl rounded-3xl border border-white/20 shadow-2xl hover:shadow-3xl transition-all duration-500 overflow-hidden cursor-pointer transform hover:scale-[1.02] hover:-translate-y-2 w-full z-10 ${sm ? 'h-32' : 'h-80'} ${sm ? 'p-1 text-xs' : ''}`}
+        className={`group relative bg-slate-50 backdrop-blur-xl rounded-2xl border border-slate-200 shadow-2xl hover:shadow-3xl transition-all duration-500 overflow-hidden cursor-pointer transform hover:scale-[1.02] hover:-translate-y-1 w-full z-10 ${sm ? 'h-32' : 'h-80'} ${sm ? 'p-1 text-xs' : ''}`}
         onClick={handleCardClick}
       >
         {/* Event Image with Gradient Overlay */}
@@ -177,8 +177,8 @@ const EventCard = memo(({ event, user, onEventUpdate, showEdit, showDelete, onEd
           
           {/* Event Type Badge */}
           {!sm && (
-            <div className="absolute top-6 left-6 z-10">
-              <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold bg-white/20 backdrop-blur-xl text-white border border-white/30 shadow-xl font-body">
+            <div className="absolute top-4 left-4 z-10">
+              <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-slate-100 backdrop-blur-xl text-slate-700 border border-slate-300 shadow-xl font-sans">
                 {event.type}
               </span>
             </div>
@@ -186,62 +186,62 @@ const EventCard = memo(({ event, user, onEventUpdate, showEdit, showDelete, onEd
 
           {/* Registration/Capacity Badge */}
           {!sm && isLoggedIn && user?.role !== 'admin' && (
-            <div className="absolute top-6 right-6 z-10">
-              <span className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold shadow-xl backdrop-blur-xl border ${
+            <div className="absolute top-4 right-4 z-10">
+              <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold shadow-xl backdrop-blur-xl border ${
                 maxCapacity
                   ? (registeredCount >= maxCapacity
-                      ? 'bg-red-500/20 text-red-300 border-red-400/30'
-                      : 'bg-green-500/20 text-green-300 border-green-400/30')
-                  : 'bg-white/20 text-white border-white/30'
+                      ? 'bg-red-100 text-red-700 border-red-300'
+                      : 'bg-green-100 text-green-700 border-green-300')
+                  : 'bg-slate-100 text-slate-700 border-slate-300'
               }`}>
                 {maxCapacity
                   ? `${registeredCount}/${maxCapacity}`
                   : `${registeredCount} Registered`}
                 {maxCapacity && registeredCount >= maxCapacity && (
-                  <span className="ml-2 font-bold">FULL</span>
+                  <span className="ml-1.5 font-bold">FULL</span>
                 )}
               </span>
             </div>
           )}
 
           {/* Event Content Overlay */}
-          <div className={`absolute bottom-0 left-0 right-0 p-6 text-white ${sm ? 'p-2' : ''}`}>
+          <div className={`absolute bottom-0 left-0 right-0 p-5 text-slate-900 ${sm ? 'p-2' : ''}`}>
             {/* Event Title */}
-            <h3 className={`font-bold font-display mb-3 line-clamp-2 ${sm ? 'text-sm' : 'text-xl md:text-2xl'} leading-tight drop-shadow-lg group-hover:text-primary-300 transition-colors duration-300`}>
+            <h3 className={`font-bold mb-2 line-clamp-2 ${sm ? 'text-xs' : 'text-base md:text-lg'} leading-tight drop-shadow-lg group-hover:text-primary-600 transition-colors duration-300 font-sans`}>
               {event.name}
             </h3>
 
             {/* Event Details */}
-            <div className={`space-y-2 mb-4 ${sm ? 'space-y-1 mb-2' : ''}`}>
-              <div className="flex items-center text-sm text-white/90 drop-shadow-md font-body">
-                <CalendarIcon className="h-4 w-4 mr-3 text-primary-300" />
+            <div className={`space-y-1.5 mb-3 ${sm ? 'space-y-1 mb-2' : ''}`}>
+              <div className="flex items-center text-xs text-slate-700 drop-shadow-md font-sans">
+                <CalendarIcon className="h-3 w-3 mr-2 text-primary-600" />
                 {formatDate(event.date)}
               </div>
               
-              <div className="flex items-center text-sm text-white/90 drop-shadow-md font-body">
-                <ClockIcon className="h-4 w-4 mr-3 text-secondary-300" />
+              <div className="flex items-center text-xs text-slate-700 drop-shadow-md font-sans">
+                <ClockIcon className="h-3 w-3 mr-2 text-secondary-600" />
                 {formatTime(event.time)}
               </div>
               
-              <div className="flex items-center text-sm text-white/90 drop-shadow-md font-body">
-                <MapPinIcon className="h-4 w-4 mr-3 text-accent-300" />
+              <div className="flex items-center text-xs text-slate-700 drop-shadow-md font-sans">
+                <MapPinIcon className="h-3 w-3 mr-2 text-accent-600" />
                 {event.location}
               </div>
             </div>
 
             {/* Organizer */}
-            <div className={`text-sm text-white/80 mb-4 drop-shadow-md font-body ${sm ? 'text-xs mb-2' : ''}`}>
-              <span className="text-white/60">Organized by:</span> {event.organizer}
+            <div className={`text-xs text-slate-600 mb-3 drop-shadow-md font-sans ${sm ? 'text-xs mb-2' : ''}`}>
+              <span className="text-slate-500">Organized by:</span> {event.organizer}
             </div>
 
             {/* Action Buttons */}
-            <div className="flex gap-3">
+            <div className="flex gap-2">
               {showEdit || showDelete ? (
-                <div className="flex gap-3">
+                <div className="flex gap-2">
                   {showEdit && (
                     <button
                       onClick={e => { e.stopPropagation(); onEdit && onEdit(event); }}
-                      className="px-4 py-2 bg-gradient-to-r from-secondary-500 to-secondary-600 text-white rounded-full font-semibold text-xs shadow-xl hover:from-secondary-600 hover:to-secondary-700 hover:shadow-2xl transition-all duration-300 transform hover:scale-105 font-body"
+                      className="px-3 py-1.5 bg-gradient-to-r from-secondary-500 to-secondary-600 text-white rounded-full font-semibold text-xs shadow-xl hover:from-secondary-600 hover:to-secondary-700 hover:shadow-2xl transition-all duration-300 transform hover:scale-105 font-sans"
                     >
                       Edit
                     </button>
@@ -249,7 +249,7 @@ const EventCard = memo(({ event, user, onEventUpdate, showEdit, showDelete, onEd
                   {showDelete && (
                     <button
                       onClick={e => { e.stopPropagation(); onDelete && onDelete(event); }}
-                      className="px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-full font-semibold text-xs shadow-xl hover:from-red-600 hover:to-red-700 hover:shadow-2xl transition-all duration-300 transform hover:scale-105 font-body"
+                      className="px-3 py-1.5 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-full font-semibold text-xs shadow-xl hover:from-red-600 hover:to-red-700 hover:shadow-2xl transition-all duration-300 transform hover:scale-105 font-sans"
                     >
                       Delete
                     </button>
@@ -258,7 +258,7 @@ const EventCard = memo(({ event, user, onEventUpdate, showEdit, showDelete, onEd
               ) : isAdmin ? (
                 <button
                   onClick={handleViewRegistrations}
-                  className="px-4 py-2 bg-gradient-to-r from-secondary-500 to-secondary-600 text-white rounded-full font-semibold text-xs shadow-xl hover:from-secondary-600 hover:to-secondary-700 hover:shadow-2xl transition-all duration-300 transform hover:scale-105 flex items-center gap-2 font-body"
+                  className="px-3 py-1.5 bg-gradient-to-r from-secondary-500 to-secondary-600 text-white rounded-full font-semibold text-xs shadow-xl hover:from-secondary-600 hover:to-secondary-700 hover:shadow-2xl transition-all duration-300 transform hover:scale-105 flex items-center gap-1.5 font-sans"
                 >
                   <UsersIcon className="h-3 w-3" />
                   <span>View</span>
@@ -266,12 +266,12 @@ const EventCard = memo(({ event, user, onEventUpdate, showEdit, showDelete, onEd
               ) : isOrganizer ? (
                 <button
                   disabled
-                  className="px-4 py-2 bg-white/20 backdrop-blur-xl text-white/60 rounded-full font-semibold text-xs cursor-not-allowed border border-white/30 font-body"
+                  className="px-3 py-1.5 bg-slate-100 backdrop-blur-xl text-slate-500 rounded-full font-semibold text-xs cursor-not-allowed border border-slate-300 font-sans"
                 >
                   Organizer
                 </button>
               ) : (
-                <div className="flex gap-3">
+                <div className="flex gap-2">
                   <button
                     onClick={isLoggedIn && !isRegistered && !isFaculty && !registrationClosed ? handleRegistration : undefined}
                     onMouseEnter={() => {
@@ -280,9 +280,9 @@ const EventCard = memo(({ event, user, onEventUpdate, showEdit, showDelete, onEd
                     }}
                     onMouseLeave={() => setIsHovering(false)}
                     disabled={buttonDisabled}
-                    className={`px-4 py-2 rounded-full text-xs font-semibold shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center font-body ${
+                    className={`px-3 py-1.5 rounded-full text-xs font-semibold shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center font-sans ${
                       buttonDisabled
-                        ? 'bg-white/20 backdrop-blur-xl text-white/60 cursor-not-allowed border border-white/30'
+                        ? 'bg-slate-100 backdrop-blur-xl text-slate-500 cursor-not-allowed border border-slate-300'
                         : isRegistered
                           ? 'bg-gradient-to-r from-green-500 to-green-600 text-white cursor-not-allowed'
                           : 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white hover:from-primary-600 hover:to-secondary-600 hover:shadow-2xl'
@@ -294,7 +294,7 @@ const EventCard = memo(({ event, user, onEventUpdate, showEdit, showDelete, onEd
                   <button
                     onClick={handleCardClick}
                     onMouseEnter={() => trackHover(null, `event_read_more_${event.id}`)}
-                    className="px-4 py-2 bg-white/20 backdrop-blur-xl text-white rounded-full font-semibold text-xs shadow-xl hover:bg-white/30 hover:shadow-2xl transition-all duration-300 transform hover:scale-105 border border-white/30 font-body"
+                    className="px-3 py-1.5 bg-slate-100 backdrop-blur-xl text-slate-700 rounded-full font-semibold text-xs shadow-xl hover:bg-slate-200 hover:shadow-2xl transition-all duration-300 transform hover:scale-105 border border-slate-300 font-sans"
                   >
                     Read More
                   </button>

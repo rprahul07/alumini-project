@@ -117,13 +117,13 @@ const MyEvents = ({ showAlert, refreshTrigger = 0 }) => {
 
   return (
     <div className="flex flex-col h-full">
-      <h3 className="text-sm font-semibold mb-3 text-white">My Created Events</h3>
+      <h3 className="text-sm font-semibold mb-3 text-slate-900">My Created Events</h3>
       {loading ? (
-        <div className="text-center text-gray-300 py-8">Loading...</div>
+        <div className="text-center text-slate-600 py-8">Loading...</div>
       ) : error ? (
-        <div className="text-center text-red-400 py-8">{error}</div>
+        <div className="text-center text-red-600 py-8">{error}</div>
       ) : events.length === 0 ? (
-        <div className="text-center text-gray-300 py-8">You have not created any events yet.</div>
+        <div className="text-center text-slate-600 py-8">You have not created any events yet.</div>
       ) : (
         <>
           {/* Mobile Card View */}
@@ -134,31 +134,39 @@ const MyEvents = ({ showAlert, refreshTrigger = 0 }) => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.1 }}
-                className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl p-3 hover:bg-white/20 transition-colors duration-200"
+                className="bg-slate-50 backdrop-blur-xl border border-slate-200 rounded-xl p-3 hover:bg-slate-100 transition-colors duration-200"
               >
-                <div className="space-y-2">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-white text-sm mb-1 truncate">{event.name || '-'}</h4>
-                      <p className="text-xs text-gray-300">
-                        {new Date(event.date).toLocaleDateString()}
-                      </p>
+                  <div className="space-y-2">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-semibold text-slate-900 text-sm mb-1 truncate">{event.name || '-'}</h4>
+                        <p className="text-xs text-slate-600">
+                          {new Date(event.date).toLocaleDateString()}
+                          {event.time ? ` • ${event.time}` : ''}
+                        </p>
+                        {/* Registration Count */}
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-xs text-slate-500">
+                            {event.registeredCount || 0} registered
+                            {event.maxCapacity ? ` / ${event.maxCapacity}` : ''}
+                          </span>
+                        </div>
+                      </div>
+                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                        event.status === 'approved' ? 'bg-green-100 text-green-700' :
+                        event.status === 'rejected' ? 'bg-red-100 text-red-700' :
+                        'bg-yellow-100 text-yellow-700'
+                      }`}>
+                        {event.status === 'approved' ? 'Approved' :
+                       event.status === 'rejected' ? '✗ Rejected' :
+                       '⏳ Pending'}
+                      </span>
                     </div>
-                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${
-                      event.status === 'approved' ? 'bg-green-500/20 text-green-300 border-green-500/30' :
-                      event.status === 'rejected' ? 'bg-red-500/20 text-red-300 border-red-500/30' :
-                      'bg-yellow-500/20 text-yellow-300 border-yellow-500/30'
-                    }`}>
-                      {event.status === 'approved' ? 'Approved' :
-                     event.status === 'rejected' ? '✗ Rejected' :
-                     '⏳ Pending'}
-                    </span>
-                  </div>
                   <div className="flex gap-1">
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="flex-1 px-2 py-1.5 rounded-lg bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-semibold text-xs hover:from-primary-600 hover:to-secondary-600 transition-all duration-200 shadow-lg"
+                      className="flex-1 px-3 py-2 rounded-full bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-semibold text-xs hover:from-primary-600 hover:to-secondary-600 transition-all duration-200 shadow-lg"
                       onClick={() => openEventDetails(event)}
                     >
                       View
@@ -167,7 +175,7 @@ const MyEvents = ({ showAlert, refreshTrigger = 0 }) => {
                       <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        className="flex-1 px-2 py-1.5 rounded-lg bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold text-xs hover:from-blue-600 hover:to-cyan-600 transition-all duration-200 shadow-lg"
+                        className="flex-1 px-3 py-2 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold text-xs hover:from-blue-600 hover:to-cyan-600 transition-all duration-200 shadow-lg"
                         onClick={() => handleEditEvent(event)}
                       >
                         Edit
@@ -176,7 +184,7 @@ const MyEvents = ({ showAlert, refreshTrigger = 0 }) => {
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="flex-1 px-2 py-1.5 rounded-lg bg-gradient-to-r from-red-500 to-pink-500 text-white font-semibold text-xs hover:from-red-600 hover:to-pink-600 transition-all duration-200 shadow-lg"
+                      className="flex-1 px-3 py-2 rounded-full bg-gradient-to-r from-red-500 to-pink-500 text-white font-semibold text-xs hover:from-red-600 hover:to-pink-600 transition-all duration-200 shadow-lg"
                       onClick={() => handleDeleteEvent(event.id)}
                       disabled={actionLoading === event.id}
                     >
@@ -193,39 +201,58 @@ const MyEvents = ({ showAlert, refreshTrigger = 0 }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="hidden lg:block h-full overflow-x-auto rounded-xl shadow-2xl bg-white/10 backdrop-blur-xl border border-white/20"
+            className="hidden lg:block h-full overflow-x-auto rounded-xl shadow-2xl bg-slate-50 backdrop-blur-xl border border-slate-200"
           >
-            <table className="w-full table-fixed divide-y divide-white/20 text-xs h-full" role="grid" aria-label="My created events table">
-              <thead className="bg-white/10">
+            <table className="w-full table-fixed divide-y divide-slate-200 text-xs h-full" role="grid" aria-label="My created events table">
+              <thead className="bg-slate-100">
                 <tr>
-                  <th className="px-2 py-2 w-48 text-left font-medium text-white/90 uppercase tracking-wider">Event Name</th>
-                  <th className="px-2 py-2 w-32 text-left font-medium text-white/90 uppercase tracking-wider">Date</th>
-                  <th className="px-2 py-2 w-24 text-left font-medium text-white/90 uppercase tracking-wider">Status</th>
-                  <th className="px-2 py-2 w-40 text-right font-medium text-white/90 uppercase tracking-wider">Actions</th>
+                  <th className="px-2 py-2 w-48 text-left font-medium text-slate-700 uppercase tracking-wider">Event Name</th>
+                  <th className="px-2 py-2 w-32 text-left font-medium text-slate-700 uppercase tracking-wider">Date</th>
+                  <th className="px-2 py-2 w-24 text-left font-medium text-slate-700 uppercase tracking-wider">Registrations</th>
+                  <th className="px-2 py-2 w-24 text-left font-medium text-slate-700 uppercase tracking-wider">Status</th>
+                  <th className="px-2 py-2 w-40 text-right font-medium text-slate-700 uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
-              <tbody className="bg-white/5 divide-y divide-white/20">
+              <tbody className="bg-white divide-y divide-slate-200">
                 {events.map((event, index) => (
                   <motion.tr
                     key={event.id}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3, delay: index * 0.1 }}
-                    className="hover:bg-white/10 cursor-pointer transition-colors duration-200"
+                    className="hover:bg-slate-50 cursor-pointer transition-colors duration-200"
                   >
                     <td className="px-2 py-2 whitespace-nowrap font-semibold">
-                      <span className="truncate max-w-[120px] block text-white">{event.name || '-'}</span>
+                      <span className="truncate max-w-[120px] block text-slate-900">{event.name || '-'}</span>
                     </td>
                     <td className="px-2 py-2 whitespace-nowrap">
-                      <span className="truncate max-w-[100px] block text-gray-300">
-                        {new Date(event.date).toLocaleDateString()}
-                      </span>
+                      <div className="truncate max-w-[100px] block text-slate-600">
+                        <div className="text-xs">
+                          {new Date(event.date).toLocaleDateString()}
+                        </div>
+                        {event.time && (
+                          <div className="text-xs text-slate-500">
+                            {event.time}
+                          </div>
+                        )}
+                      </div>
                     </td>
                     <td className="px-2 py-2 whitespace-nowrap">
-                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${
-                        event.status === 'approved' ? 'bg-green-500/20 text-green-300 border-green-500/30' :
-                        event.status === 'rejected' ? 'bg-red-500/20 text-red-300 border-red-500/30' :
-                        'bg-yellow-500/20 text-yellow-300 border-yellow-500/30'
+                      <div className="text-xs text-slate-600">
+                        <div className="font-medium">
+                          {event.registeredCount || 0}
+                          {event.maxCapacity ? ` / ${event.maxCapacity}` : ''}
+                        </div>
+                        <div className="text-slate-500">
+                          registered
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-2 py-2 whitespace-nowrap">
+                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                        event.status === 'approved' ? 'bg-green-100 text-green-700' :
+                        event.status === 'rejected' ? 'bg-red-100 text-red-700' :
+                        'bg-yellow-100 text-yellow-700'
                       }`}>
                         {event.status === 'approved' ? 'Approved' :
                        event.status === 'rejected' ? '✗ Rejected' :

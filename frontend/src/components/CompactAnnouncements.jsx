@@ -51,12 +51,12 @@ const CompactAnnouncements = ({ announcements, loading }) => {
 
   if (loading) {
     return (
-      <section className="py-3 bg-gradient-to-r from-primary-50/50 to-secondary-50/50 border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-2 bg-gradient-to-r from-primary-50/50 to-secondary-50/50 border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
           <div className="flex items-center justify-center">
             <div className="animate-pulse flex items-center space-x-3">
-              <div className="w-2 h-2 bg-primary-300 rounded-full"></div>
-              <div className="h-3 bg-gray-200 rounded w-24"></div>
+              <div className="w-1.5 h-1.5 bg-primary-300 rounded-full"></div>
+              <div className="h-2.5 bg-gray-200 rounded w-20"></div>
             </div>
           </div>
         </div>
@@ -73,20 +73,20 @@ const CompactAnnouncements = ({ announcements, loading }) => {
 
   return (
     <section 
-      className="py-3 bg-gradient-to-r from-primary-50/50 via-white/80 to-secondary-50/50 border-b border-gray-100 relative overflow-hidden"
+      className="py-2 bg-gradient-to-r from-primary-50/50 via-white/80 to-secondary-50/50 border-b border-gray-100 relative overflow-hidden"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Subtle background elements */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-primary-100/30 to-secondary-100/30 rounded-full opacity-40 blur-xl"></div>
+        <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-primary-100/30 to-secondary-100/30 rounded-full opacity-40 blur-xl"></div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 relative z-10">
         <div className="flex items-center justify-between">
           {/* Left side - Icon and title */}
-          <div className="flex items-center space-x-3 min-w-0 flex-1">
-            <div className="w-6 h-6 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-md flex items-center justify-center flex-shrink-0">
+          <div className="flex items-center space-x-2.5 min-w-0 flex-1">
+            <div className="w-5 h-5 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-md flex items-center justify-center flex-shrink-0">
               <span className="text-white text-xs">📢</span>
             </div>
             
@@ -101,16 +101,16 @@ const CompactAnnouncements = ({ announcements, loading }) => {
                   className="flex items-center space-x-2"
                 >
                   {/* Priority dot */}
-                  <div className={`w-2 h-2 rounded-full ${priority.dotColor} flex-shrink-0`}></div>
+                  <div className={`w-1.5 h-1.5 rounded-full ${priority.dotColor} flex-shrink-0`}></div>
                   
                   {/* Title */}
-                  <h3 className="text-sm font-semibold text-gray-900 truncate cursor-pointer hover:text-primary-600 transition-colors duration-200"
+                  <h3 className="text-xs font-semibold text-gray-900 truncate cursor-pointer hover:text-primary-600 transition-colors duration-200 font-sans"
                       onClick={() => navigate('/announcements')}>
                     {currentAnnouncement.title}
                   </h3>
                   
                   {/* Time */}
-                  <span className="text-xs text-gray-500 font-medium flex-shrink-0">
+                  <span className="text-xs text-gray-500 font-medium flex-shrink-0 font-sans">
                     {getTimeAgo(currentAnnouncement.createdAt)}
                   </span>
                 </motion.div>
@@ -119,7 +119,7 @@ const CompactAnnouncements = ({ announcements, loading }) => {
           </div>
 
           {/* Right side - Navigation and view all */}
-          <div className="flex items-center space-x-2 ml-4">
+          <div className="flex items-center space-x-1.5 ml-3">
             {/* Navigation dots */}
             {announcements.length > 1 && (
               <div className="flex items-center space-x-1">
@@ -127,7 +127,7 @@ const CompactAnnouncements = ({ announcements, loading }) => {
                   <button
                     key={index}
                     onClick={() => setCurrentIndex(index)}
-                    className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
+                    className={`w-1 h-1 rounded-full transition-all duration-300 ${
                       index === currentIndex 
                         ? 'bg-primary-500 scale-125' 
                         : 'bg-gray-300 hover:bg-primary-300'
@@ -142,18 +142,18 @@ const CompactAnnouncements = ({ announcements, loading }) => {
               <div className="flex items-center space-x-1">
                 <button
                   onClick={handlePrev}
-                  className="w-6 h-6 bg-white/60 hover:bg-white rounded-full flex items-center justify-center shadow-sm transition-all duration-200 hover:scale-110"
+                  className="w-5 h-5 bg-white/60 hover:bg-white rounded-full flex items-center justify-center shadow-sm transition-all duration-200 hover:scale-110"
                 >
-                  <svg className="w-3 h-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-2.5 h-2.5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                   </svg>
                 </button>
                 
                 <button
                   onClick={handleNext}
-                  className="w-6 h-6 bg-white/60 hover:bg-white rounded-full flex items-center justify-center shadow-sm transition-all duration-200 hover:scale-110"
+                  className="w-5 h-5 bg-white/60 hover:bg-white rounded-full flex items-center justify-center shadow-sm transition-all duration-200 hover:scale-110"
                 >
-                  <svg className="w-3 h-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-2.5 h-2.5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </button>

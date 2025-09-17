@@ -137,15 +137,17 @@ const VideoPlayer = ({
 
   return (
     <div className="relative group" ref={videoRef}>
-      <div className="relative bg-gray-900 rounded-2xl overflow-hidden shadow-2xl transform group-hover:scale-[1.02] transition-all duration-500">
+      <div className="relative bg-white/90 backdrop-blur-xl rounded-3xl overflow-hidden shadow-lg transform group-hover:scale-[1.02] transition-all duration-500 border border-slate-200/50 hover:shadow-xl" style={{
+        boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.05)'
+    }}>
         {/* Video Player Container */}
-        <div className="relative w-full h-48 sm:h-64 md:h-80 lg:h-96 bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
+        <div className="relative w-full h-48 sm:h-64 md:h-80 lg:h-96 bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
           {/* YouTube Video Player */}
           <div className="relative w-full h-full">
             {!isPlaying ? (
               // Play Button Overlay
               <div 
-                className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center cursor-pointer" 
+                className="absolute inset-0 bg-gradient-to-br from-primary-100/40 to-secondary-100/40 flex items-center justify-center cursor-pointer" 
                 onClick={handlePlay}
                 role="button"
                 tabIndex={0}
@@ -153,13 +155,15 @@ const VideoPlayer = ({
                 aria-label={`Play video: ${title}`}
               >
                 <div className="text-center">
-                  <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mb-3 mx-auto group-hover:scale-110 transition-transform duration-300">
-                    <i className="fas fa-play text-white text-2xl ml-1"></i>
+                  <div className="w-14 h-14 bg-gradient-to-r from-primary-500 to-secondary-500 backdrop-blur-sm rounded-full flex items-center justify-center mb-3 mx-auto group-hover:scale-110 transition-transform duration-300 shadow-lg" style={{
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+                  }}>
+                    <i className="fas fa-play text-white text-lg ml-1"></i>
                   </div>
-                  <h3 className="text-lg font-bold text-white mb-1">{title}</h3>
-                  <p className="text-white/80 text-xs px-4">{description}</p>
+                  <h3 className="text-sm font-bold text-slate-900 mb-1 font-sans">{title}</h3>
+                  <p className="text-slate-600 text-xs px-4 font-sans">{description}</p>
                   {isMuted && (
-                    <div className="mt-1 flex items-center justify-center text-white/60 text-xs">
+                    <div className="mt-1 flex items-center justify-center text-slate-500 text-xs font-sans">
                       <i className="fas fa-volume-mute mr-1"></i>
                       Muted by default
                     </div>
@@ -170,31 +174,35 @@ const VideoPlayer = ({
               // YouTube iframe
               <div className="absolute inset-0">
                 {isLoading && (
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/30 to-secondary/30 flex items-center justify-center z-10">
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary-100/50 to-secondary-100/50 flex items-center justify-center z-10">
                     <div className="text-center">
-                      <div className="w-16 h-16 bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center mb-4 mx-auto animate-pulse">
-                        <i className="fas fa-spinner fa-spin text-white text-2xl"></i>
+                      <div className="w-14 h-14 bg-gradient-to-r from-primary-500 to-secondary-500 backdrop-blur-sm rounded-full flex items-center justify-center mb-3 mx-auto animate-pulse shadow-lg" style={{
+                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+                      }}>
+                        <i className="fas fa-spinner fa-spin text-white text-lg"></i>
                       </div>
-                      <h3 className="text-lg font-bold text-white mb-2">Loading Video...</h3>
-                      <p className="text-white/80 text-sm">Please wait</p>
+                      <h3 className="text-sm font-bold text-slate-900 mb-2 font-sans">Loading Video...</h3>
+                      <p className="text-slate-600 text-xs font-sans">Please wait</p>
                     </div>
                   </div>
                 )}
                 
                 {hasError ? (
-                  <div className="absolute inset-0 bg-gradient-to-br from-red-500/30 to-red-600/30 flex items-center justify-center">
+                  <div className="absolute inset-0 bg-gradient-to-br from-red-100/60 to-red-200/60 flex items-center justify-center">
                     <div className="text-center">
-                      <div className="w-16 h-16 bg-red-500/30 backdrop-blur-sm rounded-full flex items-center justify-center mb-4 mx-auto">
-                        <i className="fas fa-exclamation-triangle text-white text-2xl"></i>
+                      <div className="w-14 h-14 bg-red-500 backdrop-blur-sm rounded-full flex items-center justify-center mb-3 mx-auto shadow-lg" style={{
+                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+                      }}>
+                        <i className="fas fa-exclamation-triangle text-white text-lg"></i>
                       </div>
-                      <h3 className="text-lg font-bold text-white mb-2">Video Unavailable</h3>
-                      <p className="text-white/80 text-sm mb-4">Unable to load the video</p>
+                      <h3 className="text-sm font-bold text-slate-900 mb-2 font-sans">Video Unavailable</h3>
+                      <p className="text-slate-600 text-xs mb-3 font-sans">Unable to load the video</p>
                       <button 
                         onClick={() => {
                           setHasError(false);
                           setIsPlaying(false);
                         }}
-                        className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-lg text-white hover:bg-white/30 transition-colors duration-200"
+                        className="px-3 py-1.5 bg-gradient-to-r from-primary-500 to-secondary-500 backdrop-blur-sm rounded-lg text-white hover:from-primary-600 hover:to-secondary-600 transition-all duration-200 shadow-lg text-xs font-sans"
                       >
                         Try Again
                       </button>
@@ -227,30 +235,32 @@ const VideoPlayer = ({
                 onMouseLeave={() => setShowControls(false)}
               >
                 <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-2">
                     <button 
-                      className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-colors duration-200"
+                      className="w-8 h-8 bg-gradient-to-r from-primary-500 to-secondary-500 backdrop-blur-sm rounded-full flex items-center justify-center hover:from-primary-600 hover:to-secondary-600 transition-all duration-200 shadow-lg" style={{
+                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+                      }}
                       onClick={isPlaying ? handlePause : handlePlay}
                       aria-label={isPlaying ? 'Pause video' : 'Play video'}
                     >
-                      <i className={`fas ${isPlaying ? 'fa-pause' : 'fa-play'} text-white text-sm`}></i>
+                      <i className={`fas ${isPlaying ? 'fa-pause' : 'fa-play'} text-white text-xs`}></i>
                     </button>
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-1">
                       <button 
-                        className="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-colors duration-200"
+                        className="w-6 h-6 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-all duration-200 shadow-md"
                         onClick={handleMuteToggle}
                         aria-label={isMuted ? 'Unmute video' : 'Mute video'}
                       >
-                        <i className={`fas ${isMuted ? 'fa-volume-mute' : 'fa-volume-up'} text-white text-xs`}></i>
+                        <i className={`fas ${isMuted ? 'fa-volume-mute' : 'fa-volume-up'} text-slate-700 text-xs`}></i>
                       </button>
-                      <div className="text-white/80 text-xs px-2 py-1 bg-black/20 backdrop-blur-sm rounded">
+                      <div className="text-slate-700 text-xs px-2 py-1 bg-white/90 backdrop-blur-sm rounded shadow-md font-sans">
                         {isMuted ? 'Muted' : 'Unmuted'}
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-1">
                     <button 
-                      className="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-colors duration-200"
+                      className="w-6 h-6 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-all duration-200 shadow-md"
                       onClick={() => {
                         if (iframeRef.current) {
                           iframeRef.current.requestFullscreen?.();
@@ -258,7 +268,7 @@ const VideoPlayer = ({
                       }}
                       aria-label="Enter fullscreen"
                     >
-                      <i className="fas fa-expand text-white text-xs"></i>
+                      <i className="fas fa-expand text-slate-700 text-xs"></i>
                     </button>
                   </div>
                 </div>
@@ -270,41 +280,43 @@ const VideoPlayer = ({
 
       {/* Compact Video Info Card */}
       <div className="mt-4">
-        <div className="bg-white/10 backdrop-blur-xl rounded-xl p-4 sm:p-6 shadow-2xl border border-white/20 hover:shadow-3xl hover:border-white/30 transition-all duration-300">
+        <div className="bg-white/90 backdrop-blur-xl rounded-3xl p-4 sm:p-5 shadow-lg border border-slate-200/50 hover:shadow-xl hover:border-primary-300 transition-all duration-300 transform hover:-translate-y-1" style={{
+          boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.05)'
+        }}>
           {/* Mobile: Stack vertically, Desktop: Side by side */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
             {/* Content Section */}
             <div className="flex-1 min-w-0">
               <div className="mb-2 sm:mb-1">
-                <h3 className="text-sm sm:text-base font-bold text-white leading-tight">{title}</h3>
+                <h3 className="text-xs sm:text-sm font-bold text-slate-900 leading-tight font-sans">{title}</h3>
               </div>
             </div>
             
             {/* Action Buttons */}
             <div className="flex items-center justify-center sm:justify-end gap-2 sm:gap-1 flex-wrap">
               <button 
-                className="px-3 py-2 sm:px-3 sm:py-1.5 bg-white/20 backdrop-blur-sm text-white rounded-lg font-semibold hover:bg-white/30 transition-all duration-200 flex items-center text-xs sm:text-xs border border-white/20 min-w-[80px] sm:min-w-0"
+                className="px-3 py-1.5 sm:px-3 sm:py-1.5 bg-gradient-to-r from-primary-500 to-secondary-500 backdrop-blur-sm text-white rounded-full font-semibold hover:from-primary-600 hover:to-secondary-600 transition-all duration-200 flex items-center text-xs sm:text-xs shadow-lg hover:shadow-xl min-w-[70px] sm:min-w-0 font-sans"
                 onClick={isPlaying ? handlePause : handlePlay}
                 disabled={isLoading}
               >
-                <i className={`fas ${isLoading ? 'fa-spinner fa-spin' : isPlaying ? 'fa-pause' : 'fa-play'} mr-1 sm:mr-1`}></i>
+                <i className={`fas ${isLoading ? 'fa-spinner fa-spin' : isPlaying ? 'fa-pause' : 'fa-play'} mr-1 sm:mr-1 text-xs`}></i>
                 <span className="hidden sm:inline">{isLoading ? 'Loading...' : isPlaying ? 'Pause' : 'Play'}</span>
                 <span className="sm:hidden">{isLoading ? '...' : isPlaying ? 'Pause' : 'Play'}</span>
               </button>
               <button 
-                className="px-3 py-2 sm:px-3 sm:py-1.5 bg-white/10 backdrop-blur-sm text-white rounded-lg font-semibold hover:bg-white/20 transition-all duration-200 flex items-center text-xs sm:text-xs border border-white/20 min-w-[80px] sm:min-w-0"
+                className="px-3 py-1.5 sm:px-3 sm:py-1.5 bg-slate-100 backdrop-blur-sm text-slate-700 rounded-full font-semibold hover:bg-slate-200 transition-all duration-200 flex items-center text-xs sm:text-xs min-w-[70px] sm:min-w-0 font-sans"
                 onClick={handleMuteToggle}
                 disabled={!isPlaying}
               >
-                <i className={`fas ${isMuted ? 'fa-volume-mute' : 'fa-volume-up'} mr-1 sm:mr-1`}></i>
+                <i className={`fas ${isMuted ? 'fa-volume-mute' : 'fa-volume-up'} mr-1 sm:mr-1 text-xs`}></i>
                 <span className="hidden sm:inline">{isMuted ? 'Unmute' : 'Mute'}</span>
                 <span className="sm:hidden">{isMuted ? 'Unmute' : 'Mute'}</span>
               </button>
               <button 
-                className="px-3 py-2 sm:px-3 sm:py-1.5 bg-white/10 backdrop-blur-sm text-white rounded-lg font-semibold hover:bg-white/20 transition-all duration-200 flex items-center text-xs sm:text-xs border border-white/20 min-w-[80px] sm:min-w-0"
+                className="px-3 py-1.5 sm:px-3 sm:py-1.5 bg-slate-100 backdrop-blur-sm text-slate-700 rounded-full font-semibold hover:bg-slate-200 transition-all duration-200 flex items-center text-xs sm:text-xs min-w-[70px] sm:min-w-0 font-sans"
                 onClick={handleShare}
               >
-                <i className="fas fa-share mr-1 sm:mr-1"></i>
+                <i className="fas fa-share mr-1 sm:mr-1 text-xs"></i>
                 <span className="hidden sm:inline">Share</span>
                 <span className="sm:hidden">Share</span>
               </button>

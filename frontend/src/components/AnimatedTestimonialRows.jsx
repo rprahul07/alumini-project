@@ -103,29 +103,32 @@ const defaultImages = {
           </AnimatePresence>
         </div>
       ) : (
-        /* Desktop: Continuous Sliding Animation */
-        <motion.div
-          className="flex space-x-6"
-          animate={{
-            x: isPaused ? undefined : "-100%"
-          }}
-          transition={{
-            duration: 30,
-            repeat: isPaused ? 0 : Infinity,
-            ease: "linear",
-            repeatType: "loop"
-          }}
-        >
-          {duplicatedTestimonials.map((testimonial, index) => (
-            <TestimonialCard
-              key={`single-${testimonial.id}-${index}`}
-              testimonial={testimonial}
-              handleImageError={handleImageError}
-              defaultImages={defaultImages}
-              variant="single"
-            />
-          ))}
-        </motion.div>
+        /* Desktop: Simplified Full-Width Animation */
+        <div className="w-screen relative -ml-4 -mr-4 sm:-ml-6 sm:-mr-6 lg:-ml-8 lg:-mr-8 xl:-ml-12 xl:-mr-12 2xl:-ml-16 2xl:-mr-16">
+          <motion.div
+            className="flex space-x-6"
+            animate={{
+              x: isPaused ? undefined : [0, -100 * testimonials.length]
+            }}
+            transition={{
+              duration: 35,
+              repeat: isPaused ? 0 : Infinity,
+              ease: "linear",
+              repeatType: "loop"
+            }}
+            style={{ width: `${duplicatedTestimonials.length * 320}px` }}
+          >
+            {duplicatedTestimonials.map((testimonial, index) => (
+              <TestimonialCard
+                key={`single-${testimonial.id}-${index}`}
+                testimonial={testimonial}
+                handleImageError={handleImageError}
+                defaultImages={defaultImages}
+                variant="single"
+              />
+            ))}
+          </motion.div>
+        </div>
       )}
 
       {/* Pause Indicator - Only show on desktop */}
@@ -159,15 +162,16 @@ const defaultImages = {
 
 const TestimonialCard = ({ testimonial, handleImageError, defaultImages, variant }) => {
   return (
-    <div className={`${variant === 'mobile' ? 'w-80 sm:w-96' : 'flex-shrink-0 w-80 sm:w-96'} bg-white/10 backdrop-blur-xl rounded-3xl border border-white/20 shadow-2xl overflow-hidden hover:shadow-3xl transition-all duration-500 transform hover:-translate-y-2 hover:scale-105 flex flex-col group`}>
-      {/* Gradient Border Effect */}
-      <div className="absolute inset-0 bg-gradient-to-r from-primary-500/20 via-secondary-500/20 to-primary-500/20 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-      
-      <div className="relative p-6 flex flex-col h-full">
+    <div className={`${variant === 'mobile' ? 'w-72 sm:w-80' : 'flex-shrink-0 w-72 sm:w-80 lg:w-80'} bg-white/90 backdrop-blur-xl rounded-3xl border border-slate-200/50 shadow-lg hover:shadow-xl overflow-hidden transition-all duration-300 transform hover:-translate-y-2 hover:scale-105 flex flex-col group`} style={{
+      boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.05)'
+    }}>
+      <div className="p-5 flex flex-col h-full space-y-3">
         {/* Header with Photo and Name */}
-        <div className="flex items-start space-x-4 mb-4 flex-shrink-0">
+        <div className="flex items-center space-x-4">
           <div className="relative">
-            <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-white/30 shadow-lg group-hover:border-primary-400/50 transition-colors duration-300">
+            <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-slate-200/50 shadow-md group-hover:border-primary-300 transition-colors duration-300" style={{
+              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+            }}>
               <img
                 src={(testimonial.photoUrl && testimonial.photoUrl.trim() !== '') 
                   ? testimonial.photoUrl 
@@ -178,62 +182,40 @@ const TestimonialCard = ({ testimonial, handleImageError, defaultImages, variant
                 alt={`${testimonial.name} profile`}
               />
             </div>
-            {/* Animated Status Indicator */}
-            <div className="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full flex items-center justify-center shadow-lg animate-pulse">
-              <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h4v10h-10z"/>
-              </svg>
-            </div>
+            {/* Enhanced Online Indicator */}
+            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-gradient-to-r from-secondary-500 to-success-500 rounded-full border-2 border-white shadow-md" style={{
+              boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+            }}></div>
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="text-base font-bold font-display text-white mb-1 leading-tight group-hover:text-primary-300 transition-colors duration-300">
+            <h3 className="text-sm font-bold text-slate-900 group-hover:text-primary-600 transition-colors duration-300 font-sans">
               {testimonial.name}
             </h3>
-            <p className="text-primary-400 font-semibold text-sm mb-1 leading-tight">
+            <p className="text-xs font-semibold bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent font-sans tracking-wide">
               {testimonial.currentJobTitle}
             </p>
-            <p className="text-secondary-400 font-medium text-sm leading-tight">
+            <p className="text-slate-500 text-xs font-sans">
               {testimonial.companyName}
             </p>
           </div>
         </div>
 
-        {/* Testimonial Content */}
-        <div className="relative flex-1 min-h-0 mb-4">
-          <div className="h-full flex flex-col justify-center">
-            <blockquote className="text-sm text-gray-200 leading-relaxed italic break-words font-body" style={{
-              display: '-webkit-box',
-              WebkitLineClamp: 6,
-              WebkitBoxOrient: 'vertical',
-              overflow: 'hidden'
-            }}>
-              "{testimonial.content.length > 200 ? testimonial.content.substring(0, 200) + '...' : testimonial.content}"
-            </blockquote>
-          </div>
-          
-          {/* Quote Icon with Enhanced Design */}
-          <div className="absolute -top-1 -left-1 w-6 h-6 bg-gradient-to-r from-primary-500/20 to-secondary-500/20 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg border border-white/20">
-            <svg className="w-3 h-3 text-primary-400" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h4v10h-10z"/>
-            </svg>
-          </div>
+        {/* Testimonial Content - Enhanced */}
+        <div className="flex-1">
+          <blockquote className="text-xs text-slate-700 leading-relaxed italic font-sans">
+            "{testimonial.content.length > 120 ? testimonial.content.substring(0, 120) + '...' : testimonial.content}"
+          </blockquote>
         </div>
 
         {/* Enhanced Tags */}
-        <div className="flex flex-wrap gap-2 mb-4 flex-shrink-0">
-          <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-primary-500/20 text-primary-300 border border-primary-400/30 backdrop-blur-sm">
+        <div className="flex flex-wrap gap-2">
+          <span className="text-xs font-semibold bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent font-sans">
             {testimonial.course}
           </span>
-          <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-secondary-500/20 text-secondary-300 border border-secondary-400/30 backdrop-blur-sm">
+          <span className="text-xs font-semibold bg-gradient-to-r from-secondary-600 to-primary-600 bg-clip-text text-transparent font-sans">
             {testimonial.graduationYear}
           </span>
-          <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-white/10 text-gray-300 border border-white/20 backdrop-blur-sm">
-            {testimonial.department}
-          </span>
         </div>
-
-        {/* Enhanced Bottom Gradient Line */}
-        <div className="h-1 bg-gradient-to-r from-primary-500 via-secondary-500 to-primary-500 rounded-full flex-shrink-0 shadow-lg"></div>
       </div>
     </div>
   );

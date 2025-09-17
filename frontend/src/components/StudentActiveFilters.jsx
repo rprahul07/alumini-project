@@ -13,39 +13,39 @@ const StudentActiveFilters = ({
   if (!hasActiveFilters) return null;
 
   return (
-    <div className="flex flex-wrap gap-3 mb-6">
+    <div className="flex flex-wrap gap-2 mb-4">
       {searchTerm && (
-        <div className="flex items-center gap-3 px-4 py-2 bg-accent-100 text-accent-700 rounded-full text-sm font-semibold shadow-lg animate-fade-in">
+        <div className="flex items-center gap-2 px-3 py-1.5 bg-primary-100 text-primary-700 rounded-full text-xs font-semibold shadow-lg animate-fade-in font-sans">
           <span>Search: "{searchTerm}"</span>
           <button
             onClick={onClearSearch}
-            className="text-accent-600 hover:text-accent-800 transition-colors p-1 rounded-full hover:bg-accent-200"
+            className="text-primary-600 hover:text-primary-800 transition-colors p-0.5 rounded-full hover:bg-primary-200"
           >
-            <XMarkIcon className="h-4 w-4" />
+            <XMarkIcon className="h-3 w-3" />
           </button>
         </div>
       )}
       
       {selectedDepartment && (
-        <div className="flex items-center gap-3 px-4 py-2 bg-accent-100 text-accent-700 rounded-full text-sm font-semibold shadow-lg animate-fade-in">
+        <div className="flex items-center gap-2 px-3 py-1.5 bg-secondary-100 text-secondary-700 rounded-full text-xs font-semibold shadow-lg animate-fade-in font-sans">
           <span>Department: {selectedDepartment}</span>
           <button
             onClick={() => onClearFilter('department')}
-            className="text-accent-600 hover:text-accent-800 transition-colors p-1 rounded-full hover:bg-accent-200"
+            className="text-secondary-600 hover:text-secondary-800 transition-colors p-0.5 rounded-full hover:bg-secondary-200"
           >
-            <XMarkIcon className="h-4 w-4" />
+            <XMarkIcon className="h-3 w-3" />
           </button>
         </div>
       )}
       
       {selectedSemester && (
-        <div className="flex items-center gap-3 px-4 py-2 bg-accent-100 text-accent-700 rounded-full text-sm font-semibold shadow-lg animate-fade-in">
+        <div className="flex items-center gap-2 px-3 py-1.5 bg-green-100 text-green-700 rounded-full text-xs font-semibold shadow-lg animate-fade-in font-sans">
           <span>Semester: {selectedSemester}</span>
           <button
             onClick={() => onClearFilter('semester')}
-            className="text-accent-600 hover:text-accent-800 transition-colors p-1 rounded-full hover:bg-accent-200"
+            className="text-green-600 hover:text-green-800 transition-colors p-0.5 rounded-full hover:bg-green-200"
           >
-            <XMarkIcon className="h-4 w-4" />
+            <XMarkIcon className="h-3 w-3" />
           </button>
         </div>
       )}

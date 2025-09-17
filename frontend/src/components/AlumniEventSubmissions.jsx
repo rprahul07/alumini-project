@@ -19,7 +19,7 @@ const statusBadge = (status) => {
     color = "bg-yellow-200 text-yellow-800";
   }
   return (
-    <span className={`px-2 py-1 rounded text-xs font-semibold ${color}`}>{display}</span>
+    <span className={`px-1.5 py-0.5 rounded text-xs font-semibold ${color} font-sans`}>{display}</span>
   );
 };
 
@@ -160,18 +160,18 @@ const AlumniEventSubmissions = ({ sectionDefault = "alumni" }) => {
     setConfirmOpen(true);
   };
 
-  if (loading) return <div className="p-6">Loading events...</div>;
-  if (error) return <div className="p-6 text-red-500">{error}</div>;
+  if (loading) return <div className="p-4 text-sm font-sans">Loading events...</div>;
+  if (error) return <div className="p-4 text-sm text-red-500 font-sans">{error}</div>;
 
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">
+    <div className="p-4">
+      <h2 className="text-xl font-bold mb-3 font-sans">
         {sectionDefault === "alumni" && "Alumni Events"}
         {sectionDefault === "faculty" && "Faculty Events"}
         {sectionDefault === "admin" && "Admin Events"}
       </h2>
       <div className="overflow-x-auto">
-        <table className="min-w-full bg-white border rounded shadow">
+        <table className="min-w-full bg-white border rounded-lg shadow">
           <thead>
             <tr className="bg-gray-100">
               <th className="p-2">Event ID</th>
