@@ -2,6 +2,7 @@ import React, { useState, useEffect, memo } from 'react';
 import { testimonialsAPI } from '../services/testimonialsService';
 import { dashboardAPI } from '../services/dashboardService';
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 import VideoPlayer from '../components/VideoPlayer';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -1057,6 +1058,9 @@ const AboutPage = memo(() => {
           </div>
         </motion.section>
       </div>
+      
+      {/* Footer */}
+      <Footer />
     </>
   );
 });

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from '../config/axios';
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 import { motion, AnimatePresence } from 'framer-motion';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { useInteractionTracking, useAnalytics } from '../hooks/useAnalytics';
@@ -529,6 +530,9 @@ const ContactPage = () => {
         </>
       )}
       </div>
+      
+      {/* Footer */}
+      <Footer />
     </>
   );
 };

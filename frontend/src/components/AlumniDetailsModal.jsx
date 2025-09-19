@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { XMarkIcon, EnvelopeIcon, PhoneIcon, GlobeAltIcon, AcademicCapIcon, UserIcon, BuildingOfficeIcon } from '@heroicons/react/24/outline';
 import { motion, AnimatePresence } from 'framer-motion';
+import ReactDOM from 'react-dom';
 import axios from '../config/axios';
 import useAlert from '../hooks/useAlert';
 import { useAuth } from '../contexts/AuthContext';
@@ -202,7 +203,7 @@ const AlumniDetailsModal = ({ open, onClose, alumni, onRequestMentorship, onRefr
 
   if (!open) return null;
 
-  return (
+  const modalContent = (
     <AnimatePresence>
       <motion.div 
         initial={{ opacity: 0 }}
@@ -352,6 +353,8 @@ const AlumniDetailsModal = ({ open, onClose, alumni, onRequestMentorship, onRefr
       </motion.div>
     </AnimatePresence>
   );
+
+  return ReactDOM.createPortal(modalContent, document.body);
 };
 
 export default AlumniDetailsModal; 

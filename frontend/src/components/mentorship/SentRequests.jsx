@@ -349,28 +349,28 @@ const SentRequests = ({ requests, loading, error, setRequests, showAlert }) => {
       )}
       {/* Modal for sent request details */}
       {showSentRequestModal && selectedSentRequestForModal && ReactDOM.createPortal(
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-1 sm:p-2 z-50">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-1 sm:p-2 z-50">
           <motion.div
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             transition={{ duration: 0.3 }}
-            className="bg-white/10 backdrop-blur-2xl rounded-2xl w-full max-w-sm sm:max-w-md md:max-w-lg max-h-[80vh] overflow-y-auto scrollbar-hide p-3 border border-white/20 shadow-2xl" style={{ scrollbarWidth: 'none' }}
+            className="bg-white/95 backdrop-blur-2xl rounded-2xl w-full max-w-sm sm:max-w-md md:max-w-lg max-h-[80vh] overflow-y-auto scrollbar-hide p-4 border border-slate-200 shadow-2xl" style={{ scrollbarWidth: 'none' }}
           >
             {/* Header */}
-            <div className="flex items-center justify-between mb-2">
-              <h2 className="text-base sm:text-lg font-bold text-white">Mentorship Request Details</h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-base sm:text-lg font-bold text-slate-900 font-sans">Mentorship Request Details</h2>
               <motion.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={() => setShowSentRequestModal(false)}
-                className="text-gray-300 hover:text-white transition-colors"
+                className="p-1.5 bg-slate-100 backdrop-blur-sm rounded-full text-slate-600 hover:text-slate-900 hover:bg-slate-200 transition-all duration-300 border border-slate-200 hover:border-slate-300"
               >
-                <XMarkIcon className="h-6 w-6" />
+                <XMarkIcon className="h-4 w-4" />
               </motion.button>
             </div>
             {/* Alumni Image */}
-            <div className="relative h-28 sm:h-36 bg-white/10 rounded-2xl mb-2 border border-white/20">
+            <div className="relative h-28 sm:h-36 bg-slate-50 backdrop-blur-sm rounded-2xl mb-4 overflow-hidden border border-slate-200">
               {selectedSentRequestForModal.alumni?.photoUrl ? (
                 <img 
                   src={selectedSentRequestForModal.alumni.photoUrl} 
@@ -379,18 +379,18 @@ const SentRequests = ({ requests, loading, error, setRequests, showAlert }) => {
                   loading="lazy"
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary-500/20 to-secondary-500/20 rounded-2xl">
-                  <AcademicCapIcon className="h-12 w-12 text-primary-400" />
+                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary-100 to-secondary-100 rounded-2xl">
+                  <AcademicCapIcon className="h-12 w-12 text-primary-600" />
                 </div>
               )}
               {/* Status Badge */}
               <div className="absolute top-2 left-2">
                 <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium border ${
                   selectedSentRequestForModal.status === 'accepted' 
-                    ? 'bg-green-500/20 text-green-300 border-green-500/30'
+                    ? 'bg-green-100 text-green-700 border-green-200'
                     : selectedSentRequestForModal.status === 'pending'
-                    ? 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30'
-                    : 'bg-red-500/20 text-red-300 border-red-500/30'
+                    ? 'bg-yellow-100 text-yellow-700 border-yellow-200'
+                    : 'bg-red-100 text-red-700 border-red-200'
                 }`}>
                   {selectedSentRequestForModal.status === 'accepted' ? '✓ Accepted' :
                    selectedSentRequestForModal.status === 'pending' ? '⏳ Pending' : '✗ Rejected'}
@@ -399,7 +399,7 @@ const SentRequests = ({ requests, loading, error, setRequests, showAlert }) => {
               {/* Tier Badge */}
               {selectedSentRequestForModal.status === 'accepted' && selectedSentRequestForModal.tier && (
                 <div className="absolute top-2 right-2">
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-primary-500/20 text-primary-300 border border-primary-500/30">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-primary-100 text-primary-700 border border-primary-200">
                     <UserIcon className="h-3 w-3 mr-1" />
                     Tier {selectedSentRequestForModal.tier}
                   </span>
@@ -407,52 +407,52 @@ const SentRequests = ({ requests, loading, error, setRequests, showAlert }) => {
               )}
             </div>
             {/* Content */}
-            <div className="p-2 sm:p-3">
+            <div className="relative z-10">
               {/* Alumni Name */}
-              <h3 className="font-bold text-white mb-2 line-clamp-2 text-xl sm:text-2xl leading-tight">
+              <h3 className="font-bold text-slate-900 mb-4 line-clamp-2 text-xl sm:text-2xl leading-tight font-sans">
                 {selectedSentRequestForModal.alumni?.fullName || 'Alumni'}
               </h3>
               {/* Alumni Details */}
-              <div className="space-y-1 mb-2">
+              <div className="space-y-2 mb-4">
                 {selectedSentRequestForModal.alumni?.graduationYear && (
-                  <div className="flex items-center text-xs sm:text-sm text-gray-300">
-                    <AcademicCapIcon className="h-4 w-4 mr-2 text-gray-400" />
+                  <div className="flex items-center text-xs sm:text-sm text-slate-600 font-sans">
+                    <AcademicCapIcon className="h-4 w-4 mr-2 text-primary-500" />
                     {selectedSentRequestForModal.alumni.graduationYear}
                   </div>
                 )}
                 {selectedSentRequestForModal.alumni?.course && (
-                  <div className="flex items-center text-xs sm:text-sm text-gray-300">
-                    <svg className="h-4 w-4 mr-2 text-primary-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 20h9" /><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m0 0H3a1 1 0 01-1-1V5a1 1 0 011-1h9" /></svg>
+                  <div className="flex items-center text-xs sm:text-sm text-slate-600 font-sans">
+                    <svg className="h-4 w-4 mr-2 text-secondary-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 20h9" /><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m0 0H3a1 1 0 01-1-1V5a1 1 0 011-1h9" /></svg>
                     {selectedSentRequestForModal.alumni.course}
                   </div>
                 )}
                 {selectedSentRequestForModal.alumni?.currentJobTitle && (
-                  <div className="flex items-center text-xs sm:text-sm text-gray-300">
-                    <UserIcon className="h-4 w-4 mr-2 text-gray-400" />
+                  <div className="flex items-center text-xs sm:text-sm text-slate-600 font-sans">
+                    <UserIcon className="h-4 w-4 mr-2 text-accent-500" />
                     {selectedSentRequestForModal.alumni.currentJobTitle}
                   </div>
                 )}
                 {selectedSentRequestForModal.alumni?.companyName && (
-                  <div className="flex items-center text-xs sm:text-sm text-gray-300">
-                    <BuildingOfficeIcon className="h-4 w-4 mr-2 text-gray-400" />
+                  <div className="flex items-center text-xs sm:text-sm text-slate-600 font-sans">
+                    <BuildingOfficeIcon className="h-4 w-4 mr-2 text-accent-500" />
                     {selectedSentRequestForModal.alumni.companyName}
                   </div>
                 )}
               </div>
               {/* Your Request Message */}
               {selectedSentRequestForModal.descriptionbyUser && (
-                <div className="mb-3">
-                  <h4 className="text-base font-semibold text-white mb-1">Your Request Message</h4>
-                  <div className="bg-primary-500/10 border-l-4 border-primary-400 rounded-md p-3 text-gray-300 text-xs sm:text-sm leading-relaxed whitespace-pre-line">
+                <div className="mb-4">
+                  <h4 className="text-base font-semibold text-slate-900 mb-2 font-sans">Your Request Message</h4>
+                  <div className="bg-slate-50 backdrop-blur-sm rounded-xl p-3 text-slate-600 text-xs leading-relaxed whitespace-pre-line break-words border border-slate-200 font-sans">
                     {selectedSentRequestForModal.descriptionbyUser}
                   </div>
                 </div>
               )}
               {/* Alumni's Response Message */}
               {selectedSentRequestForModal.status === 'accepted' && selectedSentRequestForModal.descriptionbyAlumni && (
-                <div className="mb-3">
-                  <h4 className="text-base font-semibold text-white mb-1">Alumni's Response</h4>
-                  <div className="bg-green-500/10 border-l-4 border-green-400 rounded-md p-3 text-gray-300 text-xs sm:text-sm leading-relaxed whitespace-pre-line">
+                <div className="mb-4">
+                  <h4 className="text-base font-semibold text-slate-900 mb-2 font-sans">Alumni's Response</h4>
+                  <div className="bg-green-500/10 backdrop-blur-sm border-l-4 border-green-400/50 rounded-xl p-3 text-slate-600 text-xs leading-relaxed whitespace-pre-line font-sans">
                     {selectedSentRequestForModal.descriptionbyAlumni}
                   </div>
                 </div>
@@ -460,12 +460,12 @@ const SentRequests = ({ requests, loading, error, setRequests, showAlert }) => {
               {/* Contact Information */}
               {getSentRequestContactSection()}
               {/* Close Button */}
-              <div className="mt-4 flex flex-col sm:flex-row justify-end gap-2">
+              <div className="mt-6 flex flex-col sm:flex-row justify-end gap-2">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setShowSentRequestModal(false)}
-                  className="rounded-full px-4 py-1.5 font-semibold border border-white/30 text-white hover:bg-white/10 transition-all duration-200 w-full sm:w-auto"
+                  className="rounded-xl px-4 py-2 font-semibold border border-slate-300 text-slate-900 hover:bg-slate-100 hover:border-white/50 transition-all duration-300 w-full sm:w-auto backdrop-blur-sm text-sm font-sans"
                 >
                   Close
                 </motion.button>

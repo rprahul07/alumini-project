@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import ReactDOM from 'react-dom';
 import axios from '../config/axios';
 import { 
   XMarkIcon, 
@@ -67,7 +68,7 @@ const StudentDetailsModal = ({ studentId, open, onClose }) => {
   const skills = student?.skills || [];
   const resumeUrl = student?.resumeUrl || '';
 
-  return (
+  const modalContent = (
     <AnimatePresence>
       <motion.div 
         initial={{ opacity: 0 }}
@@ -319,6 +320,8 @@ const StudentDetailsModal = ({ studentId, open, onClose }) => {
       </motion.div>
     </AnimatePresence>
   );
+
+  return ReactDOM.createPortal(modalContent, document.body);
 };
 
 export default StudentDetailsModal; 

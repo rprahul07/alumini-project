@@ -2,6 +2,7 @@ import React, { useState, useEffect, memo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 import EventGrid from '../components/EventGrid';
 import EventSearch from '../components/EventSearch';
 import EventFilterButton from '../components/EventFilterButton';
@@ -370,6 +371,9 @@ const EventsPage = memo(() => {
           </motion.div>
         </div>
       </div>
+      
+      {/* Footer */}
+      <Footer />
     </>
   );
 });

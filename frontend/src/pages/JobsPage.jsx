@@ -2,6 +2,7 @@ import React, { useState, useEffect, memo, useCallback, useMemo } from 'react';
 import { ToastContainer } from 'react-toastify';
 import { motion } from 'framer-motion';
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 import JobGrid from '../components/opportunities/JobGrid';
 import JobSearch from '../components/opportunities/JobSearch';
 import FilterButton from '../components/opportunities/FilterButton';

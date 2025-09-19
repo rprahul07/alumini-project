@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 import StudentCard from '../components/StudentCard';
 import StudentDetailsModal from '../components/StudentDetailsModal';
 import EventPagination from '../components/EventPagination';
@@ -297,6 +298,9 @@ const StudentsPage = () => {
         onClose={() => setDetailsModalOpen(false)}
         studentId={selectedStudent?.id || selectedStudent?.user?.id}
       />
+      
+      {/* Footer */}
+      <Footer />
     </>
   );
 };

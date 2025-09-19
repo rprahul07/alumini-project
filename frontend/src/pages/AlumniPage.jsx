@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 import AlumniSearch from '../components/AlumniSearch';
 import AlumniFilterButton from '../components/AlumniFilterButton';
 import AlumniActiveFilters from '../components/AlumniActiveFilters';
@@ -562,6 +563,9 @@ const AlumniPage = () => {
         onRequestMentorship={handleRequestMentorship}
         onRefresh={fetchAlumni}
       />
+      
+      {/* Footer */}
+      <Footer />
     </>
   );
 };

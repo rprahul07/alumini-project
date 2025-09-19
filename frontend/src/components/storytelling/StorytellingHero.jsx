@@ -68,7 +68,7 @@ const StorytellingHero = () => {
           <OptimizedImage
             src="https://i.postimg.cc/z8Yh8P4R/Thirike-1.jpg?w=1200&q=60&format=webp&fit=max&compress=true"
             alt="Professional alumni network meeting and reconnecting - CUCEK Alumni Connect"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover object-[center_25%]"
             priority={true}
             quality={60}
             fallbackSrc="/Thirike (1).jpg"
@@ -83,17 +83,15 @@ const StorytellingHero = () => {
         {/* Elegant gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-black/30 to-black/50"></div>
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
-        {/* Bottom gradient for smooth transition to white section */}
-        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white/30 via-white/10 to-transparent"></div>
       </div>
 
       {/* Content */}
-      <div className="relative z-40 max-w-5xl mx-auto px-6 py-8 text-center overflow-visible">
+      <div className="relative z-40 max-w-5xl mx-auto px-6 py-12 text-center overflow-visible">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: "easeOut" }}
-          className="space-y-6 relative z-40"
+          className="space-y-8 relative z-40"
         >
 
           {/* Main Heading - More Elegant */}
@@ -101,36 +99,18 @@ const StorytellingHero = () => {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.3 }}
-            className="text-4xl sm:text-3xl md:text-3xl lg:text-4xl font-bold font-sans leading-tight relative z-40"
+            className="text-4xl sm:text-3xl md:text-3xl lg:text-4xl font-bold font-sans leading-relaxed relative z-40"
             style={{ textShadow: '0 4px 8px rgba(0, 0, 0, 0.5)' }}
           >
             <span className="block text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-white drop-shadow-2xl font-sans">
               Reconnect, Inspire,
             </span>
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-primary-300 via-secondary-300 to-primary-300 drop-shadow-2xl mt-2 font-sans">
+            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-primary-300 via-secondary-300 to-primary-300 drop-shadow-2xl mt-2 font-sans pb-2">
               and Grow Together
             </span>
           </motion.h1>
 
 
-          {/* CTA Button - Only show for non-joined users */}
-          {!user && (
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, delay: 0.9 }}
-              className="pt-4"
-            >
-              <motion.button
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={handleJoinNetwork}
-                className="px-8 py-3 bg-gradient-to-r from-primary-600 via-secondary-600 to-primary-600 text-white rounded-full font-semibold text-xl sm:text-base shadow-2xl hover:shadow-primary-500/25 transition-all duration-300 transform backdrop-blur-sm border border-white/20 font-sans"
-              >
-                Join Our Network
-              </motion.button>
-            </motion.div>
-          )}
 
           {/* Minimal Feature Indicators - Less Crowded */}
           <motion.div
