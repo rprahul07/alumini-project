@@ -29,7 +29,7 @@ export default function EventCard({ title, imgSrc }) {
           e.target.src = 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=400&h=300&fit=crop';
         }}
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/70 to-black/30" />
       {/* Social media icons */}
       <div className="absolute top-4 right-4 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
         <a

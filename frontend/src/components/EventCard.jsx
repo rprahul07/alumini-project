@@ -172,8 +172,8 @@ const EventCard = memo(({ event, user, onEventUpdate, showEdit, showDelete, onEd
             </div>
           )}
           
-          {/* Enhanced Gradient Overlay for Text Readability */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent"></div>
+          {/* Enhanced Dark Smoke Gradient Overlay for Text Readability */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/70 to-black/30"></div>
           
           {/* Event Type Badge */}
           {!sm && (
@@ -205,33 +205,33 @@ const EventCard = memo(({ event, user, onEventUpdate, showEdit, showDelete, onEd
           )}
 
           {/* Event Content Overlay */}
-          <div className={`absolute bottom-0 left-0 right-0 p-5 text-slate-900 ${sm ? 'p-2' : ''}`}>
+          <div className={`absolute bottom-0 left-0 right-0 p-5 text-white ${sm ? 'p-2' : ''}`}>
             {/* Event Title */}
-            <h3 className={`font-bold mb-2 line-clamp-2 ${sm ? 'text-xs' : 'text-base md:text-lg'} leading-tight drop-shadow-lg group-hover:text-primary-600 transition-colors duration-300 font-sans`}>
+            <h3 className={`font-bold mb-2 line-clamp-2 ${sm ? 'text-xs' : 'text-base md:text-lg'} leading-tight drop-shadow-lg group-hover:text-primary-300 transition-colors duration-300 font-sans text-white`}>
               {event.name}
             </h3>
 
             {/* Event Details */}
             <div className={`space-y-1.5 mb-3 ${sm ? 'space-y-1 mb-2' : ''}`}>
-              <div className="flex items-center text-xs text-slate-700 drop-shadow-md font-sans">
-                <CalendarIcon className="h-3 w-3 mr-2 text-primary-600" />
+              <div className="flex items-center text-xs text-white/90 drop-shadow-md font-sans">
+                <CalendarIcon className="h-3 w-3 mr-2 text-primary-300" />
                 {formatDate(event.date)}
               </div>
               
-              <div className="flex items-center text-xs text-slate-700 drop-shadow-md font-sans">
-                <ClockIcon className="h-3 w-3 mr-2 text-secondary-600" />
+              <div className="flex items-center text-xs text-white/90 drop-shadow-md font-sans">
+                <ClockIcon className="h-3 w-3 mr-2 text-secondary-300" />
                 {formatTime(event.time)}
               </div>
               
-              <div className="flex items-center text-xs text-slate-700 drop-shadow-md font-sans">
-                <MapPinIcon className="h-3 w-3 mr-2 text-accent-600" />
+              <div className="flex items-center text-xs text-white/90 drop-shadow-md font-sans">
+                <MapPinIcon className="h-3 w-3 mr-2 text-accent-300" />
                 {event.location}
               </div>
             </div>
 
             {/* Organizer */}
-            <div className={`text-xs text-slate-600 mb-3 drop-shadow-md font-sans ${sm ? 'text-xs mb-2' : ''}`}>
-              <span className="text-slate-500">Organized by:</span> {event.organizer}
+            <div className={`text-xs text-white/80 mb-3 drop-shadow-md font-sans ${sm ? 'text-xs mb-2' : ''}`}>
+              <span className="text-white/70">Organized by:</span> {event.organizer}
             </div>
 
             {/* Action Buttons */}
@@ -294,7 +294,7 @@ const EventCard = memo(({ event, user, onEventUpdate, showEdit, showDelete, onEd
                   <button
                     onClick={handleCardClick}
                     onMouseEnter={() => trackHover(null, `event_read_more_${event.id}`)}
-                    className="px-3 py-1.5 bg-slate-100 backdrop-blur-xl text-slate-700 rounded-full font-semibold text-xs shadow-xl hover:bg-slate-200 hover:shadow-2xl transition-all duration-300 transform hover:scale-105 border border-slate-300 font-sans"
+                    className="px-3 py-1.5 bg-white/90 backdrop-blur-xl text-slate-800 rounded-full font-semibold text-xs shadow-xl hover:bg-white hover:shadow-2xl transition-all duration-300 transform hover:scale-105 border border-white/50 font-sans"
                   >
                     Read More
                   </button>
