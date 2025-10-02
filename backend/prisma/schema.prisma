@@ -328,3 +328,13 @@ model Spotlight {
   @@index([userId])
   @@map("spotlights")
 }
+
+model YoutubeVideo {
+  id          Int      @id @default(autoincrement())
+  videoUrl    String   @map("video_url") @db.VarChar(500)
+  description String   @db.VarChar(1000)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("youtube_videos")
+}
