@@ -4,7 +4,7 @@ import prisma from "../../lib/prisma.js";
 export const createYoutubeVideo = async (req, res) => {
   try {
     const { videoUrl, description } = req.body;
-    const user = await Prisma.user.findUnique({
+    const user = await prisma.user.findUnique({
       where: { id: req.user.id },
       include: { admin: true },
     });
