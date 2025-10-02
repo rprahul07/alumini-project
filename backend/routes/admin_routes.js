@@ -18,10 +18,16 @@ import {
 import { deleteAlumniById } from "../controllers/user/alumni_controller.js";
 import { uploadPhotoMiddleware } from "../middleware/upload.middleware.js";
 import { searchEvents } from "../controllers/event/event.controller.js";
+import {
+  createYoutubeVideo,
+  deleteYoutubeVideo,
+  editYoutubeVideo,
+} from "../controllers/youtube_video/youtube_video.controller.js";
 
 const router = express.Router();
 
 // Apply protect middleware to all admin routes
+
 router.use(protect);
 router.use(isAdmin);
 
@@ -35,6 +41,7 @@ router.get("/profile", getAdminProfile);
 router.post("/create", createAdmin);
 
 router.post("/event/create", uploadPhotoMiddleware, createEventForAdmin);
+router.post("/youtube-videos", createYoutubeVideo);
 router.get("/event/all", getAllEventsForAdmin);
 router.get("/event/search", searchEvents);
 router.post("/event/:id", approveEventById);
@@ -42,5 +49,7 @@ router.patch("/event/:id", uploadPhotoMiddleware, editEventByIdForAdmin);
 router.get("/event/:id", getEventByIdForAdmin);
 router.delete("/event/:id", deleteEventByIdForAdmin);
 router.get("/event/users/:id", getEventRegisteredUsers);
+router.put("/youtube-videos/:id", editYoutubeVideo);
+router.delete("/youtube-videos/:id", deleteYoutubeVideo);
 
 export default router;
