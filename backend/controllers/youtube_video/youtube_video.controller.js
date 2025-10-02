@@ -207,16 +207,41 @@ export const deleteYoutubeVideo = async (req, res) => {
 
 export const getAllYoutubeVideos = async (req, res) => {
   try {
+    // Get page and limit from query parameters, with defaults
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+
+    // Calculate skip value for pagination
+    const skip = (page - 1) * limit;
+
+    // Get total count for pagination metadata
+    const totalVideos = await prisma.youtubeVideo.count();
+
+    // Fetch paginated videos
     const videos = await prisma.youtubeVideo.findMany({
+      skip: skip,
+      take: limit,
       orderBy: {
         createdAt: "desc",
       },
     });
 
+    // Calculate pagination metadata
+    const totalPages = Math.ceil(totalVideos / limit);
+    const hasNextPage = page < totalPages;
+    const hasPreviousPage = page > 1;
+
     res.status(200).json({
       success: true,
       data: videos,
-      count: videos.length,
+      pagination: {
+        currentPage: page,
+        totalPages: totalPages,
+        totalVideos: totalVideos,
+        limit: limit,
+        hasNextPage: hasNextPage,
+        hasPreviousPage: hasPreviousPage,
+      },
     });
   } catch (err) {
     console.error("Error fetching YouTube videos:", err);
