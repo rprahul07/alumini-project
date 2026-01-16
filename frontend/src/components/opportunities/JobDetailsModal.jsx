@@ -52,9 +52,9 @@ const JobDetailsModal = ({ job, open, onClose, onJobEdit, onJobDelete, showAlert
   return ReactDOM.createPortal(
     <>
       {/* Modal Overlay */}
-      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-1 sm:p-2 z-50">
-        <div className="bg-white/95 backdrop-blur-xl rounded-xl w-full max-w-sm sm:max-w-md md:max-w-lg max-h-[90vh] overflow-y-auto scrollbar-hide p-3 sm:p-4 lg:p-5 border border-slate-200 shadow-2xl">
-          
+      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-[9999]">
+        <div className="bg-white/95 backdrop-blur-xl rounded-2xl w-full max-w-sm sm:max-w-md md:max-w-lg max-h-[90vh] overflow-y-auto scrollbar-hide p-4 sm:p-5 lg:p-6 border border-slate-200 shadow-2xl">
+
           {/* Header */}
           <div className="flex items-center justify-between mb-3 sm:mb-4">
             <h2 className="text-sm sm:text-base lg:text-lg font-bold text-slate-900 font-sans">Job Details</h2>
@@ -69,11 +69,10 @@ const JobDetailsModal = ({ job, open, onClose, onJobEdit, onJobDelete, showAlert
               <h3 className="font-bold text-slate-900 text-sm sm:text-base lg:text-lg leading-tight font-sans">
                 {job.jobTitle}
               </h3>
-              <span className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs font-semibold shadow-lg backdrop-blur-sm border font-sans ${
-                job.type === 'internship' 
-                  ? 'bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-400 border-green-400/30' 
+              <span className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs font-semibold shadow-lg backdrop-blur-sm border font-sans ${job.type === 'internship'
+                  ? 'bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-400 border-green-400/30'
                   : 'bg-gradient-to-r from-primary-500/20 to-secondary-500/20 text-primary-400 border-primary-400/30'
-              }`}>
+                }`}>
                 {job.type === 'internship' ? 'Internship' : 'Job'}
               </span>
             </div>
@@ -150,11 +149,10 @@ const JobDetailsModal = ({ job, open, onClose, onJobEdit, onJobDelete, showAlert
               <div className="flex items-center">
                 <span className="font-medium text-slate-900 font-sans">
                   Registration Type:
-                  <span className={`ml-2 px-2 py-1 rounded-full text-xs font-semibold backdrop-blur-sm border font-sans ${
-                    job.registrationType === 'external' 
-                      ? 'bg-gradient-to-r from-orange-500/20 to-red-500/20 text-orange-500 border-orange-400/30' 
+                  <span className={`ml-2 px-2 py-1 rounded-full text-xs font-semibold backdrop-blur-sm border font-sans ${job.registrationType === 'external'
+                      ? 'bg-gradient-to-r from-orange-500/20 to-red-500/20 text-orange-500 border-orange-400/30'
                       : 'bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-blue-500 border-blue-400/30'
-                  }`}>
+                    }`}>
                     {job.registrationType === 'external' ? 'External Link' : 'Internal Application'}
                   </span>
                 </span>

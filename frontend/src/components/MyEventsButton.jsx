@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import axios from '../config/axios';
-import { 
-  CalendarIcon, 
-  XMarkIcon, 
+import {
+  CalendarIcon,
+  XMarkIcon,
   EyeIcon,
   PencilIcon,
   TrashIcon,
@@ -91,7 +91,7 @@ const MyEventsButton = () => {
     fetchMyEvents();
     setIsModalOpen(true);
   };
-  
+
   const handleCloseModal = () => setIsModalOpen(false);
   const handleEditEvent = (event) => {
     setSelectedEvent(event);
@@ -114,7 +114,7 @@ const MyEventsButton = () => {
   };
 
   useEffect(() => {
-    if(isModalOpen) {
+    if (isModalOpen) {
       fetchMyEvents();
     }
   }, [isModalOpen, currentPage, selectedStatus]);
@@ -141,8 +141,8 @@ const MyEventsButton = () => {
                   onClick={() => { setCurrentPage(1); setSelectedStatus(status); }}
                   className={`px-3 py-2 rounded-full text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${selectedStatus === status ?
                     (status === 'approved' ? 'bg-green-600 text-white' :
-                     status === 'pending' ? 'bg-yellow-600 text-white' :
-                     'bg-primary text-white') :
+                      status === 'pending' ? 'bg-yellow-600 text-white' :
+                        'bg-primary text-white') :
                     'bg-white text-gray-700 hover:bg-gray-100'}`}
                 >
                   {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -192,7 +192,7 @@ const MyEventsButton = () => {
                         sm
                       />
                     ))}
-                    </div>
+                  </div>
                 </>
               )}
             </div>

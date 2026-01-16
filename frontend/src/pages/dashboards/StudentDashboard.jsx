@@ -67,29 +67,29 @@ const StudentDashboard = () => {
       title: 'Events Attended',
       value: 0,
       Icon: CalendarIcon,
-      iconBg: 'bg-gradient-to-br from-accent-100 to-primary-100',
-      iconColor: 'text-accent-500',
+      iconBg: 'bg-slate-100',
+      iconColor: 'text-slate-700',
     },
     {
       title: 'Jobs Applied',
       value: 0,
       Icon: BriefcaseIcon,
-      iconBg: 'bg-gradient-to-br from-secondary-100 to-primary-100',
-      iconColor: 'text-secondary-600',
+      iconBg: 'bg-slate-100',
+      iconColor: 'text-slate-700',
     },
     {
       title: 'Mentorship Requests',
       value: 0,
       Icon: AcademicCapIcon,
-      iconBg: 'bg-gradient-to-br from-primary-200 to-secondary-200',
-      iconColor: 'text-primary-600',
+      iconBg: 'bg-slate-100',
+      iconColor: 'text-slate-700',
     },
     {
       title: 'Alumni Connected',
       value: 0,
       Icon: UserGroupIcon,
-      iconBg: 'bg-gradient-to-br from-primary-100 to-accent-100',
-      iconColor: 'text-primary-600',
+      iconBg: 'bg-slate-100',
+      iconColor: 'text-slate-700',
     },
   ]);
   const [statsLoading, setStatsLoading] = useState(true);
@@ -124,14 +124,13 @@ const StudentDashboard = () => {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen font-roboto bg-gray-50 pt-16 relative overflow-hidden">
+      <div className="min-h-screen font-roboto bg-slate-50 pt-16 relative overflow-hidden">
         {/* Light gradient background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-white via-slate-50 to-white"></div>
-        {/* Animated background elements */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary-100/40 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-secondary-100/40 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-accent-100/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '4s' }}></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-slate-50"></div>
+        {/* Animated background elements - Toned down */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-[20%] -right-[10%] w-[70%] h-[70%] bg-blue-100/20 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute top-[20%] -left-[10%] w-[50%] h-[50%] bg-slate-200/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
         </div>
         {/* Mobile-First Layout */}
         <div className="relative z-10">
@@ -143,12 +142,10 @@ const StudentDashboard = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
-                className="bg-white/80 backdrop-blur-xl rounded-xl shadow-2xl p-4 border border-slate-200 relative overflow-hidden"
+                className="bg-white/80 backdrop-blur-xl rounded-xl shadow-sm p-4 border border-slate-200 relative overflow-hidden"
               >
                 {/* Background Pattern */}
-                <div className="absolute inset-0 bg-gradient-to-br from-primary-500/10 to-secondary-500/10 rounded-2xl"></div>
-                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primary-400/20 to-transparent rounded-full -translate-y-16 translate-x-16"></div>
-                <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-secondary-400/20 to-transparent rounded-full translate-y-12 -translate-x-12"></div>
+                <div className="absolute inset-0 bg-gradient-to-br from-slate-50 to-white rounded-2xl"></div>
 
                 <div className="relative z-10">
                   <div className="flex items-center justify-between">
@@ -170,11 +167,11 @@ const StudentDashboard = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1 }}
-                className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-2xl p-4 border border-slate-200"
+                className="bg-white/80 backdrop-blur-xl rounded-xl shadow-sm p-4 border border-slate-200"
               >
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-xs font-bold font-sans text-slate-700 tracking-wider uppercase">Quick Stats</h3>
-                  <div className="w-2 h-2 rounded-full bg-gradient-to-r from-primary-500 to-secondary-500 animate-pulse"></div>
+                  <div className="w-2 h-2 rounded-full bg-slate-400 animate-pulse"></div>
                 </div>
 
                 {statsLoading ? (
@@ -215,11 +212,15 @@ const StudentDashboard = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
-                className="bg-white/80 backdrop-blur-xl rounded-xl shadow-2xl p-4 border border-slate-200 relative overflow-hidden"
+                {/* Mobile Profile Card - Beautiful Design */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="bg-white/80 backdrop-blur-xl rounded-xl shadow-sm p-4 border border-slate-200 relative overflow-hidden"
               >
                 {/* Background Pattern */}
-                <div className="absolute inset-0 bg-gradient-to-br from-accent-500/10 to-primary-500/10 rounded-2xl"></div>
-                <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-accent-400/20 to-transparent rounded-full -translate-y-10 translate-x-10"></div>
+                <div className="absolute inset-0 bg-gradient-to-br from-slate-50 to-white rounded-2xl"></div>
 
                 <div className="relative z-10">
                   <div className="flex items-center justify-between mb-4">
@@ -320,7 +321,8 @@ const StudentDashboard = () => {
                 </div>
 
                 {/* Tab Content */}
-                <div className="bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-200 min-h-[400px] overflow-hidden">
+                {/* Tab Content */}
+                <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-sm border border-slate-200 min-h-[400px] overflow-hidden">
                   <div className="p-4 h-full overflow-y-auto scrollbar-hide">
                     {mainTab === 'mentorship' && <StudentMentorshipRequests />}
                     {mainTab === 'opportunities' && <AppliedJobs />}

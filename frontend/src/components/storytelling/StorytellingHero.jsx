@@ -21,17 +21,7 @@ const StorytellingHero = () => {
     navigate('/alumni');
   };
 
-  // Floating Card Component
-  const FloatingCard = ({ delay, className, children }) => (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: delay, duration: 0.8 }}
-      className={`absolute z-20 bg-white/90 backdrop-blur-md rounded-2xl shadow-xl border border-white/20 p-4 ${className}`}
-    >
-      {children}
-    </motion.div>
-  );
+
 
   return (
     <section className="relative min-h-[90vh] flex bg-slate-50 overflow-hidden pt-16 lg:pt-20">
@@ -130,50 +120,7 @@ const StorytellingHero = () => {
               </div>
             </motion.div>
 
-            {/* Functional Floating Cards */}
 
-            {/* Card 1: Mentorship */}
-            <FloatingCard delay={1.2} className="hidden md:block top-10 -left-12 w-64 animate-[float_4s_ease-in-out_infinite]">
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-primary-500 flex items-center justify-center text-white shrink-0">
-                  🎓
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-slate-900 font-sans">Mentorship Match</p>
-                  <p className="text-[10px] text-slate-500 mt-1 font-sans">You matched with a Senior Engineer from Google!</p>
-                </div>
-              </div>
-            </FloatingCard>
-
-            {/* Card 2: Upcoming Event */}
-            <FloatingCard delay={1.4} className="hidden md:block bottom-20 -right-8 w-60 animate-[float_5s_ease-in-out_infinite_1s]">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-lg bg-secondary-50 text-secondary-600 flex flex-col items-center justify-center text-xs font-bold border border-secondary-100 shrink-0">
-                  <span>OCT</span>
-                  <span className="text-lg">24</span>
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-slate-900 font-sans">Annual Reunion</p>
-                  <p className="text-[10px] text-slate-500 font-sans">Main Auditorium • 10 AM</p>
-                  <div className="flex -space-x-1 mt-1.5">
-                    {[1, 2, 3].map(i => <div key={i} className="w-4 h-4 rounded-full bg-slate-200 border border-white"></div>)}
-                  </div>
-                </div>
-              </div>
-            </FloatingCard>
-
-            {/* Card 3: Job Alert */}
-            <FloatingCard delay={1.6} className="hidden md:block top-1/2 -right-12 w-56 animate-[float_6s_ease-in-out_infinite_0.5s]">
-              <div className="flex items-center justify-between border-b border-gray-100 pb-2 mb-2">
-                <span className="text-[10px] font-bold text-primary-600 uppercase tracking-wider font-sans">New Job Alert</span>
-                <span className="w-2 h-2 rounded-full bg-red-400"></span>
-              </div>
-              <div>
-                <p className="text-xs font-bold text-slate-900 font-sans">Software Architect</p>
-                <p className="text-[10px] text-slate-500 font-sans">Remote • $120k - $160k</p>
-                <button className="mt-2 w-full py-1 bg-slate-50 text-slate-600 text-[10px] font-semibold rounded hover:bg-slate-100 transition-colors">View Details</button>
-              </div>
-            </FloatingCard>
 
           </div>
         </div>
