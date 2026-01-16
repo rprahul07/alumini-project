@@ -15,7 +15,7 @@ const MemoryLaneGallery = () => {
   const [galleryLoading, setGalleryLoading] = useState(true);
   const [galleryError, setGalleryError] = useState(null);
   const [preloadedImages, setPreloadedImages] = useState(new Set());
-  
+
   // Analytics tracking
   const { trackClick, trackHover } = useInteractionTracking('storytelling');
   const { trackEngagement } = useAnalytics();
@@ -50,7 +50,7 @@ const MemoryLaneGallery = () => {
       memories: ['Morning lectures', 'Group photos', 'First-day excitement']
     }
   ];
-  
+
 
   // Image preloading function
   const preloadImage = (src) => {
@@ -70,7 +70,7 @@ const MemoryLaneGallery = () => {
         ...galleryImages.map(image => image.image)
       ].filter(Boolean);
 
-      const preloadPromises = allImages.map(src => 
+      const preloadPromises = allImages.map(src =>
         preloadImage(src).catch(() => null)
       );
 
@@ -93,7 +93,7 @@ const MemoryLaneGallery = () => {
         setGalleryLoading(true);
         setGalleryError(null);
         const result = await galleryAPI.getGallery();
-        
+
         if (result.success && result.data.length > 0) {
           // Transform API data to match our component structure
           const transformedImages = result.data.map((item, index) => ({
@@ -129,11 +129,11 @@ const MemoryLaneGallery = () => {
     const collegeInterval = setInterval(() => {
       setActiveCollegeSlide((prev) => (prev + 1) % collegeMemories.length);
     }, 6000);
-    
+
     const alumniInterval = setInterval(() => {
       setActiveAlumniSlide((prev) => (prev + 1) % galleryImages.length);
     }, 7000);
-    
+
     return () => {
       clearInterval(collegeInterval);
       clearInterval(alumniInterval);
@@ -180,14 +180,14 @@ const MemoryLaneGallery = () => {
   };
 
   return (
-    <section className="py-12 bg-gradient-to-br from-white via-slate-50 to-white relative overflow-hidden">
+    <section id="memory-lane" className="py-16 md:py-24 bg-gradient-to-br from-white via-slate-50 to-white relative overflow-hidden">
       {/* Enhanced Background decorative elements */}
       <div className="absolute inset-0 overflow-hidden">
         {/* Animated gradient orbs */}
         <div className="absolute top-10 right-10 w-96 h-96 bg-gradient-to-br from-primary-100/40 to-secondary-100/40 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-tr from-secondary-100/40 to-primary-100/40 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-primary-50/30 to-secondary-50/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
-        
+
         {/* Floating particles */}
         <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-primary-400/40 rounded-full animate-bounce" style={{ animationDelay: '0.5s' }}></div>
         <div className="absolute top-3/4 right-1/4 w-1 h-1 bg-secondary-400/40 rounded-full animate-bounce" style={{ animationDelay: '1.5s' }}></div>
@@ -201,19 +201,22 @@ const MemoryLaneGallery = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="text-center mb-8"
+          className="text-center mb-16"
         >
-          <div className="inline-flex items-center px-4 py-2 rounded-full text-xs font-semibold bg-gradient-to-r from-primary-50 to-secondary-50 backdrop-blur-sm text-slate-700 border border-slate-200 mb-4 shadow-lg font-sans">
-            <span className="w-2 h-2 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full mr-2 animate-pulse"></span>
+          <div className="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold bg-white border border-slate-200 shadow-sm mb-6 text-slate-700 font-sans">
+            <span className="flex h-2 w-2 relative mr-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-primary-500"></span>
+            </span>
             <span>Memory Lane Gallery</span>
           </div>
-          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-slate-900 mb-4 leading-tight font-sans">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 mb-6 leading-tight font-sans tracking-tight">
             Our Journey Through{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 via-secondary-600 to-primary-600">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-secondary-600">
               Time & Achievement
             </span>
           </h2>
-          <p className="text-sm md:text-base text-slate-600 max-w-3xl mx-auto leading-relaxed font-sans">
+          <p className="text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed font-sans">
             Discover the cherished memories of our college days and celebrate the remarkable achievements of our alumni community
           </p>
         </motion.div>
@@ -245,25 +248,25 @@ const MemoryLaneGallery = () => {
                 <AnimatePresence mode="popLayout">
                   <motion.div
                     key={activeCollegeSlide}
-                    initial={{ 
-                      opacity: 0, 
+                    initial={{
+                      opacity: 0,
                       scale: 1.05,
                       x: 20,
                       rotateY: 5
                     }}
-                    animate={{ 
-                      opacity: 1, 
+                    animate={{
+                      opacity: 1,
                       scale: 1,
                       x: 0,
                       rotateY: 0
                     }}
-                    exit={{ 
-                      opacity: 0, 
+                    exit={{
+                      opacity: 0,
                       scale: 0.95,
                       x: -20,
                       rotateY: -5
                     }}
-                    transition={{ 
+                    transition={{
                       duration: 0.6,
                       ease: [0.25, 0.46, 0.45, 0.94],
                       type: "tween"
@@ -289,21 +292,21 @@ const MemoryLaneGallery = () => {
                         loading="eager"
                       />
                     </motion.div>
-                    
+
                     {/* Enhanced Overlay with Animation */}
-                    <motion.div 
+                    <motion.div
                       className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ duration: 0.6, delay: 0.2 }}
                     >
-                      <motion.div 
+                      <motion.div
                         className="absolute bottom-0 left-0 right-0 p-6 text-white"
                         initial={{ y: 20, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         transition={{ duration: 0.6, delay: 0.4 }}
                       >
-                        <motion.h4 
+                        <motion.h4
                           className="text-lg font-bold mb-2 font-sans"
                           initial={{ y: 10, opacity: 0 }}
                           animate={{ y: 0, opacity: 1 }}
@@ -311,7 +314,7 @@ const MemoryLaneGallery = () => {
                         >
                           {collegeMemories[activeCollegeSlide].title}
                         </motion.h4>
-                        <motion.p 
+                        <motion.p
                           className="text-primary-100 mb-3 text-sm font-sans"
                           initial={{ y: 10, opacity: 0 }}
                           animate={{ y: 0, opacity: 1 }}
@@ -336,17 +339,17 @@ const MemoryLaneGallery = () => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
               >
-                <motion.svg 
-                  className="w-6 h-6 text-slate-700" 
-                  fill="none" 
-                  stroke="currentColor" 
+                <motion.svg
+                  className="w-6 h-6 text-slate-700"
+                  fill="none"
+                  stroke="currentColor"
                   viewBox="0 0 24 24"
                   whileHover={{ x: -2 }}
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </motion.svg>
               </motion.button>
-              
+
               <motion.button
                 onClick={() => handleCollegeSlideChange((activeCollegeSlide + 1) % collegeMemories.length)}
                 className="absolute right-4 top-1/3 transform -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-xl transition-all duration-300 backdrop-blur-sm border border-slate-200/50"
@@ -357,10 +360,10 @@ const MemoryLaneGallery = () => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
               >
-                <motion.svg 
-                  className="w-6 h-6 text-slate-700" 
-                  fill="none" 
-                  stroke="currentColor" 
+                <motion.svg
+                  className="w-6 h-6 text-slate-700"
+                  fill="none"
+                  stroke="currentColor"
                   viewBox="0 0 24 24"
                   whileHover={{ x: 2 }}
                 >
@@ -374,11 +377,10 @@ const MemoryLaneGallery = () => {
                   <button
                     key={index}
                     onClick={() => handleCollegeSlideChange(index)}
-                    className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                      index === activeCollegeSlide
-                        ? 'bg-primary-500 scale-125'
-                        : 'bg-slate-300 hover:bg-slate-400'
-                    }`}
+                    className={`w-3 h-3 rounded-full transition-all duration-300 ${index === activeCollegeSlide
+                      ? 'bg-primary-500 scale-125'
+                      : 'bg-slate-300 hover:bg-slate-400'
+                      }`}
                     aria-label={`Go to slide ${index + 1}`}
                   />
                 ))}
@@ -441,25 +443,25 @@ const MemoryLaneGallery = () => {
                   <AnimatePresence mode="popLayout">
                     <motion.div
                       key={activeAlumniSlide}
-                      initial={{ 
-                        opacity: 0, 
+                      initial={{
+                        opacity: 0,
                         scale: 1.05,
                         x: -20,
                         rotateY: -5
                       }}
-                      animate={{ 
-                        opacity: 1, 
+                      animate={{
+                        opacity: 1,
                         scale: 1,
                         x: 0,
                         rotateY: 0
                       }}
-                      exit={{ 
-                        opacity: 0, 
+                      exit={{
+                        opacity: 0,
                         scale: 0.95,
                         x: 20,
                         rotateY: 5
                       }}
-                      transition={{ 
+                      transition={{
                         duration: 0.6,
                         ease: [0.25, 0.46, 0.45, 0.94],
                         type: "tween"
@@ -485,21 +487,21 @@ const MemoryLaneGallery = () => {
                           loading="eager"
                         />
                       </motion.div>
-                      
+
                       {/* Enhanced Overlay with Animation */}
-                      <motion.div 
+                      <motion.div
                         className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.6, delay: 0.2 }}
                       >
-                        <motion.div 
+                        <motion.div
                           className="absolute bottom-0 left-0 right-0 p-6 text-white"
                           initial={{ y: 20, opacity: 0 }}
                           animate={{ y: 0, opacity: 1 }}
                           transition={{ duration: 0.6, delay: 0.4 }}
                         >
-                          <motion.h4 
+                          <motion.h4
                             className="text-lg font-bold mb-2 font-sans"
                             initial={{ y: 10, opacity: 0 }}
                             animate={{ y: 0, opacity: 1 }}
@@ -507,7 +509,7 @@ const MemoryLaneGallery = () => {
                           >
                             {galleryImages[activeAlumniSlide].title}
                           </motion.h4>
-                          <motion.p 
+                          <motion.p
                             className="text-secondary-100 mb-2 text-sm font-sans"
                             initial={{ y: 10, opacity: 0 }}
                             animate={{ y: 0, opacity: 1 }}
@@ -515,7 +517,7 @@ const MemoryLaneGallery = () => {
                           >
                             {galleryImages[activeAlumniSlide].description}
                           </motion.p>
-                          <motion.p 
+                          <motion.p
                             className="text-xs text-secondary-200 mb-3 font-sans"
                             initial={{ y: 10, opacity: 0 }}
                             animate={{ y: 0, opacity: 1 }}
@@ -555,17 +557,17 @@ const MemoryLaneGallery = () => {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.5, delay: 0.2 }}
                   >
-                    <motion.svg 
-                      className="w-6 h-6 text-slate-700" 
-                      fill="none" 
-                      stroke="currentColor" 
+                    <motion.svg
+                      className="w-6 h-6 text-slate-700"
+                      fill="none"
+                      stroke="currentColor"
                       viewBox="0 0 24 24"
                       whileHover={{ x: -2 }}
                     >
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                     </motion.svg>
                   </motion.button>
-                  
+
                   <motion.button
                     onClick={() => handleAlumniSlideChange((activeAlumniSlide + 1) % galleryImages.length)}
                     className="absolute right-4 top-1/3 transform -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-xl transition-all duration-300 backdrop-blur-sm border border-slate-200/50"
@@ -576,10 +578,10 @@ const MemoryLaneGallery = () => {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.5, delay: 0.2 }}
                   >
-                    <motion.svg 
-                      className="w-6 h-6 text-slate-700" 
-                      fill="none" 
-                      stroke="currentColor" 
+                    <motion.svg
+                      className="w-6 h-6 text-slate-700"
+                      fill="none"
+                      stroke="currentColor"
                       viewBox="0 0 24 24"
                       whileHover={{ x: 2 }}
                     >
@@ -596,11 +598,10 @@ const MemoryLaneGallery = () => {
                     <button
                       key={index}
                       onClick={() => handleAlumniSlideChange(index)}
-                      className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                        index === activeAlumniSlide
-                          ? 'bg-secondary-500 scale-125'
-                          : 'bg-slate-300 hover:bg-slate-400'
-                      }`}
+                      className={`w-3 h-3 rounded-full transition-all duration-300 ${index === activeAlumniSlide
+                        ? 'bg-secondary-500 scale-125'
+                        : 'bg-slate-300 hover:bg-slate-400'
+                        }`}
                       aria-label={`Go to slide ${index + 1}`}
                     />
                   ))}
@@ -632,10 +633,10 @@ const MemoryLaneGallery = () => {
               >
                 <div className="text-center mb-4">
                   <div className="text-3xl mb-3">
-                    {selectedMemory.category === 'Startup' ? '🚀' : 
-                     selectedMemory.category === 'Company' ? '🏢' : 
-                     selectedMemory.category === 'Reunion' ? '👥' : 
-                     selectedMemory.category === 'Event' ? '🎉' : '🏛️'}
+                    {selectedMemory.category === 'Startup' ? '🚀' :
+                      selectedMemory.category === 'Company' ? '🏢' :
+                        selectedMemory.category === 'Reunion' ? '👥' :
+                          selectedMemory.category === 'Event' ? '🎉' : '🏛️'}
                   </div>
                   <h3 className="text-xl font-bold text-gray-900 mb-2 font-sans">
                     {selectedMemory.title}
@@ -656,11 +657,11 @@ const MemoryLaneGallery = () => {
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                     {(selectedMemory.achievements || selectedMemory.memories).map((item, index) => (
-                    <div key={index} className="flex items-start">
+                      <div key={index} className="flex items-start">
                         <span className="text-primary-500 mr-2 mt-1 text-xs">•</span>
                         <span className="text-gray-700 text-xs font-sans">{item}</span>
-                    </div>
-                  ))}
+                      </div>
+                    ))}
                   </div>
                 </div>
 

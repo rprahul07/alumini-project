@@ -86,7 +86,7 @@ const AboutPage = memo(() => {
             location: 'India'
           }));
           setTestimonials(transformedTestimonials);
-          
+
           // Update success stories count with actual testimonials count
           setStats(prevStats => ({
             ...prevStats,
@@ -136,67 +136,67 @@ const AboutPage = memo(() => {
   ];
 
   // University achievements and milestones
- const achievements = [
-  {
-    icon: 'fas fa-award',
-    title: 'One of the Top Engineering Colleges in Kerala',
-    description: 'Constituent college of CUSAT with NBA-accredited programs and research center status since 2017.',
-    color: 'from-amber-400 to-orange-400'
-  },
-  {
-    icon: 'fas fa-globe-americas',
-    title: 'Global Recognition',
-    description: 'CUCEK alumni work in global companies across 45+ countries, offering worldwide opportunities and a strong professional network.',
-    color: 'from-blue-400 to-cyan-400'
-  },
-  {
-    icon: 'fas fa-lightbulb',
-    title: 'Innovation Hub',
-    description: 'CUCEK supports student projects, coding clubs, and startup initiatives with mentorship from alumni and faculty.',
-    color: 'from-purple-400 to-pink-400'
-  },
-  {
-    icon: 'fas fa-handshake',
-    title: 'Strong Network',
-    description: 'Active alumni support and regular placement drives with leading recruiters.',
-    color: 'from-green-400 to-emerald-400'
-  }
-];
+  const achievements = [
+    {
+      icon: 'fas fa-award',
+      title: 'One of the Top Engineering Colleges in Kerala',
+      description: 'Constituent college of CUSAT with NBA-accredited programs and research center status since 2017.',
+      color: 'from-amber-400 to-orange-400'
+    },
+    {
+      icon: 'fas fa-globe-americas',
+      title: 'Global Recognition',
+      description: 'CUCEK alumni work in global companies across 45+ countries, offering worldwide opportunities and a strong professional network.',
+      color: 'from-blue-400 to-cyan-400'
+    },
+    {
+      icon: 'fas fa-lightbulb',
+      title: 'Innovation Hub',
+      description: 'CUCEK supports student projects, coding clubs, and startup initiatives with mentorship from alumni and faculty.',
+      color: 'from-purple-400 to-pink-400'
+    },
+    {
+      icon: 'fas fa-handshake',
+      title: 'Strong Network',
+      description: 'Active alumni support and regular placement drives with leading recruiters.',
+      color: 'from-green-400 to-emerald-400'
+    }
+  ];
 
 
   // University timeline milestones
- const timelineMilestones = [
-  {
-    year: '1999',
-    title: 'Established',
-    description: 'CUCEK was founded in October 1999 as the rural engineering campus of CUSAT at Pulincunnu, Kuttanad.'
-  },
-  {
-    year: 'Early 2000s',
-    title: 'Academic Expansion',
-    description: 'Introduced multiple B.Tech programs—Civil, CSE, IT, ECE, EEE & Mechanical Engineering—and MCA with structured intake.'
-  },
-  {
-    year: '2017',
-    title: 'Researched Designation',
-    description: 'Elevated to a CUSAT Research Centre, supporting doctoral studies under nine supervisors.'
-  },
-  {
-    year: '2018',
-    title: 'Alumni Engagement',
-    description: 'Launched the official alumni connect platform for networking, mentoring, and community building.'
-  },
-  {
-    year: '2020',
-    title: 'Digital Transition',
-    description: 'Adopted online classes and virtual labs in line with COVID‑19 adaptations across Kerala’s higher education.'
-  },
-  {
-    year: '2025',
-    title: 'Placement Milestone',
-    description: 'Placement activity gained visibility with top packages up to ₹29.17 LPA and average placements around ₹3.3 LPA.'
-  }
-];
+  const timelineMilestones = [
+    {
+      year: '1999',
+      title: 'Established',
+      description: 'CUCEK was founded in October 1999 as the rural engineering campus of CUSAT at Pulincunnu, Kuttanad.'
+    },
+    {
+      year: 'Early 2000s',
+      title: 'Academic Expansion',
+      description: 'Introduced multiple B.Tech programs—Civil, CSE, IT, ECE, EEE & Mechanical Engineering—and MCA with structured intake.'
+    },
+    {
+      year: '2017',
+      title: 'Researched Designation',
+      description: 'Elevated to a CUSAT Research Centre, supporting doctoral studies under nine supervisors.'
+    },
+    {
+      year: '2018',
+      title: 'Alumni Engagement',
+      description: 'Launched the official alumni connect platform for networking, mentoring, and community building.'
+    },
+    {
+      year: '2020',
+      title: 'Digital Transition',
+      description: 'Adopted online classes and virtual labs in line with COVID‑19 adaptations across Kerala’s higher education.'
+    },
+    {
+      year: '2025',
+      title: 'Placement Milestone',
+      description: 'Placement activity gained visibility with top packages up to ₹29.17 LPA and average placements around ₹3.3 LPA.'
+    }
+  ];
 
   return (
     <>
@@ -209,7 +209,7 @@ const AboutPage = memo(() => {
           <div className="absolute top-10 right-10 w-96 h-96 bg-gradient-to-br from-primary-100/40 to-secondary-100/40 rounded-full blur-3xl animate-pulse"></div>
           <div className="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-tr from-secondary-100/40 to-primary-100/40 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-primary-50/30 to-secondary-50/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
-          
+
           {/* Floating particles */}
           <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-primary-400/40 rounded-full animate-bounce" style={{ animationDelay: '0.5s' }}></div>
           <div className="absolute top-3/4 right-1/4 w-1 h-1 bg-secondary-400/40 rounded-full animate-bounce" style={{ animationDelay: '1.5s' }}></div>
@@ -217,48 +217,52 @@ const AboutPage = memo(() => {
         </div>
 
         {/* Hero Section */}
-        <section className="relative z-10 py-12">
+        <section className="relative z-10 py-16 md:py-24">
 
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
               className="text-center"
             >
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
-                className="mb-6"
+                className="mb-8"
               >
-                <span className="inline-flex items-center px-4 py-2 rounded-full text-xs font-medium bg-gradient-to-r from-primary-50 to-secondary-50 backdrop-blur-sm text-slate-700 border border-slate-200 shadow-lg font-sans">
+                <div className="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold bg-white border border-slate-200 shadow-sm text-slate-700 font-sans">
+                  <span className="flex h-2 w-2 relative mr-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-primary-500"></span>
+                  </span>
                   Est. 1999 • Excellence in Engineering
-                </span>
+                </div>
               </motion.div>
-              
-              <motion.h1 
+
+              <motion.h1
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.4 }}
-                className="text-2xl md:text-3xl lg:text-4xl font-bold font-sans text-slate-900 mb-4 leading-tight"
+                className="text-4xl md:text-6xl lg:text-7xl font-bold font-sans text-slate-900 mb-6 leading-tight tracking-tight"
               >
-                Where 
+                Where
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 via-secondary-600 to-primary-600 animate-pulse"> Innovation </span>
                 Meets Legacy
               </motion.h1>
-              
-              <motion.p 
+
+              <motion.p
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.6 }}
-                className="text-sm md:text-base text-slate-600 max-w-3xl mx-auto leading-relaxed font-sans mb-6"
+                className="text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed font-sans mb-10"
               >
-                Join a network of 15,000+ brilliant minds who are shaping the future across technology, 
+                Join a network of 15,000+ brilliant minds who are shaping the future across technology,
                 research, entrepreneurship, and beyond.
               </motion.p>
-              
-              <motion.div 
+
+              <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.8 }}
@@ -275,7 +279,7 @@ const AboutPage = memo(() => {
                     </span>
                   </button>
                 )}
-                
+
                 <button
                   onClick={() => navigate('/events')}
                   className="px-4 py-2 border-2 border-slate-300 text-slate-700 rounded-lg font-semibold hover:bg-slate-100 hover:border-slate-400 transition-all duration-300 flex items-center text-xs font-sans"
@@ -286,7 +290,7 @@ const AboutPage = memo(() => {
               </motion.div>
 
               {/* Stats Cards */}
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 1.0 }}
@@ -330,12 +334,12 @@ const AboutPage = memo(() => {
         </section>
 
         {/* Company Partners Section */}
-        <motion.section 
+        <motion.section
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
           viewport={{ once: true, margin: "-100px" }}
-          className="py-12 bg-gradient-to-br from-white via-slate-50 to-white relative overflow-hidden"
+          className="py-16 md:py-24 bg-gradient-to-br from-white via-slate-50 to-white relative overflow-hidden"
         >
           {/* Enhanced Background decorative elements */}
           <div className="absolute inset-0 overflow-hidden">
@@ -343,7 +347,7 @@ const AboutPage = memo(() => {
             <div className="absolute top-10 right-10 w-96 h-96 bg-gradient-to-br from-primary-100/40 to-secondary-100/40 rounded-full blur-3xl animate-pulse"></div>
             <div className="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-tr from-secondary-100/40 to-primary-100/40 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-primary-50/30 to-secondary-50/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
-            
+
             {/* Floating particles */}
             <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-primary-400/40 rounded-full animate-bounce" style={{ animationDelay: '0.5s' }}></div>
             <div className="absolute top-3/4 right-1/4 w-1 h-1 bg-secondary-400/40 rounded-full animate-bounce" style={{ animationDelay: '1.5s' }}></div>
@@ -351,14 +355,17 @@ const AboutPage = memo(() => {
           </div>
 
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div className="text-center mb-8">
-              <div className="inline-flex items-center px-4 py-2 rounded-full text-xs font-semibold bg-gradient-to-r from-primary-50 to-secondary-50 backdrop-blur-sm text-slate-700 border border-slate-200 mb-4 shadow-lg font-sans">
-                <span className="w-2 h-2 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full mr-2 animate-pulse"></span>
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold bg-white border border-slate-200 shadow-sm mb-6 text-slate-700 font-sans">
+                <span className="flex h-2 w-2 relative mr-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-primary-500"></span>
+                </span>
                 <span>Global Recognition</span>
               </div>
-              <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold font-sans text-slate-900 mb-3 leading-tight text-center">
-                <div className="flex items-center justify-center mb-3">
-                  <i className="fas fa-building mr-3 text-primary-500 text-3xl"></i>
+              <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold font-sans text-slate-900 mb-6 leading-tight text-center tracking-tight">
+                <div className="flex items-center justify-center mb-4">
+                  <i className="fas fa-building mr-3 text-primary-500 text-4xl"></i>
                 </div>
                 Our Alumni Work at{' '}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 via-secondary-600 to-primary-600">
@@ -366,7 +373,7 @@ const AboutPage = memo(() => {
                 </span>{' '}
                 Worldwide
               </h3>
-              <p className="text-sm md:text-base text-slate-600 max-w-3xl mx-auto leading-relaxed font-sans mb-6">
+              <p className="text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed font-sans mb-10">
                 From Silicon Valley to Wall Street, our graduates are making their mark at the world's most innovative companies
               </p>
             </div>
@@ -384,12 +391,12 @@ const AboutPage = memo(() => {
         </motion.section>
 
         {/* Interactive Mission/Vision/Values Section */}
-        <motion.section 
+        <motion.section
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
           viewport={{ once: true, margin: "-100px" }}
-          className="py-12 bg-gradient-to-br from-white via-slate-50 to-white relative overflow-hidden"
+          className="py-16 md:py-24 bg-gradient-to-br from-white via-slate-50 to-white relative overflow-hidden"
         >
           {/* Enhanced Background decorative elements */}
           <div className="absolute inset-0 overflow-hidden">
@@ -397,7 +404,7 @@ const AboutPage = memo(() => {
             <div className="absolute top-10 right-10 w-96 h-96 bg-gradient-to-br from-primary-100/40 to-secondary-100/40 rounded-full blur-3xl animate-pulse"></div>
             <div className="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-tr from-secondary-100/40 to-primary-100/40 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-primary-50/30 to-secondary-50/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
-            
+
             {/* Floating particles */}
             <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-primary-400/40 rounded-full animate-bounce" style={{ animationDelay: '0.5s' }}></div>
             <div className="absolute top-3/4 right-1/4 w-1 h-1 bg-secondary-400/40 rounded-full animate-bounce" style={{ animationDelay: '1.5s' }}></div>
@@ -405,19 +412,22 @@ const AboutPage = memo(() => {
           </div>
 
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div className="text-center mb-12">
-              <div className="inline-flex items-center px-4 py-2 rounded-full text-xs font-semibold bg-gradient-to-r from-primary-50 to-secondary-50 backdrop-blur-sm text-slate-700 border border-slate-200 mb-4 shadow-lg font-sans">
-                <span className="w-2 h-2 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full mr-2 animate-pulse"></span>
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold bg-white border border-slate-200 shadow-sm mb-6 text-slate-700 font-sans">
+                <span className="flex h-2 w-2 relative mr-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-primary-500"></span>
+                </span>
                 <span>Our Foundation</span>
               </div>
-              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold font-sans text-slate-900 mb-3 leading-tight">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold font-sans text-slate-900 mb-6 leading-tight tracking-tight">
                 Built on{' '}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 via-secondary-600 to-primary-600">
                   Principles
                 </span>{' '}
                 That Guide Us
               </h2>
-              <p className="text-sm md:text-base text-slate-600 max-w-3xl mx-auto leading-relaxed font-sans">
+              <p className="text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed font-sans">
                 For over two decades, these core values have shaped our community and continue to inspire excellence
               </p>
             </div>
@@ -429,11 +439,10 @@ const AboutPage = memo(() => {
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
-                    className={`px-6 py-2 rounded-xl font-semibold capitalize transition-all duration-300 text-sm font-sans ${
-                      activeTab === tab
+                    className={`px-6 py-2 rounded-xl font-semibold capitalize transition-all duration-300 text-sm font-sans ${activeTab === tab
                         ? 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white shadow-lg'
                         : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-                    }`}
+                      }`}
                   >
                     {tab}
                   </button>
@@ -444,33 +453,33 @@ const AboutPage = memo(() => {
             {/* Tab Content */}
             <div className="max-w-4xl mx-auto">
               {activeTab === 'mission' && (
-                  <motion.div 
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, ease: "easeOut" }}
-                    className="text-center space-y-6"
-                  >
-                    <div className="w-16 h-16 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg" style={{
-                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
-                    }}>
-                      <i className="fas fa-bullseye text-white text-xl"></i>
-                    </div>
-                    <h3 className="text-lg font-bold text-slate-900 mb-3 font-sans">
-                      Our{' '}
-                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 via-secondary-600 to-primary-600">
-                        Mission
-                      </span>
-                    </h3>
-                    <p className="text-sm text-slate-600 max-w-4xl mx-auto font-sans leading-relaxed">
-                      To create a vibrant ecosystem where CUCEK graduates connect, collaborate, and contribute 
-                      to technological advancement and societal progress while maintaining lifelong bonds with 
-                      their alma mater.
-                    </p>
-                  </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, ease: "easeOut" }}
+                  className="text-center space-y-6"
+                >
+                  <div className="w-16 h-16 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg" style={{
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+                  }}>
+                    <i className="fas fa-bullseye text-white text-xl"></i>
+                  </div>
+                  <h3 className="text-lg font-bold text-slate-900 mb-3 font-sans">
+                    Our{' '}
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 via-secondary-600 to-primary-600">
+                      Mission
+                    </span>
+                  </h3>
+                  <p className="text-sm text-slate-600 max-w-4xl mx-auto font-sans leading-relaxed">
+                    To create a vibrant ecosystem where CUCEK graduates connect, collaborate, and contribute
+                    to technological advancement and societal progress while maintaining lifelong bonds with
+                    their alma mater.
+                  </p>
+                </motion.div>
               )}
 
               {activeTab === 'vision' && (
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, ease: "easeOut" }}
@@ -488,15 +497,15 @@ const AboutPage = memo(() => {
                     </span>
                   </h3>
                   <p className="text-sm text-slate-600 max-w-4xl mx-auto font-sans leading-relaxed">
-                    To be the world's premier engineering alumni network, fostering innovation, 
-                    entrepreneurship, and leadership that addresses global challenges and creates 
+                    To be the world's premier engineering alumni network, fostering innovation,
+                    entrepreneurship, and leadership that addresses global challenges and creates
                     a sustainable future for humanity.
                   </p>
                 </motion.div>
               )}
 
               {activeTab === 'values' && (
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, ease: "easeOut" }}
@@ -555,12 +564,12 @@ const AboutPage = memo(() => {
         </motion.section>
 
         {/* Why Choose CUCEK - Enhanced Section */}
-        <motion.section 
+        <motion.section
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
           viewport={{ once: true, margin: "-100px" }}
-          className="py-12 bg-gradient-to-br from-white via-slate-50 to-white relative overflow-hidden"
+          className="py-16 md:py-24 bg-gradient-to-br from-white via-slate-50 to-white relative overflow-hidden"
         >
           {/* Enhanced Background decorative elements */}
           <div className="absolute inset-0 overflow-hidden">
@@ -568,25 +577,28 @@ const AboutPage = memo(() => {
             <div className="absolute top-10 right-10 w-96 h-96 bg-gradient-to-br from-primary-100/40 to-secondary-100/40 rounded-full blur-3xl animate-pulse"></div>
             <div className="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-tr from-secondary-100/40 to-primary-100/40 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-primary-50/30 to-secondary-50/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
-            
+
             {/* Floating particles */}
             <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-primary-400/40 rounded-full animate-bounce" style={{ animationDelay: '0.5s' }}></div>
             <div className="absolute top-3/4 right-1/4 w-1 h-1 bg-secondary-400/40 rounded-full animate-bounce" style={{ animationDelay: '1.5s' }}></div>
             <div className="absolute top-1/2 right-1/3 w-1.5 h-1.5 bg-primary-300/40 rounded-full animate-bounce" style={{ animationDelay: '2.5s' }}></div>
           </div>
-          
+
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             {/* Section Header */}
-            <div className="text-center mb-8">
-              <div className="inline-flex items-center px-4 py-2 rounded-full text-xs font-semibold bg-gradient-to-r from-primary-50 to-secondary-50 backdrop-blur-sm text-slate-700 border border-slate-200 mb-4 shadow-lg font-sans">
-                <span className="w-2 h-2 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full mr-2 animate-pulse"></span>
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold bg-white border border-slate-200 shadow-sm mb-6 text-slate-700 font-sans">
+                <span className="flex h-2 w-2 relative mr-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-primary-500"></span>
+                </span>
                 <span>Why Choose CUCEK?</span>
               </div>
-              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold font-sans text-slate-900 mb-3 leading-tight">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold font-sans text-slate-900 mb-6 leading-tight tracking-tight">
                 Excellence in Every
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 via-secondary-600 to-primary-600 animate-pulse"> Dimension</span>
               </h2>
-              <p className="text-sm md:text-base text-slate-600 max-w-3xl mx-auto leading-relaxed font-sans">
+              <p className="text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed font-sans">
                 Discover the unique advantages that make CUCEK the premier choice for engineering education and career success
               </p>
             </div>
@@ -595,7 +607,7 @@ const AboutPage = memo(() => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
               {/* Feature 1 - Large Card */}
               <div className="group">
-                <div 
+                <div
                   className="relative bg-white/90 backdrop-blur-xl rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all duration-500 transform hover:-translate-y-1 border border-slate-200/50 hover:border-primary-300 overflow-hidden h-full"
                   style={{
                     boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.05)'
@@ -604,7 +616,7 @@ const AboutPage = memo(() => {
                   {/* Background Pattern */}
                   <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-primary-100/30 to-secondary-100/30 rounded-full -translate-y-10 translate-x-10"></div>
                   <div className="absolute bottom-0 left-0 w-16 h-16 bg-gradient-to-tr from-accent-100/30 to-primary-100/30 rounded-full translate-y-8 -translate-x-8"></div>
-                  
+
                   <div className="relative z-10 h-full flex flex-col">
                     <div className="w-12 h-12 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-xl flex items-center justify-center mb-3 shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300" style={{
                       boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
@@ -619,7 +631,7 @@ const AboutPage = memo(() => {
                       in Kerala
                     </h3>
                     <p className="text-slate-600 leading-relaxed text-xs font-sans flex-grow">
-                      Constituent college of CUSAT with NBA-accredited programs and research center status since 2017. 
+                      Constituent college of CUSAT with NBA-accredited programs and research center status since 2017.
                       Our rigorous academic standards and industry-aligned curriculum ensure you're prepared for real-world challenges.
                     </p>
                   </div>
@@ -628,7 +640,7 @@ const AboutPage = memo(() => {
 
               {/* Feature 2 - Large Card */}
               <div className="group">
-                <div 
+                <div
                   className="relative bg-white/90 backdrop-blur-xl rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all duration-500 transform hover:-translate-y-1 border border-slate-200/50 hover:border-primary-300 overflow-hidden h-full"
                   style={{
                     boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.05)'
@@ -637,7 +649,7 @@ const AboutPage = memo(() => {
                   {/* Background Pattern */}
                   <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-secondary-100/30 to-accent-100/30 rounded-full -translate-y-10 translate-x-10"></div>
                   <div className="absolute bottom-0 left-0 w-16 h-16 bg-gradient-to-tr from-primary-100/30 to-secondary-100/30 rounded-full translate-y-8 -translate-x-8"></div>
-                  
+
                   <div className="relative z-10 h-full flex flex-col">
                     <div className="w-12 h-12 bg-gradient-to-r from-secondary-500 to-accent-500 rounded-xl flex items-center justify-center mb-3 shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300" style={{
                       boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
@@ -651,16 +663,16 @@ const AboutPage = memo(() => {
                       </span>
                     </h3>
                     <p className="text-slate-600 leading-relaxed text-xs font-sans flex-grow">
-                      CUCEK alumni are placed in global companies across 85+ countries. Our strong international reputation 
+                      CUCEK alumni are placed in global companies across 85+ countries. Our strong international reputation
                       opens doors to opportunities worldwide and connects you with a powerful professional network.
                     </p>
                   </div>
                 </div>
               </div>
 
-               {/* Feature 3 - Large Card */}
+              {/* Feature 3 - Large Card */}
               <div className="group">
-                <div 
+                <div
                   className="relative bg-white/90 backdrop-blur-xl rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all duration-500 transform hover:-translate-y-1 border border-slate-200/50 hover:border-primary-300 overflow-hidden h-full"
                   style={{
                     boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.05)'
@@ -669,7 +681,7 @@ const AboutPage = memo(() => {
                   {/* Background Pattern */}
                   <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-accent-100/30 to-primary-100/30 rounded-full -translate-y-10 translate-x-10"></div>
                   <div className="absolute bottom-0 left-0 w-16 h-16 bg-gradient-to-tr from-secondary-100/30 to-accent-100/30 rounded-full translate-y-8 -translate-x-8"></div>
-                  
+
                   <div className="relative z-10 h-full flex flex-col">
                     <div className="w-12 h-12 bg-gradient-to-r from-accent-500 to-primary-500 rounded-xl flex items-center justify-center mb-3 shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300" style={{
                       boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
@@ -689,9 +701,9 @@ const AboutPage = memo(() => {
                 </div>
               </div>
 
-               {/* Feature 4 - Large Card */}
+              {/* Feature 4 - Large Card */}
               <div className="group">
-                <div 
+                <div
                   className="relative bg-white/90 backdrop-blur-xl rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all duration-500 transform hover:-translate-y-1 border border-slate-200/50 hover:border-primary-300 overflow-hidden h-full"
                   style={{
                     boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.05)'
@@ -700,7 +712,7 @@ const AboutPage = memo(() => {
                   {/* Background Pattern */}
                   <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-primary-100/30 to-accent-100/30 rounded-full -translate-y-10 translate-x-10"></div>
                   <div className="absolute bottom-0 left-0 w-16 h-16 bg-gradient-to-tr from-secondary-100/30 to-primary-100/30 rounded-full translate-y-8 -translate-x-8"></div>
-                  
+
                   <div className="relative z-10 h-full flex flex-col">
                     <div className="w-12 h-12 bg-gradient-to-r from-primary-500 to-accent-500 rounded-xl flex items-center justify-center mb-3 shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300" style={{
                       boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
@@ -714,7 +726,7 @@ const AboutPage = memo(() => {
                       Network
                     </h3>
                     <p className="text-slate-600 leading-relaxed text-xs font-sans flex-grow">
-                     Active alumni support and regular placement drives with leading recruiters.
+                      Active alumni support and regular placement drives with leading recruiters.
                     </p>
                   </div>
                 </div>
@@ -726,12 +738,12 @@ const AboutPage = memo(() => {
         </motion.section>
 
         {/* Video Player Section */}
-        <motion.section 
+        <motion.section
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
           viewport={{ once: true, margin: "-100px" }}
-          className="py-12 bg-gradient-to-br from-white via-slate-50 to-white relative overflow-hidden"
+          className="py-16 md:py-24 bg-gradient-to-br from-white via-slate-50 to-white relative overflow-hidden"
         >
           {/* Enhanced Background decorative elements */}
           <div className="absolute inset-0 overflow-hidden">
@@ -739,17 +751,17 @@ const AboutPage = memo(() => {
             <div className="absolute top-10 right-10 w-96 h-96 bg-gradient-to-br from-primary-100/40 to-secondary-100/40 rounded-full blur-3xl animate-pulse"></div>
             <div className="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-tr from-secondary-100/40 to-primary-100/40 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-primary-50/30 to-secondary-50/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
-            
+
             {/* Floating particles */}
             <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-primary-400/40 rounded-full animate-bounce" style={{ animationDelay: '0.5s' }}></div>
             <div className="absolute top-3/4 right-1/4 w-1 h-1 bg-secondary-400/40 rounded-full animate-bounce" style={{ animationDelay: '1.5s' }}></div>
             <div className="absolute top-1/2 right-1/3 w-1.5 h-1.5 bg-primary-300/40 rounded-full animate-bounce" style={{ animationDelay: '2.5s' }}></div>
           </div>
-          
+
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div className="text-center mb-8">
+            <div className="text-center mb-16">
               <div className="flex flex-col items-center">
-                <div className="relative mb-4">
+                <div className="relative mb-6">
                   <div className="w-14 h-14 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-xl flex items-center justify-center shadow-lg transform hover:scale-110 transition-all duration-300" style={{
                     boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
                   }}>
@@ -762,39 +774,42 @@ const AboutPage = memo(() => {
                     <i className="fas fa-star text-white text-xs"></i>
                   </div>
                 </div>
-                <div className="inline-flex items-center px-4 py-2 rounded-full text-xs font-semibold bg-gradient-to-r from-primary-50 to-secondary-50 backdrop-blur-sm text-slate-700 border border-slate-200 mb-4 shadow-lg font-sans">
-                  <span className="w-2 h-2 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full mr-2 animate-pulse"></span>
+                <div className="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold bg-white border border-slate-200 shadow-sm mb-6 text-slate-700 font-sans">
+                  <span className="flex h-2 w-2 relative mr-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-primary-500"></span>
+                  </span>
                   <span>Our Story</span>
                 </div>
-                <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold font-sans text-slate-900 mb-2 leading-tight flex items-center justify-center">
-                  <i className="fas fa-play-circle mr-2 text-primary-500 text-2xl"></i>
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold font-sans text-slate-900 mb-6 leading-tight flex items-center justify-center tracking-tight">
+                  <i className="fas fa-play-circle mr-3 text-primary-500 text-3xl"></i>
                   Discover Our{' '}
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 via-secondary-600 to-primary-600">
                     Journey
                   </span>
                 </h2>
-                <div className="w-12 h-1 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full mb-3"></div>
-                <p className="text-xs md:text-sm text-slate-600 max-w-2xl mx-auto leading-relaxed font-sans">
-                  Watch our inspiring journey from a small engineering college to a global community of 
+                <div className="w-12 h-1 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full mb-6"></div>
+                <p className="text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed font-sans">
+                  Watch our inspiring journey from a small engineering college to a global community of
                   <span className="font-semibold text-primary-600"> innovators, leaders, and changemakers</span>
                 </p>
               </div>
             </div>
 
-             {/* Video Player */}
-             <VideoPlayer
-               videoId="R_hQzJ0jRqE" // YouTube video ID from the provided URL
-               title="More than a college — it's family"
-               description="Discover how our graduates are making a difference in technology, innovation, and society worldwide"
-               duration="5:30 min"
-               views="2.5K views"
-               year="2024"
-               muted={true} // Play without sound by default
-               autoplay={false} // Don't autoplay, let user control
-               loop={false} // Don't loop the video
-               onPlay={() => {}}
-               onShare={() => {}}
-             />
+            {/* Video Player */}
+            <VideoPlayer
+              videoId="R_hQzJ0jRqE" // YouTube video ID from the provided URL
+              title="More than a college — it's family"
+              description="Discover how our graduates are making a difference in technology, innovation, and society worldwide"
+              duration="5:30 min"
+              views="2.5K views"
+              year="2024"
+              muted={true} // Play without sound by default
+              autoplay={false} // Don't autoplay, let user control
+              loop={false} // Don't loop the video
+              onPlay={() => { }}
+              onShare={() => { }}
+            />
 
             {/* Video Features */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
@@ -838,7 +853,7 @@ const AboutPage = memo(() => {
 
 
         {/* Our Legacy - Redesigned Timeline */}
-        <motion.section 
+        <motion.section
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
@@ -851,13 +866,13 @@ const AboutPage = memo(() => {
             <div className="absolute top-10 right-10 w-96 h-96 bg-gradient-to-br from-primary-100/40 to-secondary-100/40 rounded-full blur-3xl animate-pulse"></div>
             <div className="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-tr from-secondary-100/40 to-primary-100/40 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-primary-50/30 to-secondary-50/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
-            
+
             {/* Floating particles */}
             <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-primary-400/40 rounded-full animate-bounce" style={{ animationDelay: '0.5s' }}></div>
             <div className="absolute top-3/4 right-1/4 w-1 h-1 bg-secondary-400/40 rounded-full animate-bounce" style={{ animationDelay: '1.5s' }}></div>
             <div className="absolute top-1/2 right-1/3 w-1.5 h-1.5 bg-primary-300/40 rounded-full animate-bounce" style={{ animationDelay: '2.5s' }}></div>
           </div>
-          
+
           <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Section Header */}
             <div className="text-center mb-8">
@@ -870,7 +885,7 @@ const AboutPage = memo(() => {
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 via-secondary-600 to-primary-600 animate-pulse"> Excellence</span>
               </h2>
               <p className="text-sm md:text-base text-slate-600 max-w-3xl mx-auto leading-relaxed font-sans">
-                From humble beginnings to becoming a beacon of engineering excellence, 
+                From humble beginnings to becoming a beacon of engineering excellence,
                 discover the milestones that shaped our remarkable journey
               </p>
             </div>
@@ -879,7 +894,7 @@ const AboutPage = memo(() => {
             <div className="relative">
               {/* Central Timeline Line */}
               <div className="absolute left-1/2 transform -translate-x-0.5 w-1 h-full bg-gradient-to-b from-primary-500 via-secondary-500 to-accent-500 rounded-full shadow-lg"></div>
-              
+
               {/* Timeline Items */}
               <div className="space-y-12">
                 {timelineMilestones.map((milestone, index) => (
@@ -887,7 +902,7 @@ const AboutPage = memo(() => {
                     <div className={`flex items-center ${index % 2 === 0 ? 'justify-start' : 'justify-end'}`}>
                       {/* Content Card */}
                       <div className={`w-full lg:w-5/12 ${index % 2 === 0 ? 'lg:pr-6' : 'lg:pl-6'}`}>
-                        <div 
+                        <div
                           className="relative bg-white/90 backdrop-blur-xl rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all duration-500 transform hover:-translate-y-1 border border-slate-200/50 hover:border-primary-300 overflow-hidden group-hover:border-primary-300"
                           style={{
                             boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.05)'
@@ -896,19 +911,19 @@ const AboutPage = memo(() => {
                           {/* Background Pattern */}
                           <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-primary-100/30 to-secondary-100/30 rounded-full -translate-y-12 translate-x-12"></div>
                           <div className="absolute bottom-0 left-0 w-20 h-20 bg-gradient-to-tr from-accent-100/30 to-primary-100/30 rounded-full translate-y-10 -translate-x-10"></div>
-                          
+
                           <div className="relative z-10">
                             {/* Year Badge */}
                             <div className="inline-flex items-center px-2.5 py-1 rounded-full bg-gradient-to-r from-primary-500 to-secondary-500 text-white text-xs font-bold mb-2 shadow-lg font-sans">
                               <i className="fas fa-calendar-alt mr-1.5 text-xs"></i>
                               {milestone.year}
                             </div>
-                            
+
                             {/* Title */}
                             <h3 className="text-xs font-bold text-slate-900 mb-2 group-hover:text-primary-600 transition-colors duration-300 font-sans">
                               {milestone.title}
                             </h3>
-                            
+
                             {/* Description */}
                             <p className="text-slate-600 leading-relaxed text-xs font-sans">
                               {milestone.description}
@@ -916,7 +931,7 @@ const AboutPage = memo(() => {
                           </div>
                         </div>
                       </div>
-                      
+
                       {/* Timeline Dot */}
                       <div className="absolute left-1/2 transform -translate-x-1/2 z-20 hidden lg:block">
                         <div className="relative">
@@ -939,7 +954,7 @@ const AboutPage = memo(() => {
                 <div className="absolute inset-0 bg-black/10"></div>
                 <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -translate-y-20 translate-x-20"></div>
                 <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full translate-y-16 -translate-x-16"></div>
-                
+
                 <div className="relative z-10">
                   <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-2 font-sans">Join Our Continuing Story</h3>
                   <p className="text-white/90 text-xs max-w-2xl mx-auto mb-4 font-sans leading-relaxed">
@@ -970,7 +985,7 @@ const AboutPage = memo(() => {
         </motion.section>
 
         {/* Call to Action with Modern Design */}
-        <motion.section 
+        <motion.section
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
@@ -983,7 +998,7 @@ const AboutPage = memo(() => {
             <div className="absolute top-10 right-10 w-96 h-96 bg-gradient-to-br from-primary-100/40 to-secondary-100/40 rounded-full blur-3xl animate-pulse"></div>
             <div className="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-tr from-secondary-100/40 to-primary-100/40 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-primary-50/30 to-secondary-50/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
-            
+
             {/* Floating particles */}
             <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-primary-400/40 rounded-full animate-bounce" style={{ animationDelay: '0.5s' }}></div>
             <div className="absolute top-3/4 right-1/4 w-1 h-1 bg-secondary-400/40 rounded-full animate-bounce" style={{ animationDelay: '1.5s' }}></div>
@@ -1004,10 +1019,10 @@ const AboutPage = memo(() => {
                 </span>?
               </h2>
               <p className="text-sm md:text-base text-slate-600 mb-6 leading-relaxed font-sans">
-                Join our global community of innovators, entrepreneurs, and leaders who are 
+                Join our global community of innovators, entrepreneurs, and leaders who are
                 making a real impact in their fields and beyond.
               </p>
-              
+
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
                 {!user && !loading && (
                   <button
@@ -1021,7 +1036,7 @@ const AboutPage = memo(() => {
                     <div className="absolute inset-0 bg-gradient-to-r from-primary-50 to-secondary-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   </button>
                 )}
-                
+
                 <button
                   onClick={() => navigate('/events')}
                   className="px-4 py-2 border-2 border-slate-300 text-slate-700 rounded-lg font-semibold text-xs hover:bg-slate-100 hover:border-slate-400 transition-all duration-300 flex items-center shadow-lg hover:shadow-xl font-sans"
@@ -1030,7 +1045,7 @@ const AboutPage = memo(() => {
                   Explore Events
                 </button>
               </div>
-              
+
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 text-slate-600">
                 <div className="group flex flex-col items-center p-5 bg-white/90 backdrop-blur-xl rounded-3xl border border-slate-200/50 hover:border-primary-300 transition-all duration-300 transform hover:-translate-y-1" style={{
                   boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.05)'
@@ -1058,7 +1073,7 @@ const AboutPage = memo(() => {
           </div>
         </motion.section>
       </div>
-      
+
       {/* Footer */}
       <Footer />
     </>

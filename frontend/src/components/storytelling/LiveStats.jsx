@@ -71,20 +71,20 @@ const LiveStats = ({ statsData, loading }) => {
         const animate = (currentTime) => {
           if (!startTime) startTime = currentTime;
           const progress = Math.min((currentTime - startTime) / duration, 1);
-          
+
           // Easing function for smooth animation
           const easeOutQuart = 1 - Math.pow(1 - progress, 4);
           const currentValue = Math.floor(startValue + (endValue - startValue) * easeOutQuart);
-          
+
           setCount(currentValue);
-          
+
           if (progress < 1) {
             requestAnimationFrame(animate);
           } else {
             setCount(endValue);
           }
         };
-        
+
         requestAnimationFrame(animate);
       }
     }, [inView, end, duration, isAnimating]);
@@ -93,19 +93,19 @@ const LiveStats = ({ statsData, loading }) => {
   };
 
   // Pre-calculate all counter values to avoid calling hooks in map
-  const animatedValues = stats.map((stat, index) => 
+  const animatedValues = stats.map((stat, index) =>
     useCounter(stat.value, 1500 + index * 100)
   );
 
   return (
-    <section id="live-stats" className="py-12 bg-gradient-to-br from-white via-slate-50 to-white relative overflow-hidden">
+    <section id="live-stats" className="py-16 md:py-24 bg-gradient-to-br from-white via-slate-50 to-white relative overflow-hidden">
       {/* Enhanced Background decorative elements */}
       <div className="absolute inset-0 overflow-hidden">
         {/* Animated gradient orbs */}
         <div className="absolute top-10 right-10 w-96 h-96 bg-gradient-to-br from-primary-100/40 to-secondary-100/40 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-tr from-secondary-100/40 to-primary-100/40 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-primary-50/30 to-secondary-50/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
-        
+
         {/* Floating particles */}
         <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-primary-400/40 rounded-full animate-bounce" style={{ animationDelay: '0.5s' }}></div>
         <div className="absolute top-3/4 right-1/4 w-1 h-1 bg-secondary-400/40 rounded-full animate-bounce" style={{ animationDelay: '1.5s' }}></div>
@@ -119,23 +119,26 @@ const LiveStats = ({ statsData, loading }) => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="text-center mb-8"
+          className="text-center mb-16"
         >
-          <div className="inline-flex items-center px-4 py-2 rounded-full text-xs font-semibold bg-gradient-to-r from-primary-50 to-secondary-50 backdrop-blur-sm text-slate-700 border border-slate-200 mb-4 shadow-lg font-sans">
-            <span className="w-2 h-2 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full mr-2 animate-pulse"></span>
+          <div className="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold bg-white border border-slate-200 shadow-sm mb-6 text-slate-700 font-sans">
+            <span className="flex h-2 w-2 relative mr-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-primary-500"></span>
+            </span>
             <span>Every Story Starts Here</span>
           </div>
-          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-slate-900 mb-4 leading-tight font-sans">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 mb-6 leading-tight font-sans tracking-tight">
             Our{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 via-secondary-600 to-primary-600">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-secondary-600">
               Growing Impact
             </span>
           </h2>
-          <p className="text-sm md:text-base text-slate-600 max-w-2xl mx-auto leading-relaxed mb-4 font-sans">
-            From the moment we walked through CUCEK's gates, we became part of something bigger than ourselves. 
+          <p className="text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed mb-4 font-sans">
+            From the moment we walked through CUCEK's gates, we became part of something bigger than ourselves.
             Today, our family continues to grow, each new member adding their unique chapter to our collective story.
           </p>
-          <p className="text-xs md:text-sm text-slate-500 italic font-sans">
+          <p className="text-sm text-slate-500 italic font-sans">
             From every corner of the world, our CUCEK family grows stronger together.
           </p>
         </motion.div>
@@ -153,25 +156,25 @@ const LiveStats = ({ statsData, loading }) => {
                 viewport={{ once: true }}
                 className="group"
               >
-                 <div className="bg-white/90 backdrop-blur-xl rounded-3xl p-4 border border-slate-200/50 text-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1" style={{
-                   boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.05)'
-                 }}>
-                   {/* Loading Value */}
-                   <div className="mb-2">
-                     <div className="text-xl md:text-2xl font-bold text-slate-400 mb-1 animate-pulse font-sans">
-                       ---
-                     </div>
-                     <div className="text-xs font-semibold text-slate-500 leading-tight animate-pulse font-sans">
-                       Loading...
-                     </div>
-                   </div>
-                 </div>
+                <div className="bg-white/90 backdrop-blur-xl rounded-3xl p-4 border border-slate-200/50 text-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1" style={{
+                  boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.05)'
+                }}>
+                  {/* Loading Value */}
+                  <div className="mb-2">
+                    <div className="text-xl md:text-2xl font-bold text-slate-400 mb-1 animate-pulse font-sans">
+                      ---
+                    </div>
+                    <div className="text-xs font-semibold text-slate-500 leading-tight animate-pulse font-sans">
+                      Loading...
+                    </div>
+                  </div>
+                </div>
               </motion.div>
             ))
           ) : (
             stats.map((stat, index) => {
               const animatedValue = animatedValues[index];
-              
+
               return (
                 <motion.div
                   key={stat.id}
@@ -181,20 +184,20 @@ const LiveStats = ({ statsData, loading }) => {
                   viewport={{ once: true }}
                   className="group"
                 >
-                   <div className="bg-white/90 backdrop-blur-xl rounded-3xl p-4 border border-slate-200/50 hover:border-primary-300 hover:bg-white/95 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl text-center shadow-lg" style={{
-                     boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.05)'
-                   }}>
-                     {/* Compact Value */}
-                     <div className="mb-2">
-                       <motion.div
-                         className="text-xl md:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-secondary-600 mb-1 font-sans"
-                         key={animatedValue}
-                       >
-                         {animatedValue.toLocaleString()}{stat.suffix}
-                       </motion.div>
-                       <div className="text-xs font-semibold text-slate-700 leading-tight font-sans">{stat.label}</div>
-                     </div>
-                   </div>
+                  <div className="bg-white/90 backdrop-blur-xl rounded-3xl p-4 border border-slate-200/50 hover:border-primary-300 hover:bg-white/95 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl text-center shadow-lg" style={{
+                    boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.05)'
+                  }}>
+                    {/* Compact Value */}
+                    <div className="mb-2">
+                      <motion.div
+                        className="text-xl md:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-secondary-600 mb-1 font-sans"
+                        key={animatedValue}
+                      >
+                        {animatedValue.toLocaleString()}{stat.suffix}
+                      </motion.div>
+                      <div className="text-xs font-semibold text-slate-700 leading-tight font-sans">{stat.label}</div>
+                    </div>
+                  </div>
                 </motion.div>
               );
             })
@@ -214,7 +217,7 @@ const LiveStats = ({ statsData, loading }) => {
           }}>
             {/* Animated background */}
             <div className="absolute inset-0 bg-gradient-to-r from-primary-100/30 to-secondary-100/30 rounded-3xl animate-pulse"></div>
-            
+
             <div className="text-center relative z-10">
               <div className="w-10 h-10 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full flex items-center justify-center text-white text-sm font-bold mx-auto mb-3 shadow-lg" style={{
                 boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
@@ -247,7 +250,7 @@ const LiveStats = ({ statsData, loading }) => {
           }}>
             {/* Animated background */}
             <div className="absolute inset-0 bg-gradient-to-r from-primary-100/30 to-secondary-100/30 rounded-3xl animate-pulse"></div>
-            
+
             <div className="relative z-10">
               <h3 className="text-lg font-bold text-slate-900 mb-2 font-sans">
                 Be Part of Our Growing Story

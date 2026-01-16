@@ -20,7 +20,7 @@ export default function Timeline({ milestones }) {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 640); // sm breakpoint
     };
-    
+
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
@@ -36,10 +36,10 @@ export default function Timeline({ milestones }) {
 
   const scrollToMilestone = (direction) => {
     if (!scrollContainerRef.current) return;
-    
+
     const container = scrollContainerRef.current;
     const scrollAmount = window.innerWidth; // Full viewport width
-    
+
     if (direction === 'left') {
       container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
     } else {
@@ -50,25 +50,23 @@ export default function Timeline({ milestones }) {
   return (
     <section
       ref={timelineRef}
-      className={`w-full flex flex-col justify-center items-center relative ${isMobile ? 'min-h-screen' : ''}`}
-      style={{ 
+      className={`w-full flex flex-col justify-center items-center relative ${isMobile ? 'min-h-screen' : ''} bg-slate-50`}
+      style={{
         minHeight: isMobile ? undefined : '100vh',
-        background: '#f8f0fc',
-        padding: isMobile ? '1rem 0' : '0'
+        padding: isMobile ? '4rem 0' : '0'
       }}
     >
       <h2
-        className={`${isMobile ? 'text-3xl mt-4 mb-1' : 'text-2xl md:text-4xl mb-2 md:mb-4'} font-bold text-[#5A32EA] text-center`}
+        className={`${isMobile ? 'text-3xl mt-4 mb-4' : 'text-3xl md:text-5xl mb-6 md:mb-12'} font-bold text-slate-900 text-center font-sans tracking-tight leading-tight`}
       >
         Our Journey
       </h2>
-      <br></br>
       <p
-        className={`${isMobile ? 'text-md mb-4 mt-0' : 'text-sm md:text-lg mb-4 md:mb-24'} text-gray-500 text-center px-4`}
+        className={`${isMobile ? 'text-lg mb-8 mt-0' : 'text-lg text-slate-600 mb-8 md:mb-24'} max-w-2xl mx-auto text-center px-4 font-sans leading-relaxed`}
       >
         {isMobile ? 'Swipe to walk through the milestones of our incredible journey' : 'Hover over to get a detailed glimpse of our journey this far'}
       </p>
-      
+
       {/* Mobile Navigation Arrows */}
       {isMobile && (
         <div className="flex justify-between items-center w-full max-w-6xl px-4 mb-2">
@@ -145,7 +143,7 @@ export default function Timeline({ milestones }) {
 
         {/* Mobile Timeline */}
         {isMobile && (
-          <div 
+          <div
             ref={scrollContainerRef}
             className="w-full flex-1 flex flex-col justify-center overflow-x-auto scrollbar-hide snap-x snap-mandatory"
             style={{
@@ -161,7 +159,7 @@ export default function Timeline({ milestones }) {
                 <div
                   key={m.year}
                   className="flex flex-col items-center justify-center snap-center relative h-full"
-                  style={{ 
+                  style={{
                     minWidth: '100vw',
                     width: '100vw'
                   }}
@@ -188,7 +186,7 @@ export default function Timeline({ milestones }) {
                       </div>
                       {/* Description Card - Compact, always centered and never overflowing */}
                       <div className="w-[90vw] max-w-sm mx-auto mt-2">
-                        <div className="bg-white border border-gray-200 shadow-md rounded-xl p-4 text-gray-800 text-sm font-normal min-h-[120px] max-h-[160px] overflow-y-auto" style={{scrollbarWidth: 'thin', scrollbarColor: '#D1D5DB transparent'}}>
+                        <div className="bg-white border border-gray-200 shadow-md rounded-xl p-4 text-gray-800 text-sm font-normal min-h-[120px] max-h-[160px] overflow-y-auto" style={{ scrollbarWidth: 'thin', scrollbarColor: '#D1D5DB transparent' }}>
                           <div className="font-semibold text-[#5A32EA] mb-2 text-sm">{m.year} - {m.summary}</div>
                           <div className="text-sm leading-relaxed line-clamp-3">{m.details}</div>
                         </div>
