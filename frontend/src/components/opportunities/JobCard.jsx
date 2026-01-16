@@ -24,7 +24,7 @@ const JobCard = memo(({ job, user, isApplied, onClick, onApply, onJobDeleted }) 
     const now = new Date();
     const diffTime = Math.abs(now - date);
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
+
     if (diffDays === 1) return 'Posted today';
     if (diffDays === 2) return 'Posted yesterday';
     if (diffDays <= 7) return `Posted ${diffDays - 1} days ago`;
@@ -101,16 +101,17 @@ const JobCard = memo(({ job, user, isApplied, onClick, onApply, onJobDeleted }) 
     >
       {/* Animated background */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary-100/40 via-transparent to-secondary-100/40 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-      
+
       {/* Job Type Badge */}
       <div className="absolute top-3 right-3 z-10">
         <span
-          className={`px-2.5 py-1 rounded-full text-xs font-semibold shadow-lg backdrop-blur-sm border font-sans
-            ${job.type === 'internship' 
-              ? 'bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-400 border-green-400/30' 
-              : 'bg-gradient-to-r from-primary-500/20 to-secondary-500/20 text-primary-400 border-primary-400/30'
+          className={`px-3 py-1 rounded-full text-xs font-semibold shadow-sm backdrop-blur-sm border font-sans bg-white inline-flex items-center gap-1.5
+            ${job.type === 'internship'
+              ? 'text-green-700 border-green-200'
+              : 'text-primary-700 border-primary-200'
             }`}
         >
+          <span className={`w-1.5 h-1.5 rounded-full ${job.type === 'internship' ? 'bg-green-500' : 'bg-primary-500'}`}></span>
           {job.type === 'internship' ? 'Internship' : 'Job'}
         </span>
       </div>
@@ -121,7 +122,7 @@ const JobCard = memo(({ job, user, isApplied, onClick, onApply, onJobDeleted }) 
         <h3 className="font-bold text-slate-900 mb-2 line-clamp-2 text-base leading-tight group-hover:text-primary-600 transition-colors duration-300 font-sans">
           {job.jobTitle}
         </h3>
-        
+
         {/* Job Details */}
         <div className="space-y-1.5 mb-3">
           <div className="flex items-center text-xs text-slate-600">
@@ -145,7 +146,7 @@ const JobCard = memo(({ job, user, isApplied, onClick, onApply, onJobDeleted }) 
             </div>
           )}
         </div>
-        
+
         {/* Creator Information */}
         {job.user && (
           <div className="border-t border-slate-200 pt-3 mb-3">
@@ -164,24 +165,23 @@ const JobCard = memo(({ job, user, isApplied, onClick, onApply, onJobDeleted }) 
             </div>
           </div>
         )}
-        
+
         {/* Spacer to push button to bottom */}
         <div className="flex-grow"></div>
-        
+
         {/* Apply Button */}
         <button
-          className={`mt-3 px-5 py-2.5 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg text-sm font-sans ${
-            buttonState.disabled
+          className={`mt-3 px-5 py-2.5 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg text-sm font-sans ${buttonState.disabled
               ? 'bg-slate-200 text-slate-400 cursor-not-allowed border border-slate-300'
               : 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white hover:from-primary-600 hover:to-secondary-600 hover:shadow-xl'
-          }`}
+            }`}
           onClick={e => { if (!buttonState.disabled) { e.stopPropagation(); onApply && onApply(job); } }}
           disabled={buttonState.disabled}
         >
           {buttonState.text}
         </button>
       </div>
-      
+
       <ConfirmDialog
         open={confirmOpen}
         title="Delete Job"

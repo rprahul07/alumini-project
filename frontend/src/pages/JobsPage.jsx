@@ -113,12 +113,12 @@ const JobsPage = memo(() => {
     setSortOrder(sortOrderValue);
     setCurrentPage(1);
   }, []);
-  
+
   const handleClearType = useCallback(() => {
     setSelectedType('');
     setCurrentPage(1);
   }, []);
-  
+
   const handleClearSort = useCallback(() => {
     setSortBy('createdAt');
     setSortOrder('desc');
@@ -155,34 +155,37 @@ const JobsPage = memo(() => {
           <div className="absolute top-10 right-10 w-96 h-96 bg-gradient-to-br from-primary-100/40 to-secondary-100/40 rounded-full blur-3xl animate-pulse"></div>
           <div className="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-tr from-secondary-100/40 to-primary-100/40 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-primary-50/30 to-secondary-50/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
-          
+
           {/* Floating particles */}
           <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-primary-400/40 rounded-full animate-bounce" style={{ animationDelay: '0.5s' }}></div>
           <div className="absolute top-3/4 right-1/4 w-1 h-1 bg-secondary-400/40 rounded-full animate-bounce" style={{ animationDelay: '1.5s' }}></div>
           <div className="absolute top-1/2 right-1/3 w-1.5 h-1.5 bg-primary-300/40 rounded-full animate-bounce" style={{ animationDelay: '2.5s' }}></div>
         </div>
-        
+
         {/* Hero Section */}
-        <section className="relative py-12">
+        <section className="relative py-16 md:py-24">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="text-center">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
-                className="mb-6"
+                className="mb-8"
               >
-                <div className="inline-flex items-center px-4 py-2 rounded-full text-xs font-semibold bg-gradient-to-r from-primary-50 to-secondary-50 backdrop-blur-sm text-slate-700 border border-slate-200 mb-4 shadow-lg font-sans">
-                  <span className="w-2 h-2 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full mr-2 animate-pulse"></span>
+                <div className="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold bg-white border border-slate-200 mb-6 shadow-sm text-slate-700 font-sans">
+                  <span className="flex h-2 w-2 relative mr-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-primary-500"></span>
+                  </span>
                   <span>💼 Career Opportunities</span>
                 </div>
-                <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-slate-900 mb-3 leading-tight font-sans">
+                <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-slate-900 mb-6 leading-tight font-sans tracking-tight">
                   Discover Your{' '}
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 via-secondary-600 to-primary-600">
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 via-secondary-600 to-primary-600 animate-pulse">
                     Dream Career
                   </span>
                 </h1>
-                <p className="text-sm md:text-base text-slate-600 max-w-3xl mx-auto leading-relaxed font-sans">
+                <p className="text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed font-sans">
                   Connect with amazing job opportunities and internships shared by our alumni network. Your next career move starts here.
                 </p>
               </motion.div>
@@ -193,16 +196,25 @@ const JobsPage = memo(() => {
                 transition={{ duration: 0.6, delay: 0.2 }}
                 className="flex flex-wrap justify-center gap-3 text-xs sm:text-sm"
               >
-                <div className="flex items-center gap-2 bg-white/90 backdrop-blur-xl rounded-full px-3 py-1.5 border border-slate-200/50 hover:bg-white hover:shadow-lg transition-all duration-300 transform hover:scale-105 shadow-md font-sans">
-                  <div className="w-2 h-2 bg-primary-500 rounded-full animate-pulse"></div>
+                <div className="flex items-center gap-2 bg-white/90 backdrop-blur-xl rounded-full px-4 py-2 border border-slate-200/50 hover:bg-white hover:shadow-lg transition-all duration-300 transform hover:scale-105 shadow-sm font-sans">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-primary-500"></span>
+                  </span>
                   <span className="text-slate-700 font-medium">Verified Opportunities</span>
                 </div>
-                <div className="flex items-center gap-2 bg-white/90 backdrop-blur-xl rounded-full px-3 py-1.5 border border-slate-200/50 hover:bg-white hover:shadow-lg transition-all duration-300 transform hover:scale-105 shadow-md font-sans">
-                  <div className="w-2 h-2 bg-secondary-500 rounded-full animate-pulse"></div>
+                <div className="flex items-center gap-2 bg-white/90 backdrop-blur-xl rounded-full px-4 py-2 border border-slate-200/50 hover:bg-white hover:shadow-lg transition-all duration-300 transform hover:scale-105 shadow-sm font-sans">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-secondary-500"></span>
+                  </span>
                   <span className="text-slate-700 font-medium">Alumni Network</span>
                 </div>
-                <div className="flex items-center gap-2 bg-white/90 backdrop-blur-xl rounded-full px-3 py-1.5 border border-slate-200/50 hover:bg-white hover:shadow-lg transition-all duration-300 transform hover:scale-105 shadow-md font-sans">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <div className="flex items-center gap-2 bg-white/90 backdrop-blur-xl rounded-full px-4 py-2 border border-slate-200/50 hover:bg-white hover:shadow-lg transition-all duration-300 transform hover:scale-105 shadow-sm font-sans">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                  </span>
                   <span className="text-slate-700 font-medium">Direct Applications</span>
                 </div>
               </motion.div>
@@ -223,7 +235,7 @@ const JobsPage = memo(() => {
           >
             {/* Animated background */}
             <div className="absolute inset-0 bg-gradient-to-r from-primary-50/30 to-secondary-50/30 rounded-2xl"></div>
-            
+
             <div className="relative z-10">
               <div className="flex flex-col sm:flex-row gap-3 items-center">
                 <div className="flex-1 w-full">
@@ -236,7 +248,7 @@ const JobsPage = memo(() => {
                   <label className="block text-sm font-semibold text-slate-700 mb-2 font-sans">
                     Filter & Sort
                   </label>
-                  <FilterButton 
+                  <FilterButton
                     selectedType={selectedType}
                     sortBy={sortBy}
                     sortOrder={sortOrder}
@@ -330,7 +342,7 @@ const JobsPage = memo(() => {
                         {jobs.length > 0 ? `${jobs.length} Opportunities Found` : 'Opportunities'}
                       </h3>
                       <p className="text-slate-600 mt-2 text-sm font-sans">
-                        {jobs.length > 0 
+                        {jobs.length > 0
                           ? 'Discover and apply to amazing career opportunities'
                           : 'No opportunities available at the moment'
                         }
@@ -345,16 +357,16 @@ const JobsPage = memo(() => {
                   </div>
 
                   {/* Jobs Grid */}
-                  <JobGrid 
-                    jobs={jobs} 
-                    user={user} 
-                    appliedJobIds={appliedJobIds} 
-                    onJobClick={handleJobClick} 
+                  <JobGrid
+                    jobs={jobs}
+                    user={user}
+                    appliedJobIds={appliedJobIds}
+                    onJobClick={handleJobClick}
                     onApply={handleApply}
                     isLoading={loading}
                   />
                 </div>
-                
+
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -372,7 +384,7 @@ const JobsPage = memo(() => {
           </motion.div>
         </div>
       </div>
-      
+
       {/* Modals and Toast Container */}
       <JobDetailsModal
         job={selectedJob}
@@ -390,16 +402,16 @@ const JobsPage = memo(() => {
           refreshJobsAndApplied();
         }}
       />
-      
-      <ToastContainer 
-        position="top-right" 
-        autoClose={4000} 
-        hideProgressBar={false} 
-        newestOnTop 
-        closeOnClick 
-        pauseOnFocusLoss 
-        draggable 
-        pauseOnHover 
+
+      <ToastContainer
+        position="top-right"
+        autoClose={4000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
       />
     </>
   );
