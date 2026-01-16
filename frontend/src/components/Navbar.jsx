@@ -69,7 +69,7 @@ const getProfileImageUrl = (user) => {
         }
 
         // If it's a relative path, construct the backend URL using environment variable
-        const backendUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001'; // ✅ BEST PRACTICE
+        const backendUrl = import.meta.env.VITE_API_BASE_URL || 'https://alumini-project.onrender.com'; // ✅ BEST PRACTICE
         let fullUrl;
 
         if (imagePath.startsWith('/')) {

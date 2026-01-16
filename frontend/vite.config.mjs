@@ -7,7 +7,7 @@ dotenv.config();
 export default defineConfig(({ command, mode }) => {
   const isDev = command === 'serve';
   const isProd = mode === 'production';
-  
+
   return {
     plugins: [
       react(),
@@ -33,7 +33,7 @@ export default defineConfig(({ command, mode }) => {
       },
       proxy: {
         '/api': {
-          target: process.env.VITE_API_BASE_URL || 'http://localhost:5001',
+          target: process.env.VITE_API_BASE_URL || 'https://alumini-project.onrender.com',
           changeOrigin: true,
           secure: false,
         }
@@ -148,7 +148,7 @@ export default defineConfig(({ command, mode }) => {
               // Other vendor libraries
               return 'vendor';
             }
-            
+
             // Application chunks with better organization
             if (id.includes('/pages/')) {
               return 'pages';
