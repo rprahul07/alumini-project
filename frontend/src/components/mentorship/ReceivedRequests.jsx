@@ -7,10 +7,10 @@ import ConfirmDialog from '../ConfirmDialog';
 import { motion } from 'framer-motion';
 
 const roleColors = {
-  student: 'bg-blue-100 text-blue-700',
-  alumni: 'bg-green-100 text-green-700',
-  faculty: 'bg-purple-100 text-purple-700',
-  admin: 'bg-gray-200 text-gray-700',
+  student: 'bg-white border-blue-200 text-blue-700',
+  alumni: 'bg-white border-green-200 text-green-700',
+  faculty: 'bg-white border-purple-200 text-purple-700',
+  admin: 'bg-white border-gray-200 text-gray-700',
 };
 const statusColors = {
   pending: 'bg-yellow-100 text-yellow-700',
@@ -138,13 +138,12 @@ const ReceivedRequests = ({ requests, loading, error, setRequests, showAlert }) 
               key={key}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className={`flex-shrink-0 px-1.5 py-0.5 rounded-full text-xs font-medium border transition-all duration-200 ${
-                receivedSubTab === key 
-                  ? color === 'yellow'
-                    ? 'bg-yellow-500 text-white border-yellow-500 shadow-sm'
-                    : 'bg-green-500 text-white border-green-500 shadow-sm'
-                  : 'bg-slate-100 text-slate-700 border-slate-300 hover:bg-slate-200 hover:border-slate-400'
-              }`}
+              className={`flex-shrink-0 px-1.5 py-0.5 rounded-full text-xs font-medium border transition-all duration-200 ${receivedSubTab === key
+                ? color === 'yellow'
+                  ? 'bg-yellow-500 text-white border-yellow-500 shadow-sm'
+                  : 'bg-green-500 text-white border-green-500 shadow-sm'
+                : 'bg-slate-100 text-slate-700 border-slate-300 hover:bg-slate-200 hover:border-slate-400'
+                }`}
               onClick={() => setReceivedSubTab(key)}
             >
               {label}
@@ -152,7 +151,7 @@ const ReceivedRequests = ({ requests, loading, error, setRequests, showAlert }) 
           );
         })}
       </div>
-      
+
       {/* Requests Content */}
       <div className="h-full">
         {loading ? (
@@ -181,12 +180,11 @@ const ReceivedRequests = ({ requests, loading, error, setRequests, showAlert }) 
                           <img src={u.photoUrl} alt={u.fullName} className="w-8 h-8 rounded-full object-cover border border-slate-300 flex-shrink-0" />
                           <div className="flex-1 min-w-0">
                             <h4 className="font-semibold text-slate-900 text-sm truncate">{u.fullName}</h4>
-                            <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-semibold border ${
-                              u.role === 'student' ? 'bg-blue-100 text-blue-700 border-blue-300' :
+                            <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-semibold border ${u.role === 'student' ? 'bg-blue-100 text-blue-700 border-blue-300' :
                               u.role === 'alumni' ? 'bg-green-100 text-green-700 border-green-300' :
-                              u.role === 'faculty' ? 'bg-purple-100 text-purple-700 border-purple-300' :
-                              'bg-gray-100 text-gray-700 border-gray-300'
-                            }`}>
+                                u.role === 'faculty' ? 'bg-purple-100 text-purple-700 border-purple-300' :
+                                  'bg-gray-100 text-gray-700 border-gray-300'
+                              }`}>
                               {u.role}
                             </span>
                           </div>
@@ -225,120 +223,119 @@ const ReceivedRequests = ({ requests, loading, error, setRequests, showAlert }) 
               transition={{ duration: 0.6 }}
               className="hidden lg:block overflow-x-auto rounded-xl shadow-2xl bg-slate-50 backdrop-blur-xl border border-slate-200 h-full"
             >
-          <table className="w-full table-fixed divide-y divide-slate-200 text-xs h-full" role="grid" aria-label="Mentorship requests table">
-            <thead className="bg-slate-100">
-              <tr>
-                <th className="px-2 py-2 w-48 text-left font-medium text-slate-700 uppercase tracking-wider">Name</th>
-                <th className="px-2 py-2 w-24 text-left font-medium text-slate-700 uppercase tracking-wider">Role</th>
-                <th className="px-2 py-2 w-40 text-right font-medium text-slate-700 uppercase tracking-wider">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-slate-200">
-              {loading ? (
-                <tr><td colSpan={3} className="text-center text-slate-600 py-6">Loading...</td></tr>
-              ) : error ? (
-                <tr><td colSpan={3} className="text-center text-red-600 py-6">{error}</td></tr>
-              ) : getFilteredRequests().length === 0 ? (
-                <tr><td colSpan={3} className="text-center text-slate-600 py-6">No {receivedSubTab} mentorship requests.</td></tr>
-              ) : (
-                getFilteredRequests().map((req, index) => {
-                  const u = req.requester;
-                  return (
-                    <motion.tr
-                      key={req.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3, delay: index * 0.1 }}
-                      className="hover:bg-slate-50 cursor-pointer transition-colors duration-200"
-                    >
-                      <td className="px-2 py-2 whitespace-nowrap font-semibold">
-                        <div className="flex items-center gap-2">
-                          <img src={u.photoUrl} alt={u.fullName} className="w-7 h-7 rounded-full object-cover border border-slate-300" />
-                          <span className="truncate max-w-[120px] block text-slate-900">{u.fullName}</span>
-                        </div>
-                      </td>
-                      <td className="px-2 py-2 whitespace-nowrap">
-                        <span className={`inline-block px-2 py-1 rounded-full text-xs font-semibold border ${
-                          u.role === 'student' ? 'bg-blue-100 text-blue-700 border-blue-300' :
-                          u.role === 'alumni' ? 'bg-green-100 text-green-700 border-green-300' :
-                          u.role === 'faculty' ? 'bg-purple-100 text-purple-700 border-purple-300' :
-                          'bg-gray-100 text-gray-700 border-gray-300'
-                        }`}>{u.role}</span>
-                      </td>
-                      <td className="px-2 py-2 whitespace-nowrap text-right relative flex gap-2 justify-end">
-                        {req.status === 'pending' && (
-                          <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="inline-block px-2 py-1 rounded-full bg-gradient-to-r from-green-500 to-emerald-500 text-white font-semibold text-xs hover:from-green-600 hover:to-emerald-600 transition-all duration-200 shadow-lg"
-                            onClick={e => { e.stopPropagation(); handleAccept(req); }}
-                          >
-                            Accept
-                          </motion.button>
-                        )}
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          className="inline-block px-2 py-1 rounded-full bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-semibold text-xs hover:from-primary-600 hover:to-secondary-600 transition-all duration-200 shadow-lg"
-                          onClick={e => { e.stopPropagation(); handleViewProfile(req); }}
+              <table className="w-full table-fixed divide-y divide-slate-200 text-xs h-full" role="grid" aria-label="Mentorship requests table">
+                <thead className="bg-slate-100">
+                  <tr>
+                    <th className="px-2 py-2 w-48 text-left font-medium text-slate-700 uppercase tracking-wider">Name</th>
+                    <th className="px-2 py-2 w-24 text-left font-medium text-slate-700 uppercase tracking-wider">Role</th>
+                    <th className="px-2 py-2 w-40 text-right font-medium text-slate-700 uppercase tracking-wider">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-slate-200">
+                  {loading ? (
+                    <tr><td colSpan={3} className="text-center text-slate-600 py-6">Loading...</td></tr>
+                  ) : error ? (
+                    <tr><td colSpan={3} className="text-center text-red-600 py-6">{error}</td></tr>
+                  ) : getFilteredRequests().length === 0 ? (
+                    <tr><td colSpan={3} className="text-center text-slate-600 py-6">No {receivedSubTab} mentorship requests.</td></tr>
+                  ) : (
+                    getFilteredRequests().map((req, index) => {
+                      const u = req.requester;
+                      return (
+                        <motion.tr
+                          key={req.id}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.3, delay: index * 0.1 }}
+                          className="hover:bg-slate-50 cursor-pointer transition-colors duration-200"
                         >
-                          View Profile
-                        </motion.button>
-                        <div className="relative inline-block">
-                          <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="inline-block px-2 py-1 rounded-full bg-white/10 text-white font-semibold text-xs hover:bg-white/20 transition-all duration-200 border border-white/30"
-                            onClick={e => {
-                              e.stopPropagation();
-                              if (openDropdownId === req.id) {
-                                setOpenDropdownId(null);
-                              } else {
-                                const rect = e.currentTarget.getBoundingClientRect();
-                                setDropdownPosition({
-                                  top: rect.bottom + window.scrollY,
-                                  left: rect.right + window.scrollX - 128,
-                                  width: rect.width
-                                });
-                                setOpenDropdownId(req.id);
-                              }
-                            }}
-                          >
-                            ⋮
-                          </motion.button>
-                          {openDropdownId === req.id && ReactDOM.createPortal(
-                            <div style={{ position: 'absolute', top: dropdownPosition.top, left: dropdownPosition.left, width: 128, zIndex: 9999 }} className="bg-white border border-gray-200 rounded-lg shadow-lg">
-                              <ul className="py-1 text-sm">
-                                {req.status === 'pending' && (
-                                  <li>
-                                    <button
-                                      className="w-full text-left px-4 py-2 hover:bg-red-50 text-red-700"
-                                      onClick={e => { e.stopPropagation(); setOpenDropdownId(null); handleRejectRequest(req); }}
-                                    >
-                                      ✗ Reject
-                                    </button>
-                                  </li>
-                                )}
-                                <li>
-                                  <button
-                                    className="w-full text-left px-4 py-2 hover:bg-red-50 text-red-700"
-                                    onClick={e => { e.stopPropagation(); setOpenDropdownId(null); handleDeleteRequest(req); }}
-                                  >
-                                    🗑️ Delete
-                                  </button>
-                                </li>
-                              </ul>
-                            </div>,
-                            document.body
-                          )}
-                        </div>
-                      </td>
-                    </motion.tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
+                          <td className="px-2 py-2 whitespace-nowrap font-semibold">
+                            <div className="flex items-center gap-2">
+                              <img src={u.photoUrl} alt={u.fullName} className="w-7 h-7 rounded-full object-cover border border-slate-300" />
+                              <span className="truncate max-w-[120px] block text-slate-900">{u.fullName}</span>
+                            </div>
+                          </td>
+                          <td className="px-2 py-2 whitespace-nowrap">
+                            <span className={`inline-block px-2 py-1 rounded-full text-xs font-semibold border ${u.role === 'student' ? 'bg-blue-100 text-blue-700 border-blue-300' :
+                              u.role === 'alumni' ? 'bg-green-100 text-green-700 border-green-300' :
+                                u.role === 'faculty' ? 'bg-purple-100 text-purple-700 border-purple-300' :
+                                  'bg-gray-100 text-gray-700 border-gray-300'
+                              }`}>{u.role}</span>
+                          </td>
+                          <td className="px-2 py-2 whitespace-nowrap text-right relative flex gap-2 justify-end">
+                            {req.status === 'pending' && (
+                              <motion.button
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                className="inline-block px-2 py-1 rounded-lg bg-gradient-to-r from-green-500 to-emerald-500 text-white font-semibold text-xs hover:from-green-600 hover:to-emerald-600 transition-all duration-200 shadow-lg"
+                                onClick={e => { e.stopPropagation(); handleAccept(req); }}
+                              >
+                                Accept
+                              </motion.button>
+                            )}
+                            <motion.button
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              className="inline-block px-2 py-1 rounded-lg bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-semibold text-xs hover:from-primary-600 hover:to-secondary-600 transition-all duration-200 shadow-lg"
+                              onClick={e => { e.stopPropagation(); handleViewProfile(req); }}
+                            >
+                              View Profile
+                            </motion.button>
+                            <div className="relative inline-block">
+                              <motion.button
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                className="inline-block px-2 py-1 rounded-lg bg-white/10 text-white font-semibold text-xs hover:bg-white/20 transition-all duration-200 border border-white/30"
+                                onClick={e => {
+                                  e.stopPropagation();
+                                  if (openDropdownId === req.id) {
+                                    setOpenDropdownId(null);
+                                  } else {
+                                    const rect = e.currentTarget.getBoundingClientRect();
+                                    setDropdownPosition({
+                                      top: rect.bottom + window.scrollY,
+                                      left: rect.right + window.scrollX - 128,
+                                      width: rect.width
+                                    });
+                                    setOpenDropdownId(req.id);
+                                  }
+                                }}
+                              >
+                                ⋮
+                              </motion.button>
+                              {openDropdownId === req.id && ReactDOM.createPortal(
+                                <div style={{ position: 'absolute', top: dropdownPosition.top, left: dropdownPosition.left, width: 128, zIndex: 9999 }} className="bg-white border border-gray-200 rounded-lg shadow-lg">
+                                  <ul className="py-1 text-sm">
+                                    {req.status === 'pending' && (
+                                      <li>
+                                        <button
+                                          className="w-full text-left px-4 py-2 hover:bg-red-50 text-red-700"
+                                          onClick={e => { e.stopPropagation(); setOpenDropdownId(null); handleRejectRequest(req); }}
+                                        >
+                                          ✗ Reject
+                                        </button>
+                                      </li>
+                                    )}
+                                    <li>
+                                      <button
+                                        className="w-full text-left px-4 py-2 hover:bg-red-50 text-red-700"
+                                        onClick={e => { e.stopPropagation(); setOpenDropdownId(null); handleDeleteRequest(req); }}
+                                      >
+                                        🗑️ Delete
+                                      </button>
+                                    </li>
+                                  </ul>
+                                </div>,
+                                document.body
+                              )}
+                            </div>
+                          </td>
+                        </motion.tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
             </motion.div>
           </>
         )}
@@ -379,12 +376,11 @@ const ReceivedRequests = ({ requests, loading, error, setRequests, showAlert }) 
                   </div>
                 )}
                 <div className="absolute top-2 left-2">
-                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium border ${
-                    selectedRequest.requester?.role === 'student' ? 'bg-blue-100 text-blue-700 border-blue-300' :
+                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium border ${selectedRequest.requester?.role === 'student' ? 'bg-blue-100 text-blue-700 border-blue-300' :
                     selectedRequest.requester?.role === 'alumni' ? 'bg-green-100 text-green-700 border-green-300' :
-                    selectedRequest.requester?.role === 'faculty' ? 'bg-purple-100 text-purple-700 border-purple-300' :
-                    'bg-gray-100 text-gray-700 border-gray-300'
-                  }`}>{selectedRequest.requester?.role}</span>
+                      selectedRequest.requester?.role === 'faculty' ? 'bg-purple-100 text-purple-700 border-purple-300' :
+                        'bg-gray-100 text-gray-700 border-gray-300'
+                    }`}>{selectedRequest.requester?.role}</span>
                 </div>
               </div>
               <h3 className="font-bold text-slate-900 mb-4 text-xl sm:text-2xl leading-tight">{selectedRequest.requester?.fullName}</h3>
@@ -415,16 +411,16 @@ const ReceivedRequests = ({ requests, loading, error, setRequests, showAlert }) 
                 )}
               </div>
             </div>
-            
+
             {selectedRequest.descriptionbyUser && (
               <div className="bg-white/80 backdrop-blur-xl rounded-xl lg:rounded-2xl p-3 sm:p-4 lg:p-6 mb-4 sm:mb-6 border border-slate-200">
                 <div className="text-sm text-slate-700 font-semibold mb-2">Request Message</div>
-                <div className="bg-blue-50 border-l-4 border-blue-400 rounded-md p-3 text-slate-700 text-sm leading-relaxed whitespace-pre-line">
+                <div className="bg-blue-50 border-l-4 border-blue-400 rounded-lg p-3 text-slate-700 text-sm leading-relaxed whitespace-pre-line">
                   {selectedRequest.descriptionbyUser}
                 </div>
               </div>
             )}
-            
+
             {selectedRequest.requester?.bio && (
               <div className="bg-white/80 backdrop-blur-xl rounded-xl lg:rounded-2xl p-3 sm:p-4 lg:p-6 mb-4 sm:mb-6 border border-slate-200">
                 <h4 className="text-base font-semibold text-slate-900 mb-2">Bio</h4>
@@ -433,20 +429,19 @@ const ReceivedRequests = ({ requests, loading, error, setRequests, showAlert }) 
                 </div>
               </div>
             )}
-            
+
             {selectedRequest.status === 'accepted' && selectedRequest.tier && (
               <div className="bg-white/80 backdrop-blur-xl rounded-xl lg:rounded-2xl p-3 sm:p-4 lg:p-6 mb-4 sm:mb-6 border border-slate-200">
                 <div className="flex items-center gap-2">
-                  <span className={`inline-block px-2 py-1 rounded-full font-semibold border ${
-                    selectedRequest.status === 'accepted' ? 'bg-green-100 text-green-700 border-green-300' :
+                  <span className={`inline-block px-2 py-1 rounded-full font-semibold border ${selectedRequest.status === 'accepted' ? 'bg-green-100 text-green-700 border-green-300' :
                     selectedRequest.status === 'pending' ? 'bg-yellow-100 text-yellow-700 border-yellow-300' :
-                    'bg-gray-100 text-gray-700 border-gray-300'
-                  }`}>{selectedRequest.status}</span>
+                      'bg-gray-100 text-gray-700 border-gray-300'
+                    }`}>{selectedRequest.status}</span>
                   <span className="text-sm text-primary-600 font-semibold">({tierLabels[selectedRequest.tier]})</span>
                 </div>
               </div>
             )}
-            
+
             <div className="mt-4 flex justify-end">
               <button
                 onClick={() => setShowProfileModal(false)}
@@ -460,12 +455,12 @@ const ReceivedRequests = ({ requests, loading, error, setRequests, showAlert }) 
       {/* Accept Modal */}
       {showAccept && selectedRequest && ReactDOM.createPortal(
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-1 sm:p-2 z-50">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             transition={{ duration: 0.3 }}
-            className="bg-white/95 backdrop-blur-xl rounded-xl lg:rounded-2xl w-full max-w-sm sm:max-w-md max-h-[90vh] overflow-y-auto scrollbar-hide p-3 sm:p-4 lg:p-6 border border-slate-200 shadow-2xl" 
+            className="bg-white/95 backdrop-blur-xl rounded-xl lg:rounded-2xl w-full max-w-sm sm:max-w-md max-h-[90vh] overflow-y-auto scrollbar-hide p-3 sm:p-4 lg:p-6 border border-slate-200 shadow-2xl"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
             {/* Header */}
@@ -501,11 +496,10 @@ const ReceivedRequests = ({ requests, loading, error, setRequests, showAlert }) 
                       key={tier.value}
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      className={`flex items-center rounded-xl border px-3 py-3 cursor-pointer transition-all duration-200 ${
-                        acceptTier === tier.value 
-                          ? 'border-green-500 bg-green-50 shadow-lg' 
-                          : 'border-slate-300 bg-slate-50 hover:border-slate-400 hover:bg-slate-100'
-                      }`}
+                      className={`flex items-center rounded-xl border px-3 py-3 cursor-pointer transition-all duration-200 ${acceptTier === tier.value
+                        ? 'border-green-500 bg-green-50 shadow-lg'
+                        : 'border-slate-300 bg-slate-50 hover:border-slate-400 hover:bg-slate-100'
+                        }`}
                     >
                       <input
                         type="radio"

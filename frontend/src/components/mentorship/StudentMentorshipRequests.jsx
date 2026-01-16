@@ -7,9 +7,9 @@ import { toast } from 'react-toastify';
 import { motion } from 'framer-motion';
 
 const statusColors = {
-  pending: 'bg-yellow-100 text-yellow-700 border-yellow-200',
-  accepted: 'bg-green-100 text-green-700 border-green-200',
-  rejected: 'bg-gray-100 text-gray-600 border-gray-200',
+  pending: 'bg-white text-yellow-700 border border-yellow-200',
+  accepted: 'bg-white text-green-700 border border-green-200',
+  rejected: 'bg-white text-gray-600 border border-gray-200',
 };
 
 const StudentMentorshipRequests = () => {
@@ -105,7 +105,7 @@ const StudentMentorshipRequests = () => {
             <h4 className="text-sm font-semibold text-slate-900 mb-2">Contact Information</h4>
             <div className="bg-red-500/20 border border-red-500/30 rounded-lg p-4 text-center">
               <p className="text-red-300 text-sm">Unable to load contact information</p>
-              <motion.button 
+              <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => {
@@ -129,7 +129,7 @@ const StudentMentorshipRequests = () => {
             {alumni.email && (
               <div className="flex items-center text-xs sm:text-sm text-slate-900/70">
                 <UserIcon className="h-4 w-4 mr-2 text-slate-900/60" />
-                <a 
+                <a
                   href={`mailto:${alumni.email}`}
                   className="text-primary-400 hover:text-primary-300 transition-colors"
                 >
@@ -140,7 +140,7 @@ const StudentMentorshipRequests = () => {
             {alumni.linkedinUrl && (
               <div className="flex items-center text-xs sm:text-sm text-slate-900/70">
                 <GlobeAltIcon className="h-4 w-4 mr-2 text-slate-900/60" />
-                <a 
+                <a
                   href={alumni.linkedinUrl}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -153,7 +153,7 @@ const StudentMentorshipRequests = () => {
             {alumni.phoneNumber && (
               <div className="flex items-center text-xs sm:text-sm text-slate-900/70">
                 <PhoneIcon className="h-4 w-4 mr-2 text-slate-900/60" />
-                <a 
+                <a
                   href={`tel:${alumni.phoneNumber}`}
                   className="text-primary-400 hover:text-primary-300 transition-colors"
                 >
@@ -188,11 +188,11 @@ const StudentMentorshipRequests = () => {
         </div>
         <div className="text-center pt-2">
           <p className="text-xs sm:text-sm text-slate-900/60 mb-3">
-            {req.status === 'pending' 
+            {req.status === 'pending'
               ? 'Contact information will be available once your request is accepted'
               : req.status === 'rejected'
-              ? 'Contact information is not available for rejected requests'
-              : 'Contact information will be available once your request is accepted'
+                ? 'Contact information is not available for rejected requests'
+                : 'Contact information will be available once your request is accepted'
             }
           </p>
         </div>
@@ -212,18 +212,17 @@ const StudentMentorshipRequests = () => {
             key={key}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className={`flex-shrink-0 px-1.5 py-0.5 rounded-full text-xs font-medium border transition-all duration-200 font-sans ${
-              subTab === key 
-                ? `bg-gradient-to-r from-${color}-500 to-${color}-600 text-slate-900 border-${color}-500 shadow-lg` 
-                : `bg-white/10 text-${color}-300 border-${color}-500/30 hover:bg-${color}-500/20`
-            }`}
+            className={`flex-shrink-0 px-1.5 py-0.5 rounded-full text-xs font-medium border transition-all duration-200 font-sans ${subTab === key
+              ? `bg-gradient-to-r from-${color}-500 to-${color}-600 text-slate-900 border-${color}-500 shadow-lg`
+              : `bg-white/10 text-${color}-300 border-${color}-500/30 hover:bg-${color}-500/20`
+              }`}
             onClick={() => setSubTab(key)}
           >
             {label}
           </motion.button>
         ))}
       </div>
-      
+
       {/* Content Container */}
       <div className="flex-1 overflow-hidden">
         {/* Mobile Card View */}
@@ -266,10 +265,10 @@ const StudentMentorshipRequests = () => {
               >
                 <div className="flex items-center space-x-2 mb-2">
                   <div className="relative">
-                    <img 
-                      src={req.alumni?.photoUrl || '/default-avatar.png'} 
-                      alt={req.alumni?.fullName || 'Alumni'} 
-                      className="w-8 h-8 rounded-full object-cover border-2 border-slate-300 shadow-lg" 
+                    <img
+                      src={req.alumni?.photoUrl || '/default-avatar.png'}
+                      alt={req.alumni?.fullName || 'Alumni'}
+                      className="w-8 h-8 rounded-full object-cover border-2 border-slate-300 shadow-lg"
                     />
                     <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-blue-500 rounded-full border-2 border-white flex items-center justify-center">
                       <div className="w-1 h-1 bg-white rounded-full"></div>
@@ -326,8 +325,8 @@ const StudentMentorshipRequests = () => {
                 <tr><td colSpan={3} className="text-center text-slate-600 py-8">No mentorship requests in this category.</td></tr>
               ) : (
                 filteredRequests.map((req, index) => (
-                  <motion.tr 
-                    key={req.id || index} 
+                  <motion.tr
+                    key={req.id || index}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3, delay: index * 0.1 }}
@@ -336,10 +335,10 @@ const StudentMentorshipRequests = () => {
                     <td className="px-4 py-3 whitespace-nowrap font-semibold">
                       <div className="flex items-center gap-3">
                         <div className="relative">
-                          <img 
-                            src={req.alumni?.photoUrl || '/default-avatar.png'} 
-                            alt={req.alumni?.fullName || 'Alumni'} 
-                            className="w-8 h-8 rounded-full object-cover border-2 border-slate-300 shadow-lg" 
+                          <img
+                            src={req.alumni?.photoUrl || '/default-avatar.png'}
+                            alt={req.alumni?.fullName || 'Alumni'}
+                            className="w-8 h-8 rounded-full object-cover border-2 border-slate-300 shadow-lg"
                           />
                           <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-blue-500 rounded-full border border-white"></div>
                         </div>
@@ -358,7 +357,7 @@ const StudentMentorshipRequests = () => {
                         <motion.button
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
-                          className="px-2 py-1 rounded-full bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-semibold text-xs hover:from-primary-600 hover:to-secondary-600 transition-all duration-200 shadow-lg"
+                          className="px-2 py-1 rounded-lg bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-semibold text-xs hover:from-primary-600 hover:to-secondary-600 transition-all duration-200 shadow-lg"
                           onClick={() => handleView(req)}
                         >
                           View
@@ -366,7 +365,7 @@ const StudentMentorshipRequests = () => {
                         <motion.button
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
-                          className="px-2 py-1 rounded-full bg-slate-200 text-slate-700 font-semibold text-xs hover:bg-slate-300 transition-all duration-200 border border-slate-300"
+                          className="px-2 py-1 rounded-lg bg-slate-200 text-slate-700 font-semibold text-xs hover:bg-slate-300 transition-all duration-200 border border-slate-300"
                           onClick={() => handleDelete(req)}
                           disabled={actionLoading}
                         >
@@ -383,12 +382,12 @@ const StudentMentorshipRequests = () => {
       </div>
       {showModal && selectedRequest && ReactDOM.createPortal(
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-1 sm:p-2 z-50">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             transition={{ duration: 0.3 }}
-            className="bg-white/10 backdrop-blur-xl rounded-2xl w-full max-w-sm sm:max-w-md md:max-w-lg max-h-[80vh] overflow-y-auto scrollbar-hide p-4 border border-white/20 shadow-2xl" 
+            className="bg-white/10 backdrop-blur-xl rounded-2xl w-full max-w-sm sm:max-w-md md:max-w-lg max-h-[80vh] overflow-y-auto scrollbar-hide p-4 border border-white/20 shadow-2xl"
             style={{ scrollbarWidth: 'none' }}
           >
             <div className="flex items-center justify-between mb-4">
@@ -406,8 +405,8 @@ const StudentMentorshipRequests = () => {
             </div>
             <div className="relative h-28 sm:h-36 bg-gradient-to-br from-white/20 to-white/10 rounded-2xl mb-4 border border-white/20 overflow-hidden">
               {selectedRequest.alumni?.photoUrl ? (
-                <img 
-                  src={selectedRequest.alumni.photoUrl} 
+                <img
+                  src={selectedRequest.alumni.photoUrl}
                   alt={selectedRequest.alumni.fullName}
                   className="w-full h-full object-cover rounded-2xl"
                   loading="lazy"

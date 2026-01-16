@@ -597,10 +597,10 @@ const HomePage = memo(() => {
                     </p>
                     <button
                       onClick={() => navigate('/register')}
-                      className="inline-flex items-center px-5 py-2.5 bg-slate-100 backdrop-blur-sm text-slate-700 font-semibold rounded-full hover:bg-slate-200 transition-all duration-300 transform hover:scale-105 shadow-lg border border-slate-200 text-sm font-sans"
+                      className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-semibold rounded-lg hover:from-primary-600 hover:to-secondary-600 transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl border border-transparent text-sm font-sans"
                     >
                       <span className="mr-2">Join Now</span>
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                       </svg>
                     </button>
@@ -760,7 +760,7 @@ const HomePage = memo(() => {
                               href={spotlights[currentSpotlightIndex].redirectionUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex items-center px-2.5 py-1 bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-semibold font-sans rounded-full hover:from-primary-600 hover:to-secondary-600 transition-all duration-200 text-xs"
+                              className="inline-flex items-center px-2.5 py-1 bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-semibold font-sans rounded-lg hover:from-primary-600 hover:to-secondary-600 transition-all duration-200 text-xs"
                             >
                               <span className="mr-1.5">Read More</span>
                               <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import OptimizedImage from './OptimizedImage';
 import axios from '../config/axios';
-import { 
-  ClipboardDocumentListIcon, 
-  CheckIcon, 
-  XMarkIcon, 
+import {
+  ClipboardDocumentListIcon,
+  CheckIcon,
+  XMarkIcon,
   EyeIcon,
   CalendarIcon,
   ClockIcon,
@@ -79,15 +79,15 @@ const AdminEventProposals = () => {
   const handleEventAction = async (eventId, action) => {
     try {
       setActionLoading(eventId);
-      
+
       if (action === 'approve') {
         const response = await axios.post(`/api/admin/event/${eventId}`);
-        
+
         if (response.data.success) {
           // Update the event status in the list
-          setEvents(prevEvents => 
-            prevEvents.map(event => 
-              event.id === eventId 
+          setEvents(prevEvents =>
+            prevEvents.map(event =>
+              event.id === eventId
                 ? { ...event, status: 'approved' }
                 : event
             )
@@ -105,7 +105,7 @@ const AdminEventProposals = () => {
       }
     } catch (error) {
       console.error('Error handling event action:', error);
-      
+
       if (error.response?.status === 401) {
         toast.error('Please log in to perform this action');
       } else if (error.response?.status === 403) {
@@ -165,7 +165,7 @@ const AdminEventProposals = () => {
 
   return (
     <>
-      <button 
+      <button
         onClick={() => setIsModalOpen(true)}
         className="rounded-full px-4 py-1.5 font-semibold bg-primary text-white text-sm shadow hover:bg-primary-700 transition-colors flex items-center gap-2"
       >
@@ -200,7 +200,7 @@ const AdminEventProposals = () => {
               ) : error ? (
                 <div className="text-center py-12">
                   <div className="text-red-600 text-lg font-medium">{error}</div>
-                  <button 
+                  <button
                     onClick={fetchEvents}
                     className="mt-4 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-700 transition-colors"
                   >
@@ -244,9 +244,9 @@ const AdminEventProposals = () => {
                               <div className="flex items-center">
                                 <div className="flex-shrink-0 h-10 w-10">
                                   {event.imageUrl ? (
-                                    <OptimizedImage 
-                                      className="h-10 w-10 rounded-lg object-cover" 
-                                      src={event.imageUrl} 
+                                    <OptimizedImage
+                                      className="h-10 w-10 rounded-lg object-cover"
+                                      src={event.imageUrl}
                                       alt={event.name}
                                       sizes="40px"
                                       priority={false}
@@ -287,7 +287,7 @@ const AdminEventProposals = () => {
                                 >
                                   <EyeIcon className="h-4 w-4" />
                                 </button>
-                                
+
                                 {user?.role === 'admin' && event.status === 'pending' && (
                                   <>
                                     <button
@@ -302,7 +302,7 @@ const AdminEventProposals = () => {
                                         <CheckIcon className="h-4 w-4" />
                                       )}
                                     </button>
-                                    
+
                                     <button
                                       onClick={() => handleEventAction(event.id, 'reject')}
                                       disabled={actionLoading === event.id}
@@ -331,14 +331,14 @@ const AdminEventProposals = () => {
                         <button
                           onClick={() => handlePageChange(currentPage - 1)}
                           disabled={currentPage === 1}
-                          className="px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           Previous
                         </button>
                         <button
                           onClick={() => handlePageChange(currentPage + 1)}
                           disabled={currentPage === totalPages}
-                          className="px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           Next
                         </button>
@@ -367,22 +367,22 @@ const AdminEventProposals = () => {
               </button>
             </div>
 
-                         {/* Event Image */}
-             <div className="relative h-64 bg-gray-200">
-               {selectedEvent.imageUrl ? (
-                 <OptimizedImage 
-                   src={selectedEvent.imageUrl} 
-                   alt={selectedEvent.name}
-                   className="w-full h-full object-cover"
-                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                   priority={false}
-                 />
-               ) : (
-                 <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-accent-100 to-accent-200">
-                   <PhotoIcon className="h-20 w-20 text-accent-400" />
-                 </div>
-               )}
-              
+            {/* Event Image */}
+            <div className="relative h-64 bg-gray-200">
+              {selectedEvent.imageUrl ? (
+                <OptimizedImage
+                  src={selectedEvent.imageUrl}
+                  alt={selectedEvent.name}
+                  className="w-full h-full object-cover"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  priority={false}
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-accent-100 to-accent-200">
+                  <PhotoIcon className="h-20 w-20 text-accent-400" />
+                </div>
+              )}
+
               {/* Status Badge */}
               <div className="absolute top-4 right-4">
                 <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusBadgeColor(selectedEvent.status)}`}>
@@ -404,17 +404,17 @@ const AdminEventProposals = () => {
                   <CalendarIcon className="h-5 w-5 mr-3 text-gray-400" />
                   <span className="font-medium">{formatDate(selectedEvent.date)}</span>
                 </div>
-                
+
                 <div className="flex items-center text-gray-600">
                   <ClockIcon className="h-5 w-5 mr-3 text-gray-400" />
                   <span className="font-medium">{selectedEvent.time}</span>
                 </div>
-                
+
                 <div className="flex items-center text-gray-600">
                   <MapPinIcon className="h-5 w-5 mr-3 text-gray-400" />
                   <span className="font-medium">{selectedEvent.location}</span>
                 </div>
-                
+
                 <div className="flex items-center text-gray-600">
                   <UserIcon className="h-5 w-5 mr-3 text-gray-400" />
                   <span className="font-medium">Organized by: {selectedEvent.organizer}</span>
@@ -435,20 +435,20 @@ const AdminEventProposals = () => {
               <div className="border-t pt-6">
                 <h4 className="text-lg font-semibold text-gray-900 mb-3">Event Creator</h4>
                 <div className="bg-gray-50 rounded-lg p-4">
-                                     <div className="flex items-center">
-                     {selectedEvent.createdBy.photoUrl ? (
-                       <OptimizedImage 
-                         className="h-10 w-10 rounded-full object-cover" 
-                         src={selectedEvent.createdBy.photoUrl} 
-                         alt={selectedEvent.createdBy.fullName}
-                         sizes="40px"
-                         priority={false}
-                       />
-                     ) : (
-                       <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
-                         <UserIcon className="h-5 w-5 text-gray-500" />
-                       </div>
-                     )}
+                  <div className="flex items-center">
+                    {selectedEvent.createdBy.photoUrl ? (
+                      <OptimizedImage
+                        className="h-10 w-10 rounded-full object-cover"
+                        src={selectedEvent.createdBy.photoUrl}
+                        alt={selectedEvent.createdBy.fullName}
+                        sizes="40px"
+                        priority={false}
+                      />
+                    ) : (
+                      <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
+                        <UserIcon className="h-5 w-5 text-gray-500" />
+                      </div>
+                    )}
                     <div className="ml-3">
                       <div className="text-sm font-medium text-gray-900">{selectedEvent.createdBy.fullName}</div>
                       <div className="text-sm text-gray-500">{selectedEvent.createdBy.email}</div>

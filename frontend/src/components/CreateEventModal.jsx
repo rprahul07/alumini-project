@@ -387,7 +387,7 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated, isMobileModal, edit
                   <div className="flex text-xs text-slate-600">
                     <label
                       htmlFor="imageFile"
-                      className="relative cursor-pointer bg-slate-100 rounded-md font-medium text-primary-600 hover:text-primary-700 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-primary px-2 py-1"
+                      className="relative cursor-pointer bg-slate-100 rounded-lg font-medium text-primary-600 hover:text-primary-700 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-primary px-2 py-1"
                     >
                       <span>Upload a file</span>
                       <input
@@ -420,7 +420,7 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated, isMobileModal, edit
               type="button"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="rounded-full px-4 py-1.5 font-semibold border border-slate-300 text-slate-700 hover:bg-slate-100 transition-all duration-200"
+              className="rounded-lg px-4 py-1.5 font-semibold border border-slate-300 text-slate-700 hover:bg-slate-100 transition-all duration-200"
               onClick={handleClose}
               disabled={isSubmitting}
             >
@@ -430,7 +430,7 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated, isMobileModal, edit
               type="submit"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="rounded-full px-4 py-1.5 font-semibold bg-gradient-to-r from-primary-500 to-secondary-500 text-white hover:from-primary-600 hover:to-secondary-600 transition-all duration-200 flex items-center justify-center gap-2 shadow-lg"
+              className="rounded-lg px-4 py-1.5 font-semibold bg-gradient-to-r from-primary-500 to-secondary-500 text-white hover:from-primary-600 hover:to-secondary-600 transition-all duration-200 flex items-center justify-center gap-2 shadow-lg"
               disabled={isSubmitting}
             >
               {isSubmitting ? (

@@ -17,7 +17,7 @@ const EventCard = memo(({ event, user, onEventUpdate, showEdit, showDelete, onEd
   const [confirmOpen, setConfirmOpen] = React.useState(false);
   const [confirmAction, setConfirmAction] = React.useState(null);
   const [confirmMessage, setConfirmMessage] = React.useState('');
-  
+
   // Analytics tracking
   const { trackClick, trackHover } = useInteractionTracking('events');
   const { trackEngagement, trackConversion } = useAnalytics();
@@ -49,7 +49,7 @@ const EventCard = memo(({ event, user, onEventUpdate, showEdit, showDelete, onEd
 
     try {
       setIsRegistering(true);
-      
+
       // Track registration attempt
       trackConversion('event_registration_attempt', {
         event_id: event.id,
@@ -57,7 +57,7 @@ const EventCard = memo(({ event, user, onEventUpdate, showEdit, showDelete, onEd
         user_role: user.role,
         event_type: event.eventType
       });
-      
+
       const endpoint = `/api/${user.role}/event/${event.id}`;
       const response = await axios.post(endpoint);
 
@@ -69,7 +69,7 @@ const EventCard = memo(({ event, user, onEventUpdate, showEdit, showDelete, onEd
           user_role: user.role,
           event_type: event.eventType
         });
-        
+
         toast.success(response.data.message || 'Action successful!');
         // Refetch events to update UI with new isRegistered and registeredCount
         if (onEventUpdate) {
@@ -114,7 +114,7 @@ const EventCard = memo(({ event, user, onEventUpdate, showEdit, showDelete, onEd
 
   // Check if user can register
   const canRegister = user && (user.role === 'student' || user.role === 'alumni');
-  const isEventFull = event.maxCapacity && event.registeredCount && 
+  const isEventFull = event.maxCapacity && event.registeredCount &&
     event.registeredCount >= event.maxCapacity;
   const isAdmin = user?.role === 'admin';
   // Check if user is the organizer
@@ -126,7 +126,7 @@ const EventCard = memo(({ event, user, onEventUpdate, showEdit, showDelete, onEd
   const isRegistered = !!event.isRegistered;
 
   // Check if event is in the past
-  const isPastEvent = new Date(event.date) < new Date(new Date().setHours(0,0,0,0));
+  const isPastEvent = new Date(event.date) < new Date(new Date().setHours(0, 0, 0, 0));
 
   // Registration button logic
   const isLoggedIn = !!user;
@@ -142,21 +142,21 @@ const EventCard = memo(({ event, user, onEventUpdate, showEdit, showDelete, onEd
     ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
     : (!isLoggedIn || isFaculty)
       ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-    : isRegistered
+      : isRegistered
         ? 'bg-accent text-white cursor-not-allowed'
         : 'bg-primary text-white hover:bg-primary-700';
 
   return (
     <>
-      <div 
-        className={`group relative bg-slate-50 backdrop-blur-xl rounded-2xl border border-slate-200 shadow-2xl hover:shadow-3xl transition-all duration-500 overflow-hidden cursor-pointer transform hover:scale-[1.02] hover:-translate-y-1 w-full z-10 ${sm ? 'h-32' : 'h-80'} ${sm ? 'p-1 text-xs' : ''}`}
+      <div
+        className={`group relative bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer transform hover:-translate-y-1 w-full z-10 flex flex-col ${sm ? 'h-auto' : 'h-full min-h-[420px]'}`}
         onClick={handleCardClick}
       >
-        {/* Event Image with Gradient Overlay */}
-        <div className={`relative ${sm ? 'h-16' : 'h-full'} w-full overflow-hidden`}>
+        {/* Event Image - Top Half */}
+        <div className={`relative ${sm ? 'h-32' : 'h-48'} w-full overflow-hidden flex-shrink-0`}>
           {event.imageUrl ? (
-            <OptimizedImage 
-              src={event.imageUrl} 
+            <OptimizedImage
+              src={event.imageUrl}
               alt={event.name}
               wrapperClassName="w-full h-full"
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
@@ -167,81 +167,80 @@ const EventCard = memo(({ event, user, onEventUpdate, showEdit, showDelete, onEd
               fallbackSrc="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&h=600&fit=crop"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary-500/20 to-secondary-500/20">
-              <CalendarIcon className={`${sm ? 'h-8 w-8' : 'h-20 w-20'} text-white/60`} />
+            <div className="w-full h-full flex items-center justify-center bg-slate-100">
+              <CalendarIcon className={`${sm ? 'h-8 w-8' : 'h-16 w-16'} text-slate-300`} />
             </div>
           )}
-          
-          {/* Enhanced Dark Smoke Gradient Overlay for Text Readability */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/70 to-black/30"></div>
-          
-          {/* Event Type Badge */}
+
+          {/* Badges Overlay on Image */}
           {!sm && (
-            <div className="absolute top-4 left-4 z-10">
-              <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-slate-100 backdrop-blur-xl text-slate-700 border border-slate-300 shadow-xl font-sans">
-                {event.type}
-              </span>
-            </div>
+            <>
+              <div className="absolute top-4 left-4 z-10">
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-white/95 backdrop-blur-sm text-slate-700 shadow-md font-sans">
+                  {event.type}
+                </span>
+              </div>
+
+              {isLoggedIn && user?.role !== 'admin' && (
+                <div className="absolute top-4 right-4 z-10">
+                  <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold shadow-md backdrop-blur-sm ${maxCapacity
+                      ? (registeredCount >= maxCapacity
+                        ? 'bg-red-50 text-red-700 border border-red-100'
+                        : 'bg-white/95 text-green-700')
+                      : 'bg-white/95 text-slate-700'
+                    }`}>
+                    {maxCapacity
+                      ? `${registeredCount}/${maxCapacity}`
+                      : `${registeredCount} Reg`}
+                    {maxCapacity && registeredCount >= maxCapacity && (
+                      <span className="ml-1.5 font-bold text-red-600">FULL</span>
+                    )}
+                  </span>
+                </div>
+              )}
+            </>
           )}
+        </div>
 
-          {/* Registration/Capacity Badge */}
-          {!sm && isLoggedIn && user?.role !== 'admin' && (
-            <div className="absolute top-4 right-4 z-10">
-              <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold shadow-xl backdrop-blur-xl border ${
-                maxCapacity
-                  ? (registeredCount >= maxCapacity
-                      ? 'bg-red-100 text-red-700 border-red-300'
-                      : 'bg-green-100 text-green-700 border-green-300')
-                  : 'bg-slate-100 text-slate-700 border-slate-300'
-              }`}>
-                {maxCapacity
-                  ? `${registeredCount}/${maxCapacity}`
-                  : `${registeredCount} Registered`}
-                {maxCapacity && registeredCount >= maxCapacity && (
-                  <span className="ml-1.5 font-bold">FULL</span>
-                )}
-              </span>
-            </div>
-          )}
+        {/* Content - Bottom Half */}
+        <div className={`flex-1 flex flex-col p-5 ${sm ? 'p-3' : ''}`}>
+          {/* Organized By */}
+          <div className="text-xs text-slate-500 mb-2 font-medium font-sans uppercase tracking-wider">
+            {event.organizer}
+          </div>
 
-          {/* Event Content Overlay */}
-          <div className={`absolute bottom-0 left-0 right-0 p-5 text-white ${sm ? 'p-2' : ''}`}>
-            {/* Event Title */}
-            <h3 className={`font-bold mb-2 line-clamp-2 ${sm ? 'text-xs' : 'text-base md:text-lg'} leading-tight drop-shadow-lg group-hover:text-primary-300 transition-colors duration-300 font-sans text-white`}>
-              {event.name}
-            </h3>
+          {/* Event Title */}
+          <h3 className={`font-bold text-slate-900 mb-4 line-clamp-2 ${sm ? 'text-sm' : 'text-lg'} leading-snug font-sans group-hover:text-primary-600 transition-colors`}>
+            {event.name}
+          </h3>
 
-            {/* Event Details */}
-            <div className={`space-y-1.5 mb-3 ${sm ? 'space-y-1 mb-2' : ''}`}>
-              <div className="flex items-center text-xs text-white/90 drop-shadow-md font-sans">
-                <CalendarIcon className="h-3 w-3 mr-2 text-primary-300" />
-                {formatDate(event.date)}
-              </div>
-              
-              <div className="flex items-center text-xs text-white/90 drop-shadow-md font-sans">
-                <ClockIcon className="h-3 w-3 mr-2 text-secondary-300" />
-                {formatTime(event.time)}
-              </div>
-              
-              <div className="flex items-center text-xs text-white/90 drop-shadow-md font-sans">
-                <MapPinIcon className="h-3 w-3 mr-2 text-accent-300" />
-                {event.location}
-              </div>
+          {/* Event Details */}
+          <div className={`space-y-2 mb-6 flex-1 ${sm ? 'space-y-1 mb-3' : ''}`}>
+            <div className="flex items-center text-sm text-slate-600 font-sans">
+              <CalendarIcon className="h-4 w-4 mr-2.5 text-slate-400 flex-shrink-0" />
+              <span className="truncate">{formatDate(event.date)}</span>
             </div>
 
-            {/* Organizer */}
-            <div className={`text-xs text-white/80 mb-3 drop-shadow-md font-sans ${sm ? 'text-xs mb-2' : ''}`}>
-              <span className="text-white/70">Organized by:</span> {event.organizer}
+            <div className="flex items-center text-sm text-slate-600 font-sans">
+              <ClockIcon className="h-4 w-4 mr-2.5 text-slate-400 flex-shrink-0" />
+              <span className="truncate">{formatTime(event.time)}</span>
             </div>
 
-            {/* Action Buttons */}
+            <div className="flex items-center text-sm text-slate-600 font-sans">
+              <MapPinIcon className="h-4 w-4 mr-2.5 text-slate-400 flex-shrink-0" />
+              <span className="truncate">{event.location}</span>
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="pt-4 border-t border-slate-100 mt-auto">
             <div className="flex gap-2">
               {showEdit || showDelete ? (
-                <div className="flex gap-2">
+                <div className="flex gap-2 w-full">
                   {showEdit && (
                     <button
                       onClick={e => { e.stopPropagation(); onEdit && onEdit(event); }}
-                      className="px-3 py-1.5 bg-gradient-to-r from-secondary-500 to-secondary-600 text-white rounded-full font-semibold text-xs shadow-xl hover:from-secondary-600 hover:to-secondary-700 hover:shadow-2xl transition-all duration-300 transform hover:scale-105 font-sans"
+                      className="flex-1 px-3 py-2 bg-white text-slate-700 border border-slate-200 rounded-lg font-semibold text-xs hover:bg-slate-50 hover:border-slate-300 transition-all font-sans"
                     >
                       Edit
                     </button>
@@ -249,7 +248,7 @@ const EventCard = memo(({ event, user, onEventUpdate, showEdit, showDelete, onEd
                   {showDelete && (
                     <button
                       onClick={e => { e.stopPropagation(); onDelete && onDelete(event); }}
-                      className="px-3 py-1.5 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-full font-semibold text-xs shadow-xl hover:from-red-600 hover:to-red-700 hover:shadow-2xl transition-all duration-300 transform hover:scale-105 font-sans"
+                      className="flex-1 px-3 py-2 bg-white text-red-600 border border-red-200 rounded-lg font-semibold text-xs hover:bg-red-50 hover:border-red-300 transition-all font-sans"
                     >
                       Delete
                     </button>
@@ -258,20 +257,23 @@ const EventCard = memo(({ event, user, onEventUpdate, showEdit, showDelete, onEd
               ) : isAdmin ? (
                 <button
                   onClick={handleViewRegistrations}
-                  className="px-3 py-1.5 bg-gradient-to-r from-secondary-500 to-secondary-600 text-white rounded-full font-semibold text-xs shadow-xl hover:from-secondary-600 hover:to-secondary-700 hover:shadow-2xl transition-all duration-300 transform hover:scale-105 flex items-center gap-1.5 font-sans"
+                  className="w-full px-4 py-2 bg-white text-slate-700 border border-slate-200 rounded-lg font-semibold text-sm hover:bg-slate-50 hover:border-slate-300 transition-all flex items-center justify-center gap-2 font-sans"
                 >
-                  <UsersIcon className="h-3 w-3" />
-                  <span>View</span>
+                  <UsersIcon className="h-4 w-4" />
+                  <span>View Registrations</span>
                 </button>
               ) : isOrganizer ? (
                 <button
                   disabled
-                  className="px-3 py-1.5 bg-slate-100 backdrop-blur-xl text-slate-500 rounded-full font-semibold text-xs cursor-not-allowed border border-slate-300 font-sans"
+                  className="w-full px-4 py-2 bg-slate-50 text-slate-400 border border-slate-200 rounded-lg font-semibold text-sm cursor-not-allowed font-sans text-center"
                 >
-                  Organizer
+                  <span className="flex items-center justify-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-slate-400"></span>
+                    You are Organizing
+                  </span>
                 </button>
               ) : (
-                <div className="flex gap-2">
+                <div className="flex gap-2 w-full">
                   <button
                     onClick={isLoggedIn && !isRegistered && !isFaculty && !registrationClosed ? handleRegistration : undefined}
                     onMouseEnter={() => {
@@ -280,23 +282,25 @@ const EventCard = memo(({ event, user, onEventUpdate, showEdit, showDelete, onEd
                     }}
                     onMouseLeave={() => setIsHovering(false)}
                     disabled={buttonDisabled}
-                    className={`px-3 py-1.5 rounded-full text-xs font-semibold shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center font-sans ${
-                      buttonDisabled
-                        ? 'bg-slate-100 backdrop-blur-xl text-slate-500 cursor-not-allowed border border-slate-300'
+                    className={`flex-1 px-3 py-2 rounded-lg text-sm font-semibold shadow-sm transition-all duration-300 flex items-center justify-center font-sans ${buttonDisabled
+                        ? 'bg-slate-50 text-slate-400 border border-slate-200 cursor-not-allowed'
                         : isRegistered
-                          ? 'bg-gradient-to-r from-green-500 to-green-600 text-white cursor-not-allowed'
-                          : 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white hover:from-primary-600 hover:to-secondary-600 hover:shadow-2xl'
-                    }`}
-                    title={!isLoggedIn || isFaculty ? 'Login to register' : ''}
+                          ? 'bg-green-50 text-green-700 border border-green-200 cursor-not-allowed'
+                          : 'bg-slate-900 text-white hover:bg-slate-800 hover:shadow-md'
+                      }`}
                   >
-                    {buttonText}
+                    {isRegistered ? (
+                      <span className="flex items-center gap-1.5">
+                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                        Registered
+                      </span>
+                    ) : buttonText}
                   </button>
                   <button
                     onClick={handleCardClick}
-                    onMouseEnter={() => trackHover(null, `event_read_more_${event.id}`)}
-                    className="px-3 py-1.5 bg-white/90 backdrop-blur-xl text-slate-800 rounded-full font-semibold text-xs shadow-xl hover:bg-white hover:shadow-2xl transition-all duration-300 transform hover:scale-105 border border-white/50 font-sans"
+                    className="px-4 py-2 bg-white text-slate-700 border border-slate-200 rounded-lg font-semibold text-sm hover:bg-slate-50 hover:border-slate-300 transition-all font-sans"
                   >
-                    Read More
+                    Details
                   </button>
                 </div>
               )}

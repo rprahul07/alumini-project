@@ -41,7 +41,7 @@ const CompactAnnouncements = ({ announcements, loading }) => {
     const now = new Date();
     const announcementDate = new Date(date);
     const diffInHours = Math.floor((now - announcementDate) / (1000 * 60 * 60));
-    
+
     if (diffInHours < 1) return 'Now';
     if (diffInHours < 24) return `${diffInHours}h`;
     if (diffInHours < 48) return '1d';
@@ -72,7 +72,7 @@ const CompactAnnouncements = ({ announcements, loading }) => {
   const priority = getPriorityInfo(currentAnnouncement.order);
 
   return (
-    <section 
+    <section
       className="py-2 bg-gradient-to-r from-primary-50/50 via-white/80 to-secondary-50/50 border-b border-gray-100 relative overflow-hidden"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -86,10 +86,10 @@ const CompactAnnouncements = ({ announcements, loading }) => {
         <div className="flex items-center justify-between">
           {/* Left side - Icon and title */}
           <div className="flex items-center space-x-2.5 min-w-0 flex-1">
-            <div className="w-5 h-5 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-md flex items-center justify-center flex-shrink-0">
+            <div className="w-5 h-5 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center flex-shrink-0">
               <span className="text-white text-xs">📢</span>
             </div>
-            
+
             <div className="min-w-0 flex-1">
               <AnimatePresence mode="wait">
                 <motion.div
@@ -102,13 +102,13 @@ const CompactAnnouncements = ({ announcements, loading }) => {
                 >
                   {/* Priority dot */}
                   <div className={`w-1.5 h-1.5 rounded-full ${priority.dotColor} flex-shrink-0`}></div>
-                  
+
                   {/* Title */}
                   <h3 className="text-xs font-semibold text-gray-900 truncate cursor-pointer hover:text-primary-600 transition-colors duration-200 font-sans"
-                      onClick={() => navigate('/announcements')}>
+                    onClick={() => navigate('/announcements')}>
                     {currentAnnouncement.title}
                   </h3>
-                  
+
                   {/* Time */}
                   <span className="text-xs text-gray-500 font-medium flex-shrink-0 font-sans">
                     {getTimeAgo(currentAnnouncement.createdAt)}
@@ -127,11 +127,10 @@ const CompactAnnouncements = ({ announcements, loading }) => {
                   <button
                     key={index}
                     onClick={() => setCurrentIndex(index)}
-                    className={`w-1 h-1 rounded-full transition-all duration-300 ${
-                      index === currentIndex 
-                        ? 'bg-primary-500 scale-125' 
+                    className={`w-1 h-1 rounded-full transition-all duration-300 ${index === currentIndex
+                        ? 'bg-primary-500 scale-125'
                         : 'bg-gray-300 hover:bg-primary-300'
-                    }`}
+                      }`}
                   />
                 ))}
               </div>
@@ -148,7 +147,7 @@ const CompactAnnouncements = ({ announcements, loading }) => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                   </svg>
                 </button>
-                
+
                 <button
                   onClick={handleNext}
                   className="w-5 h-5 bg-white/60 hover:bg-white rounded-full flex items-center justify-center shadow-sm transition-all duration-200 hover:scale-110"

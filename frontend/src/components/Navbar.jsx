@@ -206,7 +206,7 @@ const Navbar = memo(({ isHome = false }) => {
 
     // Profile Dropdown Component
     const ProfileDropdown = () => (
-        <div className="absolute right-0 mt-2 w-56 max-w-[calc(100vw-2rem)] sm:max-w-xs rounded-xl shadow-2xl border border-white/20 py-1.5 z-[60] bg-white/95 backdrop-blur-xl animate-in fade-in duration-200 overflow-hidden dropdown-menu">
+        <div className="absolute right-0 mt-2 w-56 max-w-[calc(100vw-2rem)] sm:max-w-xs rounded-2xl shadow-2xl border border-white/20 py-1.5 z-[60] bg-white/95 backdrop-blur-xl animate-in fade-in duration-200 overflow-hidden dropdown-menu">
             <div className="px-3 py-2 border-b border-gray-100">
                 <div className="flex items-center space-x-2">
                     <ProfileImage user={user} size="w-8 h-8" textSize="text-xs" />
@@ -249,11 +249,10 @@ const Navbar = memo(({ isHome = false }) => {
 
     return (
         <nav
-            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled || !isHomePage || isDarkBackgroundPage
-                    ? 'bg-transparent backdrop-blur-lg shadow-lg'
-                    : 'bg-transparent'
+            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 h-14 ${scrolled || !isHomePage || isDarkBackgroundPage
+                ? 'bg-white/80 backdrop-blur-xl shadow-lg border-b border-white/20'
+                : 'bg-transparent'
                 }`}
-            style={{ height: '56px' }}
         >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-14">
@@ -285,7 +284,7 @@ const Navbar = memo(({ isHome = false }) => {
                                 </span>
                                 <div className="flex items-center space-x-1 -mt-0.5">
                                     <span className="text-xs font-medium font-sans text-black">
-                                        Student Network
+                                        Alumni Network
                                     </span>
                                 </div>
                             </div>
@@ -328,8 +327,8 @@ const Navbar = memo(({ isHome = false }) => {
                                 <button
                                     onClick={handleUserDropdownToggle}
                                     className={`flex items-center space-x-2 p-1.5 rounded-full backdrop-blur-xl border transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl ${isDarkBackgroundPage
-                                            ? 'bg-slate-100 border-slate-200 hover:bg-slate-200'
-                                            : 'bg-slate-50 border-slate-200 hover:bg-slate-100'
+                                        ? 'bg-slate-100 border-slate-200 hover:bg-slate-200'
+                                        : 'bg-slate-50 border-slate-200 hover:bg-slate-100'
                                         }`}
                                 >
                                     <ProfileImage user={user} size="w-7 h-7" textSize="text-xs" />
@@ -357,8 +356,8 @@ const Navbar = memo(({ isHome = false }) => {
                         <button
                             onClick={handleMobileMenuToggle}
                             className={`lg:hidden p-1.5 rounded-full backdrop-blur-xl border transition-all duration-300 shadow-xl ${isDarkBackgroundPage
-                                    ? 'bg-slate-100 border-slate-200 hover:bg-slate-200'
-                                    : 'bg-slate-50 border-slate-200 hover:bg-slate-100'
+                                ? 'bg-slate-100 border-slate-200 hover:bg-slate-200'
+                                : 'bg-slate-50 border-slate-200 hover:bg-slate-100'
                                 }`}
                         >
                             {isMenuOpen ? (
@@ -378,8 +377,8 @@ const Navbar = memo(({ isHome = false }) => {
             {/* Mobile Menu */}
             {isMenuOpen && (
                 <div className={`lg:hidden backdrop-blur-2xl mx-3 mt-1.5 rounded-2xl shadow-2xl border animate-in slide-in-from-top duration-300 z-[60] ${isDarkBackgroundPage
-                        ? 'bg-white/95 border-slate-200'
-                        : 'bg-white/95 border-slate-200'
+                    ? 'bg-white/95 border-slate-200'
+                    : 'bg-white/95 border-slate-200'
                     }`}>
                     <div className="py-3">
                         {navLinks
@@ -437,7 +436,7 @@ const Navbar = memo(({ isHome = false }) => {
                         <div className="border-t border-slate-200 pt-3 pb-3 px-3">
                             <button
                                 onClick={() => { setIsMenuOpen(false); navigate('/role-selection'); }}
-                                className="w-full bg-gradient-to-r from-primary-600 to-secondary-600 text-white py-2 px-4 rounded-lg text-xs font-semibold font-sans hover:from-primary-700 hover:to-secondary-700 transition-all duration-300 shadow-xl"
+                                className="w-full bg-gradient-to-r from-primary-600 to-secondary-600 text-white py-2 px-4 rounded-full text-xs font-semibold font-sans hover:from-primary-700 hover:to-secondary-700 transition-all duration-300 shadow-xl"
                             >
                                 Get Started
                             </button>

@@ -305,7 +305,7 @@ const JobsPage = memo(() => {
                 </p>
                 <button
                   onClick={fetchJobs}
-                  className="px-5 py-2.5 bg-gradient-to-r from-primary-600 to-secondary-600 text-white rounded-full font-semibold shadow-lg hover:from-primary-700 hover:to-secondary-700 hover:shadow-xl transition-all duration-300 transform hover:scale-105 text-sm font-sans"
+                  className="px-5 py-2.5 bg-gradient-to-r from-primary-600 to-secondary-600 text-white rounded-lg font-semibold shadow-lg hover:from-primary-700 hover:to-secondary-700 hover:shadow-xl transition-all duration-300 transform hover:scale-105 text-sm font-sans"
                 >
                   Try Again
                 </button>
@@ -327,7 +327,7 @@ const JobsPage = memo(() => {
                     setSelectedType('');
                     setCurrentPage(1);
                   }}
-                  className="px-5 py-2.5 bg-gradient-to-r from-primary-600 to-secondary-600 text-white rounded-full font-semibold shadow-lg hover:from-primary-700 hover:to-secondary-700 hover:shadow-xl transition-all duration-300 transform hover:scale-105 text-sm font-sans"
+                  className="px-5 py-2.5 bg-gradient-to-r from-primary-600 to-secondary-600 text-white rounded-lg font-semibold shadow-lg hover:from-primary-700 hover:to-secondary-700 hover:shadow-xl transition-all duration-300 transform hover:scale-105 text-sm font-sans"
                 >
                   Clear Filters
                 </button>

@@ -12,9 +12,8 @@ const useAlert = () => {
 
   const AlertComponent = () => alert && (
     <div
-      className={`fixed bottom-4 right-4 p-4 rounded-md shadow-lg text-white ${
-        alert.type === 'success' ? 'bg-green-500' : 'bg-red-500'
-      }`}
+      className={`fixed bottom-4 right-4 p-4 rounded-lg shadow-lg text-white ${alert.type === 'success' ? 'bg-green-500' : 'bg-red-500'
+        }`}
       role="alert"
     >
       {alert.message}

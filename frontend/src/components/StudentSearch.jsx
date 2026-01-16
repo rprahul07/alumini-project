@@ -36,7 +36,7 @@ const StudentSearch = ({ searchTerm, onSearchChange, isLoading = false }) => {
           value={localSearchTerm}
           onChange={(e) => setLocalSearchTerm(e.target.value)}
           placeholder="Search students..."
-          className="w-full pl-6 pr-6 py-2 border border-slate-300 bg-white/80 backdrop-blur-sm text-xs text-slate-900 placeholder-slate-500 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all duration-200 shadow-lg hover:shadow-xl font-sans"
+          className="w-full pl-6 pr-6 py-2 border border-slate-300 bg-white/80 backdrop-blur-sm text-xs text-slate-900 placeholder-slate-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all duration-200 shadow-lg hover:shadow-xl font-sans"
           disabled={isLoading}
         />
         {localSearchTerm && (

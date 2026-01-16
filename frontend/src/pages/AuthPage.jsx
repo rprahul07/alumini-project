@@ -25,17 +25,17 @@ const AuthPage = () => {
   const { user, selectedRole, login, register, loading, error, clearError } = useAuth();
   const [authType, setAuthType] = useState('login');
   const [showPassword, setShowPassword] = useState(false);
-  
+
   // Analytics tracking
   const { trackClick, trackSubmit, trackFocus } = useInteractionTracking('auth');
   const { trackEngagement, trackConversion } = useAnalytics();
-  
+
   // Forgot Password States
   const [forgotStep, setForgotStep] = useState(1); // 1=email, 2=otp+password
   const [forgotEmail, setForgotEmail] = useState('');
   const [otpTimer, setOtpTimer] = useState(0);
   const [otpLoading, setOtpLoading] = useState(false); // Loading state for OTP operations
-  
+
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -86,88 +86,88 @@ const AuthPage = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setFormError('');
-  clearError();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setFormError('');
+    clearError();
 
-  // Track form submission attempt
-  trackSubmit(e.target, `auth_${authType}_form`);
+    // Track form submission attempt
+    trackSubmit(e.target, `auth_${authType}_form`);
 
-  const emailRegex = /^\S+@\S+\.\S+$/;
-  if (!emailRegex.test(formData.email)) {
-    toast.error("Please enter a valid email address");
-    return;
-  }
-
-  if (!formData.password || formData.password.trim() === '') {
-    toast.error("Password cannot be empty");
-    return;
-  }
-
-  try {
-    if (authType === 'login') {
-      // Track login attempt
-      trackConversion('login_attempt', {
-        user_role: selectedRole,
-        email_domain: formData.email.split('@')[1]
-      });
-      
-      const result = await login({
-        email: formData.email,
-        password: formData.password,
-        role: selectedRole
-      });
-      if (result.success) {
-        // Track successful login
-        trackConversion('login_success', {
-          user_role: selectedRole,
-          user_id: result.user?.id
-        });
-        toast.success('Login successful!');
-      }
-    } else {
-      if (formData.password !== formData.confirmPassword) {
-        toast.error('Passwords do not match');
-        return;
-      }
-
-      // Track registration attempt
-      trackConversion('registration_attempt', {
-        user_role: selectedRole,
-        email_domain: formData.email.split('@')[1]
-      });
-
-      const regData = {
-        ...formData,
-        role: selectedRole,
-        currentSemester: selectedRole === 'student' ? parseInt(formData.currentSemester) : undefined,
-        department: formData.department || '',
-        rollNumber: formData.rollNumber || '',
-        ...(selectedRole !== 'student' && { currentSemester: undefined }),
-        ...(selectedRole !== 'alumni' && {
-          graduationYear: undefined,
-          currentJobTitle: undefined,
-          companyName: undefined
-        }),
-        ...(selectedRole !== 'faculty' && { designation: undefined })
-      };
-
-      const result = await register(regData);
-      if (result.success) {
-        // Track successful registration
-        trackConversion('registration_success', {
-          user_role: selectedRole,
-          user_id: result.user?.id
-        });
-        toast.success('Registration successful! Please login.');
-        setAuthType('login');
-      }
+    const emailRegex = /^\S+@\S+\.\S+$/;
+    if (!emailRegex.test(formData.email)) {
+      toast.error("Please enter a valid email address");
+      return;
     }
-  } catch (err) {
-    setFormError(err.message || 'Authentication failed');
-  }
-};
+
+    if (!formData.password || formData.password.trim() === '') {
+      toast.error("Password cannot be empty");
+      return;
+    }
+
+    try {
+      if (authType === 'login') {
+        // Track login attempt
+        trackConversion('login_attempt', {
+          user_role: selectedRole,
+          email_domain: formData.email.split('@')[1]
+        });
+
+        const result = await login({
+          email: formData.email,
+          password: formData.password,
+          role: selectedRole
+        });
+        if (result.success) {
+          // Track successful login
+          trackConversion('login_success', {
+            user_role: selectedRole,
+            user_id: result.user?.id
+          });
+          toast.success('Login successful!');
+        }
+      } else {
+        if (formData.password !== formData.confirmPassword) {
+          toast.error('Passwords do not match');
+          return;
+        }
+
+        // Track registration attempt
+        trackConversion('registration_attempt', {
+          user_role: selectedRole,
+          email_domain: formData.email.split('@')[1]
+        });
+
+        const regData = {
+          ...formData,
+          role: selectedRole,
+          currentSemester: selectedRole === 'student' ? parseInt(formData.currentSemester) : undefined,
+          department: formData.department || '',
+          rollNumber: formData.rollNumber || '',
+          ...(selectedRole !== 'student' && { currentSemester: undefined }),
+          ...(selectedRole !== 'alumni' && {
+            graduationYear: undefined,
+            currentJobTitle: undefined,
+            companyName: undefined
+          }),
+          ...(selectedRole !== 'faculty' && { designation: undefined })
+        };
+
+        const result = await register(regData);
+        if (result.success) {
+          // Track successful registration
+          trackConversion('registration_success', {
+            user_role: selectedRole,
+            user_id: result.user?.id
+          });
+          toast.success('Registration successful! Please login.');
+          setAuthType('login');
+        }
+      }
+    } catch (err) {
+      setFormError(err.message || 'Authentication failed');
+    }
+  };
 
   const renderRoleSpecificFields = () => {
     switch (selectedRole) {
@@ -252,7 +252,7 @@ const handleSubmit = async (e) => {
               </div>
             </div>
             <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1 font-sans">
+              <label className="block text-xs font-medium text-slate-700 mb-1 font-sans">
                 Graduation Year
               </label>
               <div className="relative">
@@ -269,7 +269,7 @@ const handleSubmit = async (e) => {
               </div>
             </div>
             <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1 font-sans">
+              <label className="block text-xs font-medium text-slate-700 mb-1 font-sans">
                 Current Job Title
               </label>
               <div className="relative">
@@ -286,7 +286,7 @@ const handleSubmit = async (e) => {
               </div>
             </div>
             <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1 font-sans">
+              <label className="block text-xs font-medium text-slate-700 mb-1 font-sans">
                 Company Name
               </label>
               <div className="relative">
@@ -325,7 +325,7 @@ const handleSubmit = async (e) => {
               </div>
             </div>
             <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1 font-sans">
+              <label className="block text-xs font-medium text-slate-700 mb-1 font-sans">
                 Designation
               </label>
               <div className="relative">
@@ -379,7 +379,7 @@ const handleSubmit = async (e) => {
     e.preventDefault();
     setFormError('');
     clearError();
-    
+
     if (!formData.otp || formData.otp.length !== 4) {
       setFormError('Please enter a valid 4-digit OTP');
       return;
@@ -389,16 +389,16 @@ const handleSubmit = async (e) => {
       setFormError('Password must be at least 6 characters long');
       return;
     }
-    
+
     if (formData.newPassword !== formData.confirmNewPassword) {
       setFormError('Passwords do not match');
       return;
     }
-    
+
     try {
       await authAPI.resetPassword(forgotEmail, formData.otp, formData.newPassword);
       toast.success('Password reset successful!');
-      
+
       // Reset to login form
       setAuthType('login');
       setForgotStep(1);
@@ -426,18 +426,18 @@ const handleSubmit = async (e) => {
   };
 
   const validateLogin = () => {
-  const emailRegex = /^\S+@\S+\.\S+$/;
+    const emailRegex = /^\S+@\S+\.\S+$/;
 
-  if (!emailRegex.test(formData.email)) {
-    setFormError('Please enter a valid email address');
-    return false;
-  }
-  if (!formData.password || formData.password.trim() === '') {
-    setFormError('Password cannot be empty');
-    return false;
-  }
-  return true;
-};
+    if (!emailRegex.test(formData.email)) {
+      setFormError('Please enter a valid email address');
+      return false;
+    }
+    if (!formData.password || formData.password.trim() === '') {
+      setFormError('Password cannot be empty');
+      return false;
+    }
+    return true;
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-white via-slate-50 to-white py-6 px-4 relative overflow-hidden">
@@ -451,7 +451,7 @@ const handleSubmit = async (e) => {
       <div className="w-full max-w-md relative z-10">
         {/* Main Card */}
         <div className="bg-white/80 backdrop-blur-2xl rounded-3xl shadow-2xl border border-slate-200 p-5 animate-slide-up">
-          
+
           {/* Header */}
           <div className="text-center mb-4">
             <div className="w-14 h-14 bg-gradient-to-r from-primary-500/20 to-secondary-500/20 rounded-full flex items-center justify-center mx-auto mb-2 border border-slate-200">
@@ -474,24 +474,22 @@ const handleSubmit = async (e) => {
 
           {/* Auth Type Tabs */}
           {(authType === 'login' || authType === 'register') && (
-            <div className="flex bg-slate-100 rounded-full p-1 mb-3 border border-slate-200">
+            <div className="flex bg-slate-100 rounded-lg p-1 mb-3 border border-slate-200">
               <button
                 onClick={() => setAuthType('login')}
-                className={`flex-1 py-1.5 px-3 rounded-full text-xs font-medium transition-all duration-300 font-sans ${
-                  authType === 'login'
-                    ? 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white shadow-lg'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-white'
-                }`}
+                className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-medium transition-all duration-300 font-sans ${authType === 'login'
+                  ? 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white shadow-lg'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-white'
+                  }`}
               >
                 Sign In
               </button>
               <button
                 onClick={() => setAuthType('register')}
-                className={`flex-1 py-1.5 px-3 rounded-full text-xs font-medium transition-all duration-300 font-sans ${
-                  authType === 'register'
-                    ? 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white shadow-lg'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-white'
-                }`}
+                className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-medium transition-all duration-300 font-sans ${authType === 'register'
+                  ? 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white shadow-lg'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-white'
+                  }`}
               >
                 Register
               </button>
@@ -511,23 +509,23 @@ const handleSubmit = async (e) => {
                     required
                     value={forgotEmail}
                     onChange={(e) => setForgotEmail(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all duration-200 text-slate-900 placeholder-slate-500 font-sans text-sm"
+                    className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all duration-200 text-slate-900 placeholder-slate-500 font-sans text-sm"
                     placeholder="Enter your email"
                   />
                   <FiMail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
                 </div>
               </div>
-              
+
               {formError && (
-                <div className="bg-red-50 border border-red-200 rounded-2xl px-3 py-2 text-red-600 text-xs text-center font-sans">
+                <div className="bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-red-600 text-xs text-center font-sans">
                   {formError}
                 </div>
               )}
-              
+
               <button
                 type="submit"
                 disabled={otpLoading}
-                className="w-full bg-gradient-to-r from-primary-500 to-secondary-500 hover:from-primary-600 hover:to-secondary-600 disabled:from-primary-400 disabled:to-secondary-400 disabled:cursor-not-allowed text-white font-semibold py-2.5 px-5 rounded-2xl transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-105 disabled:transform-none disabled:hover:scale-100 font-sans text-sm"
+                className="w-full bg-gradient-to-r from-primary-500 to-secondary-500 hover:from-primary-600 hover:to-secondary-600 disabled:from-primary-400 disabled:to-secondary-400 disabled:cursor-not-allowed text-white font-semibold py-2.5 px-5 rounded-lg transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-105 disabled:transform-none disabled:hover:scale-100 font-sans text-sm"
               >
                 {otpLoading ? (
                   <div className="flex items-center justify-center">
@@ -538,7 +536,7 @@ const handleSubmit = async (e) => {
                   'Send OTP'
                 )}
               </button>
-              
+
               <div className="text-center">
                 <button
                   type="button"
@@ -568,7 +566,7 @@ const handleSubmit = async (e) => {
                   </p>
                 )}
               </div>
-              
+
               <div>
                 <label className="block text-xs font-medium text-slate-700 mb-1 font-sans">
                   Enter 4-digit OTP
@@ -585,7 +583,7 @@ const handleSubmit = async (e) => {
                   placeholder="0000"
                 />
               </div>
-              
+
               <div>
                 <label className="block text-xs font-medium text-slate-700 mb-1 font-sans">
                   New Password
@@ -610,7 +608,7 @@ const handleSubmit = async (e) => {
                   </button>
                 </div>
               </div>
-              
+
               <div>
                 <label className="block text-xs font-medium text-slate-700 mb-1 font-sans">
                   Confirm New Password
@@ -635,17 +633,17 @@ const handleSubmit = async (e) => {
                   </button>
                 </div>
               </div>
-              
+
               {formError && (
                 <div className="bg-red-50 border border-red-200 rounded-2xl px-3 py-2 text-red-600 text-xs text-center font-sans">
                   {formError}
                 </div>
               )}
-              
+
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-gradient-to-r from-primary-500 to-secondary-500 hover:from-primary-600 hover:to-secondary-600 disabled:from-primary-400 disabled:to-secondary-400 disabled:cursor-not-allowed text-white font-semibold py-2.5 px-5 rounded-2xl transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-105 disabled:transform-none disabled:hover:scale-100 font-sans text-sm"
+                className="w-full bg-gradient-to-r from-primary-500 to-secondary-500 hover:from-primary-600 hover:to-secondary-600 disabled:from-primary-400 disabled:to-secondary-400 disabled:cursor-not-allowed text-white font-semibold py-2.5 px-5 rounded-lg transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-105 disabled:transform-none disabled:hover:scale-100 font-sans text-sm"
               >
                 {loading ? (
                   <div className="flex items-center justify-center">
@@ -656,7 +654,7 @@ const handleSubmit = async (e) => {
                   'Reset Password'
                 )}
               </button>
-              
+
               <div className="flex justify-center space-x-4 text-sm">
                 <button
                   type="button"
@@ -673,7 +671,7 @@ const handleSubmit = async (e) => {
                   <button
                     type="button"
                     onClick={() => {
-                      handleForgotPasswordStep1({ preventDefault: () => {} });
+                      handleForgotPasswordStep1({ preventDefault: () => { } });
                     }}
                     disabled={otpLoading}
                     className="text-primary-600 hover:text-primary-700 disabled:text-primary-400 transition-colors font-sans text-xs"
@@ -707,7 +705,7 @@ const handleSubmit = async (e) => {
                   </div>
                 </div>
               )}
-              
+
               <div>
                 <label className="block text-xs font-medium text-slate-700 mb-1 font-sans">
                   Email Address
@@ -745,7 +743,7 @@ const handleSubmit = async (e) => {
                   </div>
                 </div>
               )}
-              
+
               <div>
                 <label className="block text-xs font-medium text-slate-700 mb-1 font-sans">
                   Password
@@ -807,18 +805,18 @@ const handleSubmit = async (e) => {
                   </div>
                 </>
               )}
-              
+
               {(formError || error) && (
                 <div className="bg-red-50 border border-red-200 rounded-2xl px-3 py-2 text-red-600 text-xs text-center font-sans">
                   {formError || error}
                 </div>
               )}
-              
+
               <button
                 type="submit"
                 disabled={loading}
                 onClick={() => trackClick(null, `auth_${authType}_submit_button`)}
-                className="w-full bg-gradient-to-r from-primary-500 to-secondary-500 hover:from-primary-600 hover:to-secondary-600 disabled:from-primary-400 disabled:to-secondary-400 disabled:cursor-not-allowed text-white font-semibold py-2.5 px-5 rounded-2xl transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-105 disabled:transform-none disabled:hover:scale-100 font-sans text-sm"
+                className="w-full bg-gradient-to-r from-primary-500 to-secondary-500 hover:from-primary-600 hover:to-secondary-600 disabled:from-primary-400 disabled:to-secondary-400 disabled:cursor-not-allowed text-white font-semibold py-2.5 px-5 rounded-lg transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-105 disabled:transform-none disabled:hover:scale-100 font-sans text-sm"
               >
                 {loading ? (
                   <div className="flex items-center justify-center">
@@ -829,7 +827,7 @@ const handleSubmit = async (e) => {
                   authType === 'login' ? 'Sign In' : 'Create Account'
                 )}
               </button>
-              
+
               {authType === 'login' && (
                 <div className="text-center">
                   <button
@@ -850,7 +848,7 @@ const handleSubmit = async (e) => {
 
               {/* Role Display */}
               <div className="text-center mt-4">
-                <div className={`inline-flex items-center px-3 py-1.5 rounded-2xl border ${roleColors[selectedRole]} font-sans text-xs`}>
+                <div className={`inline-flex items-center px-3 py-1.5 rounded-lg border ${roleColors[selectedRole]} font-sans text-xs`}>
                   <div className="w-1.5 h-1.5 bg-current rounded-full mr-1.5"></div>
                   {roleLabels[selectedRole]}
                 </div>

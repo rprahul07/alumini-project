@@ -176,27 +176,25 @@ const AdminOpportunities = () => {
     <div className="space-y-4">
       <div className="flex gap-2">
         <button
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-            activeTab === 'pending' 
-              ? 'bg-primary-600 text-white' 
-              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-          }`}
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === 'pending'
+            ? 'bg-primary-600 text-white'
+            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            }`}
           onClick={() => setActiveTab('pending')}
         >
           Pending
         </button>
         <button
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-            activeTab === 'approved' 
-              ? 'bg-green-600 text-white' 
-              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-          }`}
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === 'approved'
+            ? 'bg-green-600 text-white'
+            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            }`}
           onClick={() => setActiveTab('approved')}
         >
           Approved
         </button>
       </div>
-      
+
       {loading ? (
         <div className="text-center text-gray-500 py-8">Loading...</div>
       ) : jobsToShow.length === 0 ? (
@@ -217,14 +215,14 @@ const AdminOpportunities = () => {
                 </div>
                 <div className="flex gap-2 ml-4">
                   <button
-                    className="px-3 py-1 bg-primary-600 text-white text-xs font-medium rounded hover:bg-primary-700 transition-colors"
+                    className="px-3 py-1 bg-primary-600 text-white text-xs font-medium rounded-lg hover:bg-primary-700 transition-colors"
                     onClick={() => handleView(job)}
                   >
                     View
                   </button>
                   {job.status === 'pending' && (
                     <button
-                      className="px-3 py-1 bg-green-600 text-white text-xs font-medium rounded hover:bg-green-700 transition-colors disabled:opacity-50"
+                      className="px-3 py-1 bg-green-600 text-white text-xs font-medium rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
                       onClick={async () => {
                         setActionLoading(job.id);
                         try {
@@ -243,7 +241,7 @@ const AdminOpportunities = () => {
                     </button>
                   )}
                   <button
-                    className="px-3 py-1 bg-red-600 text-white text-xs font-medium rounded hover:bg-red-700 transition-colors"
+                    className="px-3 py-1 bg-red-600 text-white text-xs font-medium rounded-lg hover:bg-red-700 transition-colors"
                     onClick={() => { setDeleteJobId(job.id); setShowDeleteDialog(true); }}
                   >
                     Delete
@@ -314,7 +312,7 @@ const ProtectedRoute = ({ children }) => {
 // --- Enhanced Sidebar Component ---
 const Sidebar = ({ onNavigate, activeView, isOpen, setIsOpen }) => {
   const [isUserManagementExpanded, setIsUserManagementExpanded] = useState(false);
-  
+
   // Main menu items - reorganized for better admin workflow
   const mainMenuItems = [
     { title: "Overview", icon: FiHome, view: "dashboard", description: "Dashboard stats and quick actions" },
@@ -353,7 +351,7 @@ const Sidebar = ({ onNavigate, activeView, isOpen, setIsOpen }) => {
       <div className="lg:hidden p-4">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="p-2 text-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+          className="p-2 text-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
         >
           {isOpen ? <FiX className="h-6 w-6" /> : <FiMenu className="h-6 w-6" />}
         </button>
@@ -365,9 +363,8 @@ const Sidebar = ({ onNavigate, activeView, isOpen, setIsOpen }) => {
         ></div>
       )}
       <aside
-        className={`fixed inset-y-0 left-0 w-80 bg-white shadow-xl transform ${
-          isOpen ? "translate-x-0" : "-translate-x-full"
-        } lg:relative lg:translate-x-0 lg:inset-y-auto lg:left-auto lg:w-auto transition-transform duration-300 ease-in-out z-40 lg:z-auto rounded-r-2xl lg:rounded-2xl overflow-hidden`}
+        className={`fixed inset-y-0 left-0 w-80 bg-white shadow-xl transform ${isOpen ? "translate-x-0" : "-translate-x-full"
+          } lg:relative lg:translate-x-0 lg:inset-y-auto lg:left-auto lg:w-auto transition-transform duration-300 ease-in-out z-40 lg:z-auto rounded-r-2xl lg:rounded-2xl overflow-hidden`}
       >
         <div className="flex justify-end lg:hidden p-4">
           <button
@@ -377,13 +374,13 @@ const Sidebar = ({ onNavigate, activeView, isOpen, setIsOpen }) => {
             <FiX className="h-6 w-6" />
           </button>
         </div>
-        
+
         <div className="p-6 h-full overflow-y-auto">
           <div className="mb-8">
             <h3 className="text-xl font-bold text-gray-900 mb-2">Admin Panel</h3>
             <p className="text-sm text-gray-600">Content & User Management</p>
           </div>
-          
+
           <nav className="space-y-2">
             {mainMenuItems.map((item) => (
               <div key={item.title}>
@@ -395,11 +392,10 @@ const Sidebar = ({ onNavigate, activeView, isOpen, setIsOpen }) => {
                           setIsUserManagementExpanded(!isUserManagementExpanded);
                         }
                       }}
-                      className={`w-full text-left flex items-center justify-between p-3 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-200 group ${
-                        (item.view === 'user-management' && isUserManagementActive) || 
+                      className={`w-full text-left flex items-center justify-between p-3 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-200 group ${(item.view === 'user-management' && isUserManagementActive) ||
                         (item.view === 'content-management' && isContentManagementActive)
-                          ? 'bg-primary-50 text-primary-700' : ''
-                      }`}
+                        ? 'bg-primary-50 text-primary-700' : ''
+                        }`}
                     >
                       <div className="flex items-center space-x-3">
                         <item.icon className="h-5 w-5 text-gray-500 group-hover:text-primary-600" />
@@ -409,11 +405,10 @@ const Sidebar = ({ onNavigate, activeView, isOpen, setIsOpen }) => {
                         </div>
                       </div>
                       <svg
-                        className={`h-4 w-4 transition-transform duration-200 ${
-                          (item.view === 'user-management' && isUserManagementExpanded) ||
+                        className={`h-4 w-4 transition-transform duration-200 ${(item.view === 'user-management' && isUserManagementExpanded) ||
                           (item.view === 'content-management' && isContentManagementActive)
-                            ? "rotate-90" : ""
-                        }`}
+                          ? "rotate-90" : ""
+                          }`}
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -426,7 +421,7 @@ const Sidebar = ({ onNavigate, activeView, isOpen, setIsOpen }) => {
                         />
                       </svg>
                     </button>
-                    
+
                     {/* User Management Submenu */}
                     {item.view === 'user-management' && isUserManagementExpanded && (
                       <div className="ml-6 mt-2 space-y-1">
@@ -434,9 +429,8 @@ const Sidebar = ({ onNavigate, activeView, isOpen, setIsOpen }) => {
                           <button
                             key={subItem.title}
                             onClick={() => handleNavigationClick(subItem.view)}
-                            className={`w-full text-left flex items-center justify-between p-2 text-sm text-gray-600 rounded-md hover:bg-gray-50 transition-colors duration-200 ${
-                              activeView === subItem.view ? 'bg-primary-100 text-primary-800' : ''
-                            }`}
+                            className={`w-full text-left flex items-center justify-between p-2 text-sm text-gray-600 rounded-lg hover:bg-gray-50 transition-colors duration-200 ${activeView === subItem.view ? 'bg-primary-100 text-primary-800' : ''
+                              }`}
                           >
                             <div className="flex items-center space-x-2">
                               <subItem.icon className="h-4 w-4" />
@@ -446,7 +440,7 @@ const Sidebar = ({ onNavigate, activeView, isOpen, setIsOpen }) => {
                         ))}
                       </div>
                     )}
-                    
+
                     {/* Content Management Submenu */}
                     {item.view === 'content-management' && (
                       <div className="ml-6 mt-2 space-y-1">
@@ -454,9 +448,8 @@ const Sidebar = ({ onNavigate, activeView, isOpen, setIsOpen }) => {
                           <button
                             key={subItem.title}
                             onClick={() => handleNavigationClick(subItem.view)}
-                            className={`w-full text-left flex items-center space-x-2 p-2 text-sm text-gray-600 rounded-md hover:bg-gray-50 transition-colors duration-200 ${
-                              activeView === subItem.view ? 'bg-primary-100 text-primary-800' : ''
-                            }`}
+                            className={`w-full text-left flex items-center space-x-2 p-2 text-sm text-gray-600 rounded-lg hover:bg-gray-50 transition-colors duration-200 ${activeView === subItem.view ? 'bg-primary-100 text-primary-800' : ''
+                              }`}
                           >
                             <subItem.icon className="h-4 w-4" />
                             <span>{subItem.title}</span>
@@ -468,9 +461,8 @@ const Sidebar = ({ onNavigate, activeView, isOpen, setIsOpen }) => {
                 ) : (
                   <button
                     onClick={() => handleNavigationClick(item.view)}
-                    className={`w-full text-left flex items-center space-x-3 p-3 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-200 group ${
-                      activeView === item.view ? 'bg-primary-50 text-primary-700' : ''
-                    }`}
+                    className={`w-full text-left flex items-center space-x-3 p-3 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-200 group ${activeView === item.view ? 'bg-primary-50 text-primary-700' : ''
+                      }`}
                   >
                     <item.icon className="h-5 w-5 text-gray-500 group-hover:text-primary-600" />
                     <div>
@@ -482,8 +474,8 @@ const Sidebar = ({ onNavigate, activeView, isOpen, setIsOpen }) => {
               </div>
             ))}
           </nav>
-        </div>
-      </aside>
+        </div >
+      </aside >
     </>
   );
 };
@@ -494,9 +486,8 @@ const ProfileCard = ({ isProfileComplete }) => {
   return (
     <div className="flex items-center space-x-4 bg-gradient-to-r from-primary-50 to-secondary-50 p-4 rounded-xl shadow-inner">
       <div
-        className={`p-3 rounded-full ${
-          isProfileComplete ? "bg-green-100" : "bg-red-100"
-        }`}
+        className={`p-3 rounded-full ${isProfileComplete ? "bg-green-100" : "bg-red-100"
+          }`}
       >
         {isProfileComplete ? (
           <svg
@@ -531,9 +522,8 @@ const ProfileCard = ({ isProfileComplete }) => {
       <div>
         <h3 className="font-semibold text-gray-800">Profile Status</h3>
         <p
-          className={`text-sm ${
-            isProfileComplete ? "text-green-700" : "text-red-700"
-          }`}
+          className={`text-sm ${isProfileComplete ? "text-green-700" : "text-red-700"
+            }`}
         >
           {isProfileComplete
             ? "Your profile is complete!"
@@ -622,11 +612,10 @@ const UserVerificationTable = ({ users, onVerify, onReject }) => {
           <button
             key={status}
             onClick={() => setFilterStatus(status)}
-            className={`px-4 py-2 rounded-lg font-semibold shadow-sm transition-all ${
-              filterStatus === status
-                ? "bg-primary text-white hover:bg-primary-700"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-            }`}
+            className={`px-4 py-2 rounded-lg font-semibold shadow-sm transition-all ${filterStatus === status
+              ? "bg-primary text-white hover:bg-primary-700"
+              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
           >
             {status} (
             {
@@ -753,7 +742,7 @@ const UserTableDisplay = ({ userType, users, onUpdateUser, onDeleteUser }) => {
   };
 
   const handleConfirmAction = async () => {
-    
+
     if (modalAction === 'update') {
       navigate(`/admin/edit-user/${userType}/${selectedUserId}`);
       setIsConfirmModalOpen(false);
@@ -833,12 +822,11 @@ const UserTableDisplay = ({ userType, users, onUpdateUser, onDeleteUser }) => {
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <h3 className="font-semibold text-gray-900 text-lg">{getValueByKeyPath(user, "fullName") || "-"}</h3>
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      user.role === 'alumni' ? 'bg-green-100 text-green-800' :
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${user.role === 'alumni' ? 'bg-green-100 text-green-800' :
                       user.role === 'student' ? 'bg-blue-100 text-blue-800' :
-                      user.role === 'faculty' ? 'bg-purple-100 text-purple-800' :
-                      'bg-gray-100 text-gray-800'
-                    }`}>
+                        user.role === 'faculty' ? 'bg-purple-100 text-purple-800' :
+                          'bg-gray-100 text-gray-800'
+                      }`}>
                       {user.role || 'Unknown'}
                     </span>
                   </div>
@@ -966,7 +954,7 @@ const UserTableDisplay = ({ userType, users, onUpdateUser, onDeleteUser }) => {
         open={isConfirmModalOpen}
         title={modalAction === "delete" ? "Confirm Deletion" : "Confirm Update"}
         message={modalAction === "delete"
-            ? `Are you sure you want to delete ${selectedUserName}? This action cannot be undone.`
+          ? `Are you sure you want to delete ${selectedUserName}? This action cannot be undone.`
           : `Are you sure you want to update ${selectedUserName}?`}
         onConfirm={handleConfirmAction}
         onCancel={() => {
@@ -1200,12 +1188,12 @@ const AdminDashboard = memo(() => {
   };
 
   const handleDeleteUser = async (id, type) => {
-    
+
     if (!id) {
       toast.error("Invalid user ID");
       return;
     }
-    
+
     try {
       let endpoint = "";
       switch (type) {
@@ -1221,19 +1209,19 @@ const AdminDashboard = memo(() => {
         default:
           throw new Error("Invalid user type");
       }
-      
+
       const response = await apiService.raw.delete(endpoint);
-      
+
       // Only re-fetch the affected list
       if (type === "students") refetchStudents();
       if (type === "alumni") refetchAlumni();
       if (type === "faculty") refetchFaculty();
-      
+
       toast.success("User deleted successfully");
     } catch (err) {
       toast.error(
         err.response?.data?.message ||
-          "Failed to delete user. Please try again."
+        "Failed to delete user. Please try again."
       );
     }
   };
@@ -1267,7 +1255,7 @@ const AdminDashboard = memo(() => {
     } catch (err) {
       toast.error(
         err.response?.data?.message ||
-          "Failed to update user. Please try again."
+        "Failed to update user. Please try again."
       );
     }
   };
@@ -1322,7 +1310,7 @@ const AdminDashboard = memo(() => {
                     </div>
                   </div>
                 </div>
-                
+
                 {/* Alumni */}
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
                   <div className="flex items-center justify-between">
@@ -1335,7 +1323,7 @@ const AdminDashboard = memo(() => {
                     </div>
                   </div>
                 </div>
-                
+
                 {/* Students */}
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
                   <div className="flex items-center justify-between">
@@ -1348,7 +1336,7 @@ const AdminDashboard = memo(() => {
                     </div>
                   </div>
                 </div>
-                
+
               </div>
             )}
             {/* --- End Statistics Cards --- */}

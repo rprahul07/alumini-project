@@ -33,9 +33,9 @@ const ApplicantProfileModal = ({ open, onClose, applicant }) => {
         {/* Applicant Image/Banner */}
         <div className="relative h-28 sm:h-36 bg-gray-200 rounded-2xl mb-2">
           {data.photoUrl ? (
-            <img 
-              src={data.photoUrl} 
-              alt={data.name} 
+            <img
+              src={data.photoUrl}
+              alt={data.name}
               className="w-full h-full object-cover rounded-2xl"
             />
           ) : (
@@ -45,15 +45,14 @@ const ApplicantProfileModal = ({ open, onClose, applicant }) => {
           )}
           {/* Applicant Badge */}
           <div className="absolute top-2 left-2">
-            <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium ${
-              data.role === 'alumni' ? 'bg-blue-100 text-blue-800' :
-              data.role === 'student' ? 'bg-green-100 text-green-800' :
-              'bg-gray-100 text-gray-800'
-            }`}>
+            <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium ${data.role === 'alumni' ? 'bg-blue-100 text-blue-800' :
+                data.role === 'student' ? 'bg-green-100 text-green-800' :
+                  'bg-gray-100 text-gray-800'
+              }`}>
               <UserIcon className="h-3 w-3 mr-1" />
               {data.role === 'alumni' ? 'Alumni' :
-               data.role === 'student' ? 'Student' :
-               'Applicant'}
+                data.role === 'student' ? 'Student' :
+                  'Applicant'}
             </span>
           </div>
         </div>
@@ -132,7 +131,7 @@ const ApplicantProfileModal = ({ open, onClose, applicant }) => {
 
           {/* Action Button */}
           <div className="flex justify-end gap-2 mt-6">
-            <button type="button" className="px-4 py-2 rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300" onClick={onClose}>Close</button>
+            <button type="button" className="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300" onClick={onClose}>Close</button>
           </div>
         </div>
       </div>

@@ -37,7 +37,7 @@ const ActivityLogs = () => {
       console.error('Error fetching logs:', err);
       setError(err.message || 'Failed to fetch data');
       toast.error(err.message || 'Failed to fetch logs');
-      
+
       // If unauthorized, redirect to login
       if (err.response?.status === 401) {
         handleLogout();
@@ -74,7 +74,7 @@ const ActivityLogs = () => {
             <h1 className="text-2xl font-semibold text-gray-900">Activity Logs</h1>
             <button
               onClick={handleRefresh}
-              className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+              className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
             >
               Refresh
             </button>
@@ -90,7 +90,7 @@ const ActivityLogs = () => {
               <p className="text-red-600">{error}</p>
               <button
                 onClick={handleRefresh}
-                className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+                className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
               >
                 Try Again
               </button>
@@ -101,31 +101,28 @@ const ActivityLogs = () => {
                 <nav className="flex -mb-px">
                   <button
                     onClick={() => handleTabChange(0)}
-                    className={`${
-                      tabValue === 0
-                        ? 'border-indigo-500 text-indigo-600'
-                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                    } whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm`}
+                    className={`${tabValue === 0
+                      ? 'border-indigo-500 text-indigo-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      } whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm`}
                   >
                     Activity Logs
                   </button>
                   <button
                     onClick={() => handleTabChange(1)}
-                    className={`${
-                      tabValue === 1
-                        ? 'border-indigo-500 text-indigo-600'
-                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                    } whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm`}
+                    className={`${tabValue === 1
+                      ? 'border-indigo-500 text-indigo-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      } whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm`}
                   >
                     Password Changes
                   </button>
                   <button
                     onClick={() => handleTabChange(2)}
-                    className={`${
-                      tabValue === 2
-                        ? 'border-indigo-500 text-indigo-600'
-                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                    } whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm`}
+                    className={`${tabValue === 2
+                      ? 'border-indigo-500 text-indigo-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      } whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm`}
                   >
                     Email Changes
                   </button>
@@ -138,7 +135,7 @@ const ActivityLogs = () => {
                     {data.activityLogs.map((log, index) => (
                       <div
                         key={index}
-                        className="bg-gray-50 p-4 rounded-md"
+                        className="bg-gray-50 p-4 rounded-lg"
                       >
                         <p className="text-sm text-gray-900">{log.message}</p>
                         <p className="text-xs text-gray-500 mt-1">
@@ -154,7 +151,7 @@ const ActivityLogs = () => {
                     {data.passwordChanges.map((change, index) => (
                       <div
                         key={index}
-                        className="bg-gray-50 p-4 rounded-md"
+                        className="bg-gray-50 p-4 rounded-lg"
                       >
                         <p className="text-sm text-gray-900">
                           Password changed for user: {change.userEmail}
@@ -172,7 +169,7 @@ const ActivityLogs = () => {
                     {data.emailChanges.map((change, index) => (
                       <div
                         key={index}
-                        className="bg-gray-50 p-4 rounded-md"
+                        className="bg-gray-50 p-4 rounded-lg"
                       >
                         <p className="text-sm text-gray-900">
                           Email changed from {change.oldEmail} to {change.newEmail}

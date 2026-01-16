@@ -38,9 +38,8 @@ const ConsentBanner = () => {
 
   return (
     <div
-      className={`fixed bottom-4 left-4 right-4 z-50 transform transition-all duration-300 ease-in-out ${
-        isVisible ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'
-      }`}
+      className={`fixed bottom-4 left-4 right-4 z-50 transform transition-all duration-300 ease-in-out ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'
+        }`}
     >
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-4 max-w-md mx-auto">
         <div className="flex items-start space-x-3">
@@ -55,13 +54,13 @@ const ConsentBanner = () => {
             <div className="flex space-x-2">
               <button
                 onClick={handleAccept}
-                className="px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded-md hover:bg-blue-700 transition-colors"
+                className="px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors"
               >
                 Accept
               </button>
               <button
                 onClick={handleDecline}
-                className="px-3 py-1.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs font-medium rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                className="px-3 py-1.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs font-medium rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
               >
                 Decline
               </button>

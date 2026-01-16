@@ -82,13 +82,13 @@ const RegisteredEvents = () => {
       isRegistered: event.isRegistered || true, // If it's in registered events, user is registered
       createdBy: event.eventCreatedBy || event.createdBy
     };
-    
+
     // Debug logging to see what data we're getting
     console.log('Original event data:', event);
     console.log('Normalized event data:', normalizedEvent);
     console.log('Registered count:', normalizedEvent.registeredCount);
     console.log('Max capacity:', normalizedEvent.maxCapacity);
-    
+
     setSelectedEvent(normalizedEvent);
     setShowModal(true);
   };
@@ -110,7 +110,7 @@ const RegisteredEvents = () => {
             <p className="text-red-600 font-medium text-sm">{error}</p>
             <button
               onClick={() => window.location.reload()}
-              className="px-3 py-1.5 bg-gradient-to-r from-primary-500 to-secondary-500 text-white rounded-md hover:from-primary-600 hover:to-secondary-600 transition-all duration-200 text-xs shadow-lg"
+              className="px-3 py-1.5 bg-gradient-to-r from-primary-500 to-secondary-500 text-white rounded-lg hover:from-primary-600 hover:to-secondary-600 transition-all duration-200 text-xs shadow-lg"
             >
               Retry
             </button>

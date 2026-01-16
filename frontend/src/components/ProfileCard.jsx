@@ -53,7 +53,7 @@ const ProfileCard = ({ compact = false }) => {
     const genericFields = [];
     if (user.department) genericFields.push({ label: 'Department', value: user.department });
     if (user.email) genericFields.push({ label: 'Email', value: user.email });
-    return genericFields.slice(0,2);
+    return genericFields.slice(0, 2);
   };
 
   if (loading) {
@@ -128,15 +128,14 @@ const ProfileCard = ({ compact = false }) => {
       {/* Name */}
       <h2 className="text-lg font-bold text-slate-900 mt-1 mb-1 text-center font-sans">{user.fullName || 'User'}</h2>
       {/* Role badge */}
-      <span className={`px-3 py-1 rounded-full text-xs font-semibold mb-2 text-center border shadow-sm ${
-        user.role?.toLowerCase() === 'alumni'
-          ? 'bg-green-500 text-white border-green-600'
+      <span className={`px-3 py-1 rounded-full text-xs font-semibold mb-2 text-center border shadow-sm ${user.role?.toLowerCase() === 'alumni'
+          ? 'bg-white text-green-700 border-green-200'
           : user.role?.toLowerCase() === 'student'
-          ? 'bg-blue-500 text-white border-blue-600'
-          : user.role?.toLowerCase() === 'faculty'
-          ? 'bg-purple-500 text-white border-purple-600'
-          : 'bg-gray-500 text-white border-gray-600'
-      }`}>
+            ? 'bg-white text-blue-700 border-blue-200'
+            : user.role?.toLowerCase() === 'faculty'
+              ? 'bg-white text-purple-700 border-purple-200'
+              : 'bg-white text-gray-700 border-gray-200'
+        }`}>
         {getRoleDisplay(user.role)}
       </span>
       {/* Details */}

@@ -395,7 +395,7 @@ const ProfileEditor = memo(() => {
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary-500/20 rounded-full blur-3xl animate-pulse"></div>
           <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-secondary-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
         </div>
-        
+
         <div className="relative z-10 bg-white/80 backdrop-blur-xl rounded-2xl shadow-2xl p-8 w-full max-w-md border border-slate-200">
           <div className="animate-pulse">
             <div className="h-12 bg-slate-200 rounded-xl w-3/4 mx-auto mb-8"></div>
@@ -421,7 +421,7 @@ const ProfileEditor = memo(() => {
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-red-500/20 rounded-full blur-3xl animate-pulse"></div>
           <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-red-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
         </div>
-        
+
         <div className="relative z-10 bg-white/80 backdrop-blur-xl rounded-2xl shadow-2xl p-8 text-center border border-slate-200">
           <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
             <XMarkIcon className="w-8 h-8 text-red-400" />
@@ -429,7 +429,7 @@ const ProfileEditor = memo(() => {
           <p className="text-red-400 font-semibold mb-6">Error: {error}</p>
           <button
             onClick={() => navigate('/profile')}
-            className="px-6 py-3 bg-gradient-to-r from-primary-500 to-secondary-500 text-slate-900 rounded-full font-medium hover:from-primary-600 hover:to-secondary-600 transition-all duration-200 shadow-lg hover:shadow-xl"
+            className="px-6 py-3 bg-gradient-to-r from-primary-500 to-secondary-500 text-slate-900 rounded-lg font-medium hover:from-primary-600 hover:to-secondary-600 transition-all duration-200 shadow-lg hover:shadow-xl"
           >
             Go Back to Profile
           </button>
@@ -446,13 +446,13 @@ const ProfileEditor = memo(() => {
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-secondary-100/40 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-accent-100/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '4s' }}></div>
       </div>
-      
+
       <div className="relative z-10 w-full max-w-4xl bg-white/80 backdrop-blur-xl p-4 sm:p-8 rounded-xl shadow-2xl border border-slate-200">
         <div className="flex items-center gap-3 mb-6">
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="rounded-full p-2 bg-slate-100 hover:bg-slate-200 text-slate-700 transition-all duration-200 shadow-lg border border-slate-200"
+            className="rounded-lg p-2 bg-slate-100 hover:bg-slate-200 text-slate-700 transition-all duration-200 shadow-lg border border-slate-200"
             title="Back to Profile"
           >
             <ArrowLeftIcon className="w-5 h-5" />
@@ -461,7 +461,7 @@ const ProfileEditor = memo(() => {
         </div>
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Profile Photo */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -482,7 +482,7 @@ const ProfileEditor = memo(() => {
               <div className="absolute bottom-0 right-0 flex gap-1">
                 <label
                   htmlFor="profilePhotoInput"
-                  className="bg-gradient-to-r from-primary-500 to-secondary-500 text-slate-900 p-1.5 rounded-full shadow-lg cursor-pointer hover:from-primary-600 hover:to-secondary-600 transition-all duration-200 transform hover:scale-105 border-2 border-white"
+                  className="bg-gradient-to-r from-primary-500 to-secondary-500 text-slate-900 p-1.5 rounded-lg shadow-lg cursor-pointer hover:from-primary-600 hover:to-secondary-600 transition-all duration-200 transform hover:scale-105 border-2 border-white"
                   title="Upload profile photo"
                 >
                   <CameraIcon className="w-4 h-4" />
@@ -500,7 +500,7 @@ const ProfileEditor = memo(() => {
                     type="button"
                     onClick={handleDeletePhoto}
                     disabled={loading}
-                    className="bg-white/20 text-slate-900 p-1.5 rounded-full shadow-lg cursor-pointer hover:bg-white/30 transition-all duration-200 border-2 border-white"
+                    className="bg-white/20 text-slate-900 p-1.5 rounded-lg shadow-lg cursor-pointer hover:bg-white/30 transition-all duration-200 border-2 border-white"
                     title="Delete profile photo"
                   >
                     <TrashIcon className="w-4 h-4" />
@@ -525,7 +525,7 @@ const ProfileEditor = memo(() => {
             </p>
           </motion.div>
           {/* Modern Basic Information Section */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
@@ -659,7 +659,7 @@ const ProfileEditor = memo(() => {
 
           {/* Modern Professional Information Section*/}
           {(formData.userRole === 'alumni') && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
@@ -728,7 +728,7 @@ const ProfileEditor = memo(() => {
 
           {/* Modern Role-specific Section */}
           {formData.userRole && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
@@ -760,7 +760,7 @@ const ProfileEditor = memo(() => {
             </motion.div>
           )}
           {/* Modern Social Media Section */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
@@ -844,7 +844,7 @@ const ProfileEditor = memo(() => {
           </motion.div>
           {/* Modern Resume/CV and Skills Section - Only for Students and Alumni */}
           {(formData.userRole === 'student' || formData.userRole === 'alumni') && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.5 }}
@@ -913,8 +913,8 @@ const ProfileEditor = memo(() => {
                         <label
                           htmlFor="cv-upload"
                           className={`block w-full p-3 border-2 border-dashed rounded-xl text-center transition-all duration-200 backdrop-blur-sm ${cvUploading
-                              ? 'border-primary-500/50 bg-primary-500/10 cursor-not-allowed'
-                              : 'border-white/30 bg-white/10 hover:border-primary-500/50 hover:bg-primary-500/10 cursor-pointer'
+                            ? 'border-primary-500/50 bg-primary-500/10 cursor-not-allowed'
+                            : 'border-white/30 bg-white/10 hover:border-primary-500/50 hover:bg-primary-500/10 cursor-pointer'
                             }`}
                         >
                           <div className="flex flex-col items-center gap-2">
@@ -1021,7 +1021,7 @@ const ProfileEditor = memo(() => {
             </motion.div>
           )}
           {/* Modern Action Buttons */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.6 }}

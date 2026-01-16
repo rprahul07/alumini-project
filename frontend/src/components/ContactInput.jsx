@@ -71,7 +71,7 @@ function ContactInput() {
           type="text"
           placeholder="Enter your name"
           onChange={(e) => setFullName(e.target.value)}
-          className="w-full mt-1 p-2 border border-gray-300 rounded-md"
+          className="w-full mt-1 p-2 border border-gray-300 rounded-lg"
         />
       </label>
 
@@ -81,7 +81,7 @@ function ContactInput() {
           type="email"
           placeholder="Enter your email"
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full mt-1 p-2 border border-gray-300 rounded-md"
+          className="w-full mt-1 p-2 border border-gray-300 rounded-lg"
         />
       </label>
 
@@ -91,7 +91,7 @@ function ContactInput() {
           type="text"
           placeholder="What's this about?"
           onChange={(e) => setSubject(e.target.value)}
-          className="w-full mt-1 p-2 border border-gray-300 rounded-md"
+          className="w-full mt-1 p-2 border border-gray-300 rounded-lg"
         />
       </label>
 
@@ -101,11 +101,11 @@ function ContactInput() {
           rows="6"
           placeholder="How can we help you?"
           onChange={(e) => setMessage(e.target.value)}
-          className="w-full mt-1 p-2 border border-gray-300 rounded-md"
+          className="w-full mt-1 p-2 border border-gray-300 rounded-lg"
         />
       </label>
 
-      <button type="submit"className="bg-purple-700 text-white px-5 py-2 rounded-full transition duration-300 hover:bg-[rgba(74,35,218,1)]">
+      <button type="submit" className="bg-gradient-to-r from-primary-600 to-secondary-600 text-white px-5 py-2 rounded-lg transition duration-300 hover:from-primary-700 hover:to-secondary-700 shadow-lg">
         Send Message
       </button>
 

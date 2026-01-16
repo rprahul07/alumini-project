@@ -56,23 +56,23 @@ const AnnouncementNotification = ({ announcements, loading }) => {
   };
 
   const getPriorityInfo = (order) => {
-    if (order <= 1) return { 
-      color: 'from-red-500 to-red-600', 
-      bgColor: 'bg-red-500/20', 
+    if (order <= 1) return {
+      color: 'from-red-500 to-red-600',
+      bgColor: 'bg-red-500/20',
       textColor: 'text-red-300',
       dotColor: 'bg-red-500',
       borderColor: 'border-red-500/30'
     };
-    if (order <= 3) return { 
-      color: 'from-yellow-500 to-orange-500', 
-      bgColor: 'bg-yellow-500/20', 
+    if (order <= 3) return {
+      color: 'from-yellow-500 to-orange-500',
+      bgColor: 'bg-yellow-500/20',
       textColor: 'text-yellow-300',
       dotColor: 'bg-yellow-500',
       borderColor: 'border-yellow-500/30'
     };
-    return { 
-      color: 'from-primary-500 to-secondary-500', 
-      bgColor: 'bg-primary-500/20', 
+    return {
+      color: 'from-primary-500 to-secondary-500',
+      bgColor: 'bg-primary-500/20',
       textColor: 'text-primary-300',
       dotColor: 'bg-primary-500',
       borderColor: 'border-primary-500/30'
@@ -83,7 +83,7 @@ const AnnouncementNotification = ({ announcements, loading }) => {
     const now = new Date();
     const announcementDate = new Date(date);
     const diffInHours = Math.floor((now - announcementDate) / (1000 * 60 * 60));
-    
+
     if (diffInHours < 1) return 'Just now';
     if (diffInHours < 24) return `${diffInHours}h ago`;
     if (diffInHours < 48) return 'Yesterday';
@@ -98,7 +98,7 @@ const AnnouncementNotification = ({ announcements, loading }) => {
       const timer = setTimeout(() => {
         setIsVisible(false);
       }, 2000);
-      
+
       return () => clearTimeout(timer);
     }
   }, [loading]);
@@ -109,7 +109,7 @@ const AnnouncementNotification = ({ announcements, loading }) => {
       const timer = setTimeout(() => {
         setIsVisible(false);
       }, 1000);
-      
+
       return () => clearTimeout(timer);
     }
   }, [announcements]);
@@ -126,18 +126,18 @@ const AnnouncementNotification = ({ announcements, loading }) => {
           initial={{ opacity: 0, x: 320, scale: 0.9 }}
           animate={{ opacity: 1, x: 0, scale: 1 }}
           exit={{ opacity: 0, x: 320, scale: 0.9 }}
-          transition={{ 
-            type: "spring", 
-            stiffness: 400, 
+          transition={{
+            type: "spring",
+            stiffness: 400,
             damping: 25,
-            duration: 0.4 
+            duration: 0.4
           }}
           className="fixed top-3 right-3 z-50 max-w-xs w-full"
         >
           <div className="bg-white/80 backdrop-blur-2xl rounded-xl shadow-2xl border border-slate-200 overflow-hidden relative">
             {/* Animated background gradient */}
             <div className="absolute inset-0 bg-gradient-to-br from-primary-500/10 via-secondary-500/10 to-primary-500/10 rounded-xl animate-pulse"></div>
-            
+
             {/* Loading content */}
             <div className="p-3 relative z-10">
               <div className="flex items-center justify-center space-x-3">
@@ -161,18 +161,18 @@ const AnnouncementNotification = ({ announcements, loading }) => {
           initial={{ opacity: 0, x: 320, scale: 0.9 }}
           animate={{ opacity: 1, x: 0, scale: 1 }}
           exit={{ opacity: 0, x: 320, scale: 0.9 }}
-          transition={{ 
-            type: "spring", 
-            stiffness: 400, 
+          transition={{
+            type: "spring",
+            stiffness: 400,
             damping: 25,
-            duration: 0.4 
+            duration: 0.4
           }}
           className="fixed top-3 right-3 z-50 max-w-xs w-full"
         >
           <div className="bg-white/80 backdrop-blur-2xl rounded-xl shadow-2xl border border-slate-200 overflow-hidden hover:shadow-3xl hover:border-slate-300 transition-all duration-300 relative">
             {/* Animated background gradient */}
             <div className="absolute inset-0 bg-gradient-to-br from-primary-500/10 via-secondary-500/10 to-primary-500/10 rounded-xl animate-pulse"></div>
-            
+
             {/* Floating particles */}
             <div className="absolute top-2 right-2 w-1 h-1 bg-primary-400/60 rounded-full animate-bounce" style={{ animationDelay: '0.5s' }}></div>
             <div className="absolute bottom-2 left-2 w-0.5 h-0.5 bg-secondary-400/60 rounded-full animate-bounce" style={{ animationDelay: '1.5s' }}></div>
@@ -180,10 +180,10 @@ const AnnouncementNotification = ({ announcements, loading }) => {
             <div className="flex items-center justify-between p-2.5 relative z-10">
               <div className="flex items-center space-x-2.5 flex-1 min-w-0">
                 {/* Compact Icon */}
-                <div className={`w-7 h-7 bg-gradient-to-r ${priority.color} rounded-md flex items-center justify-center shadow-lg flex-shrink-0`}>
+                <div className={`w-7 h-7 bg-gradient-to-r ${priority.color} rounded-lg flex items-center justify-center shadow-lg flex-shrink-0`}>
                   <span className="text-white text-xs">🔔</span>
                 </div>
-                
+
                 {/* Title and Priority */}
                 <div className="flex items-center space-x-2 flex-1 min-w-0">
                   <span className="font-semibold text-slate-900 text-xs truncate font-sans">New Announcement</span>
@@ -195,11 +195,11 @@ const AnnouncementNotification = ({ announcements, loading }) => {
                   )}
                 </div>
               </div>
-              
+
               {/* Close Button */}
               <button
                 onClick={handleDismiss}
-                className="text-slate-500 hover:text-slate-900 transition-colors duration-200 p-0.5 hover:bg-slate-100 rounded-md flex-shrink-0"
+                className="text-slate-500 hover:text-slate-900 transition-colors duration-200 p-0.5 hover:bg-slate-100 rounded-lg flex-shrink-0"
               >
                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -224,7 +224,7 @@ const AnnouncementNotification = ({ announcements, loading }) => {
                 </p>
                 <div className="flex items-center justify-between mt-2">
                   <span className="text-xs text-slate-500 font-sans">{getTimeAgo(currentAnnouncement.createdAt)}</span>
-                  
+
                   {/* Compact Actions */}
                   <div className="flex items-center space-x-2">
                     {/* Next arrow button */}
@@ -246,11 +246,10 @@ const AnnouncementNotification = ({ announcements, loading }) => {
                         {announcements.map((_, index) => (
                           <div
                             key={index}
-                            className={`w-0.5 h-0.5 rounded-full transition-all duration-300 ${
-                              index === currentIndex 
-                                ? 'bg-primary-500' 
+                            className={`w-0.5 h-0.5 rounded-full transition-all duration-300 ${index === currentIndex
+                                ? 'bg-primary-500'
                                 : 'bg-slate-300'
-                            }`}
+                              }`}
                           />
                         ))}
                       </div>

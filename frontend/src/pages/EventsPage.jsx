@@ -29,7 +29,7 @@ const EventsPage = memo(() => {
     try {
       setLoading(true);
       setError(null);
-      
+
       // Build query parameters
       const params = new URLSearchParams({
         page: currentPage,
@@ -57,9 +57,9 @@ const EventsPage = memo(() => {
 
       if (response.data.success) {
         // Filter out any undefined or null events and ensure they have required properties
-        const validEvents = (response.data.data.events || []).filter(event => 
-          event && 
-          event.id && 
+        const validEvents = (response.data.data.events || []).filter(event =>
+          event &&
+          event.id &&
           typeof event.id === 'string' || typeof event.id === 'number'
         );
         setEvents(validEvents);
@@ -69,7 +69,7 @@ const EventsPage = memo(() => {
         setError(response.data.message || 'Failed to fetch events');
       }
     } catch (err) {
-      
+
       if (err.response?.status === 401) {
         setError('Please log in to view events');
       } else if (err.response?.status === 403) {
@@ -143,12 +143,12 @@ const EventsPage = memo(() => {
       <div className="min-h-screen bg-gradient-to-br from-white via-slate-50 to-white relative overflow-hidden pt-16">
         {/* Background Elements */}
         <div className="absolute inset-0 bg-gradient-to-br from-primary-100/40 via-transparent to-secondary-100/40"></div>
-        
+
         <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-primary-100/40 to-transparent rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-to-tr from-secondary-100/40 to-transparent rounded-full blur-3xl"></div>
-        
+
         {/* Section Header with Badge */}
-        <div className="relative py-12">
+        <div className="relative py-16 md:py-24">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -156,17 +156,20 @@ const EventsPage = memo(() => {
               transition={{ duration: 0.8 }}
               className="text-center mb-8"
             >
-              <div className="inline-flex items-center px-4 py-2 rounded-full text-xs font-semibold bg-gradient-to-r from-primary-50 to-secondary-50 backdrop-blur-sm text-slate-700 border border-slate-200 mb-4 shadow-lg font-sans">
-                <span className="w-2 h-2 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full mr-2 animate-pulse"></span>
-                <span>🎉 Events & Activities</span>
+              <div className="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold bg-white border border-slate-200 shadow-sm mb-6 text-slate-700 font-sans">
+                <span className="flex h-2 w-2 relative mr-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-primary-500"></span>
+                </span>
+                Events & Activities
               </div>
-              <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-slate-900 mb-3 leading-tight font-sans">
+              <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-slate-900 mb-6 tracking-tight leading-tight font-sans">
                 Discover{' '}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 via-secondary-600 to-primary-600">
                   Amazing Events
                 </span>
               </h1>
-              <p className="text-sm md:text-base text-slate-600 max-w-3xl mx-auto leading-relaxed font-sans mb-6">
+              <p className="text-lg md:text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed font-sans mb-8">
                 Join our community and participate in exciting events that inspire and connect
               </p>
               <motion.div
@@ -175,17 +178,17 @@ const EventsPage = memo(() => {
                 transition={{ duration: 0.6, delay: 0.2 }}
                 className="flex flex-col sm:flex-row gap-4 justify-center items-center"
               >
-                <div className="flex items-center text-slate-700 bg-white/80 backdrop-blur-xl rounded-full px-3 py-1.5 border border-slate-200 hover:bg-white hover:border-slate-300 transition-all duration-300">
-                  <div className="w-2 h-2 bg-primary-500 rounded-full mr-2 animate-pulse"></div>
-                  <span className="text-xs font-medium font-sans">Live Events</span>
+                <div className="flex items-center text-slate-700 bg-white/80 backdrop-blur-xl rounded-full px-4 py-2 border border-slate-200 hover:bg-white hover:border-slate-300 transition-all duration-300 shadow-sm">
+                  <div className="w-2 h-2 bg-primary-500 rounded-full mr-2"></div>
+                  <span className="text-sm font-medium font-sans">Live Events</span>
                 </div>
-                <div className="flex items-center text-slate-700 bg-white/80 backdrop-blur-xl rounded-full px-3 py-1.5 border border-slate-200 hover:bg-white hover:border-slate-300 transition-all duration-300">
-                  <div className="w-2 h-2 bg-secondary-500 rounded-full mr-2 animate-pulse"></div>
-                  <span className="text-xs font-medium font-sans">Community Driven</span>
+                <div className="flex items-center text-slate-700 bg-white/80 backdrop-blur-xl rounded-full px-4 py-2 border border-slate-200 hover:bg-white hover:border-slate-300 transition-all duration-300 shadow-sm">
+                  <div className="w-2 h-2 bg-secondary-500 rounded-full mr-2"></div>
+                  <span className="text-sm font-medium font-sans">Community Driven</span>
                 </div>
-                <div className="flex items-center text-slate-700 bg-white/80 backdrop-blur-xl rounded-full px-3 py-1.5 border border-slate-200 hover:bg-white hover:border-slate-300 transition-all duration-300">
-                  <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
-                  <span className="text-xs font-medium font-sans">Always Free</span>
+                <div className="flex items-center text-slate-700 bg-white/80 backdrop-blur-xl rounded-full px-4 py-2 border border-slate-200 hover:bg-white hover:border-slate-300 transition-all duration-300 shadow-sm">
+                  <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                  <span className="text-sm font-medium font-sans">Always Free</span>
                 </div>
               </motion.div>
             </motion.div>
@@ -260,7 +263,7 @@ const EventsPage = memo(() => {
                   {events.length > 0 ? `${events.length} Events Found` : 'Events'}
                 </h3>
                 <p className="text-slate-600 mt-2 text-sm font-sans">
-                  {events.length > 0 
+                  {events.length > 0
                     ? 'Discover and join amazing events in your community'
                     : 'No events available at the moment'
                   }
@@ -308,7 +311,7 @@ const EventsPage = memo(() => {
                   </div>
                   <div className="text-slate-900 text-lg font-semibold mb-2 font-sans">Oops! Something went wrong</div>
                   <p className="text-slate-600 mb-4 text-sm font-sans">{error}</p>
-                  <button 
+                  <button
                     onClick={fetchEvents}
                     className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 font-semibold bg-red-500 text-white shadow-lg hover:bg-red-600 hover:shadow-xl transition-all duration-300 transform hover:scale-105 text-sm font-sans"
                   >
@@ -334,7 +337,7 @@ const EventsPage = memo(() => {
                   </div>
                   <div className="text-slate-900 text-lg font-semibold mb-2 font-sans">No events found</div>
                   <p className="text-slate-600 mb-4 text-sm font-sans">Try adjusting your search terms or filters to find more events</p>
-                  <button 
+                  <button
                     onClick={() => {
                       setSearchTerm('');
                       setSelectedEventType('');
@@ -359,7 +362,7 @@ const EventsPage = memo(() => {
                     transition={{ duration: 0.6, delay: 0.6 }}
                     className="mt-12"
                   >
-                    <EventPagination 
+                    <EventPagination
                       currentPage={currentPage}
                       totalPages={totalPages}
                       onPageChange={handlePageChange}
@@ -371,7 +374,7 @@ const EventsPage = memo(() => {
           </motion.div>
         </div>
       </div>
-      
+
       {/* Footer */}
       <Footer />
     </>

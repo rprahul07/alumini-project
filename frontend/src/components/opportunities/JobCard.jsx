@@ -39,25 +39,25 @@ const JobCard = memo(({ job, user, isApplied, onClick, onApply, onJobDeleted }) 
     if (isAdmin) {
       return {
         text: "Apply (Admins cannot apply)",
-        className: "mt-2 px-4 py-1.5 bg-gray-300 text-gray-600 rounded-full font-semibold cursor-not-allowed",
+        className: "mt-2 px-4 py-1.5 bg-gray-300 text-gray-600 rounded-lg font-semibold cursor-not-allowed",
         disabled: true
       };
     } else if (isCreator) {
       return {
         text: "You are the creator",
-        className: "mt-2 px-4 py-1.5 bg-gray-300 text-gray-600 rounded-full font-semibold cursor-not-allowed",
+        className: "mt-2 px-4 py-1.5 bg-gray-300 text-gray-600 rounded-lg font-semibold cursor-not-allowed",
         disabled: true
       };
     } else if (isApplied) {
       return {
         text: "Applied",
-        className: "mt-2 px-4 py-1.5 bg-green-500 text-white rounded-full font-semibold cursor-not-allowed",
+        className: "mt-2 px-4 py-1.5 bg-green-500 text-white rounded-lg font-semibold cursor-not-allowed",
         disabled: true
       };
     } else {
       return {
         text: "Apply",
-        className: "mt-2 px-4 py-1.5 bg-primary text-white rounded-full font-semibold shadow hover:bg-primary-700 transition",
+        className: "mt-2 px-4 py-1.5 bg-primary text-white rounded-lg font-semibold shadow hover:bg-primary-700 transition",
         disabled: false
       };
     }
@@ -171,9 +171,9 @@ const JobCard = memo(({ job, user, isApplied, onClick, onApply, onJobDeleted }) 
 
         {/* Apply Button */}
         <button
-          className={`mt-3 px-5 py-2.5 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg text-sm font-sans ${buttonState.disabled
-              ? 'bg-slate-200 text-slate-400 cursor-not-allowed border border-slate-300'
-              : 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white hover:from-primary-600 hover:to-secondary-600 hover:shadow-xl'
+          className={`mt-3 px-5 py-2.5 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg text-sm font-sans ${buttonState.disabled
+            ? 'bg-slate-200 text-slate-400 cursor-not-allowed border border-slate-300'
+            : 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white hover:from-primary-600 hover:to-secondary-600 hover:shadow-xl'
             }`}
           onClick={e => { if (!buttonState.disabled) { e.stopPropagation(); onApply && onApply(job); } }}
           disabled={buttonState.disabled}

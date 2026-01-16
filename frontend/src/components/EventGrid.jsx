@@ -41,7 +41,7 @@ const EventGrid = ({ events, user, onEventUpdate }) => {
                 // Load 5 events at a time for faster loading
                 const startIndex = Math.floor(index / 5) * 5;
                 const endIndex = Math.min(startIndex + 5, filteredEvents.length);
-                const eventsToAdd = filteredEvents.slice(startIndex, endIndex).filter(event => 
+                const eventsToAdd = filteredEvents.slice(startIndex, endIndex).filter(event =>
                   event && event.id && !prev.some(prevEvent => prevEvent && prevEvent.id === event.id)
                 );
                 return [...prev, ...eventsToAdd];
@@ -78,22 +78,22 @@ const EventGrid = ({ events, user, onEventUpdate }) => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       {/* Render visible events */}
       {visibleEvents.filter(event => event && event.id).map((event, index) => (
-        <div 
+        <div
           key={event.id}
           className="animate-fade-in"
           style={{ animationDelay: `${index * 100}ms` }}
         >
-          <EventCard 
-            event={event} 
-            user={user} 
+          <EventCard
+            event={event}
+            user={user}
             onEventUpdate={onEventUpdate}
           />
         </div>
       ))}
-      
+
       {/* Enhanced placeholder elements for lazy loading */}
       {filteredEvents && filteredEvents.length > visibleEvents.length && filteredEvents.slice(visibleEvents.length).map((_, index) => (
         <div
