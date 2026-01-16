@@ -80,6 +80,29 @@ const AuthPage = () => {
     }
   }, [otpTimer]);
 
+  // Prefetch dashboard code for faster redirect
+  const prefetchDashboard = (role) => {
+    switch (role) {
+      case 'student':
+        import('./dashboards/StudentDashboard');
+        break;
+      case 'alumni':
+        import('./dashboards/AlumniDashboard');
+        break;
+      case 'faculty':
+        import('./dashboards/FacultyDashboard');
+        break;
+      default:
+        break;
+    }
+  };
+
+  useEffect(() => {
+    if (selectedRole) {
+      prefetchDashboard(selectedRole);
+    }
+  }, [selectedRole]);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormError('');

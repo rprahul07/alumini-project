@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-route
 import { HelmetProvider } from 'react-helmet-async';
 import AppRoutes from './routes';
 import { Toaster } from 'react-hot-toast';
-import AdminRoutes from './routes/AdminRoutes';
+const AdminRoutes = React.lazy(() => import('./routes/AdminRoutes'));
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { BookmarkProvider } from './contexts/BookmarkContext';
 import { useAnalytics } from './hooks/useAnalytics';
@@ -26,7 +26,7 @@ function RouteTracker() {
 // Separate component to use AuthContext and pass user to BookmarkProvider
 function AppContent() {
   const { user } = useAuth();
-  
+
   return (
     <BookmarkProvider user={user}>
       <Router>
@@ -35,7 +35,15 @@ function AppContent() {
         <Toaster position="top-right" />
         <Routes>
           {/* Admin routes (leave untouched) */}
-          <Route path="/admin/*" element={<AdminRoutes />} />
+          <Route path="/admin/*" element={
+            <React.Suspense fallback={
+              <div className="min-h-screen flex items-center justify-center bg-gray-50">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+              </div>
+            }>
+              <AdminRoutes />
+            </React.Suspense>
+          } />
           {/* All other user routes are handled in AppRoutes */}
           <Route path="/*" element={<AppRoutes />} />
         </Routes>

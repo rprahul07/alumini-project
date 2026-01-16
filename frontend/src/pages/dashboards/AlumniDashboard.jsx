@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar';
 import ProfileCard from '../../components/ProfileCard';
-import Sidebar from '../../components/Sidebar';
+
+import MyActivityCard from '../../components/MyActivityCard';
 import {
   UserGroupIcon,
   BriefcaseIcon,
@@ -26,13 +27,22 @@ import MentorshipRequestModal from '../../components/MentorshipRequestModal';
 import ReactDOM from 'react-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import MentorshipRequests from '../../components/mentorship/MentorshipRequests';
-import MyActivityCard from '../../components/MyActivityCard';
-import Opportunities from '../../components/opportunities/Opportunities';
-import Events from '../../components/events/Events';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useInteractionTracking, useAnalytics } from '../../hooks/useAnalytics';
+
+// Lazy load tab components
+const MentorshipRequests = React.lazy(() => import('../../components/mentorship/MentorshipRequests'));
+const Opportunities = React.lazy(() => import('../../components/opportunities/Opportunities'));
+const Events = React.lazy(() => import('../../components/events/Events'));
+
+// Loading fallback for tabs
+const TabLoading = () => (
+  <div className="flex items-center justify-center h-64">
+    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+  </div>
+);
+
 
 const TIERS = [
   {
@@ -458,9 +468,11 @@ const AlumniDashboard = () => {
                 {/* Tab Content */}
                 <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-sm border border-slate-200 min-h-[400px] overflow-hidden">
                   <div className="p-4 h-full overflow-y-auto scrollbar-hide">
-                    {mainTab === 'opportunities' && <Opportunities />}
-                    {mainTab === 'events' && <Events />}
-                    {mainTab === 'mentorships' && <MentorshipRequests />}
+                    <React.Suspense fallback={<TabLoading />}>
+                      {mainTab === 'opportunities' && <Opportunities />}
+                      {mainTab === 'events' && <Events />}
+                      {mainTab === 'mentorships' && <MentorshipRequests />}
+                    </React.Suspense>
                   </div>
                 </div>
               </motion.div>
@@ -629,14 +641,16 @@ const AlumniDashboard = () => {
                     transition={{ duration: 0.6, delay: 0.4 }}
                     className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-sm border border-slate-200 flex-1 p-5 flex flex-col overflow-hidden"
                   >
-                    <MyActivityCard
-                      features={[
-                        { key: 'opportunities', label: 'Opportunities', component: <Opportunities /> },
-                        { key: 'events', label: 'Events', component: <Events /> },
-                        { key: 'mentorships', label: 'Mentorships', component: <MentorshipRequests /> },
-                      ]}
-                      defaultTab="opportunities"
-                    />
+                    <React.Suspense fallback={<TabLoading />}>
+                      <MyActivityCard
+                        features={[
+                          { key: 'opportunities', label: 'Opportunities', component: <Opportunities /> },
+                          { key: 'events', label: 'Events', component: <Events /> },
+                          { key: 'mentorships', label: 'Mentorships', component: <MentorshipRequests /> },
+                        ]}
+                        defaultTab="opportunities"
+                      />
+                    </React.Suspense>
                   </motion.div>
                 </div>
               </div>

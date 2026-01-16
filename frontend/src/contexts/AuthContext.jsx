@@ -20,10 +20,32 @@ export function useAuth() {
 }
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  // OPTIMISTIC AUTH INITIALIZATION:
+  // Initialize user state directly from localStorage to prevent "blank screen" or "logged out flash"
+  const [user, setUser] = useState(() => {
+    try {
+      const storedUser = localStorage.getItem('user');
+      return storedUser ? JSON.parse(storedUser) : null;
+    } catch (error) {
+      console.error('Error parsing stored user:', error);
+      return null;
+    }
+  });
+
+  // Initialize selectedRole from localStorage
   const [selectedRole, setSelectedRoleState] = useState(() => localStorage.getItem(SELECTED_ROLE_KEY) || '');
+
+  // Loading is strictly for "initial check" or "login/logout actions".
+  // If we have a stored user, we are NOT loading, we are just "verifying in background".
+  const [loading, setLoading] = useState(() => {
+    const hasStoredUser = localStorage.getItem('user');
+    // If user exists in localStorage, we assume they are logged in (Optimistic), so loading is FALSE.
+    // If no user, we are Guest, so loading is FALSE.
+    // Ideally, we want the app to be responsive instantly.
+    return false;
+  });
+
+  const [error, setError] = useState(null);
 
   // Helper to set selectedRole in state and localStorage
   const setSelectedRole = (role) => {
@@ -35,86 +57,109 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        // Check if there are any indicators that user might be logged in
+        // Optimistic check: We already set initial state from localStorage.
+        // Now we just verify the token in the background.
+
         const hasStoredUser = localStorage.getItem('user');
         const hasStoredRole = localStorage.getItem(USER_ROLE_KEY) || localStorage.getItem('userRole');
-        const hasSelectedRole = localStorage.getItem(SELECTED_ROLE_KEY);
-        
-        // If no indicators of previous login, skip API call
-        if (!hasStoredUser && !hasStoredRole && !hasSelectedRole) {
-          setUser(null);
-          setLoading(false);
+
+        // If absolutely no data, ensure state is clean
+        if (!hasStoredUser && !hasStoredRole) {
+          if (user !== null) setUser(null);
           return;
         }
 
-        // Make API call only if there are indicators of previous login
+        // Validate session with backend
         const response = await authAPI.checkAuth();
+
         if (response.success) {
           const storedRole = localStorage.getItem(USER_ROLE_KEY);
           const role = storedRole || response.data.role;
-          
-          // Fetch complete profile data
+
+          // Merge backend data with existing optimistic data to prevent flicker
+          const basicUser = {
+            ...response.data,
+            role: role
+          };
+
+          // Only update state if data changed to avoid re-renders
+          setUser(prev => {
+            // Simple equality check to avoid redundant updates
+            if (JSON.stringify(prev) !== JSON.stringify(basicUser)) {
+              return basicUser;
+            }
+            return prev;
+          });
+
+          // Fetch full profile in background
           try {
             const profileResponse = await profileAPI.getProfile(role);
             if (profileResponse.success) {
               const userWithProfile = {
-                ...response.data,
+                ...basicUser,
                 ...(profileResponse.data || {}),
-                role: role
               };
+              // Update user state with full profile data
               setUser(userWithProfile);
             }
           } catch (profileError) {
-            console.error('Error fetching profile:', profileError);
-            // Still set user with basic data if profile fetch fails
-            const userWithRole = { ...response.data, role: role };
-            setUser(userWithRole);
+            console.error('Error fetching profile in background:', profileError);
           }
+
         } else {
-          setUser(null);
+          // Token invalid? Logout.
+          console.warn('Session verification failed, logging out.');
+          handleSilentLogout();
         }
       } catch (err) {
-        // Clear any stale localStorage data on auth failure
-        localStorage.removeItem(USER_ROLE_KEY);
-        localStorage.removeItem('user');
-        localStorage.removeItem('role');
-        localStorage.removeItem('userRole');
-        setUser(null);
-      } finally {
-        setLoading(false);
+        console.error('Auth check error:', err);
+        handleSilentLogout();
       }
     };
 
     checkAuth();
   }, []);
 
+  const handleSilentLogout = () => {
+    localStorage.removeItem(USER_ROLE_KEY);
+    localStorage.removeItem('user');
+    localStorage.removeItem('role');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem(SELECTED_ROLE_KEY);
+    setUser(null);
+    setLoading(false);
+  };
+
   // Login function
   const login = async (data) => {
     setLoading(true);
     setError(null);
     try {
-      // Clear old auth data before login (token handled via HTTP-only cookies)
       localStorage.removeItem('user');
       localStorage.removeItem('role');
       localStorage.removeItem('selectedRole');
       localStorage.removeItem('userRole');
-      // Use selectedRole if not provided
+
       const loginRole = data.role || selectedRole;
       const response = await authAPI.login({ ...data, role: loginRole });
+
       if (response.success) {
-        // Always extract user object from response
         const userObj = response.user || response.data?.user || response.data?.data || response.data;
         const backendRole = (userObj.role || loginRole).toLowerCase();
-        // Set new auth data (token is handled securely via HTTP-only cookies)
-        // localStorage.setItem('token', response.token); // REMOVED: Security vulnerability
+
+        // Optimistic update
         localStorage.setItem('user', JSON.stringify(userObj));
         localStorage.setItem('role', backendRole);
         localStorage.setItem('selectedRole', backendRole);
         localStorage.setItem('userRole', backendRole);
         setSelectedRole(backendRole);
-        // Fetch complete profile data after login
-        try {
-          const profileResponse = await profileAPI.getProfile(backendRole);
+
+        const userWithRole = { ...userObj, role: backendRole };
+        setUser(userWithRole);
+
+        // Background fetch - FIRE AND FORGET (don't await)
+        // This allows the UI to redirect IMMEDIATELY
+        profileAPI.getProfile(backendRole).then(profileResponse => {
           if (profileResponse.success) {
             const userWithProfile = {
               ...userObj,
@@ -122,13 +167,13 @@ export const AuthProvider = ({ children }) => {
               role: backendRole
             };
             setUser(userWithProfile);
-            return { success: true, data: userWithProfile };
           }
-        } catch (profileError) {
-          const userWithRole = { ...userObj, role: backendRole };
-          setUser(userWithRole);
-          return { success: true, data: userWithRole };
-        }
+        }).catch(err => {
+          console.error('Background profile fetch failed:', err);
+          // We still have the basic user, so no need to do anything drastic
+        });
+
+        return { success: true, data: userWithRole };
       }
       return response;
     } catch (err) {
@@ -141,34 +186,13 @@ export const AuthProvider = ({ children }) => {
 
   // Logout function
   const logout = async () => {
-    setLoading(true);
-    try {
-      const response = await authAPI.logout();
-      if (response.success) {
-        // Remove all auth-related data from localStorage (token handled via HTTP-only cookies)
-        localStorage.removeItem('user');
-        localStorage.removeItem('role');
-        localStorage.removeItem('selectedRole');
-        localStorage.removeItem('userRole');
-        setUser(null);
-        setSelectedRoleState('');
-        setError(null);
-      } else {
-        throw new Error('Logout failed');
-      }
-    } catch (err) {
-      // Ensure cleanup on error (token handled via HTTP-only cookies)
-      localStorage.removeItem('user');
-      localStorage.removeItem('role');
-      localStorage.removeItem('selectedRole');
-      localStorage.removeItem('userRole');
-      setUser(null);
-      setSelectedRoleState('');
-      setError(getErrorMessage(err).message);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
+    // OPTIMISTIC LOGOUT: Clear state immediately
+    handleSilentLogout();
+
+    // Send request to backend to clear cookie, but don't wait for UI update
+    authAPI.logout().catch(err => {
+      console.error('Logout API error:', err);
+    });
   };
 
   // Register function
@@ -194,20 +218,12 @@ export const AuthProvider = ({ children }) => {
 
   // Helper function to check if user is admin
   const isAdmin = () => {
-    // Check multiple possible role formats (case insensitive)
     const userRole = user?.role?.toLowerCase();
     const computedRole = role?.toLowerCase();
-    
-    return userRole === 'admin' || 
-           computedRole === 'admin' || 
-           userRole === 'ADMIN' || 
-           computedRole === 'ADMIN';
+    return userRole === 'admin' || computedRole === 'admin';
   };
 
-  // Helper function to check if user can access gallery management
-  const canManageGallery = () => {
-    return isAdmin(); // Only admins can manage gallery
-  };
+  const canManageGallery = () => isAdmin();
 
   return (
     <AuthContext.Provider

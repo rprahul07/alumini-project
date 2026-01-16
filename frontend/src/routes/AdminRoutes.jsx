@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
-import AdminLogin from '../layouts/AdminLogin';
-import AdminDashboard from '../pages/dashboards/AdminDashboard';
-import EditUserPage from '../components/dashboard/EditUserPage';
-import EditEvent from '../components/EditEvent';
+// Lazy load admin pages for better performance
+const AdminLogin = React.lazy(() => import('../layouts/AdminLogin'));
+const AdminDashboard = React.lazy(() => import('../pages/dashboards/AdminDashboard'));
+const EditUserPage = React.lazy(() => import('../components/dashboard/EditUserPage'));
+const EditEvent = React.lazy(() => import('../components/EditEvent'));
 import { useAuth } from '../contexts/AuthContext'; // ✅ Add AuthContext
 
 
@@ -29,15 +30,21 @@ const AdminProtectedRoute = ({ children }) => {
 const AdminRoutes = () => {
   return (
     <Routes>
-      <Route 
-        path="/login" 
-        element={<AdminLogin />}
+      <Route
+        path="/login"
+        element={
+          <React.Suspense fallback={<div className="p-4 text-center">Loading...</div>}>
+            <AdminLogin />
+          </React.Suspense>
+        }
       />
       <Route
         path="/dashboard/*"
         element={
           <AdminProtectedRoute>
-            <AdminDashboard />
+            <React.Suspense fallback={<div className="p-4 text-center">Loading...</div>}>
+              <AdminDashboard />
+            </React.Suspense>
           </AdminProtectedRoute>
         }
       />
@@ -45,7 +52,9 @@ const AdminRoutes = () => {
         path="/edit-user/:type/:id"
         element={
           <AdminProtectedRoute>
-            <EditUserPage />
+            <React.Suspense fallback={<div className="p-4 text-center">Loading...</div>}>
+              <EditUserPage />
+            </React.Suspense>
           </AdminProtectedRoute>
         }
       />
@@ -57,7 +66,9 @@ const AdminRoutes = () => {
         path="/events/edit/:id"
         element={
           <AdminProtectedRoute>
-            <EditEvent />
+            <React.Suspense fallback={<div className="p-4 text-center">Loading...</div>}>
+              <EditEvent />
+            </React.Suspense>
           </AdminProtectedRoute>
         }
       />

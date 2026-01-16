@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar';
-import ProfileCard from '../../components/ProfileCard';
-import { AcademicCapIcon, CalendarIcon, BriefcaseIcon, UserGroupIcon, UserIcon } from '@heroicons/react/24/outline';
+import {
+  AcademicCapIcon,
+  CalendarIcon,
+  BriefcaseIcon,
+  UserGroupIcon,
+  UserIcon
+} from '@heroicons/react/24/outline';
 import { useAuth } from '../../contexts/AuthContext';
 import StudentMentorshipRequests from '../../components/mentorship/StudentMentorshipRequests';
 import AppliedJobs from '../../components/opportunities/AppliedJobs';
@@ -11,14 +16,16 @@ import axios from '../../config/axios';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useInteractionTracking, useAnalytics } from '../../hooks/useAnalytics';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const StudentDashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
   // Analytics tracking
-  const { trackClick, trackHover, trackFocus } = useInteractionTracking('student_dashboard');
-  const { trackEngagement, trackConversion } = useAnalytics();
+  const { trackClick, trackHover } = useInteractionTracking('student_dashboard');
+  const { trackEngagement } = useAnalytics();
 
   // Mobile tab state
   const [mainTab, setMainTab] = useState('mentorship');
@@ -43,25 +50,7 @@ const StudentDashboard = () => {
     });
   };
 
-  const handleQuickActionClick = (actionName) => {
-    trackClick(null, `quick_action_${actionName.toLowerCase().replace(' ', '_')}`);
-    trackEngagement('dashboard_quick_action', {
-      action_name: actionName,
-      user_role: 'student',
-      dashboard_type: 'student_dashboard'
-    });
-  };
-
-  const handleMentorshipInteraction = (interactionType, mentorId) => {
-    trackEngagement('mentorship_interaction', {
-      interaction_type: interactionType,
-      mentor_id: mentorId,
-      user_role: 'student',
-      dashboard_type: 'student_dashboard'
-    });
-  };
-
-  // ✅ State for dynamic stats
+  // State for dynamic stats
   const [stats, setStats] = useState([
     {
       title: 'Events Attended',
@@ -94,17 +83,15 @@ const StudentDashboard = () => {
   ]);
   const [statsLoading, setStatsLoading] = useState(true);
 
-  // ✅ Fetch profile data with stats when component mounts
+  // Fetch profile data with stats when component mounts
   useEffect(() => {
     const fetchProfileWithStats = async () => {
       setStatsLoading(true);
       try {
-        // Use existing profile API that now includes stats
         const response = await axios.get('/api/student/profile/get');
         if (response.data.success && response.data.data.dashboardStats) {
           const { dashboardStats } = response.data.data;
 
-          // Update stats with real data
           setStats(prevStats => [
             { ...prevStats[0], value: dashboardStats.eventsRegistered },
             { ...prevStats[1], value: dashboardStats.jobsApplied },
@@ -113,6 +100,7 @@ const StudentDashboard = () => {
           ]);
         }
       } catch (error) {
+        console.error('Error fetching student stats:', error);
       } finally {
         setStatsLoading(false);
       }
@@ -132,6 +120,7 @@ const StudentDashboard = () => {
           <div className="absolute -top-[20%] -right-[10%] w-[70%] h-[70%] bg-blue-100/20 rounded-full blur-3xl animate-pulse"></div>
           <div className="absolute top-[20%] -left-[10%] w-[50%] h-[50%] bg-slate-200/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
         </div>
+
         {/* Mobile-First Layout */}
         <div className="relative z-10">
           {/* Mobile Layout */}
@@ -150,13 +139,13 @@ const StudentDashboard = () => {
                 <div className="relative z-10">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h1 className="text-lg font-bold font-sans text-slate-900 mb-1">
-                        Welcome back, <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-secondary-600">{user?.fullName || 'Student'}</span>
+                      <h1 className="text-base font-bold text-slate-900 mb-1 font-sans">
+                        Welcome back, <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-secondary-400">{user?.fullName || 'Student'}</span>
                       </h1>
-                      <p className="text-xs text-slate-600 font-sans">Manage your studies and connections</p>
+                      <p className="text-xs text-slate-900/70 font-sans">Manage your studies and connections</p>
                     </div>
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary-100 to-secondary-100 flex items-center justify-center border-2 border-slate-200">
-                      <UserIcon className="w-6 h-6 text-primary-500" />
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary-500/20 to-secondary-500/20 flex items-center justify-center border-2 border-slate-300">
+                      <UserIcon className="w-6 h-6 text-primary-400" />
                     </div>
                   </div>
                 </div>
@@ -167,17 +156,17 @@ const StudentDashboard = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1 }}
-                className="bg-white/80 backdrop-blur-xl rounded-xl shadow-sm p-4 border border-slate-200"
+                className="bg-white/80 backdrop-blur-xl rounded-xl shadow-sm p-3 border border-slate-200"
               >
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-xs font-bold font-sans text-slate-700 tracking-wider uppercase">Quick Stats</h3>
+                  <h3 className="text-xs font-bold text-slate-900/90 tracking-wider uppercase font-sans">Quick Stats</h3>
                   <div className="w-2 h-2 rounded-full bg-slate-400 animate-pulse"></div>
                 </div>
 
                 {statsLoading ? (
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-2 gap-2">
                     {Array.from({ length: 4 }).map((_, i) => (
-                      <div key={i} className="bg-slate-100 rounded-xl p-3 animate-pulse">
+                      <div key={i} className="bg-slate-100 rounded-lg p-2 animate-pulse">
                         <div className="w-6 h-6 bg-slate-200 rounded-lg mb-2"></div>
                         <div className="h-4 bg-slate-200 rounded mb-1"></div>
                         <div className="h-3 bg-slate-200 rounded w-3/4"></div>
@@ -185,7 +174,7 @@ const StudentDashboard = () => {
                     ))}
                   </div>
                 ) : (
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-2 gap-2">
                     {stats.map((stat, i) => (
                       <motion.div
                         key={stat.title}
@@ -194,13 +183,13 @@ const StudentDashboard = () => {
                         transition={{ duration: 0.3, delay: i * 0.1 }}
                         onClick={() => handleStatCardClick(stat.title)}
                         onMouseEnter={() => trackHover(null, `stat_card_${stat.title.toLowerCase().replace(' ', '_')}`)}
-                        className="bg-white backdrop-blur-sm rounded-xl p-3 border border-slate-200 hover:border-slate-300 hover:shadow-md transition-all duration-200 group cursor-pointer shadow-sm"
+                        className="bg-white backdrop-blur-sm rounded-lg p-2 border border-slate-200 hover:border-slate-300 hover:shadow-md transition-all duration-200 group cursor-pointer shadow-sm"
                       >
                         <div className={`w-6 h-6 flex items-center justify-center rounded-lg ${stat.iconBg} mb-2 group-hover:scale-105 transition-transform duration-150`}>
-                          <stat.Icon className={`w-3 h-3 ${stat.iconColor}`} />
+                          <stat.Icon className={`w-2.5 h-2.5 ${stat.iconColor}`} />
                         </div>
-                        <div className="text-base font-bold text-slate-900 font-sans mb-1 tracking-tight">{stat.value}</div>
-                        <div className="text-xs font-medium text-slate-600 font-sans leading-tight">{stat.title}</div>
+                        <div className="text-base font-bold text-slate-900 mb-1 tracking-tight font-sans">{stat.value}</div>
+                        <div className="text-xs font-medium text-slate-600 leading-tight">{stat.title}</div>
                       </motion.div>
                     ))}
                   </div>
@@ -208,11 +197,6 @@ const StudentDashboard = () => {
               </motion.div>
 
               {/* Mobile Profile Card - Beautiful Design */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                {/* Mobile Profile Card - Beautiful Design */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -242,11 +226,11 @@ const StudentDashboard = () => {
                         </div>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h2 className="text-base font-bold text-slate-900 font-sans truncate">{user?.fullName || 'User'}</h2>
+                        <h2 className="text-base font-bold text-slate-900 truncate font-sans">{user?.fullName || 'User'}</h2>
                         <div className="flex items-center space-x-2">
                           <span className={`inline-block px-2 py-1 rounded-full text-xs font-semibold border ${user?.role?.toLowerCase() === 'student'
-                            ? 'bg-white text-blue-700 border-blue-200'
-                            : 'bg-white text-gray-700 border-gray-200'
+                            ? 'bg-blue-50 text-blue-600 border-blue-200'
+                            : 'bg-gray-500/20 text-gray-300 border-gray-500/30'
                             }`}>
                             {user?.role || 'User'}
                           </span>
@@ -271,17 +255,17 @@ const StudentDashboard = () => {
                   </div>
 
                   {/* Profile Details */}
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-2 gap-2">
                     {user?.student?.currentSemester && (
                       <div className="bg-slate-100 rounded-lg p-3">
                         <div className="text-xs text-slate-900/60 mb-1">Current Semester</div>
-                        <div className="text-sm font-medium text-slate-900 truncate">Semester {user.student.currentSemester}</div>
+                        <div className="text-xs font-medium text-slate-900 truncate font-sans">Semester {user.student.currentSemester}</div>
                       </div>
                     )}
                     {user?.department && (
                       <div className="bg-slate-100 rounded-lg p-3">
                         <div className="text-xs text-slate-900/60 mb-1">Department</div>
-                        <div className="text-sm font-medium text-slate-900 truncate">{user.department}</div>
+                        <div className="text-xs font-medium text-slate-900 truncate font-sans">{user.department}</div>
                       </div>
                     )}
                   </div>
@@ -293,14 +277,14 @@ const StudentDashboard = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.3 }}
-                className="space-y-4"
+                className="space-y-3"
               >
                 {/* Tab Navigation */}
                 <div className="bg-slate-100 backdrop-blur-xl rounded-2xl p-2 border border-slate-200">
                   <div className="flex gap-1">
                     {[
                       { key: 'mentorship', label: 'Mentorship', icon: AcademicCapIcon },
-                      { key: 'opportunities', label: 'Opportunities', icon: BriefcaseIcon },
+                      { key: 'opportunities', label: 'Jobs', icon: BriefcaseIcon },
                       { key: 'events', label: 'Events', icon: CalendarIcon },
                     ].map((feature) => (
                       <motion.button
@@ -321,7 +305,6 @@ const StudentDashboard = () => {
                 </div>
 
                 {/* Tab Content */}
-                {/* Tab Content */}
                 <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-sm border border-slate-200 min-h-[400px] overflow-hidden">
                   <div className="p-4 h-full overflow-y-auto scrollbar-hide">
                     {mainTab === 'mentorship' && <StudentMentorshipRequests />}
@@ -339,16 +322,18 @@ const StudentDashboard = () => {
               <div className="flex flex-col lg:flex-row gap-6 min-h-[600px] items-start">
                 {/* Sidebar: Profile + Stats */}
                 <div className="flex flex-col w-full lg:w-80 min-w-0">
+
+
+
                   {/* Enhanced Profile Card */}
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6 }}
-                    className="bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-xl rounded-2xl shadow-2xl p-6 border border-slate-200 relative overflow-hidden mb-4"
+                    className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-sm p-6 border border-slate-200 relative overflow-hidden mb-4"
                   >
                     {/* Background Pattern */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-accent-500/10 to-primary-500/10 rounded-2xl"></div>
-                    <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-accent-400/20 to-transparent rounded-full -translate-y-12 translate-x-12"></div>
+                    <div className="absolute inset-0 bg-gradient-to-br from-slate-50 to-white rounded-2xl"></div>
 
                     <div className="relative z-10">
                       <div className="flex items-center justify-between mb-4">
@@ -370,11 +355,11 @@ const StudentDashboard = () => {
                             </div>
                           </div>
                           <div className="flex-1 min-w-0">
-                            <h2 className="text-base font-bold text-slate-900 font-sans truncate">{user?.fullName || 'User'}</h2>
+                            <h2 className="text-base font-bold text-slate-900 truncate font-sans">{user?.fullName || 'User'}</h2>
                             <div className="flex items-center space-x-2">
                               <span className={`inline-block px-2 py-1 rounded-full text-xs font-semibold border ${user?.role?.toLowerCase() === 'student'
-                                ? 'bg-white text-blue-700 border-blue-200'
-                                : 'bg-white text-gray-700 border-gray-200'
+                                ? 'bg-blue-50 text-blue-600 border-blue-200'
+                                : 'bg-gray-500/20 text-gray-300 border-gray-500/30'
                                 }`}>
                                 {user?.role || 'User'}
                               </span>
@@ -399,17 +384,17 @@ const StudentDashboard = () => {
                       </div>
 
                       {/* Profile Details */}
-                      <div className="grid grid-cols-2 gap-3">
+                      <div className="grid grid-cols-2 gap-2">
                         {user?.student?.currentSemester && (
                           <div className="bg-slate-100 rounded-lg p-3">
                             <div className="text-xs text-slate-900/60 mb-1">Current Semester</div>
-                            <div className="text-sm font-medium text-slate-900 truncate">Semester {user.student.currentSemester}</div>
+                            <div className="text-xs font-medium text-slate-900 truncate font-sans">Semester {user.student.currentSemester}</div>
                           </div>
                         )}
                         {user?.department && (
                           <div className="bg-slate-100 rounded-lg p-3">
                             <div className="text-xs text-slate-900/60 mb-1">Department</div>
-                            <div className="text-sm font-medium text-slate-900 truncate">{user.department}</div>
+                            <div className="text-xs font-medium text-slate-900 truncate font-sans">{user.department}</div>
                           </div>
                         )}
                       </div>
@@ -421,17 +406,17 @@ const StudentDashboard = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6, delay: 0.1 }}
-                    className="bg-white/80 backdrop-blur-xl rounded-xl shadow-2xl p-4 border border-slate-200"
+                    className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-sm p-5 border border-slate-200"
                   >
                     <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-xs font-bold font-sans text-slate-900/90 tracking-wider uppercase">Quick Stats</h3>
-                      <div className="w-2 h-2 rounded-full bg-gradient-to-r from-primary-400 to-secondary-400 animate-pulse"></div>
+                      <h3 className="text-xs font-bold text-slate-900/90 tracking-wider uppercase font-sans">Quick Stats</h3>
+                      <div className="w-2 h-2 rounded-full bg-slate-400 animate-pulse"></div>
                     </div>
 
                     {statsLoading ? (
-                      <div className="grid grid-cols-2 gap-3">
+                      <div className="grid grid-cols-2 gap-2">
                         {Array.from({ length: 4 }).map((_, i) => (
-                          <div key={i} className="bg-slate-100 rounded-xl p-3 animate-pulse">
+                          <div key={i} className="bg-slate-100 rounded-lg p-2 animate-pulse">
                             <div className="w-6 h-6 bg-slate-200 rounded-lg mb-2"></div>
                             <div className="h-4 bg-slate-200 rounded mb-1"></div>
                             <div className="h-3 bg-slate-200 rounded w-3/4"></div>
@@ -439,7 +424,7 @@ const StudentDashboard = () => {
                         ))}
                       </div>
                     ) : (
-                      <div className="grid grid-cols-2 gap-3">
+                      <div className="grid grid-cols-2 gap-2">
                         {stats.map((stat, i) => (
                           <motion.div
                             key={stat.title}
@@ -448,13 +433,13 @@ const StudentDashboard = () => {
                             transition={{ duration: 0.3, delay: i * 0.1 }}
                             onClick={() => handleStatCardClick(stat.title)}
                             onMouseEnter={() => trackHover(null, `stat_card_${stat.title.toLowerCase().replace(' ', '_')}`)}
-                            className="bg-white backdrop-blur-sm rounded-xl p-3 border border-slate-200 hover:border-slate-300 hover:shadow-md transition-all duration-200 group cursor-pointer shadow-sm"
+                            className="bg-white backdrop-blur-sm rounded-lg p-3 border border-slate-200 hover:border-slate-300 hover:shadow-md transition-all duration-200 group cursor-pointer shadow-sm"
                           >
-                            <div className={`w-6 h-6 flex items-center justify-center rounded-lg ${stat.iconBg} mb-2 group-hover:scale-105 transition-transform duration-150`}>
-                              <stat.Icon className={`w-3 h-3 ${stat.iconColor}`} />
+                            <div className={`w-8 h-8 flex items-center justify-center rounded-lg ${stat.iconBg} mb-3 group-hover:scale-110 transition-transform duration-150`}>
+                              <stat.Icon className={`w-4 h-4 ${stat.iconColor}`} />
                             </div>
-                            <div className="text-base font-bold text-slate-900 font-sans mb-1 tracking-tight">{stat.value}</div>
-                            <div className="text-xs font-medium text-slate-600 font-sans leading-tight">{stat.title}</div>
+                            <div className="text-2xl font-bold text-slate-900 mb-1 tracking-tight font-sans">{stat.value}</div>
+                            <div className="text-xs font-medium text-slate-600 leading-tight">{stat.title}</div>
                           </motion.div>
                         ))}
                       </div>
@@ -469,19 +454,17 @@ const StudentDashboard = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6, delay: 0.2 }}
-                    className="bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-xl rounded-2xl shadow-2xl p-6 border border-slate-200 relative overflow-hidden"
+                    className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-sm p-6 border border-slate-200 relative overflow-hidden"
                   >
                     {/* Background Pattern */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary-500/10 to-secondary-500/10 rounded-2xl"></div>
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primary-400/20 to-transparent rounded-full -translate-y-16 translate-x-16"></div>
-                    <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-secondary-400/20 to-transparent rounded-full translate-y-12 -translate-x-12"></div>
+                    <div className="absolute inset-0 bg-gradient-to-br from-slate-50 to-white rounded-2xl"></div>
 
                     <div className="relative z-10 flex items-center justify-between">
                       <div className="flex-1 min-w-0">
-                        <h1 className="text-2xl font-bold text-slate-900 mb-2">
+                        <h1 className="text-lg font-bold text-slate-900 mb-2 font-sans">
                           Welcome back, <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-secondary-400">{user?.fullName || 'Student'}</span>
                         </h1>
-                        <p className="text-sm text-slate-900/70">Manage your studies and connections</p>
+
                       </div>
                       <div className="hidden md:flex flex-shrink-0">
                         <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary-500/20 to-secondary-500/20 flex items-center justify-center border-2 border-slate-300 shadow-lg">
@@ -496,12 +479,12 @@ const StudentDashboard = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6, delay: 0.4 }}
-                    className="bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-200 flex-1 p-5 flex flex-col overflow-hidden"
+                    className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-sm border border-slate-200 flex-1 p-5 flex flex-col overflow-hidden"
                   >
                     <MyActivityCard
                       features={[
                         { key: 'mentorship', label: 'Mentorship', component: <StudentMentorshipRequests /> },
-                        { key: 'opportunities', label: 'Opportunities', component: <AppliedJobs /> },
+                        { key: 'opportunities', label: 'Jobs', component: <AppliedJobs /> },
                         { key: 'events', label: 'Events', component: <Events /> },
                       ]}
                       defaultTab="mentorship"
@@ -513,8 +496,9 @@ const StudentDashboard = () => {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </>
   );
 };
 
-export default StudentDashboard; 
+export default StudentDashboard;

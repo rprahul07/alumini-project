@@ -55,7 +55,8 @@ axios.interceptors.response.use(
     }
 
     if (error.response?.status === 401) {
-      throw new Error("Invalid email or password.");
+      const isLoginRequest = error.config.url.includes('/login');
+      throw new Error(isLoginRequest ? "Invalid email or password." : "Session expired. Please login again.");
     }
 
     if (error.response?.status === 409) {
@@ -67,8 +68,8 @@ axios.interceptors.response.use(
 
     throw new Error(
       error.response?.data?.message ||
-        error.message ||
-        "An unexpected error occurred. Please try again."
+      error.message ||
+      "An unexpected error occurred. Please try again."
     );
   }
 );
@@ -126,10 +127,10 @@ const authAPI = {
     if (!email || !otp || !newPassword) {
       throw new Error("Email, OTP, and new password are required");
     }
-    const response = await axios.post("/api/auth/verify-otp", { 
-      email, 
-      otp, 
-      newPassword 
+    const response = await axios.post("/api/auth/verify-otp", {
+      email,
+      otp,
+      newPassword
     });
     return handleApiResponse(response);
   },
@@ -162,10 +163,10 @@ const profileAPI = {
         profileData instanceof FormData
           ? {}
           : {
-              headers: {
-                "Content-Type": "application/json",
-              },
-            };
+            headers: {
+              "Content-Type": "application/json",
+            },
+          };
 
       const response = await axios.put("/api/profile", profileData, config);
       return handleApiResponse(response);

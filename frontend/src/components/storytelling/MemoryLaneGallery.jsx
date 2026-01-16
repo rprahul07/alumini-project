@@ -124,19 +124,30 @@ const MemoryLaneGallery = () => {
     fetchGalleryImages();
   }, []);
 
+  // Reset active slide if out of bounds when images change
+  useEffect(() => {
+    if (galleryImages.length > 0 && activeAlumniSlide >= galleryImages.length) {
+      setActiveAlumniSlide(0);
+    }
+  }, [galleryImages.length]);
+
   // Auto-advance slides
   useEffect(() => {
     const collegeInterval = setInterval(() => {
       setActiveCollegeSlide((prev) => (prev + 1) % collegeMemories.length);
     }, 6000);
 
-    const alumniInterval = setInterval(() => {
-      setActiveAlumniSlide((prev) => (prev + 1) % galleryImages.length);
-    }, 7000);
+    // Only run gallery interval if we have images
+    let alumniInterval;
+    if (galleryImages.length > 0) {
+      alumniInterval = setInterval(() => {
+        setActiveAlumniSlide((prev) => (prev + 1) % galleryImages.length);
+      }, 7000);
+    }
 
     return () => {
       clearInterval(collegeInterval);
-      clearInterval(alumniInterval);
+      if (alumniInterval) clearInterval(alumniInterval);
     };
   }, [galleryImages.length]);
 
@@ -480,8 +491,8 @@ const MemoryLaneGallery = () => {
                         }}
                       >
                         <OptimizedImage
-                          src={galleryImages[activeAlumniSlide].image}
-                          alt={`${galleryImages[activeAlumniSlide].title} - ${galleryImages[activeAlumniSlide].year}`}
+                          src={galleryImages[activeAlumniSlide]?.image}
+                          alt={`${galleryImages[activeAlumniSlide]?.title || ''} - ${galleryImages[activeAlumniSlide]?.year || ''}`}
                           className="w-full h-full object-cover"
                           fallbackSrc=""
                           loading="eager"
@@ -507,7 +518,7 @@ const MemoryLaneGallery = () => {
                             animate={{ y: 0, opacity: 1 }}
                             transition={{ duration: 0.5, delay: 0.6 }}
                           >
-                            {galleryImages[activeAlumniSlide].title}
+                            {galleryImages[activeAlumniSlide]?.title}
                           </motion.h4>
                           <motion.p
                             className="text-secondary-100 mb-2 text-sm font-sans"
@@ -515,7 +526,7 @@ const MemoryLaneGallery = () => {
                             animate={{ y: 0, opacity: 1 }}
                             transition={{ duration: 0.5, delay: 0.8 }}
                           >
-                            {galleryImages[activeAlumniSlide].description}
+                            {galleryImages[activeAlumniSlide]?.description}
                           </motion.p>
                           <motion.p
                             className="text-xs text-secondary-200 mb-3 font-sans"
@@ -523,7 +534,7 @@ const MemoryLaneGallery = () => {
                             animate={{ y: 0, opacity: 1 }}
                             transition={{ duration: 0.5, delay: 1.0 }}
                           >
-                            by {galleryImages[activeAlumniSlide].founder} (Class of {galleryImages[activeAlumniSlide].class})
+                            by {galleryImages[activeAlumniSlide]?.founder} (Class of {galleryImages[activeAlumniSlide]?.class})
                           </motion.p>
                         </motion.div>
                       </motion.div>

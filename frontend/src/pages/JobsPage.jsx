@@ -284,13 +284,8 @@ const JobsPage = memo(() => {
           >
             {loading ? (
               <div className="flex flex-col items-center justify-center py-12">
-                <div className="w-16 h-16 bg-gradient-to-r from-primary-100 to-secondary-100 rounded-full flex items-center justify-center mb-4">
-                  <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary-600"></div>
-                </div>
-                <h3 className="text-lg font-bold text-slate-900 mb-2 font-sans">Loading Opportunities</h3>
-                <p className="text-slate-600 text-center max-w-md text-sm font-sans">
-                  Discovering amazing career opportunities for you...
-                </p>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mb-3"></div>
+                <p className="text-slate-600 text-sm font-medium font-sans">Loading opportunities...</p>
               </div>
             ) : error ? (
               <div className="flex flex-col items-center py-12">

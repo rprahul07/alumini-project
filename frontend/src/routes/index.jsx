@@ -1,21 +1,22 @@
 import React, { lazy, Suspense } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import HomePage from '../pages/HomePage';
-import AuthPage from '../pages/AuthPage';
-import RoleSelection from '../pages/RoleSelection';
-import ProfileCard from '../components/ProfileCard';
-import ProfileEditor from '../components/ProfileEditor';
-import EventsPage from '../pages/EventsPage';
-import UnauthorizedPage from '../pages/UnauthorizedPage';
-import NotFoundPage from '../pages/NotFoundPage';
-import AboutPage from '../pages/AboutPage';
-import AlumniPage from '../pages/AlumniPage';
-import ContactPage from '../pages/ContactPage';
-import StudentsPage from '../pages/StudentsPage';
-import JobsPage from '../pages/JobsPage';
-import FaqPage from '../pages/FaqPage';
-import TestimonialsPage from '../pages/TestimonialsPage';
+// Lazy load pages
+const HomePage = lazy(() => import('../pages/HomePage'));
+const AuthPage = lazy(() => import('../pages/AuthPage'));
+const RoleSelection = lazy(() => import('../pages/RoleSelection'));
+const ProfileCard = lazy(() => import('../components/ProfileCard'));
+const ProfileEditor = lazy(() => import('../components/ProfileEditor'));
+const EventsPage = lazy(() => import('../pages/EventsPage'));
+const UnauthorizedPage = lazy(() => import('../pages/UnauthorizedPage'));
+const NotFoundPage = lazy(() => import('../pages/NotFoundPage'));
+const AboutPage = lazy(() => import('../pages/AboutPage'));
+const AlumniPage = lazy(() => import('../pages/AlumniPage'));
+const ContactPage = lazy(() => import('../pages/ContactPage'));
+const StudentsPage = lazy(() => import('../pages/StudentsPage'));
+const JobsPage = lazy(() => import('../pages/JobsPage'));
+const FaqPage = lazy(() => import('../pages/FaqPage'));
+const TestimonialsPage = lazy(() => import('../pages/TestimonialsPage'));
 
 // Lazy load dashboard components for better performance
 const StudentDashboard = lazy(() => import('../pages/dashboards/StudentDashboard'));
@@ -45,99 +46,101 @@ function ProtectedRoute({ children, allowedRoles }) {
 
 const AppRoutes = () => {
   return (
-    <Routes>
-      {/* Auth routes without navbar */}
-      <Route path="/role-selection" element={<RoleSelection />} />
-      <Route path="/auth" element={<AuthPage />} />
-      <Route path="/unauthorized" element={<UnauthorizedPage />} />
-      
-      {/* HomePage with special styling */}
-      <Route path="/" element={<HomePage />} />
-      
-      {/* Routes with individual Navbar components */}
-      <Route path="events" element={<EventsPage />} />
-      <Route path="about" element={<AboutPage />} />
-      <Route path="testimonials" element={<TestimonialsPage />} />
-      <Route path="contact" element={<ContactPage />} />
-      <Route path="faq" element={<FaqPage />} />
-      <Route 
-        path="alumni" 
-        element={
-          <ProtectedRoute>
-            <AlumniPage />
-          </ProtectedRoute>
-        } 
-      />
-      <Route
-        path="students"
-        element={
-          <ProtectedRoute allowedRoles={['faculty', 'alumni', 'admin']}>
-            <StudentsPage />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="jobs"
-        element={
-          <ProtectedRoute>
-            <JobsPage />
-          </ProtectedRoute>
-        }
-      />
+    <Suspense fallback={<DashboardLoading />}>
+      <Routes>
+        {/* Auth routes without navbar */}
+        <Route path="/role-selection" element={<RoleSelection />} />
+        <Route path="/auth" element={<AuthPage />} />
+        <Route path="/unauthorized" element={<UnauthorizedPage />} />
 
-      {/* Student Dashboard */}
-      <Route
-        path="/student/dashboard"
-        element={
-          <ProtectedRoute allowedRoles={['student']}>
-            <Suspense fallback={<DashboardLoading />}>
-              <StudentDashboard />
-            </Suspense>
-          </ProtectedRoute>
-        }
-      />
-      {/* Faculty Dashboard */}
-      <Route
-        path="/faculty/dashboard"
-        element={
-          <ProtectedRoute allowedRoles={['faculty']}>
-            <Suspense fallback={<DashboardLoading />}>
-              <FacultyDashboard />
-            </Suspense>
-          </ProtectedRoute>
-        }
-      />
-      {/* Alumni Dashboard */}
-      <Route
-        path="/alumni/dashboard"
-        element={
-          <ProtectedRoute allowedRoles={['alumni']}>
-            <Suspense fallback={<DashboardLoading />}>
-              <AlumniDashboard />
-            </Suspense>
-          </ProtectedRoute>
-        }
-      />
-      {/* Profile routes (all logged-in users) */}
-      <Route
-        path="/profile"
-        element={
-          <ProtectedRoute>
-            <ProfileCard />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/profile/edit"
-        element={
-          <ProtectedRoute>
-            <ProfileEditor />
-          </ProtectedRoute>
-        }
-      />
-      {/* 404 Route */}
-      <Route path="*" element={<NotFoundPage />} />
-    </Routes>
+        {/* HomePage with special styling */}
+        <Route path="/" element={<HomePage />} />
+
+        {/* Routes with individual Navbar components */}
+        <Route path="events" element={<EventsPage />} />
+        <Route path="about" element={<AboutPage />} />
+        <Route path="testimonials" element={<TestimonialsPage />} />
+        <Route path="contact" element={<ContactPage />} />
+        <Route path="faq" element={<FaqPage />} />
+        <Route
+          path="alumni"
+          element={
+            <ProtectedRoute>
+              <AlumniPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="students"
+          element={
+            <ProtectedRoute allowedRoles={['faculty', 'alumni', 'admin']}>
+              <StudentsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="jobs"
+          element={
+            <ProtectedRoute>
+              <JobsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Student Dashboard */}
+        <Route
+          path="/student/dashboard"
+          element={
+            <ProtectedRoute allowedRoles={['student']}>
+              <Suspense fallback={<DashboardLoading />}>
+                <StudentDashboard />
+              </Suspense>
+            </ProtectedRoute>
+          }
+        />
+        {/* Faculty Dashboard */}
+        <Route
+          path="/faculty/dashboard"
+          element={
+            <ProtectedRoute allowedRoles={['faculty']}>
+              <Suspense fallback={<DashboardLoading />}>
+                <FacultyDashboard />
+              </Suspense>
+            </ProtectedRoute>
+          }
+        />
+        {/* Alumni Dashboard */}
+        <Route
+          path="/alumni/dashboard"
+          element={
+            <ProtectedRoute allowedRoles={['alumni']}>
+              <Suspense fallback={<DashboardLoading />}>
+                <AlumniDashboard />
+              </Suspense>
+            </ProtectedRoute>
+          }
+        />
+        {/* Profile routes (all logged-in users) */}
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <ProfileCard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile/edit"
+          element={
+            <ProtectedRoute>
+              <ProfileEditor />
+            </ProtectedRoute>
+          }
+        />
+        {/* 404 Route */}
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
+    </Suspense>
   );
 };
 

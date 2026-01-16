@@ -158,16 +158,13 @@
     </style>
   </head>
   <body>
-    <div id="root" class="stable-layout no-animation"></div>
+    <div id="root" class="stable-layout">
+      <!-- Static Loading Spinner for immediate feedback -->
+      <div class="loading-spinner">
+        <div class="spinner"></div>
+      </div>
+    </div>
     <div id="modal-root"></div>
     <script type="module" src="/src/main.jsx"></script>
-    <script>
-      // Re-enable animations after initial load to prevent CLS
-      window.addEventListener('load', () => {
-        setTimeout(() => {
-          document.getElementById('root').classList.remove('no-animation');
-        }, 1000);
-      });
-    </script>
   </body>
 </html>
