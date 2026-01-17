@@ -374,7 +374,7 @@ export const searchAlumniProfilesController = async (req, res) => {
       const supportRequest = alumni.user.supportRequestsReceived[0] || null;
 
       return {
-        alumniId: alumni.id,        
+        alumniId: alumni.id,
         userId: alumni.user.id,
         name: alumni.user.fullName,
         photoUrl: alumni.user.photoUrl,
@@ -467,7 +467,7 @@ export const searchAlumniForSpotlight = async (req, res) => {
 
     // Build where clause for search
     let whereClause = {};
-    
+
     if (search && search.trim()) {
       whereClause.OR = [
         {
@@ -681,7 +681,12 @@ export const login = async (req, res) => {
 // Logout function to clear the JWT cookie
 export const logout = (req, res) => {
   try {
-    res.cookie("jwt", "", { maxAge: 0, httpOnly: true });
+    res.cookie("jwt", "", {
+      maxAge: 0,
+      httpOnly: true,
+      secure: process.env.NODE_ENV !== "development",
+      sameSite: process.env.NODE_ENV === "development" ? "strict" : "none"
+    });
     res.status(200).json(createResponse(true, "Logged out successfully"));
   } catch (error) {
     handleError(error, req, res);
@@ -894,7 +899,7 @@ export const getAlumniByTier = async (req, res) => {
         descriptionbyUser: request.descriptionbyUser,
         descriptionbyAlumni: request.descriptionbyAlumni,
         requestId: request.id,
-        
+
         alumni: detailedInfo,
       };
     });
