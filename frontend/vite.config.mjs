@@ -214,7 +214,14 @@ export default defineConfig(({ command, mode }) => {
         minifyWhitespace: true
       }
     },
-
+    define: {
+      // Remove console logs in production
+      ...(isProd ? {
+        'console.log': 'undefined',
+        'console.warn': 'undefined',
+        'console.error': 'undefined'
+      } : {})
+    }
   };
 });
 

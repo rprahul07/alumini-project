@@ -26,7 +26,6 @@ console.log("Environment variables loaded");
 const PORT = process.env.PORT || 5001;
 
 const app = express();
-app.set("trust proxy", 1); // Trust first proxy (Render load balancer)
 app.use(express.json());
 const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173"; // Updated to match Vite's default port
 const PREVIEW_URL = "http://localhost:4173"; // Vite preview server port
