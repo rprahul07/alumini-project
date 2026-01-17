@@ -26,6 +26,7 @@ console.log("Environment variables loaded");
 const PORT = process.env.PORT || 5001;
 
 const app = express();
+app.set("trust proxy", 1); // Trust first proxy (Render load balancer)
 app.use(express.json());
 const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173"; // Updated to match Vite's default port
 const PREVIEW_URL = "http://localhost:4173"; // Vite preview server port
@@ -114,10 +115,10 @@ app.use((err, req, res, next) => {
       error:
         process.env.NODE_ENV === "development"
           ? {
-              code: err.code,
-              message: err.message,
-              meta: err.meta,
-            }
+            code: err.code,
+            message: err.message,
+            meta: err.meta,
+          }
           : "Database operation failed",
     });
   }
@@ -137,9 +138,9 @@ app.use((err, req, res, next) => {
     error:
       process.env.NODE_ENV === "development"
         ? {
-            message: err.message,
-            stack: err.stack,
-          }
+          message: err.message,
+          stack: err.stack,
+        }
         : "An unexpected error occurred",
   });
 });
