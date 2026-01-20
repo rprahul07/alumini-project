@@ -152,12 +152,23 @@ async function handleStaticRequest(request) {
 // Handle page requests with network-first strategy
 async function handlePageRequest(request) {
   const url = new URL(request.url);
-  
+
   // Handle API requests with stale-while-revalidate strategy
   if (url.pathname.startsWith('/api/')) {
     return handleAPIRequest(request);
   }
-  
+
+  // For SPA navigation requests, always serve index.html
+  if (request.mode === 'navigate') {
+    try {
+      const networkResponse = await fetch('/index.html');
+      return networkResponse;
+    } catch (error) {
+      const cache = await caches.open(STATIC_CACHE);
+      return cache.match('/index.html');
+    }
+  }
+
   try {
     const networkResponse = await fetch(request);
     if (networkResponse.ok) {
@@ -168,11 +179,11 @@ async function handlePageRequest(request) {
   } catch (error) {
     const cache = await caches.open(DYNAMIC_CACHE);
     const cachedResponse = await cache.match(request);
-    
+
     if (cachedResponse) {
       return cachedResponse;
     }
-    
+
     // Return offline page
     return cache.match('/');
   }
